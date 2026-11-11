@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Duel PAI Kelas 8 — Tarik Tambang Ilmu (1 vs 1 IFP)</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { font-family:'Segoe UI', system-ui, sans-serif; color:#10231c; min-height:100vh;
+         background:linear-gradient(180deg,#052e22 0%, #065f46 45%, #0b7a5c 100%); background-attachment:fixed; }
+  .bungkus { max-width:1460px; margin:0 auto; padding:12px 14px 26px; }
+  header { text-align:center; color:#fff; padding:8px 4px 2px; }
+  header .logo { font-size:42px; }
+  header h1 { font-size:27px; letter-spacing:.6px; text-shadow:0 2px 10px rgba(0,0,0,.4); }
+  header p { font-size:14.5px; opacity:.94; margin-top:3px; }
+  .kaca { background:rgba(255,255,255,.94); border-radius:16px; box-shadow:0 8px 26px rgba(0,20,14,.30); }
+  .bar-atur { display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; padding:11px 13px; margin-top:11px; }
+  .grup-atur { display:flex; gap:7px; align-items:center; flex-wrap:wrap; }
+  .grup-atur .lbl { font-size:11px; font-weight:900; letter-spacing:.6px; color:#065f46; text-transform:uppercase; }
+  .seg { display:flex; gap:5px; flex-wrap:wrap; }
+  .seg button { padding:9px 13px; font-size:13.5px; background:#eef2f7; color:#334155; border:1.5px solid #dbe3ec; border-radius:10px; font-weight:700; cursor:pointer; font-family:inherit; }
+  .seg button.aktif { background:#065f46; color:#fff; border-color:#065f46; }
+  .btn-mulai { background:#f59e0b; color:#451a03; padding:13px 26px; font-size:17px; font-weight:900; border:none; border-radius:12px; cursor:pointer; font-family:inherit; box-shadow:0 5px 16px rgba(245,158,11,.45); }
+  .btn-mulai:disabled { background:#94a3b8; color:#fff; box-shadow:none; cursor:default; }
+  /* arena tarik tambang */
+  .arena { margin-top:12px; padding:16px 16px 13px; }
+  .arena .judul { display:flex; justify-content:space-between; font-size:13px; font-weight:900; letter-spacing:.5px; color:#065f46; text-transform:uppercase; }
+  .rel { position:relative; height:64px; margin-top:10px; border-radius:12px; background:linear-gradient(90deg,#bbf7d0 0%, #fef9c3 50%, #bfdbfe 100%); border:2px solid #d1d5db; overflow:hidden; }
+  .rel .garis-tengah { position:absolute; left:50%; top:0; bottom:0; width:3px; background:#f59e0b; }
+  .rel .zona { position:absolute; top:0; bottom:0; width:11%; display:flex; align-items:center; justify-content:center; font-size:24px; }
+  .rel .zona-kiri { left:0; background:rgba(22,163,74,.20); border-right:2px dashed #16a34a; }
+  .rel .zona-kanan { right:0; background:rgba(37,99,235,.18); border-left:2px dashed #2563eb; }
+  #bendera { position:absolute; top:50%; transform:translate(-50%,-50%); font-size:40px; transition:left .45s cubic-bezier(.34,1.56,.64,1); filter:drop-shadow(0 3px 4px rgba(0,0,0,.35)); z-index:2; }
+  .rel .tali { position:absolute; top:50%; left:2%; right:2%; height:5px; transform:translateY(-50%); background:repeating-linear-gradient(90deg,#b45309 0 14px,#d97706 14px 28px); border-radius:99px; opacity:.75; }
+  .skor-bintang { display:flex; justify-content:space-between; margin-top:9px; font-size:15px; font-weight:800; }
+  .skor-bintang .kiri { color:#15803d; } .skor-bintang .kanan { color:#1d4ed8; }
+  #statusDuel { text-align:center; font-size:14.5px; font-weight:800; color:#065f46; margin-top:7px; min-height:21px; }
+  /* panel pemain */
+  .grid-panel { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+  @media (max-width:820px){ .grid-panel { grid-template-columns:1fr; } }
+  .panel { padding:15px; border-top:7px solid #16a34a; display:flex; flex-direction:column; }
+  .panel.p2 { border-top-color:#2563eb; }
+  .panel .kepala { display:flex; align-items:center; gap:10px; }
+  .panel .avatar { font-size:36px; }
+  .panel input.nama { flex:1; font-family:inherit; font-size:19px; font-weight:900; border:1.5px solid transparent; border-radius:9px; padding:6px 9px; background:#f8fafc; color:#10231c; min-width:0; }
+  .panel input.nama:focus { outline:none; border-color:#0d9488; background:#fff; }
+  .panel.p1 input.nama { color:#15803d; } .panel.p2 input.nama { color:#1d4ed8; }
+  .stat { display:flex; gap:12px; flex-wrap:wrap; font-size:13.5px; font-weight:700; color:#475569; margin-top:8px; }
+  .stat b { color:#10231c; }
+  .bar-waktu { height:9px; background:#e5e7eb; border-radius:99px; overflow:hidden; margin-top:10px; }
+  .bar-waktu > div { height:100%; background:linear-gradient(90deg,#f59e0b,#22c55e); width:100%; }
+  .bab { display:inline-block; margin-top:11px; font-size:11px; font-weight:900; letter-spacing:.5px; padding:3px 10px; border-radius:99px; background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; text-transform:uppercase; }
+  .soal { font-size:clamp(18px, 2.2vw, 24px); font-weight:700; line-height:1.45; margin-top:9px; min-height:66px; }
+  .opsi-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
+  @media (max-width:520px){ .opsi-grid { grid-template-columns:1fr; } }
+  .opsi { font-family:inherit; text-align:left; font-size:clamp(15.5px, 1.8vw, 19px); font-weight:700; padding:16px 14px; border-radius:13px; border:2px solid #dbe3ec; background:#f8fafc; color:#10231c; cursor:pointer; min-height:62px; line-height:1.35; }
+  .opsi .huruf { display:inline-block; background:#065f46; color:#fff; border-radius:7px; padding:1px 8px; margin-right:8px; font-size:.86em; }
+  .opsi:disabled { cursor:default; opacity:.92; }
+  .opsi.benar { background:#dcfce7; border-color:#16a34a; }
+  .opsi.benar .huruf { background:#16a34a; }
+  .opsi.salah { background:#fee2e2; border-color:#dc2626; }
+  .opsi.salah .huruf { background:#dc2626; }
+  .opsi.redup { opacity:.45; }
+  .umpan { margin-top:11px; font-size:14.5px; font-weight:700; min-height:42px; line-height:1.45; border-radius:10px; padding:8px 11px; background:#f8fafc; color:#475569; }
+  .umpan.ok { background:#f0fdf4; color:#15803d; }
+  .umpan.no { background:#fef2f2; color:#b91c1c; }
+  /* overlay */
+  .overlay { position:fixed; inset:0; background:rgba(2,26,19,.78); display:none; z-index:50; align-items:center; justify-content:center; padding:16px; }
+  .overlay.tampil { display:flex; }
+  .kotak-overlay { background:#fff; border-radius:18px; max-width:560px; width:100%; padding:26px 22px; text-align:center; box-shadow:0 18px 50px rgba(0,0,0,.4); position:relative; z-index:2; }
+  .kotak-overlay .trofi { font-size:56px; }
+  .kotak-overlay h2 { font-size:25px; color:#065f46; margin-top:4px; }
+  .kotak-overlay p { font-size:14.5px; color:#475569; margin-top:7px; line-height:1.55; }
+  .kotak-overlay .tabel { display:flex; gap:10px; margin-top:14px; }
+  .kotak-overlay .tabel > div { flex:1; border:1.5px solid #e2e8f0; border-radius:12px; padding:10px; font-size:13.5px; }
+  .btn-lagi { background:#f59e0b; color:#451a03; padding:13px 24px; font-size:16px; font-weight:900; border:none; border-radius:12px; cursor:pointer; font-family:inherit; margin-top:16px; }
+  #hitung { font-size:110px; font-weight:900; color:#fff; text-shadow:0 6px 30px rgba(0,0,0,.5); }
+  .konfeti { position:absolute; top:-14px; border-radius:3px; z-index:1; animation:jatuh linear forwards; }
+  @keyframes jatuh { to { transform:translateY(108vh) rotate(720deg); } }
+  footer { text-align:center; color:rgba(255,255,255,.88); font-size:12.5px; padding:10px 0 4px; line-height:1.6; }
+  @media print { .bar-atur, footer, .overlay { display:none !important; } }
+</style>
+</head>
+<body>
+<div class="bungkus">
+  <header>
+    <div class="logo">🕌</div>
+    <h1>DUEL PAI KELAS 8</h1>
+    <p>Tarik Tambang Ilmu • Pendidikan Agama Islam &amp; Budi Pekerti • Semester 1 • 1 vs 1 di Layar IFP</p>
+  </header>
+
+  <div class="kaca bar-atur">
+    <div class="grup-atur"><span class="lbl">🎯 Target Tarikan</span>
+      <div class="seg" id="segTarget">
+        <button data-v="3">3 Langkah</button><button data-v="5" class="aktif">5 Langkah</button><button data-v="7">7 Langkah</button>
+      </div>
+    </div>
+    <div class="grup-atur"><span class="lbl">📚 Bab</span>
+      <div class="seg" id="segBab">
+        <button data-v="0" class="aktif">Semua</button><button data-v="1">Bab 1</button><button data-v="2">Bab 2</button><button data-v="3">Bab 3</button><button data-v="4">Bab 4</button><button data-v="5">Bab 5</button>
+      </div>
+    </div>
+    <div class="grup-atur"><span class="lbl">⏱ Timer Soal</span>
+      <div class="seg" id="segTimer">
+        <button data-v="0">Mati</button><button data-v="15">15 dtk</button><button data-v="20" class="aktif">20 dtk</button><button data-v="30">30 dtk</button>
+      </div>
+    </div>
+    <button class="btn-mulai" id="btnMulai">▶ MULAI DUEL</button>
+    <button id="btnMusik" style="background:#065f46;color:#fff;padding:11px 16px;font-size:14px;font-weight:800;border:none;border-radius:12px;cursor:pointer;font-family:inherit">🎵 Musik: Hidup</button>
+  </div>
+
+  <div class="kaca arena">
+    <div class="judul"><span>🟢 Zona Pemain 1</span><span>🏁 Tarik bendera ke zonamu!</span><span>Zona Pemain 2 🔵</span></div>
+    <div class="rel">
+      <div class="tali"></div>
+      <div class="zona zona-kiri">🏆</div>
+      <div class="zona zona-kanan">🏆</div>
+      <div class="garis-tengah"></div>
+      <div id="bendera" style="left:50%">🚩</div>
+    </div>
+    <div class="skor-bintang"><span class="kiri" id="tarikKiri">Tarikan: 0</span><span id="infoTarget">Target: 5 langkah</span><span class="kanan" id="tarikKanan">Tarikan: 0</span></div>
+    <div id="statusDuel">Atur nama pemain, lalu tekan MULAI DUEL. Jawaban benar menarik bendera 1 langkah ke arahmu!</div>
+  </div>
+
+  <div class="grid-panel">
+    <div class="kaca panel p1" id="panel0"></div>
+    <div class="kaca panel p2" id="panel1"></div>
+  </div>
+
+  <footer>Cara bermain: dua pemain menjawab soal masing-masing secara bersamaan di satu layar. Jawaban benar = bendera tertarik 1 langkah ke zona penarik. Siapa yang lebih dulu menarik bendera sampai ke zonanya, dialah pemenangnya. Bank soal: 50 soal orisinal Bab 1–5 PAI Kelas 8 Semester 1, lengkap dengan pembahasan singkat di setiap jawaban.</footer>
+</div>
+
+<div class="overlay" id="overlayHitung"><div id="hitung">3</div></div>
+<div class="overlay" id="overlayMenang"><div class="kotak-overlay" id="kotakMenang"></div></div>
+
+<script>
+'use strict';
+function $(id){ return document.getElementById(id); }
+function esc(t){ return String(t == null ? '' : t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function acak(a){ var x = a.slice(); for (var i = x.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = x[i]; x[i] = x[j]; x[j] = t; } return x; }
+
+/* ===== Bank soal orisinal: [bab, soal, opsi, kunci, pembahasan] ===== */
+var BAB_NAMA = { 1:'Bab 1 • Kitab-Kitab Allah', 2:'Bab 2 • Menjauhi Miras, Judi & Pertengkaran', 3:'Bab 3 • Jujur & Adil', 4:'Bab 4 • Puasa', 5:'Bab 5 • Ilmu pada Masa Bani Umayyah' };
+var BANK = [
+[1,'Kitab suci yang diturunkan Allah kepada Nabi Musa a.s. adalah …',['Zabur','Taurat','Injil','Al-Qur\u2019an'],1,'Taurat diturunkan kepada Nabi Musa a.s. sebagai petunjuk bagi Bani Israil.'],
+[1,'Kitab Zabur diturunkan kepada nabi …',['Nabi Daud a.s.','Nabi Ibrahim a.s.','Nabi Isa a.s.','Nabi Muhammad saw.'],0,'Zabur, berisi pujian dan zikir, diturunkan kepada Nabi Daud a.s.'],
+[1,'Kitab Injil diturunkan kepada nabi …',['Nabi Musa a.s.','Nabi Daud a.s.','Nabi Isa a.s.','Nabi Nuh a.s.'],2,'Injil diturunkan kepada Nabi Isa a.s.'],
+[1,'Al-Qur\u2019an disampaikan kepada Nabi Muhammad saw. melalui malaikat …',['Mikail','Israfil','Izrail','Jibril'],3,'Malaikat Jibril bertugas menyampaikan wahyu, termasuk Al-Qur\u2019an.'],
+[1,'Beriman kepada kitab-kitab Allah merupakan rukun iman yang ke …',['satu','dua','tiga','empat'],2,'Urutan rukun iman: Allah, malaikat, kitab-kitab, rasul, hari akhir, qada dan qadar.'],
+[1,'Wahyu pertama yang diterima Nabi Muhammad saw. adalah surah …',['Al-Fatihah','Al-\u2019Alaq ayat 1\u20135','Al-Baqarah ayat 1\u20135','Yasin ayat 1\u20135'],1,'Surah Al-\u2019Alaq ayat 1\u20135 turun di Gua Hira, diawali perintah membaca (iqra\u2019).'],
+[1,'Tempat Nabi Muhammad saw. menerima wahyu pertama adalah …',['Gua Tsur','Gua Hira','Masjid Quba','Bukit Safa'],1,'Beliau bertahannus di Gua Hira, Jabal Nur, Makkah.'],
+[1,'Sikap yang menunjukkan cinta kepada Al-Qur\u2019an adalah …',['menyimpannya di lemari saja','membaca, memahami, dan mengamalkannya','menghafal tanpa memahami','membelinya dalam jumlah banyak'],1,'Mencintai Al-Qur\u2019an dibuktikan dengan membaca, memahami maknanya, dan mengamalkan isinya.'],
+[1,'Al-Qur\u2019an terbagi menjadi … juz.',['10','20','30','40'],2,'Al-Qur\u2019an terdiri atas 30 juz dan 114 surah.'],
+[1,'Kitab suci terakhir yang menyempurnakan kitab-kitab sebelumnya adalah …',['Taurat','Zabur','Injil','Al-Qur\u2019an'],3,'Al-Qur\u2019an adalah kitab terakhir, penyempurna, dan terjaga keasliannya hingga akhir zaman.'],
+[2,'Minuman keras dalam istilah Al-Qur\u2019an disebut …',['maisir','khamr','rijsun','zina'],1,'Khamr adalah segala minuman (dan zat) yang memabukkan dan menghilangkan akal.'],
+[2,'Hukum mengonsumsi minuman keras dalam Islam adalah …',['mubah','makruh','haram','sunnah'],2,'Khamr diharamkan secara tegas dalam Surah Al-Maidah ayat 90.'],
+[2,'Perjudian dalam Al-Qur\u2019an disebut dengan istilah …',['khamr','maisir','riba','gibah'],1,'Maisir artinya judi; khamr dan maisir disebut perbuatan keji dari perbuatan setan.'],
+[2,'Salah satu bahaya minuman keras bagi tubuh adalah …',['menyehatkan jantung','merusak akal dan organ tubuh','menambah kecerdasan','memperkuat tulang'],1,'Alkohol merusak akal, hati (liver), dan menjadi induk berbagai kejahatan (ummul khabaits).'],
+[2,'Akibat buruk perjudian bagi kehidupan sosial adalah …',['menambah banyak teman','menimbulkan permusuhan dan kerugian harta','membuat masyarakat sejahtera','menumbuhkan kejujuran'],1,'Judi menumbuhkan permusuhan, kebencian, kemalasan, dan kehancuran ekonomi keluarga.'],
+[2,'Sikap terbaik saat diajak teman meminum minuman keras adalah …',['ikut sedikit saja','menolak dengan tegas dan menjauhi ajakan itu','diam dan menonton','merekam lalu menyebarkannya'],1,'Menolak dengan tegas dan menjauh adalah cara menjaga diri dari perbuatan haram.'],
+[2,'Pertengkaran di antara sesama muslim harus dihindari karena …',['membuat terkenal','merusak persaudaraan (ukhuwah)','menambah pahala','melatih keberanian'],1,'Islam menjaga ukhuwah; perselisihan dianjurkan diselesaikan dengan mendamaikan (ishlah).'],
+[2,'Jika dua orang teman bertengkar, sikap kita yang sesuai ajaran Islam adalah …',['memanasi keduanya','mendamaikan keduanya','membela yang lebih kuat','menjauhi keduanya selamanya'],1,'Mendamaikan orang yang berselisih adalah perbuatan mulia dalam Islam.'],
+[2,'Khamr dijuluki ummul khabaits, yang artinya …',['induk segala kebaikan','induk segala kejahatan','minuman para raja','obat segala penyakit'],1,'Disebut induk segala kejahatan karena orang mabuk mudah melakukan dosa lain.'],
+[2,'Berikut ini yang BUKAN cara menghindari judi adalah …',['mengisi waktu dengan kegiatan positif','bertahan di lingkungan penjudi','memilih teman yang baik','mendekatkan diri kepada Allah'],1,'Lingkungan sangat berpengaruh; menjauhi lingkungan judi adalah langkah pencegahan.'],
+[3,'Jujur dalam bahasa Arab disebut …',['ash-shidqu','al-kidzbu','al-amanah','al-\u2019adlu'],0,'Ash-shidqu berarti berkata dan berbuat sesuai kenyataan.'],
+[3,'Lawan dari sifat jujur adalah …',['amanah','dusta','adil','sabar'],1,'Dusta (al-kidzbu) adalah berkata tidak sesuai kenyataan dan termasuk akhlak tercela.'],
+[3,'Nabi Muhammad saw. mendapat gelar Al-Amin karena beliau …',['paling kaya','sangat jujur dan dapat dipercaya','paling kuat','keturunan bangsawan'],1,'Sejak muda beliau dikenal jujur dan amanah sehingga digelari Al-Amin (yang terpercaya).'],
+[3,'Adil berarti …',['membagi semua hal sama rata tanpa melihat kebutuhan','menempatkan sesuatu pada tempatnya sesuai haknya','selalu mengalah','membela teman sendiri'],1,'Adil adalah memberikan hak kepada yang berhak secara proporsional, bukan selalu sama rata.'],
+[3,'Manfaat bersikap jujur antara lain …',['dibenci teman','dipercaya orang lain dan hati menjadi tenang','sulit bergaul','tidak disukai guru'],1,'Kejujuran mendatangkan kepercayaan, ketenangan hati, dan keberkahan.'],
+[3,'Contoh kejujuran dalam perbuatan di sekolah adalah …',['menyontek saat ujian','mengakui kesalahan dan meminta maaf','menyembunyikan nilai yang jelek','meniru tugas teman'],1,'Mengakui kesalahan adalah wujud jujur dalam perbuatan.'],
+[3,'Allah Swt. memerintahkan berlaku adil dan berbuat kebajikan (ihsan) dalam surah …',['An-Nahl ayat 90','Al-Fatihah ayat 5','Al-Ikhlas ayat 1','An-Nas ayat 1'],0,'Surah An-Nahl ayat 90 dikenal sebagai ayat perintah adil dan ihsan, sering dibaca dalam khotbah Jumat.'],
+[3,'Amanah artinya …',['cepat marah','dapat dipercaya','suka berbohong','pandai berbicara'],1,'Amanah adalah dapat dipercaya dalam menjaga titipan dan tanggung jawab.'],
+[3,'Menurut hadis, salah satu tanda orang munafik adalah …',['rajin beribadah','apabila berkata, ia berdusta','suka menolong','menepati janji'],1,'Tanda munafik ada tiga: bila berkata dusta, bila berjanji mengingkari, bila dipercaya berkhianat.'],
+[3,'Contoh sikap adil seorang ketua kelompok adalah …',['memberi tugas berat hanya kepada yang tidak disukai','membagi tugas sesuai kemampuan dan kesepakatan','mengerjakan semua sendiri','memberi nilai sama tanpa melihat kerja'],1,'Pembagian tugas yang proporsional dan disepakati bersama mencerminkan keadilan.'],
+[4,'Hukum melaksanakan puasa Ramadan adalah …',['sunnah','wajib bagi muslim yang memenuhi syarat','mubah','makruh'],1,'Puasa Ramadan wajib berdasarkan Surah Al-Baqarah ayat 183 bagi yang mukalaf dan mampu.'],
+[4,'Puasa adalah menahan diri dari hal-hal yang membatalkan sejak …',['tengah malam sampai magrib','terbit fajar sampai terbenam matahari','pagi sampai siang','imsak sampai isya'],1,'Waktu puasa dimulai sejak fajar (subuh) hingga terbenam matahari (magrib).'],
+[4,'Berikut ini yang termasuk rukun puasa adalah …',['sahur','niat dan menahan diri dari yang membatalkan','berbuka dengan yang manis','tarawih'],1,'Rukun puasa ada dua: niat dan menahan diri dari segala yang membatalkan puasa.'],
+[4,'Salah satu syarat wajib puasa adalah …',['kaya raya','berakal sehat dan sudah balig','bisa membaca Al-Qur\u2019an','berusia 40 tahun'],1,'Puasa diwajibkan bagi muslim yang balig, berakal, sehat, dan menetap (bukan musafir).'],
+[4,'Hal berikut yang membatalkan puasa adalah …',['tidur siang','makan dan minum dengan sengaja','mandi','berkumur tanpa menelan air'],1,'Makan dan minum dengan sengaja membatalkan puasa; tidur dan mandi tidak.'],
+[4,'Orang yang diperbolehkan tidak berpuasa dan wajib mengganti di hari lain adalah …',['orang yang sehat','orang sakit dan musafir','pelajar yang sibuk','pedagang'],1,'Orang sakit dan musafir boleh berbuka dan mengqada puasanya di hari lain.'],
+[4,'Niat puasa Ramadan dilakukan pada …',['setelah berbuka','malam hari sebelum fajar','saat sahur saja','pertengahan hari'],1,'Niat puasa wajib (Ramadan) dilakukan pada malam hari sebelum terbit fajar.'],
+[4,'Tujuan utama puasa menurut Surah Al-Baqarah ayat 183 adalah agar manusia …',['menjadi kaya','bertakwa','terkenal','bertubuh kurus'],1,'Ayat tersebut menegaskan puasa diwajibkan agar orang beriman menjadi bertakwa.'],
+[4,'Bulan Ramadan adalah bulan ke-… dalam kalender Hijriah.',['tujuh','delapan','sembilan','dua belas'],2,'Urutan bulan Hijriah: Muharam, Safar, Rabiulawal, Rabiulakhir, Jumadilawal, Jumadilakhir, Rajab, Syakban, Ramadan (ke-9).'],
+[4,'Orang yang benar-benar tidak mampu berpuasa (misalnya tua renta) menggantinya dengan …',['tidak perlu apa-apa','membayar fidyah, memberi makan fakir miskin','puasa dua kali lipat','menyuruh orang lain berpuasa'],1,'Fidyah berupa memberi makan seorang miskin untuk setiap hari puasa yang ditinggalkan.'],
+[5,'Dinasti Bani Umayyah beribu kota di …',['Bagdad','Damaskus','Kordoba','Kairo'],1,'Muawiyah memindahkan pusat pemerintahan ke Damaskus, Suriah.'],
+[5,'Pendiri Dinasti Bani Umayyah adalah …',['Abu Bakar Ash-Shiddiq','Umar bin Khattab','Muawiyah bin Abu Sufyan','Ali bin Abi Thalib'],2,'Muawiyah bin Abu Sufyan mendirikan Dinasti Umayyah pada tahun 661 M.'],
+[5,'Khalifah Bani Umayyah yang terkenal sangat adil dan mendorong ilmu pengetahuan adalah …',['Yazid bin Muawiyah','Umar bin Abdul Aziz','Walid bin Abdul Malik','Hisyam bin Abdul Malik'],1,'Umar bin Abdul Aziz dikenal adil, zuhud, dan memerintahkan pembukuan hadis.'],
+[5,'Pada masa Khalifah Abdul Malik bin Marwan, bahasa administrasi pemerintahan diubah menjadi bahasa …',['Persia','Yunani','Arab','Turki'],2,'Arabisasi administrasi dan pencetakan mata uang Islam terjadi pada masanya.'],
+[5,'Bangunan bersejarah di Yerusalem yang dibangun pada masa Bani Umayyah adalah …',['Masjid Nabawi','Qubbatus Sakhrah (Dome of the Rock)','Masjidil Haram','Benteng Salahuddin'],1,'Qubbatus Sakhrah dibangun atas perintah Khalifah Abdul Malik bin Marwan.'],
+[5,'Salah satu faktor kemajuan ilmu pengetahuan pada masa Bani Umayyah adalah …',['melarang penerjemahan','penerjemahan karya Yunani dan Persia ke bahasa Arab','menutup perpustakaan','perang terus-menerus'],1,'Gerakan penerjemahan membuka akses ilmu kedokteran, astronomi, dan filsafat.'],
+[5,'Pusat pemerintahan dan ilmu pengetahuan Bani Umayyah di Andalusia (Spanyol) adalah kota …',['Granada','Sevilla','Kordoba','Toledo'],2,'Kordoba berkembang menjadi kota ilmu dengan perpustakaan besar dan banyak ulama.'],
+[5,'Dinasti Bani Umayyah di Andalusia didirikan oleh …',['Thariq bin Ziyad','Abdurrahman ad-Dakhil','Harun ar-Rasyid','Salahuddin al-Ayyubi'],1,'Abdurrahman ad-Dakhil, keturunan Umayyah yang selamat, mendirikan emirat di Kordoba.'],
+[5,'Khalifah terakhir Bani Umayyah di Damaskus adalah …',['Marwan bin Muhammad','Muawiyah II','Umar bin Abdul Aziz','Sulaiman bin Abdul Malik'],0,'Marwan bin Muhammad (Marwan II) adalah khalifah terakhir sebelum kejatuhan tahun 750 M.'],
+[5,'Kekuasaan Bani Umayyah di Damaskus berakhir pada tahun …',['661 M','750 M','833 M','1258 M'],1,'Tahun 750 M Dinasti Abbasiyah menggantikan Umayyah di wilayah timur.']
+];
+
+/* ===== Musik & efek suara (WebAudio, tanpa berkas luar) ===== */
+var MELODI = [ /* [nada (semitone dari D4), ketukan] — tangga nada hijaz, melodi orisinal */
+  [12,1],[10,1],[9,1],[7,1],[5,1],[7,1],[9,1],[10,1],
+  [12,2],[13,1],[12,1],[10,1],[9,1],[7,2],[null,1],
+  [5,1],[7,1],[9,1],[10,1],[12,3],[0,1],
+  [10,1],[9,1],[7,1],[5,1],[4,1],[5,1],[7,1],[9,1],
+  [7,4],[null,2]
+];
+var BAS = [0, 0, -3, -3, -5, -5, -3, -3]; /* akar nada per 2 ketukan kelompok */
+var audio = { ctx: null, master: null, aktif: (function(){ try { return localStorage.getItem('duel_pai_musik') !== '0'; } catch (e) { return true; } })(), penjadwal: null, ketukBerikut: 0, posisiMelodi: 0, ketukKe: 0 };
+function freqDari(semitone){ return 293.66 * Math.pow(2, semitone / 12); } /* D4 = 293.66 */
+function initAudio(){
+  if (audio.ctx) { if (audio.ctx.state === 'suspended') audio.ctx.resume(); return; }
+  try {
+    var Ctx = window.AudioContext || window.webkitAudioContext; if (!Ctx) return;
+    audio.ctx = new Ctx();
+    audio.master = audio.ctx.createGain(); audio.master.gain.value = 0.5; audio.master.connect(audio.ctx.destination);
+    audio.ketukBerikut = audio.ctx.currentTime + 0.1;
+    audio.penjadwal = setInterval(jadwalMusik, 120);
+  } catch (e) { /* perangkat tanpa audio: diam saja */ }
+}
+function nada(freq, mulai, dur, jenis, vol, geser){
+  if (!audio.ctx) return;
+  var o = audio.ctx.createOscillator(), g = audio.ctx.createGain();
+  o.type = jenis; o.frequency.value = freq;
+  g.gain.setValueAtTime(0.0001, mulai);
+  g.gain.exponentialRampToValueAtTime(vol, mulai + 0.03);
+  g.gain.exponentialRampToValueAtTime(0.0001, mulai + dur);
+  o.connect(g); g.connect(audio.master);
+  o.start(mulai); o.stop(mulai + dur + 0.05);
+  if (geser){ var o2 = audio.ctx.createOscillator(), g2 = audio.ctx.createGain(); o2.type = 'sine'; o2.frequency.value = freq * 2; g2.gain.setValueAtTime(0.0001, mulai); g2.gain.exponentialRampToValueAtTime(vol * 0.25, mulai + 0.03); g2.gain.exponentialRampToValueAtTime(0.0001, mulai + dur * 0.7); o2.connect(g2); g2.connect(audio.master); o2.start(mulai); o2.stop(mulai + dur); }
+}
+var KETUK = 0.40; /* detik per ketukan */
+function jadwalMusik(){
+  if (!audio.ctx || !audio.aktif) return;
+  while (audio.ketukBerikut < audio.ctx.currentTime + 0.35){
+    var item = MELODI[audio.posisiMelodi];
+    if (item[0] !== null) nada(freqDari(item[0]), audio.ketukBerikut, Math.min(0.9, item[1] * KETUK * 0.95), 'triangle', 0.16, true);
+    if (audio.ketukKe % 8 === 0){ var b = BAS[(audio.ketukKe / 8) % BAS.length]; nada(freqDari(b - 12), audio.ketukBerikut, 2.8, 'sine', 0.20, false); }
+    audio.ketukBerikut += item[1] * KETUK;
+    audio.ketukKe += item[1];
+    audio.posisiMelodi = (audio.posisiMelodi + 1) % MELODI.length;
+  }
+}
+function sfxBenar(){ if (!audio.ctx || !audio.aktif) return; var t = audio.ctx.currentTime; nada(freqDari(12), t, 0.16, 'sine', 0.22); nada(freqDari(16), t + 0.09, 0.16, 'sine', 0.22); nada(freqDari(19), t + 0.18, 0.30, 'sine', 0.24); }
+function sfxSalah(){ if (!audio.ctx || !audio.aktif) return; var t = audio.ctx.currentTime; nada(196, t, 0.22, 'sawtooth', 0.10); nada(164.81, t + 0.12, 0.32, 'sawtooth', 0.10); }
+function sfxBip(terakhir){ if (!audio.ctx || !audio.aktif) return; var t = audio.ctx.currentTime; nada(terakhir ? freqDari(24) : freqDari(12), t, terakhir ? 0.5 : 0.15, 'sine', 0.22); }
+function sfxMenang(){ if (!audio.ctx || !audio.aktif) return; var t = audio.ctx.currentTime; [0, 4, 7, 12, 16, 19, 24].forEach(function(n, i){ nada(freqDari(n), t + i * 0.12, 0.34, 'triangle', 0.22, true); }); }
+function perbaruiBtnMusik(){ $('btnMusik').textContent = audio.aktif ? '🎵 Musik: Hidup' : '🔇 Musik: Mati'; }
+$('btnMusik').onclick = function(){
+  audio.aktif = !audio.aktif;
+  try { localStorage.setItem('duel_pai_musik', audio.aktif ? '1' : '0'); } catch (e) {}
+  if (audio.aktif) initAudio();
+  perbaruiBtnMusik();
+};
+perbaruiBtnMusik();
+
+/* ===== Logika duel ===== */
+var WARNA = ['#16a34a', '#2563eb'];
+var AVATAR = ['🌙', '⭐'];
+var HURUF = ['A','B','C','D'];
+var atur = { target: 5, bab: 0, timer: 20 };
+var posisi = 0; /* negatif = ke kiri (P1), positif = ke kanan (P2) */
+var berjalan = false, selesai = false, hitungTimer = null;
+var pemain = [null, null];
+
+function buatPanel(i){
+  var el = $('panel' + i);
+  el.innerHTML =
+    '<div class="kepala"><div class="avatar">' + AVATAR[i] + '</div>'
+    + '<input class="nama" id="nama' + i + '" type="text" value="Pemain ' + (i + 1) + '" maxlength="20" aria-label="Nama pemain ' + (i + 1) + '">'
+    + '</div>'
+    + '<div class="stat"><span>✅ Benar <b id="stBenar' + i + '">0</b></span><span>❌ Salah <b id="stSalah' + i + '">0</b></span><span>🔥 Beruntun <b id="stStreak' + i + '">0</b></span><span>🏅 Terbaik <b id="stBest' + i + '">0</b></span></div>'
+    + '<div class="bar-waktu"><div id="waktu' + i + '"></div></div>'
+    + '<span class="bab" id="bab' + i + '">Siap di garis start</span>'
+    + '<div class="soal" id="soal' + i + '">Tekan MULAI DUEL untuk bertarung ilmu!</div>'
+    + '<div class="opsi-grid" id="opsi' + i + '"></div>'
+    + '<div class="umpan" id="umpan' + i + '">Jawaban benar menarik bendera 1 langkah ke arahmu. 🏁</div>';
+}
+buatPanel(0); buatPanel(1);
+
+function segWire(id, kunci){
+  $(id).querySelectorAll('button').forEach(function(b){
+    b.onclick = function(){
+      if (berjalan) return;
+      $(id).querySelectorAll('button').forEach(function(x){ x.classList.remove('aktif'); });
+      b.classList.add('aktif'); atur[kunci] = parseInt(b.getAttribute('data-v'), 10);
+      if (kunci === 'target') $('infoTarget').textContent = 'Target: ' + atur.target + ' langkah';
+    };
+  });
+}
+segWire('segTarget', 'target'); segWire('segBab', 'bab'); segWire('segTimer', 'timer');
+
+function deckUntuk(){
+  var sumber = atur.bab === 0 ? BANK : BANK.filter(function(s){ return s[0] === atur.bab; });
+  return acak(sumber);
+}
+function namaPemain(i){ return $('nama' + i).value.trim() || ('Pemain ' + (i + 1)); }
+
+function pemainBaru(i){
+  return { deck: deckUntuk(), ke: 0, cur: null, benar: 0, salah: 0, streak: 0, best: 0, terkunci: false, sisaMs: 0, batasAkhir: 0 };
+}
+function soalBerikutnya(i){
+  var p = pemain[i];
+  if (p.ke >= p.deck.length) p.deck = deckUntuk(), p.ke = 0;
+  var mentah = p.deck[p.ke++];
+  var urutan = acak(mentah[2].map(function(_, x){ return x; }));
+  p.cur = { bab: mentah[0], soal: mentah[1], opsi: urutan.map(function(x){ return mentah[2][x]; }),
+            kunci: urutan.indexOf(mentah[3]), bahas: mentah[4] };
+  p.terkunci = false;
+  renderSoal(i);
+  mulaiTimerPemain(i);
+}
+function renderSoal(i){
+  var p = pemain[i];
+  $('bab' + i).textContent = BAB_NAMA[p.cur.bab];
+  $('soal' + i).textContent = p.cur.soal;
+  var w = $('opsi' + i); w.innerHTML = '';
+  p.cur.opsi.forEach(function(teks, x){
+    var b = document.createElement('button'); b.className = 'opsi'; b.type = 'button';
+    b.innerHTML = '<span class="huruf">' + HURUF[x] + '</span>' + esc(teks);
+    b.onclick = function(){ jawab(i, x, b); };
+    w.appendChild(b);
+  });
+  var u = $('umpan' + i); u.className = 'umpan'; u.textContent = 'Pilih jawaban yang paling benar!';
+}
+function perbaruiStat(i){
+  var p = pemain[i];
+  $('stBenar' + i).textContent = p.benar; $('stSalah' + i).textContent = p.salah;
+  $('stStreak' + i).textContent = p.streak; $('stBest' + i).textContent = p.best;
+}
+function mulaiTimerPemain(i){
+  var p = pemain[i];
+  if (!atur.timer){ $('waktu' + i).style.width = '100%'; p.batasAkhir = 0; return; }
+  p.sisaMs = atur.timer * 1000; p.batasAkhir = Date.now() + p.sisaMs;
+}
+function jawab(i, x, tombol){
+  var p = pemain[i];
+  if (!berjalan || selesai || p.terkunci) return;
+  var benar = x === p.cur.kunci;
+  selesaikanJawaban(i, benar, tombol);
+}
+function selesaikanJawaban(i, benar, tombol){
+  var p = pemain[i]; p.terkunci = true; p.batasAkhir = 0;
+  var tombolSemua = $('opsi' + i).querySelectorAll('.opsi');
+  tombolSemua.forEach(function(b, x){
+    b.disabled = true;
+    if (x === p.cur.kunci) b.classList.add('benar');
+    else if (b === tombol) b.classList.add('salah');
+    else b.classList.add('redup');
+  });
+  var u = $('umpan' + i);
+  if (benar){
+    p.benar++; p.streak++; if (p.streak > p.best) p.best = p.streak;
+    sfxBenar();
+    posisi += (i === 0 ? -1 : 1);
+    u.className = 'umpan ok';
+    u.textContent = '✅ Benar! Bendera tertarik 1 langkah. ' + p.cur.bahas;
+  } else {
+    p.salah++; p.streak = 0;
+    sfxSalah();
+    u.className = 'umpan no';
+    u.textContent = '❌ Belum tepat. Jawaban benar: ' + p.cur.opsi[p.cur.kunci] + '. ' + p.cur.bahas;
+  }
+  perbaruiStat(i); perbaruiArena();
+  if (Math.abs(posisi) >= atur.target){ akhiri(i); return; }
+  setTimeout(function(){ if (berjalan && !selesai) soalBerikutnya(i); }, 1500);
+}
+function perbaruiArena(){
+  var setengah = 50 / (atur.target * 2 + 1);
+  $('bendera').style.left = (50 + posisi * setengah) + '%';
+  $('tarikKiri').textContent = 'Tarikan: ' + Math.max(0, -posisi);
+  $('tarikKanan').textContent = 'Tarikan: ' + Math.max(0, posisi);
+}
+setInterval(function(){
+  if (!berjalan || selesai || !atur.timer) return;
+  var kini = Date.now();
+  [0, 1].forEach(function(i){
+    var p = pemain[i]; if (!p || p.terkunci || !p.batasAkhir) return;
+    var sisa = Math.max(0, p.batasAkhir - kini);
+    $('waktu' + i).style.width = (sisa / (atur.timer * 1000) * 100) + '%';
+    if (sisa <= 0){
+      var u = $('umpan' + i); u.className = 'umpan no'; u.textContent = '⏰ Waktu habis!';
+      selesaikanJawaban(i, false, null);
+    }
+  });
+}, 100);
+
+function mulai(){
+  if (berjalan) return;
+  initAudio();
+  posisi = 0; selesai = false;
+  pemain = [pemainBaru(0), pemainBaru(1)];
+  [0, 1].forEach(function(i){ perbaruiStat(i); $('waktu' + i).style.width = '100%'; });
+  perbaruiArena();
+  $('overlayMenang').classList.remove('tampil');
+  var hitung = 3;
+  $('overlayHitung').classList.add('tampil'); $('hitung').textContent = hitung; sfxBip(false);
+  clearInterval(hitungTimer);
+  hitungTimer = setInterval(function(){
+    hitung--;
+    if (hitung > 0){ $('hitung').textContent = hitung; sfxBip(false); }
+    else if (hitung === 0){ $('hitung').textContent = 'MULAI!'; sfxBip(true); }
+    else {
+      clearInterval(hitungTimer); $('overlayHitung').classList.remove('tampil');
+      berjalan = true; $('btnMulai').disabled = true; $('btnMulai').textContent = '⚔️ DUEL BERJALAN…';
+      $('statusDuel').textContent = 'Duel dimulai! ' + namaPemain(0) + ' (hijau) vs ' + namaPemain(1) + ' (biru) — tarik bendera ke zonamu!';
+      soalBerikutnya(0); soalBerikutnya(1);
+    }
+  }, 800);
+}
+function akhiri(i){
+  selesai = true; berjalan = false;
+  sfxMenang();
+  $('btnMulai').disabled = false; $('btnMulai').textContent = '↺ DUEL LAGI';
+  $('statusDuel').textContent = '🏆 ' + namaPemain(i) + ' memenangkan duel!';
+  var lawan = 1 - i;
+  var totalI = pemain[i].benar + pemain[i].salah, totalL = pemain[lawan].benar + pemain[lawan].salah;
+  var akI = totalI ? Math.round(pemain[i].benar / totalI * 100) : 0;
+  var akL = totalL ? Math.round(pemain[lawan].benar / totalL * 100) : 0;
+  $('kotakMenang').innerHTML =
+    '<div class="trofi">🏆</div><h2>' + esc(namaPemain(i)) + ' Menang!</h2>'
+    + '<p>Bendera berhasil ditarik sampai ke zona ' + (i === 0 ? 'hijau' : 'biru') + '. Kerja bagus, pejuang ilmu! 🌙</p>'
+    + '<div class="tabel"><div><b style="color:' + WARNA[i] + '">' + esc(namaPemain(i)) + '</b><br>✅ ' + pemain[i].benar + ' benar • ❌ ' + pemain[i].salah + ' salah<br>Akurasi ' + akI + '% • 🔥 Terbaik ' + pemain[i].best + '</div>'
+    + '<div><b style="color:' + WARNA[lawan] + '">' + esc(namaPemain(lawan)) + '</b><br>✅ ' + pemain[lawan].benar + ' benar • ❌ ' + pemain[lawan].salah + ' salah<br>Akurasi ' + akL + '% • 🔥 Terbaik ' + pemain[lawan].best + '</div></div>'
+    + '<button class="btn-lagi" id="btnLagi">⚔️ Duel Lagi</button>';
+  $('overlayMenang').classList.add('tampil');
+  $('btnLagi').onclick = function(){ $('overlayMenang').classList.remove('tampil'); mulai(); };
+  /* konfeti */
+  var warnaK = ['#16a34a','#2563eb','#f59e0b','#eab308','#ffffff'];
+  for (var k = 0; k < 70; k++){
+    var s = document.createElement('span'); s.className = 'konfeti';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.background = warnaK[k % warnaK.length];
+    var uk = 6 + Math.random() * 8; s.style.width = uk + 'px'; s.style.height = uk * 0.6 + 'px';
+    s.style.animationDuration = (2.2 + Math.random() * 2.4) + 's';
+    $('overlayMenang').appendChild(s);
+    setTimeout((function(el){ return function(){ el.remove(); }; })(s), 5200);
+  }
+}
+$('btnMulai').onclick = mulai;
+perbaruiArena();
+</script>
+</body>
+</html>
