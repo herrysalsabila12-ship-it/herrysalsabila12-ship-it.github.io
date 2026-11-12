@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PianoKu — Piano Virtual &amp; Latihan Lagu</title>
+<style>
+  :root{
+    --bg:#0b1226; --bg2:#131c3a; --kartu:#182448; --kartu2:#1f2c55;
+    --garis:#2c3a6e; --teks:#eef1ff; --redup:#a7b1d8;
+    --aksen:#22d3ee; --aksen2:#f59e0b; --ungu:#8b7cf6;
+    --hijau:#34d399; --kuning:#fbbf24; --merah:#fb7185;
+  }
+  html{box-sizing:border-box}
+  *,*::before,*::after{box-sizing:inherit}
+  body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;
+    background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 55%,#0d2b3d 100%);
+    color:var(--teks);min-height:100vh}
+  .bungkus{max-width:980px;margin:0 auto;padding:16px 14px 42px}
+  header.kepala{text-align:center;padding:14px 6px 4px}
+  header.kepala .logo{font-size:42px;line-height:1}
+  header.kepala h1{margin:6px 0 2px;font-size:30px;letter-spacing:.5px}
+  header.kepala h1 .ku{color:var(--aksen)}
+  header.kepala p{margin:0;color:var(--redup);font-size:14px}
+  .kartu{background:var(--kartu);border:1px solid var(--garis);border-radius:16px;
+    padding:14px;margin-top:14px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+  .baris{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .tumbuh{flex:1 1 auto}
+  label.lbl{font-size:12px;color:var(--redup);display:block;margin-bottom:4px}
+  select,input[type=text]{background:var(--bg2);color:var(--teks);border:1px solid var(--garis);
+    border-radius:10px;padding:10px 12px;font-size:15px;width:100%}
+  select:disabled{opacity:.45}
+  .pil{display:inline-flex;background:var(--bg2);border:1px solid var(--garis);border-radius:999px;padding:4px;gap:4px}
+  .pil button{border:0;background:transparent;color:var(--redup);padding:8px 16px;border-radius:999px;
+    font-size:14px;font-weight:600;cursor:pointer}
+  .pil button.aktif{background:var(--ungu);color:#fff}
+  .pil.kecil button{padding:6px 11px;font-size:12.5px}
+  .pil.kecil button.aktif{background:var(--aksen);color:#06202a}
+  .indikator{display:flex;flex-wrap:wrap;gap:8px}
+  .ind{background:var(--bg2);border:1px solid var(--garis);border-radius:10px;padding:7px 12px;
+    font-size:13px;color:var(--redup)}
+  .ind b{color:var(--teks);font-size:15px;margin-left:4px}
+  .ind .emas{color:var(--kuning)} .ind .tot{color:var(--aksen)}
+  /* ===== Panggung not jatuh ===== */
+  .panggung-pos{position:relative}
+  #panggung{position:relative;height:300px;border-radius:12px;overflow:hidden;
+    background:linear-gradient(180deg,#0a0f24 0%,#101a3d 78%,#16224e 100%);
+    border:1px solid var(--garis)}
+  .jalur{position:absolute;top:0;bottom:0;border-left:1px dashed rgba(139,124,246,.13)}
+  .garis-target{position:absolute;left:0;right:0;bottom:0;height:8px;
+    background:linear-gradient(90deg,var(--aksen),var(--ungu),var(--aksen2));
+    box-shadow:0 -2px 16px rgba(34,211,238,.55)}
+  .not-jatuh{position:absolute;border-radius:6px;pointer-events:none;
+    background:linear-gradient(180deg,#67e8f9,#0ea5c9);box-shadow:0 0 10px rgba(34,211,238,.65)}
+  .not-jatuh.hitam{background:linear-gradient(180deg,#fcd34d,#d97706);box-shadow:0 0 10px rgba(245,158,11,.65)}
+  .not-jatuh.kena-perfect{background:linear-gradient(180deg,#a7f3d0,#059669);box-shadow:0 0 16px rgba(52,211,153,.9)}
+  .not-jatuh.kena-good{background:linear-gradient(180deg,#fde68a,#d97706)}
+  .not-jatuh.lewat{opacity:.28;filter:grayscale(.7)}
+  #teksPanggung{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    text-align:center;padding:16px;color:var(--redup);font-size:16px;pointer-events:none;z-index:3}
+  #umpanBalik{position:absolute;left:50%;top:34%;transform:translate(-50%,-50%);
+    font-size:34px;font-weight:800;letter-spacing:1px;opacity:0;pointer-events:none;z-index:4;
+    text-shadow:0 2px 14px rgba(0,0,0,.7)}
+  #umpanBalik.tampil{animation:fb .55s ease-out}
+  @keyframes fb{0%{opacity:0;transform:translate(-50%,-50%) scale(.7)}
+    25%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}100%{opacity:0;transform:translate(-50%,-60%) scale(1)}}
+  /* ===== Papan tuts ===== */
+  #papanTuts{position:relative;height:190px;margin-top:10px;border-radius:0 0 12px 12px;
+    user-select:none;-webkit-user-select:none;touch-action:none}
+  .tuts-putih{position:absolute;top:0;bottom:0;background:linear-gradient(180deg,#fdfdff,#dfe3f2);
+    border:1px solid #9aa3c4;border-top:0;border-radius:0 0 7px 7px;cursor:pointer;color:#334}
+  .tuts-putih.ditekan{background:linear-gradient(180deg,#a5f3fc,#22d3ee)}
+  .tuts-putih.sorot{background:linear-gradient(180deg,#fef3c7,#fbbf24)}
+  .tuts-putih .nama{position:absolute;bottom:22px;left:0;right:0;text-align:center;font-size:11px;font-weight:700;color:#526}
+  .tuts-putih .huruf{position:absolute;bottom:6px;left:0;right:0;text-align:center;font-size:10px;color:#889}
+  .tuts-hitam{position:absolute;top:0;height:58%;background:linear-gradient(180deg,#39415f,#11162b);
+    border:1px solid #05070f;border-top:0;border-radius:0 0 6px 6px;cursor:pointer;z-index:2;color:#dde}
+  .tuts-hitam.ditekan{background:linear-gradient(180deg,#f59e0b,#b45309)}
+  .tuts-hitam.sorot{background:linear-gradient(180deg,#f59e0b,#92400e)}
+  .tuts-hitam .nama{position:absolute;bottom:16px;left:0;right:0;text-align:center;font-size:8.5px;font-weight:700}
+  .tuts-hitam .huruf{position:absolute;bottom:4px;left:0;right:0;text-align:center;font-size:8.5px;color:#aab}
+  /* ===== Tombol ===== */
+  .btn{border:0;border-radius:11px;padding:11px 18px;font-size:15px;font-weight:700;cursor:pointer}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn-utama{background:var(--ungu);color:#fff}
+  .btn-biasa{background:var(--kartu2);color:var(--teks);border:1px solid var(--garis)}
+  .btn-emas{background:var(--aksen2);color:#2a1503}
+  .btn-teal{background:var(--aksen);color:#06202a}
+  .tersembunyi{display:none !important}
+  .skor-item{display:flex;justify-content:space-between;gap:8px;padding:8px 4px;border-bottom:1px dashed var(--garis);font-size:14px}
+  .skor-item:last-child{border-bottom:0}
+  .skor-item .meta{color:var(--redup);font-size:12px}
+  .geser{width:150px;accent-color:var(--aksen)}
+  .cek{display:inline-flex;gap:6px;align-items:center;font-size:14px;color:var(--redup);cursor:pointer}
+  .cek input{width:17px;height:17px;accent-color:var(--ungu)}
+  .kecil{font-size:12.5px;color:var(--redup);line-height:1.55}
+  kbd{background:#0d1531;border:1px solid var(--garis);border-bottom-width:2px;border-radius:5px;
+    padding:0 5px;font-size:11.5px;font-family:inherit;color:var(--teks)}
+  @media (max-width:560px){
+    #panggung{height:250px}
+    #papanTuts{height:160px}
+    header.kepala h1{font-size:25px}
+    #umpanBalik{font-size:26px}
+  }
+</style>
+</head>
+<body>
+<div class="bungkus">
+
+  <header class="kepala">
+    <div class="logo">🎹</div>
+    <h1>Piano<span class="ku">Ku</span></h1>
+    <p>Piano virtual untuk bermain bebas dan berlatih lagu mengikuti not yang jatuh.</p>
+  </header>
+
+  <section class="kartu">
+    <div class="baris">
+      <div class="pil" role="tablist" aria-label="Mode">
+        <button id="btnBebas" class="aktif" type="button">🎵 Mode Bebas</button>
+        <button id="btnLatihan" type="button">🎓 Mode Latihan</button>
+      </div>
+      <div class="tumbuh">
+        <label class="lbl" for="pilihLagu">Pilih lagu (Mode Latihan)</label>
+        <select id="pilihLagu" disabled></select>
+      </div>
+    </div>
+    <div class="baris" id="stripIndikator" style="margin-top:12px">
+      <div class="indikator">
+        <span class="ind">Tempo<b id="indTempo">–</b></span>
+        <span class="ind">Skor<b class="emas" id="indSkor">0</b></span>
+        <span class="ind">Kombo<b class="tot" id="indKombo">0</b></span>
+        <span class="ind">Akurasi<b id="indAkurasi">–</b></span>
+        <span class="ind">Progres<b id="indProgres">0/0</b></span>
+      </div>
+      <div class="tumbuh"></div>
+      <div>
+        <label class="lbl">Tampilan tuts</label>
+        <div class="pil kecil" id="pilOktaf">
+          <button type="button" data-oktaf="oktaf4">Oktaf 4 (C4–B4)</button>
+          <button type="button" data-oktaf="oktaf5">Oktaf 5 (C5–B5)</button>
+          <button type="button" data-oktaf="penuh" class="aktif">2 Oktaf</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="kartu">
+    <div class="panggung-pos">
+      <div id="panggung">
+        <div id="teksPanggung">Mode Bebas: sentuh tuts, atau pakai keyboard komputer, untuk bermain piano 🎶</div>
+        <div id="umpanBalik"></div>
+        <div class="garis-target"></div>
+      </div>
+    </div>
+    <div id="papanTuts" aria-label="Papan tuts piano"></div>
+
+    <div class="baris" id="barisAksi" style="margin-top:14px">
+      <button class="btn btn-teal" id="btnContoh" type="button" disabled>▶ Dengar Contoh</button>
+      <button class="btn btn-utama" id="btnMulai" type="button" disabled>🎯 Mulai Latihan</button>
+      <button class="btn btn-biasa" id="btnUlang" type="button" disabled>↺ Ulang</button>
+      <button class="btn btn-emas" id="btnSimpan" type="button" disabled>⭐ Simpan Skor</button>
+    </div>
+
+    <form id="formSkor" class="tersembunyi" style="margin-top:14px">
+      <div class="baris">
+        <div class="tumbuh"><label class="lbl" for="namaSiswa">Nama</label>
+          <input type="text" id="namaSiswa" placeholder="Nama penampil" maxlength="40"></div>
+        <div class="tumbuh"><label class="lbl" for="kelasSiswa">Kelas / Kelompok</label>
+          <input type="text" id="kelasSiswa" placeholder="mis. 5B" maxlength="20"></div>
+        <button class="btn btn-utama" type="submit">Simpan</button>
+      </div>
+      <p class="kecil" id="ringkasanSkor" style="margin:8px 0 0"></p>
+    </form>
+  </section>
+
+  <section class="kartu">
+    <h3 style="margin:2px 0 8px">⭐ Skor Tersimpan</h3>
+    <div id="daftarSkor"><p class="kecil" style="margin:0">Belum ada skor tersimpan di perangkat ini.</p></div>
+    <div class="baris" style="margin-top:8px">
+      <button class="btn btn-biasa tersembunyi" id="btnHapusSkor" type="button">Hapus Semua Skor</button>
+    </div>
+    <p class="kecil">Skor disimpan hanya di perangkat ini (penyimpanan lokal peramban), tanpa akun dan tanpa internet.</p>
+  </section>
+
+  <section class="kartu">
+    <h3 style="margin:2px 0 8px">⌨️ Panduan &amp; Pengaturan Suara</h3>
+    <p class="kecil" style="margin-top:0">
+      Tuts putih C4–C5: <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> <kbd>F</kbd> <kbd>G</kbd> <kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> ·
+      Tuts hitam C#4–A#4: <kbd>W</kbd> <kbd>E</kbd> <kbd>T</kbd> <kbd>Y</kbd> <kbd>U</kbd> ·
+      nada lain mengikuti huruf yang tertera pada tiap tuts. Di HP/tablet, sentuh tutsnya langsung.
+    </p>
+    <div class="baris">
+      <label class="cek">Volume
+        <input type="range" class="geser" id="aturVolume" min="0" max="100" value="80">
+      </label>
+      <label class="cek"><input type="checkbox" id="aturSustain"> Sustain (nada lebih panjang)</label>
+    </div>
+    <p class="kecil">Cara latihan: pilih lagu, tekan <b>Dengar Contoh</b> untuk mendengar melodinya, lalu <b>Mulai Latihan</b> —
+      tekan tuts yang sama tepat saat not menyentuh garis warna-warni di dasar panggung.
+      Ketepatan terbaik mendapat PERFECT (300 poin), berikutnya GOOD (100 poin); not yang terlewat menjadi MISS dan memutus kombo.</p>
+  </section>
+
+</div>
+
+<script>
+'use strict';
+/* ================= DATA NADA ================= */
+var SEMI = {'C':0,'C#':1,'D':2,'D#':3,'E':4,'F':5,'F#':6,'G':7,'G#':8,'A':9,'A#':10,'B':11};
+function midiDariNama(nama){
+  var m = /^([A-G]#?)(\d)$/.exec(nama); if(!m) return 60;
+  return 12 * (parseInt(m[2],10) + 1) + SEMI[m[1]];
+}
+function frekuensi(nama){ return 440 * Math.pow(2, (midiDariNama(nama) - 69) / 12); }
+function apakahHitam(nama){ return nama.indexOf('#') >= 0; }
+
+/* Peta huruf keyboard komputer -> nada (tertera juga pada tuts) */
+var PETA_TOMBOL = {
+  'a':'C4','s':'D4','d':'E4','f':'F4','g':'G4','h':'A4','j':'B4','k':'C5','l':'D5',';':'E5',"'":'F5','z':'G5','x':'A5','c':'B5','v':'C6',
+  'w':'C#4','e':'D#4','t':'F#4','y':'G#4','u':'A#4','o':'C#5','p':'D#5','[':'F#5',']':'G#5','\\':'A#5'
+};
+var HURUF_DARI_NADA = {};
+Object.keys(PETA_TOMBOL).forEach(function(k){ HURUF_DARI_NADA[PETA_TOMBOL[k]] = (k === ' ') ? k : k.toUpperCase(); });
+
+/* Rentang tuts yang tersedia (C4..C6) */
+var SEMUA_NADA = [];
+(function(){
+  var urut = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  for (var okt = 4; okt <= 6; okt++){
+    for (var i = 0; i < urut.length; i++){
+      var n = urut[i] + okt;
+      if (midiDariNama(n) >= 60 && midiDariNama(n) <= 84) SEMUA_NADA.push(n);
+      if (n === 'C6') break;
+    }
+    if (okt === 6) break;
+  }
+})();
+var TAMPILAN = {
+  'oktaf4': { dari:'C4', sampai:'C5' },
+  'oktaf5': { dari:'C5', sampai:'C6' },
+  'penuh' : { dari:'C4', sampai:'B5' }
+};
+/* ================= DATA LAGU =================
+   Melodi baris pertama lagu anak, lagu daerah, lagu wajib, dan klasik
+   dalam rendisi yang umum diajarkan. Format: [nada, ketuk].          */
+var LAGU = [
+{ id:'twinkle', judul:'Twinkle Twinkle Little Star', level:'Pemula', bpm:84, nada:[
+  ['C4',1],['C4',1],['G4',1],['G4',1],['A4',1],['A4',1],['G4',2],
+  ['F4',1],['F4',1],['E4',1],['E4',1],['D4',1],['D4',1],['C4',2],
+  ['G4',1],['G4',1],['F4',1],['F4',1],['E4',1],['E4',1],['D4',2],
+  ['G4',1],['G4',1],['F4',1],['F4',1],['E4',1],['E4',1],['D4',2],
+  ['C4',1],['C4',1],['G4',1],['G4',1],['A4',1],['A4',1],['G4',2],
+  ['F4',1],['F4',1],['E4',1],['E4',1],['D4',1],['D4',1],['C4',2]]},
+{ id:'balonku', judul:'Balonku Ada Lima', level:'Pemula', bpm:88, nada:[
+  ['E4',1],['G4',1],['C5',1],['C5',1],['B4',1],['A4',1],['G4',1],['E4',1],
+  ['E4',1],['G4',1],['C5',1],['C5',1],['B4',1],['A4',1],['G4',2],
+  ['E4',1],['G4',1],['C5',1],['C5',1],['B4',1],['A4',1],['G4',1],['E4',1],
+  ['E4',1],['G4',1],['A4',1],['G4',1],['E4',1],['D4',1],['C4',2]]},
+{ id:'kakaktua', judul:'Burung Kakaktua', level:'Pemula', bpm:80, nada:[
+  ['C5',1],['A4',1],['F4',1],['A4',1],['C5',1],['A4',1],['F4',1],['A4',1],
+  ['B4',1],['G4',1],['E4',1],['G4',1],['B4',1],['G4',1],['E4',1],['G4',1],
+  ['C5',1],['A4',1],['F4',1],['A4',1],['C5',2],['B4',1],['G4',1],['E4',1],['G4',1],['C5',2]]},
+{ id:'kereta', judul:'Naik Kereta Api', level:'Pemula', bpm:96, nada:[
+  ['E4',1],['G4',1],['C5',1],['G4',1],['A4',1],['G4',1],['E4',1],['C4',1],
+  ['D4',1],['F4',1],['A4',1],['F4',1],['G4',1],['E4',1],['D4',2],
+  ['E4',1],['G4',1],['C5',1],['G4',1],['A4',1],['G4',1],['E4',1],['D4',1],['C4',2]]},
+{ id:'sayange', judul:'Rasa Sayange', level:'Pemula', bpm:90, nada:[
+  ['E4',1],['G4',1],['A4',1],['C5',1],['B4',1],['A4',1],['G4',1],['E4',1],
+  ['G4',1],['A4',1],['G4',1],['E4',1],['D4',1],['E4',2],
+  ['E4',1],['G4',1],['A4',1],['C5',1],['B4',1],['A4',1],['G4',1],['E4',1],
+  ['G4',1],['A4',1],['G4',1],['E4',1],['D4',1],['C4',2]]},
+{ id:'kartini', judul:'Ibu Kita Kartini', level:'Menengah', bpm:76, nada:[
+  ['C4',1],['E4',1],['G4',1],['C5',1],['B4',1],['A4',1],['G4',1],['E4',1],
+  ['A4',1],['G4',1],['F4',1],['E4',1],['D4',1],['G4',1],['E4',1],['D4',1],
+  ['C4',2],['E4',1],['G4',1],['A4',1],['G4',1],['E4',1],['D4',1],['C4',2]]},
+{ id:'gundul', judul:'Gundul Gundul Pacul', level:'Menengah', bpm:96, nada:[
+  ['C4',1],['D4',1],['E4',1],['D4',1],['C4',1],['A4',1],['G4',1],['E4',1],
+  ['D4',1],['C4',1],['D4',1],['E4',1],['D4',1],['C4',2],
+  ['E4',1],['G4',1],['A4',1],['G4',1],['E4',1],['D4',1],['E4',1],['D4',1],['C4',2]]},
+{ id:'halo', judul:'Halo Halo Bandung', level:'Menengah', bpm:108, nada:[
+  ['G4',1],['C5',1],['C5',1],['D5',1],['C5',1],['A4',1],['G4',1],
+  ['A4',1],['B4',1],['C5',2],['G4',1],['A4',1],['B4',1],['C5',1],
+  ['B4',1],['A4',1],['G4',1],['E4',1],['A4',1],['G4',2]]},
+{ id:'rayuan', judul:'Rayuan Pulau Kelapa', level:'Menengah', bpm:72, nada:[
+  ['E4',1],['G4',1],['A4',1],['C5',1],['B4',1],['A4',1],['G4',1],['E4',1],
+  ['G4',1],['A4',1],['B4',1],['D5',1],['C5',2],['B4',1],['A4',1],
+  ['G4',1],['E4',1],['A4',1],['G4',2]]},
+{ id:'manuk', judul:'Manuk Dadali', level:'Menengah', bpm:98, nada:[
+  ['C5',1],['A4',1],['G4',1],['E4',1],['G4',1],['A4',1],['C5',1],['A4',1],
+  ['G4',1],['E4',1],['G4',1],['A4',1],['G4',1],['E4',1],['D4',1],['E4',2]]},
+{ id:'ode', judul:'Ode to Joy (Beethoven)', level:'Menengah', bpm:110, nada:[
+  ['E4',1],['E4',1],['F4',1],['G4',1],['G4',1],['F4',1],['E4',1],['D4',1],
+  ['C4',1],['C4',1],['D4',1],['E4',1],['E4',1.5],['D4',0.5],['D4',2],
+  ['E4',1],['E4',1],['F4',1],['G4',1],['G4',1],['F4',1],['E4',1],['D4',1],
+  ['C4',1],['C4',1],['D4',1],['E4',1],['D4',1.5],['C4',0.5],['C4',2]]},
+{ id:'bagimu', judul:'Bagimu Negeri', level:'Mahir', bpm:68, nada:[
+  ['G4',1],['A4',1],['B4',1],['C5',1],['B4',1],['A4',1],['G4',2],
+  ['G4',1],['A4',1],['B4',1],['C5',1],['B4',1],['A4',1],['B4',2],
+  ['A4',1],['B4',1],['C5',1],['D5',1],['C5',1],['B4',1],['A4',2],
+  ['G4',1],['A4',1],['B4',1],['D5',1],['C5',3]]},
+{ id:'furelise', judul:'Fur Elise (Beethoven)', level:'Mahir', bpm:120, nada:[
+  ['E5',0.5],['D#5',0.5],['E5',0.5],['D#5',0.5],['E5',0.5],['B4',0.5],['D5',0.5],['C5',0.5],
+  ['A4',1],['C4',0.5],['E4',0.5],['A4',0.5],['B4',1],['E4',0.5],['G#4',0.5],['B4',0.5],
+  ['C5',1.5],['E4',0.5],['E5',0.5],['D#5',0.5],['E5',0.5],['D#5',0.5],['E5',0.5],['B4',0.5],['D5',0.5],['C5',0.5],
+  ['A4',1],['C4',0.5],['E4',0.5],['A4',0.5],['B4',1],['E4',0.5],['C5',0.5],['B4',0.5],['A4',2]]},
+{ id:'canon', judul:'Canon in D (Pachelbel)', level:'Mahir', bpm:70, nada:[
+  ['F#5',1],['E5',1],['D5',1],['C#5',1],['B4',1],['A4',1],['B4',1],['C#5',1],
+  ['D5',1],['C#5',1],['B4',1],['A4',1],['G4',1],['F#4',1],['G4',1],['E4',1],
+  ['F#5',1],['E5',1],['D5',1],['C#5',1],['B4',1],['A4',1],['B4',1],['C#5',1]]},
+{ id:'tanahair', judul:'Tanah Airku', level:'Mahir', bpm:66, nada:[
+  ['E4',1],['G4',1],['A4',1],['G4',1],['E4',1],['G4',1],['A4',1],['C5',1],
+  ['B4',1],['A4',1],['G4',1],['E4',1],['D4',1],['E4',1],['G4',1],['E4',2],
+  ['D4',1],['E4',1],['G4',1],['A4',1],['G4',1],['E4',1],['D4',1],['C4',2]]}
+];
+function cariLagu(id){ for (var i=0;i<LAGU.length;i++) if (LAGU[i].id===id) return LAGU[i]; return LAGU[0]; }
+/* ================= AUDIO (WebAudio, aman tanpa audio) ================= */
+var ctxAudio = null, gainUtama = null;
+function siapkanAudio(){
+  if (ctxAudio) { if (ctxAudio.resume) ctxAudio.resume(); return true; }
+  try {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return false;
+    ctxAudio = new AC();
+    gainUtama = ctxAudio.createGain();
+    gainUtama.gain.value = volumeSaatIni();
+    gainUtama.connect(ctxAudio.destination);
+    return true;
+  } catch(e){ ctxAudio = null; return false; }
+}
+function volumeSaatIni(){
+  var el = document.getElementById('aturVolume');
+  return el ? (parseInt(el.value,10) / 100) * 0.9 : 0.72;
+}
+function bunyiNada(nama){
+  if (!siapkanAudio() || !ctxAudio) return;
+  try {
+    var t = ctxAudio.currentTime;
+    var f = frekuensi(nama);
+    var g = ctxAudio.createGain();
+    var tahan = document.getElementById('aturSustain').checked ? 2.6 : 1.15;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.85, t + 0.008);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + tahan);
+    var o1 = ctxAudio.createOscillator(); o1.type = 'triangle'; o1.frequency.value = f;
+    var o2 = ctxAudio.createOscillator(); o2.type = 'sine'; o2.frequency.value = f * 2;
+    var g2 = ctxAudio.createGain(); g2.gain.value = 0.25;
+    o1.connect(g); o2.connect(g2); g2.connect(g); g.connect(gainUtama);
+    o1.start(t); o2.start(t); o1.stop(t + tahan + 0.05); o2.stop(t + tahan + 0.05);
+  } catch(e){}
+}
+
+/* ================= PAPAN TUTS ================= */
+var elPanggung = document.getElementById('panggung');
+var elPapan = document.getElementById('papanTuts');
+var elTeksPanggung = document.getElementById('teksPanggung');
+var posisiTuts = {};   /* nama nada -> {pusat:% , lebar:% , hitam:bool} */
+var elemenTuts = {};   /* nama nada -> elemen DOM */
+var tampilanAktif = 'penuh';
+
+function nadaDalamTampilan(){
+  var t = TAMPILAN[tampilanAktif];
+  var a = midiDariNama(t.dari), b = midiDariNama(t.sampai);
+  return SEMUA_NADA.filter(function(n){ var m = midiDariNama(n); return m >= a && m <= b; });
+}
+function bangunPapan(){
+  elPapan.innerHTML = ''; elemenTuts = {}; posisiTuts = {};
+  var daftar = nadaDalamTampilan();
+  var putih = daftar.filter(function(n){ return !apakahHitam(n); });
+  var nP = putih.length, lebarP = 100 / nP;
+  var indeksPutih = {};
+  putih.forEach(function(n, i){
+    indeksPutih[n] = i;
+    posisiTuts[n] = { pusat: (i + 0.5) * lebarP, lebar: lebarP, hitam: false };
+    var d = document.createElement('div');
+    d.className = 'tuts-putih'; d.dataset.nada = n;
+    d.style.left = (i * lebarP) + '%'; d.style.width = lebarP + '%';
+    d.innerHTML = '<span class="nama">' + n + '</span><span class="huruf">' + (HURUF_DARI_NADA[n] || '') + '</span>';
+    elPapan.appendChild(d); elemenTuts[n] = d;
+  });
+  daftar.forEach(function(n){
+    if (!apakahHitam(n)) return;
+    var huruf = n.charAt(0), okt = n.charAt(2);
+    var sebelum = huruf + okt; /* tuts putih tepat sebelum tuts hitam ini */
+    var idx = indeksPutih[sebelum];
+    if (idx === undefined) return;
+    var lebarH = lebarP * 0.62;
+    posisiTuts[n] = { pusat: (idx + 1) * lebarP, lebar: lebarH, hitam: true };
+    var d = document.createElement('div');
+    d.className = 'tuts-hitam'; d.dataset.nada = n;
+    d.style.left = ((idx + 1) * lebarP - lebarH / 2) + '%'; d.style.width = lebarH + '%';
+    d.innerHTML = '<span class="nama">' + n + '</span><span class="huruf">' + (HURUF_DARI_NADA[n] || '') + '</span>';
+    elPapan.appendChild(d); elemenTuts[n] = d;
+  });
+  bangunJalur();
+}
+function bangunJalur(){
+  elPanggung.querySelectorAll('.jalur').forEach(function(e){ e.remove(); });
+  var daftar = nadaDalamTampilan();
+  var putih = daftar.filter(function(n){ return !apakahHitam(n); });
+  var lebarP = 100 / putih.length;
+  for (var i = 1; i < putih.length; i++){
+    var j = document.createElement('div');
+    j.className = 'jalur'; j.style.left = (i * lebarP) + '%';
+    elPanggung.insertBefore(j, elPanggung.firstChild);
+  }
+}
+function sorotTuts(nama, kelas){
+  var el = elemenTuts[nama]; if (!el) return;
+  el.classList.add(kelas);
+  setTimeout(function(){ el.classList.remove(kelas); }, 220);
+}
+function tekanTuts(nama, dariPermainan){
+  bunyiNada(nama);
+  sorotTuts(nama, 'ditekan');
+  if (sedangMain === 'latihan') nilaiTekanan(nama);
+}
+elPapan.addEventListener('pointerdown', function(ev){
+  var t = ev.target.closest('[data-nada]');
+  if (!t) return;
+  ev.preventDefault();
+  tekanTuts(t.dataset.nada, false);
+});
+document.addEventListener('keydown', function(ev){
+  if (ev.repeat) return;
+  var tag = (ev.target && ev.target.tagName) || '';
+  if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+  var nada = PETA_TOMBOL[ev.key] || PETA_TOMBOL[(ev.key || '').toLowerCase()];
+  if (nada) tekanTuts(nada, false);
+});
+/* ================= MESIN PERMAINAN ================= */
+var JATUH = 2.0;                 /* detik not meluncur sampai garis */
+var JENDELA_BAGUS = 0.28, JENDELA_SEMPURNA = 0.14;
+var mode = 'bebas';
+var sedangMain = null;           /* null | 'latihan' | 'contoh' */
+var laguAktif = LAGU[0];
+var jadwal = [], tMulai = 0, rafId = null;
+var skor = 0, kombo = 0, komboMaks = 0, nPerfect = 0, nGood = 0, nMiss = 0;
+
+var elPilihLagu = document.getElementById('pilihLagu');
+var elIndTempo = document.getElementById('indTempo');
+var elIndSkor = document.getElementById('indSkor');
+var elIndKombo = document.getElementById('indKombo');
+var elIndAkurasi = document.getElementById('indAkurasi');
+var elIndProgres = document.getElementById('indProgres');
+var elUmpan = document.getElementById('umpanBalik');
+
+function isiPilihanLagu(){
+  elPilihLagu.innerHTML = '';
+  ['Pemula','Menengah','Mahir'].forEach(function(lv){
+    var grup = document.createElement('optgroup'); grup.label = lv;
+    LAGU.filter(function(l){ return l.level === lv; }).forEach(function(l){
+      var o = document.createElement('option');
+      o.value = l.id; o.textContent = l.judul + ' — ' + l.bpm + ' BPM';
+      grup.appendChild(o);
+    });
+    elPilihLagu.appendChild(grup);
+  });
+  elPilihLagu.value = laguAktif.id;
+}
+function segarIndikator(){
+  elIndTempo.textContent = (mode === 'latihan') ? (laguAktif.bpm + ' BPM') : '–';
+  elIndSkor.textContent = skor;
+  elIndKombo.textContent = kombo;
+  var dinilai = nPerfect + nGood + nMiss;
+  elIndAkurasi.textContent = (sedangMain === 'latihan' || dinilai > 0)
+    ? (dinilai ? Math.round(((nPerfect + nGood * 0.6) / jadwal.length) * 100) + '%' : '0%') : '–';
+  elIndProgres.textContent = dinilai + '/' + (mode === 'latihan' ? jadwal.length || laguAktif.nada.length : 0);
+}
+function umpan(teks, warna){
+  elUmpan.textContent = teks; elUmpan.style.color = warna;
+  elUmpan.classList.remove('tampil'); void elUmpan.offsetWidth; elUmpan.classList.add('tampil');
+}
+function buatJadwal(){
+  jadwal = []; var spb = 60 / laguAktif.bpm, ketuk = 0;
+  laguAktif.nada.forEach(function(p){
+    jadwal.push({ nada: p[0], waktu: ketuk * spb, el: null, status: 'tunggu' });
+    ketuk += p[1];
+  });
+}
+function buatElemenNot(item){
+  var pos = posisiTuts[item.nada]; if (!pos) { item.status = 'lewat'; return; }
+  var d = document.createElement('div');
+  d.className = 'not-jatuh' + (pos.hitam ? ' hitam' : '');
+  d.style.left = (pos.pusat - pos.lebar * 0.4) + '%';
+  d.style.width = (pos.lebar * 0.8) + '%';
+  d.style.height = '16px';
+  elPanggung.appendChild(d); item.el = d; item.status = 'jatuh';
+}
+function bersihNot(){
+  jadwal.forEach(function(it){ if (it.el) it.el.remove(); });
+  jadwal = [];
+}
+function mulaiPermainan(jenis){
+  berhentiPermainan(false);
+  if (tampilanAktif !== 'penuh'){
+    tampilanAktif = 'penuh'; tandaiPilOktaf(); bangunPapan();
+  }
+  buatJadwal();
+  skor = 0; kombo = 0; komboMaks = 0; nPerfect = 0; nGood = 0; nMiss = 0;
+  sedangMain = jenis;
+  tMulai = performance.now() / 1000 + 0.4;
+  elTeksPanggung.textContent = (jenis === 'latihan')
+    ? '🎯 Tekan tuts tepat saat not menyentuh garis di dasar panggung!'
+    : '🎧 Dengarkan contoh melodi «' + laguAktif.judul + '»…';
+  document.getElementById('formSkor').classList.add('tersembunyi');
+  segarTombol(); segarIndikator();
+  rafId = requestAnimationFrame(langkah);
+}
+function langkah(){
+  if (!sedangMain) return;
+  var now = performance.now() / 1000;
+  var H = elPanggung.clientHeight || 300;
+  var selesai = true;
+  jadwal.forEach(function(it){
+    var tNot = tMulai + JATUH + it.waktu;
+    if (it.status === 'tunggu' && now >= tNot - JATUH) buatElemenNot(it);
+    if (it.status === 'jatuh' && it.el){
+      var sisa = tNot - now;
+      var maju = 1 - (sisa / JATUH);
+      it.el.style.top = Math.min(maju, 1.06) * (H - 16) + 'px';
+      if (sedangMain === 'contoh' && sisa <= 0){
+        bunyiNada(it.nada); sorotTuts(it.nada, 'sorot');
+        it.el.classList.add('kena-perfect'); it.status = 'bunyi';
+        setTimeout(function(){ if (it.el) it.el.remove(); }, 160);
+      } else if (sedangMain === 'latihan' && sisa < -JENDELA_BAGUS){
+        it.status = 'lewat'; it.el.classList.add('lewat'); nMiss++; kombo = 0;
+        umpan('MISS', '#fb7185'); segarIndikator();
+        setTimeout(function(){ if (it.el) it.el.remove(); }, 120);
+      }
+    }
+    if (it.status === 'tunggu' || it.status === 'jatuh') selesai = false;
+  });
+  if (selesai && now > tMulai + JATUH + jadwal[jadwal.length - 1].waktu + 0.5){
+    var jenis = sedangMain; sedangMain = null;
+    if (jenis === 'latihan'){
+      var akur = jadwal.length ? Math.round(((nPerfect + nGood * 0.6) / jadwal.length) * 100) : 0;
+      elTeksPanggung.textContent = '🏁 Selesai! Skor ' + skor + ' · Kombo maks ' + komboMaks +
+        ' · Akurasi ' + akur + '% (PERFECT ' + nPerfect + ', GOOD ' + nGood + ', MISS ' + nMiss + '). ' +
+        (skor > 0 ? 'Tekan ⭐ Simpan Skor untuk mencatat hasil ini.' : 'Ayo coba lagi!');
+    } else {
+      elTeksPanggung.textContent = 'Contoh selesai. Sekarang giliranmu — tekan 🎯 Mulai Latihan!';
+    }
+    segarTombol(); segarIndikator();
+    return;
+  }
+  rafId = requestAnimationFrame(langkah);
+}
+function nilaiTekanan(nama){
+  var now = performance.now() / 1000;
+  var calon = null;
+  for (var i = 0; i < jadwal.length; i++){
+    var it = jadwal[i];
+    if (it.nada === nama && it.status === 'jatuh'){
+      var dt = Math.abs(now - (tMulai + JATUH + it.waktu));
+      if (dt <= JENDELA_BAGUS){ calon = { it: it, dt: dt }; break; }
+    }
+  }
+  if (!calon) return;
+  calon.it.status = 'kena';
+  if (calon.dt <= JENDELA_SEMPURNA){
+    nPerfect++; skor += 300; calon.it.el.classList.add('kena-perfect'); umpan('PERFECT', '#34d399');
+  } else {
+    nGood++; skor += 100; calon.it.el.classList.add('kena-good'); umpan('GOOD!', '#fbbf24');
+  }
+  kombo++; if (kombo > komboMaks) komboMaks = kombo;
+  var el = calon.it.el;
+  setTimeout(function(){ if (el) el.remove(); }, 130);
+  segarIndikator();
+}
+function berhentiPermainan(beriTeks){
+  if (rafId) cancelAnimationFrame(rafId);
+  rafId = null; sedangMain = null; bersihNot();
+  if (beriTeks !== false && mode === 'latihan')
+    elTeksPanggung.textContent = 'Pilih lagu lalu tekan Mulai Latihan, atau dengarkan contohnya dulu.';
+  segarTombol();
+}
+
+/* ================= MODE & TOMBOL ================= */
+var btnBebas = document.getElementById('btnBebas');
+var btnLatihan = document.getElementById('btnLatihan');
+var btnMulai = document.getElementById('btnMulai');
+var btnUlang = document.getElementById('btnUlang');
+var btnContoh = document.getElementById('btnContoh');
+var btnSimpan = document.getElementById('btnSimpan');
+
+function segarTombol(){
+  var main = !!sedangMain;
+  btnMulai.disabled = (mode !== 'latihan' || main);
+  btnContoh.disabled = (mode !== 'latihan' || main);
+  btnUlang.disabled = (mode !== 'latihan' || (!main && jadwal.length === 0 && skor === 0));
+  btnSimpan.disabled = !(mode === 'latihan' && !main && skor > 0);
+  elPilihLagu.disabled = (mode !== 'latihan' || main);
+  btnBebas.disabled = main; btnLatihan.disabled = main;
+}
+function aturMode(m){
+  berhentiPermainan(false);
+  mode = m;
+  btnBebas.classList.toggle('aktif', m === 'bebas');
+  btnLatihan.classList.toggle('aktif', m === 'latihan');
+  skor = 0; kombo = 0; nPerfect = 0; nGood = 0; nMiss = 0;
+  elTeksPanggung.textContent = (m === 'bebas')
+    ? 'Mode Bebas: sentuh tuts, atau pakai keyboard komputer, untuk bermain piano 🎶'
+    : 'Pilih lagu lalu tekan Mulai Latihan, atau dengarkan contohnya dulu.';
+  segarTombol(); segarIndikator();
+}
+btnBebas.addEventListener('click', function(){ aturMode('bebas'); });
+btnLatihan.addEventListener('click', function(){ aturMode('latihan'); });
+elPilihLagu.addEventListener('change', function(){
+  berhentiPermainan(false);
+  laguAktif = cariLagu(elPilihLagu.value);
+  skor = 0; kombo = 0; nPerfect = 0; nGood = 0; nMiss = 0;
+  elTeksPanggung.textContent = 'Lagu «' + laguAktif.judul + '» siap. Tekan 🎯 Mulai Latihan atau ▶ Dengar Contoh.';
+  segarTombol(); segarIndikator();
+});
+btnMulai.addEventListener('click', function(){ mulaiPermainan('latihan'); });
+btnContoh.addEventListener('click', function(){ mulaiPermainan('contoh'); });
+btnUlang.addEventListener('click', function(){
+  berhentiPermainan(false);
+  skor = 0; kombo = 0; komboMaks = 0; nPerfect = 0; nGood = 0; nMiss = 0;
+  elTeksPanggung.textContent = 'Pilih lagu lalu tekan Mulai Latihan, atau dengarkan contohnya dulu.';
+  segarTombol(); segarIndikator();
+});
+function tandaiPilOktaf(){
+  document.querySelectorAll('#pilOktaf button').forEach(function(b){
+    b.classList.toggle('aktif', b.dataset.oktaf === tampilanAktif);
+  });
+}
+document.querySelectorAll('#pilOktaf button').forEach(function(b){
+  b.addEventListener('click', function(){
+    if (sedangMain) return;
+    tampilanAktif = b.dataset.oktaf; tandaiPilOktaf(); bangunPapan();
+  });
+});
+document.getElementById('aturVolume').addEventListener('input', function(){
+  if (gainUtama) gainUtama.gain.value = volumeSaatIni();
+});
+
+/* ================= SIMPAN SKOR (lokal) ================= */
+var KUNCI_SIMPAN = 'pianoku_v1';
+function muatSkor(){
+  try { var d = JSON.parse(localStorage.getItem(KUNCI_SIMPAN) || '{}'); return Array.isArray(d.skor) ? d.skor : []; }
+  catch(e){ return []; }
+}
+function tampilSkor(){
+  var daftar = muatSkor();
+  var wadah = document.getElementById('daftarSkor');
+  var btnHapus = document.getElementById('btnHapusSkor');
+  if (!daftar.length){
+    wadah.innerHTML = '<p class="kecil" style="margin:0">Belum ada skor tersimpan di perangkat ini.</p>';
+    btnHapus.classList.add('tersembunyi'); return;
+  }
+  btnHapus.classList.remove('tersembunyi');
+  wadah.innerHTML = '';
+  daftar.slice(0, 20).forEach(function(s){
+    var d = document.createElement('div'); d.className = 'skor-item';
+    d.innerHTML = '<span><b></b> <span class="meta"></span><br><span class="meta"></span></span>' +
+      '<span style="text-align:right"><b></b><br><span class="meta"></span></span>';
+    var spans = d.querySelectorAll('b, .meta');
+    spans[0].textContent = s.nama; spans[1].textContent = s.kelas ? '· ' + s.kelas : '';
+    spans[2].textContent = s.lagu; spans[3].textContent = s.skor + ' poin';
+    spans[4].textContent = 'Akurasi ' + s.akurasi + '% · ' + s.tgl;
+    wadah.appendChild(d);
+  });
+}
+btnSimpan.addEventListener('click', function(){
+  var akur = jadwal.length ? Math.round(((nPerfect + nGood * 0.6) / jadwal.length) * 100) : 0;
+  document.getElementById('ringkasanSkor').textContent =
+    'Hasil: «' + laguAktif.judul + '» — skor ' + skor + ', akurasi ' + akur + '%, kombo maks ' + komboMaks + '.';
+  document.getElementById('formSkor').classList.remove('tersembunyi');
+  document.getElementById('namaSiswa').focus();
+});
+document.getElementById('formSkor').addEventListener('submit', function(ev){
+  ev.preventDefault();
+  var nama = document.getElementById('namaSiswa').value.trim() || 'Tanpa Nama';
+  var kelas = document.getElementById('kelasSiswa').value.trim();
+  var akur = jadwal.length ? Math.round(((nPerfect + nGood * 0.6) / jadwal.length) * 100) : 0;
+  var daftar = muatSkor();
+  daftar.unshift({ nama: nama, kelas: kelas, lagu: laguAktif.judul, skor: skor,
+    akurasi: akur, tgl: new Date().toLocaleDateString('id-ID') });
+  try { localStorage.setItem(KUNCI_SIMPAN, JSON.stringify({ skor: daftar.slice(0, 100) })); } catch(e){}
+  document.getElementById('formSkor').classList.add('tersembunyi');
+  tampilSkor();
+});
+document.getElementById('btnHapusSkor').addEventListener('click', function(){
+  if (confirm('Hapus semua skor tersimpan di perangkat ini?')){
+    try { localStorage.removeItem(KUNCI_SIMPAN); } catch(e){}
+    tampilSkor();
+  }
+});
+
+/* ================= MULAI ================= */
+isiPilihanLagu();
+bangunPapan();
+aturMode('bebas');
+tampilSkor();
+
+/* Pegangan untuk pengujian otomatis */
+window.__uji = { LAGU: LAGU, tekanTuts: tekanTuts, aturMode: aturMode,
+  mulaiPermainan: mulaiPermainan, nilaiTekanan: nilaiTekanan,
+  getState: function(){ return { mode: mode, sedangMain: sedangMain, skor: skor,
+    kombo: kombo, nPerfect: nPerfect, nGood: nGood, nMiss: nMiss, jadwal: jadwal.length }; } };
+</script>
+</body>
+</html>
