@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tangkap Planet! — Misi Bawa Pulang Planet</title>
+<style>
+  :root{
+    --bg:#070b1f; --kartu:#131b3d; --garis:#2c3a6e; --teks:#eef1ff; --redup:#a7b1d8;
+    --aksen:#22d3ee; --kuning:#fbbf24; --hijau:#34d399; --merah:#fb7185; --ungu:#8b7cf6;
+  }
+  html{box-sizing:border-box}
+  *,*::before,*::after{box-sizing:inherit}
+  body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;
+    background:radial-gradient(1200px 700px at 70% -10%,#1b2a5e 0%,var(--bg) 55%);
+    color:var(--teks);min-height:100vh}
+  .bungkus{max-width:1120px;margin:0 auto;padding:14px 12px 34px}
+  header.kepala{text-align:center;padding:8px 4px 2px}
+  header.kepala h1{margin:4px 0 2px;font-size:29px}
+  header.kepala h1 .aksen{color:var(--aksen)}
+  header.kepala p{margin:0;color:var(--redup);font-size:14px}
+  /* ===== Area permainan ===== */
+  #areaGame{position:relative;margin-top:14px;border-radius:18px;overflow:hidden;
+    border:1px solid var(--garis);background:#05081a;height:min(72vh,640px);min-height:430px;
+    box-shadow:0 14px 34px rgba(0,0,0,.45);touch-action:none}
+  #videoKamera{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    transform:scaleX(-1);display:none}
+  #lapisanBintang{position:absolute;inset:0;overflow:hidden}
+  .bintang{position:absolute;border-radius:50%;background:#dfe8ff;opacity:.75;
+    animation:kedip 2.6s ease-in-out infinite alternate}
+  @keyframes kedip{from{opacity:.25}to{opacity:.9}}
+  /* HUD */
+  .hud{position:absolute;top:10px;z-index:6;display:flex;align-items:flex-start;gap:8px;
+    left:10px;right:10px;pointer-events:none}
+  .lencana{background:rgba(10,16,40,.82);border:1px solid var(--garis);border-radius:12px;
+    padding:7px 12px;font-weight:800;font-size:16px;white-space:nowrap}
+  .lencana.kecil{font-size:13px;color:var(--redup);font-weight:600}
+  #bannerMisi{flex:1 1 auto;text-align:center;background:linear-gradient(90deg,#6d28d9,#9333ea);
+    border-radius:12px;padding:8px 12px;font-weight:700;font-size:15.5px;
+    box-shadow:0 4px 16px rgba(147,51,234,.45)}
+  #bannerMisi .target{color:#fde68a}
+  /* Panel rumah */
+  #panelRumah{position:absolute;top:64px;right:10px;bottom:10px;width:196px;z-index:4;
+    background:rgba(10,16,40,.78);border:2px dashed rgba(34,211,238,.5);border-radius:16px;
+    padding:10px;display:flex;flex-direction:column;gap:8px;transition:box-shadow .2s,border-color .2s}
+  #panelRumah.dekat{border-color:var(--kuning);box-shadow:0 0 24px rgba(251,191,36,.55)}
+  #panelRumah h3{margin:0;font-size:14px;text-align:center}
+  #matahari{width:74px;height:74px;margin:2px auto;border-radius:50%;flex:0 0 auto;
+    background:radial-gradient(circle at 38% 38%,#fff7cc,#ffd94d 45%,#ff9d2e 78%,#f97316);
+    box-shadow:0 0 34px rgba(255,170,40,.85)}
+  .slot{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--redup);
+    background:rgba(255,255,255,.04);border-radius:9px;padding:4.5px 8px}
+  .slot .titik{width:15px;height:15px;border-radius:50%;flex:0 0 auto;border:1px solid rgba(255,255,255,.35)}
+  .slot.sudah{color:var(--teks)}
+  .slot.sudah .cek{margin-left:auto;color:var(--hijau);font-weight:800}
+  .slot .cek{margin-left:auto;color:transparent}
+  /* Planet */
+  .planet{position:absolute;z-index:5;cursor:grab;text-align:center;will-change:left,top;
+    animation:melayang 3.4s ease-in-out infinite alternate;touch-action:none}
+  .planet.diambil{cursor:grabbing;animation:none;z-index:9;filter:drop-shadow(0 0 14px rgba(255,255,255,.65))}
+  .planet .bola{border-radius:50%;margin:0 auto;position:relative;
+    box-shadow:inset -10px -8px 18px rgba(0,0,0,.45),inset 6px 6px 12px rgba(255,255,255,.25),0 6px 14px rgba(0,0,0,.5)}
+  .planet .cincin{position:absolute;left:50%;top:50%;width:170%;height:44%;
+    transform:translate(-50%,-50%) rotate(-14deg);border-radius:50%;
+    border:4px solid rgba(232,207,158,.85);border-top-color:rgba(232,207,158,.25);
+    border-bottom-color:rgba(232,207,158,.95);pointer-events:none}
+  .planet .label{display:inline-block;margin-top:5px;background:rgba(8,12,30,.85);
+    border:1px solid var(--garis);color:var(--teks);font-size:12px;font-weight:700;
+    padding:2.5px 9px;border-radius:999px;white-space:nowrap}
+  @keyframes melayang{from{margin-top:-6px}to{margin-top:8px}}
+  /* Kursor tangan */
+  #kursorTangan{position:absolute;z-index:8;width:30px;height:30px;margin:-15px 0 0 -15px;
+    border-radius:50%;border:3px solid var(--aksen);background:rgba(34,211,238,.18);
+    box-shadow:0 0 16px rgba(34,211,238,.7);display:none;pointer-events:none;transition:width .12s,height .12s,margin .12s}
+  #kursorTangan.cubit{width:18px;height:18px;margin:-9px 0 0 -9px;background:rgba(251,191,36,.5);border-color:var(--kuning)}
+  /* Gelembung umpan balik */
+  #gelembung{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%) scale(.6);
+    z-index:10;background:var(--hijau);color:#06281b;font-weight:800;font-size:19px;
+    padding:12px 20px;border-radius:14px;opacity:0;pointer-events:none;text-align:center;
+    box-shadow:0 10px 26px rgba(0,0,0,.5);max-width:86%}
+  #gelembung.tampil{animation:pop 1.6s ease forwards}
+  #gelembung.salah{background:var(--merah);color:#3d0a16}
+  @keyframes pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}
+    12%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}
+    22%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-58%) scale(1)}}
+  /* Layar mulai / modal */
+  .selubung{position:absolute;inset:0;z-index:20;background:rgba(4,7,20,.88);
+    display:flex;align-items:center;justify-content:center;padding:16px}
+  .selubung.tersembunyi{display:none}
+  .kotak{background:var(--kartu);border:1px solid var(--garis);border-radius:18px;
+    max-width:520px;width:100%;padding:22px;text-align:center;
+    box-shadow:0 16px 40px rgba(0,0,0,.55);max-height:100%;overflow:auto}
+  .kotak h2{margin:4px 0 6px;font-size:24px}
+  .kotak p{color:var(--redup);font-size:14.5px;line-height:1.6;margin:6px 0}
+  .kotak .fakta{color:var(--teks);background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.35);
+    border-radius:12px;padding:10px 12px;font-size:14.5px}
+  .btn{display:block;width:100%;border:0;border-radius:12px;padding:13px 16px;margin-top:10px;
+    font-size:16px;font-weight:800;cursor:pointer}
+  .btn-kamera{background:linear-gradient(90deg,#6d28d9,#9333ea);color:#fff}
+  .btn-sentuh{background:var(--aksen);color:#06202a}
+  .btn-biasa{background:#1f2c55;color:var(--teks);border:1px solid var(--garis)}
+  .btn:disabled{opacity:.5;cursor:wait}
+  .peringatan{color:#fda4af !important;font-size:13px !important}
+  .bintangBesar{font-size:34px;letter-spacing:4px}
+  .kontrol{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .kontrol .btn{width:auto;flex:1 1 150px;margin-top:0;padding:10px 12px;font-size:14px}
+  .kecil{font-size:12.5px;color:var(--redup);line-height:1.55}
+  .tersembunyi{display:none !important}
+  @media (max-width:640px){
+    #areaGame{min-height:480px;height:74vh}
+    #panelRumah{width:148px;top:104px}
+    #matahari{width:54px;height:54px}
+    .slot{font-size:11.5px;padding:3.5px 6px}
+    #bannerMisi{font-size:13px}
+    .lencana{font-size:14px}
+    header.kepala h1{font-size:24px}
+  }
+</style>
+</head>
+<body>
+<div class="bungkus">
+  <header class="kepala">
+    <h1>🪐 Tangkap <span class="aksen">Planet!</span></h1>
+    <p>Misi antariksa: tangkap planet dengan tanganmu (kamera) atau sentuhan, lalu bawa pulang ke rumahnya di dekat Matahari.</p>
+  </header>
+
+  <div id="areaGame">
+    <video id="videoKamera" playsinline muted></video>
+    <div id="lapisanBintang"></div>
+
+    <div class="hud">
+      <span class="lencana">🚀 <span id="hudProgres">0/8</span></span>
+      <div id="bannerMisi">🎯 Misi: Bawa pulang planet <span class="target" id="hudTarget">…</span> ke rumahnya!</div>
+      <span class="lencana">⭐ <span id="hudBintang">0</span></span>
+      <span class="lencana kecil">Skor <span id="hudSkor">0</span></span>
+    </div>
+
+    <aside id="panelRumah">
+      <h3>🏠 Rumah Planet</h3>
+      <div id="matahari" title="Matahari"></div>
+      <div id="daftarSlot"></div>
+    </aside>
+
+    <div id="wadahPlanet"></div>
+    <div id="kursorTangan"></div>
+    <div id="gelembung"></div>
+
+    <div class="selubung" id="layarMulai">
+      <div class="kotak">
+        <div style="font-size:44px">🪐</div>
+        <h2>Tangkap Planet!</h2>
+        <p>Delapan planet melayang lepas dari tempatnya. Baca misinya di bagian atas,
+           <b>cubit planet yang diminta</b> dengan jarimu di depan kamera — atau seret dengan
+           sentuhan/mouse — lalu lepaskan di <b>Panel Rumah</b> di sebelah kanan.</p>
+        <button class="btn btn-kamera" id="btnKamera" type="button">📷 Main dengan Kamera (Gerakan Tangan)</button>
+        <button class="btn btn-sentuh" id="btnSentuh" type="button">👆 Main tanpa Kamera (Sentuh / Mouse)</button>
+        <p class="peringatan tersembunyi" id="pesanKamera"></p>
+        <p class="kecil">Mode kamera memakai pelacak tangan dari internet dan perlu izin kamera —
+           gambar kamera hanya diproses di perangkatmu, tidak dikirim ke mana pun.
+           Mode tanpa kamera berfungsi penuh tanpa internet.</p>
+      </div>
+    </div>
+
+    <div class="selubung tersembunyi" id="layarFakta">
+      <div class="kotak">
+        <div style="font-size:40px" id="faktaEmoji">🪐</div>
+        <h2 id="faktaJudul">Hebat!</h2>
+        <p class="fakta" id="faktaIsi"></p>
+        <button class="btn btn-sentuh" id="btnLanjut" type="button">Lanjut ke Misi Berikutnya ➜</button>
+      </div>
+    </div>
+
+    <div class="selubung tersembunyi" id="layarSelesai">
+      <div class="kotak">
+        <div style="font-size:44px">🏆</div>
+        <h2>Misi Antariksa Selesai!</h2>
+        <p class="bintangBesar" id="akhirBintang">⭐⭐⭐</p>
+        <p id="akhirRingkasan"></p>
+        <button class="btn btn-kamera" id="btnMainLagi" type="button">🔁 Main Lagi</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="kontrol">
+    <button class="btn btn-biasa" id="btnAcak" type="button">🔀 Acak Posisi Planet</button>
+    <button class="btn btn-biasa" id="btnUlangi" type="button">↺ Mulai Ulang Misi</button>
+  </div>
+  <p class="kecil">Cara main mode kamera: hadapkan telapak tangan ke kamera, dekatkan ujung ibu jari dan
+     telunjuk (gerakan mencubit) untuk memegang planet, gerakkan tanganmu, lalu jauhkan lagi kedua jari untuk melepaskannya.
+     Planet yang benar akan pulang ke Panel Rumah; planet yang salah akan memantul kembali. Kumpulkan ⭐ dengan menangkap
+     planet yang tepat tanpa salah tangkap. Materi: Tata Surya (IPAS/Sains) — urutan planet dari Matahari.</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+<script>
+'use strict';
+/* ================= DATA PLANET ================= */
+var PLANET = [
+  { id:'merkurius', nama:'Merkurius', ukuran:38, warna:'radial-gradient(circle at 35% 35%,#e8ded2,#9c8e84 60%,#6f6359)',
+    fakta:'Merkurius adalah planet terdekat dari Matahari dan yang paling kecil. Satu tahun di Merkurius hanya 88 hari di Bumi!' },
+  { id:'venus', nama:'Venus', ukuran:52, warna:'radial-gradient(circle at 35% 35%,#ffedb8,#e8c07a 55%,#c78f3e)',
+    fakta:'Venus adalah planet paling panas di tata surya, dan ia berputar mundur dibanding planet-planet lain.' },
+  { id:'bumi', nama:'Bumi', ukuran:54, warna:'radial-gradient(circle at 35% 35%,#bfe3ff,#3d7bd9 55%,#1d4e9e)',
+    fakta:'Bumi adalah rumah kita — satu-satunya planet yang diketahui memiliki kehidupan, air cair, dan udara untuk bernapas.' },
+  { id:'mars', nama:'Mars', ukuran:46, warna:'radial-gradient(circle at 35% 35%,#ffb59a,#d1603a 55%,#93301b)',
+    fakta:'Mars dijuluki Planet Merah karena debunya seperti karat besi. Di sana ada gunung tertinggi di tata surya, Olympus Mons.' },
+  { id:'jupiter', nama:'Jupiter', ukuran:86, warna:'repeating-linear-gradient(180deg,#e8cba0 0 12%,#c89858 12% 22%,#efe0c0 22% 34%,#b57e42 34% 46%,#e8cba0 46% 60%,#caa06a 60% 74%,#efe0c0 74% 100%)',
+    fakta:'Jupiter adalah planet terbesar — lebih dari 1.300 planet Bumi bisa muat di dalamnya! Badai Bintik Merahnya lebih besar dari Bumi.' },
+  { id:'saturnus', nama:'Saturnus', ukuran:70, warna:'radial-gradient(circle at 35% 35%,#fdf0cd,#e3cf9e 55%,#bfa15e)', cincin:true,
+    fakta:'Saturnus terkenal dengan cincinnya yang indah, terbuat dari jutaan bongkahan es dan batu yang mengelilinginya.' },
+  { id:'uranus', nama:'Uranus', ukuran:62, warna:'radial-gradient(circle at 35% 35%,#e6fbfc,#9fd8dd 55%,#5ea8b5)',
+    fakta:'Uranus berputar miring seperti menggelinding mengelilingi Matahari, dan termasuk planet yang paling dingin.' },
+  { id:'neptunus', nama:'Neptunus', ukuran:60, warna:'radial-gradient(circle at 35% 35%,#b9ccff,#4a6fd4 55%,#27397e)',
+    fakta:'Neptunus adalah planet terjauh dari Matahari. Angin di sana tercepat di tata surya — bisa mencapai 2.000 km per jam!' }
+];
+function planetDariId(id){ for (var i=0;i<PLANET.length;i++) if (PLANET[i].id===id) return PLANET[i]; return null; }
+function planetDariId(id){ for (var i=0;i<PLANET.length;i++) if (PLANET[i].id===id) return PLANET[i]; return null; }
+
+/* ================= SUARA ================= */
+var ctxAudio = null;
+function nada(freq, dur, tipe, jeda){
+  try {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    if (!ctxAudio) ctxAudio = new AC();
+    if (ctxAudio.resume) ctxAudio.resume();
+    var t = ctxAudio.currentTime + (jeda || 0);
+    var o = ctxAudio.createOscillator(), g = ctxAudio.createGain();
+    o.type = tipe || 'sine'; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.22, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(ctxAudio.destination);
+    o.start(t); o.stop(t + dur + 0.05);
+  } catch(e){}
+}
+function suaraAmbil(){ nada(520, 0.09, 'triangle'); }
+function suaraBenar(){ nada(660, 0.12, 'triangle'); nada(880, 0.16, 'triangle', 0.1); }
+function suaraSalah(){ nada(160, 0.22, 'sawtooth'); }
+function suaraSelesai(){ [523,659,784,1046].forEach(function(f,i){ nada(f, 0.22, 'triangle', i * 0.13); }); }
+
+/* ================= KEADAAN & ELEMEN ================= */
+var elArea = document.getElementById('areaGame');
+var elWadah = document.getElementById('wadahPlanet');
+var elPanel = document.getElementById('panelRumah');
+var elSlot = document.getElementById('daftarSlot');
+var elGelembung = document.getElementById('gelembung');
+var elKursor = document.getElementById('kursorTangan');
+var misiIndex = 0, skor = 0, jumlahBintang = 0, salahMisiIni = 0;
+var planetEl = {};        /* id -> elemen */
+var sudahPulang = {};     /* id -> bool */
+var yangDiambil = null;   /* id planet yang sedang dipegang */
+var modeKamera = false;
+var acakSeed = 7;
+function acak(){ acakSeed = (acakSeed * 16807) % 2147483647; return (acakSeed % 1000) / 1000; }
+
+function buatBintangLatar(){
+  var lap = document.getElementById('lapisanBintang');
+  for (var i = 0; i < 70; i++){
+    var b = document.createElement('span');
+    b.className = 'bintang';
+    var uk = 1 + acak() * 2.2;
+    b.style.width = uk + 'px'; b.style.height = uk + 'px';
+    b.style.left = (acak() * 100) + '%'; b.style.top = (acak() * 100) + '%';
+    b.style.animationDelay = (acak() * 2) + 's';
+    lap.appendChild(b);
+  }
+}
+function posisiAcak(){
+  return { x: 8 + acak() * 52, y: 22 + acak() * 58 };  /* persen, menghindari panel kanan & HUD */
+}
+function renderPlanet(){
+  elWadah.innerHTML = ''; planetEl = {};
+  PLANET.forEach(function(p){
+    if (sudahPulang[p.id]) return;
+    var pos = posisiAcak();
+    var d = document.createElement('div');
+    d.className = 'planet'; d.dataset.id = p.id;
+    d.style.left = pos.x + '%'; d.style.top = pos.y + '%';
+    d.style.transform = 'translate(-50%,-50%)';
+    d.style.animationDelay = (acak() * 2) + 's';
+    var cincin = p.cincin ? '<div class="cincin"></div>' : '';
+    d.innerHTML = '<div class="bola" style="width:' + p.ukuran + 'px;height:' + p.ukuran +
+      'px;background:' + p.warna + '">' + cincin + '</div><span class="label">' + p.nama + '</span>';
+    elWadah.appendChild(d); planetEl[p.id] = d;
+  });
+}
+function renderSlot(){
+  elSlot.innerHTML = '';
+  PLANET.forEach(function(p){
+    var s = document.createElement('div');
+    s.className = 'slot' + (sudahPulang[p.id] ? ' sudah' : '');
+    s.innerHTML = '<span class="titik" style="background:' + p.warna + '"></span>' + p.nama +
+      '<span class="cek">✔</span>';
+    elSlot.appendChild(s);
+  });
+}
+function targetSaatIni(){ return misiIndex < PLANET.length ? PLANET[misiIndex] : null; }
+function segarHUD(){
+  var t = targetSaatIni();
+  document.getElementById('hudProgres').textContent = misiIndex + '/8';
+  document.getElementById('hudTarget').textContent = t ? '«' + t.nama + '»' : '—';
+  document.getElementById('hudBintang').textContent = jumlahBintang;
+  document.getElementById('hudSkor').textContent = skor;
+}
+function gelembung(teks, salah){
+  elGelembung.textContent = teks;
+  elGelembung.classList.toggle('salah', !!salah);
+  elGelembung.classList.remove('tampil'); void elGelembung.offsetWidth;
+  elGelembung.classList.add('tampil');
+}
+
+/* ================= LOGIKA TANGKAP & JATUH ================= */
+function ambilPlanet(id){
+  if (yangDiambil || sudahPulang[id] || !planetEl[id]) return false;
+  if (!document.getElementById('layarFakta').classList.contains('tersembunyi')) return false;
+  if (!document.getElementById('layarSelesai').classList.contains('tersembunyi')) return false;
+  yangDiambil = id;
+  planetEl[id].classList.add('diambil');
+  suaraAmbil();
+  return true;
+}
+function gerakkanPlanet(id, xPersen, yPersen){
+  var el = planetEl[id]; if (!el) return;
+  el.style.left = Math.max(3, Math.min(97, xPersen)) + '%';
+  el.style.top = Math.max(8, Math.min(96, yPersen)) + '%';
+}
+function rectPanelPersen(){
+  var a = elArea.getBoundingClientRect(), r = elPanel.getBoundingClientRect();
+  if (!a.width || !a.height) return { x1: 76, y1: 12, x2: 99, y2: 98 };
+  return { x1: (r.left - a.left) / a.width * 100, y1: (r.top - a.top) / a.height * 100,
+           x2: (r.right - a.left) / a.width * 100, y2: (r.bottom - a.top) / a.height * 100 };
+}
+function titikDiPanel(x, y){
+  var p = rectPanelPersen();
+  return x >= p.x1 - 3 && x <= p.x2 + 2 && y >= p.y1 - 3 && y <= p.y2 + 2;
+}
+function lepasPlanet(id, diPanel){
+  var el = planetEl[id];
+  if (el) el.classList.remove('diambil');
+  if (yangDiambil === id) yangDiambil = null;
+  if (!diPanel) return 'melayang';
+  return nilaiJatuh(id);
+}
+function nilaiJatuh(id){
+  var target = targetSaatIni();
+  var p = planetDariId(id);
+  if (!target || !p) return 'abaikan';
+  if (id === target.id){
+    sudahPulang[id] = true;
+    var dapat = Math.max(20, 100 - 20 * salahMisiIni);
+    skor += dapat;
+    if (salahMisiIni === 0) jumlahBintang++;
+    gelembung('🎉 Benar! Ini adalah «' + p.nama + '» 👏', false);
+    suaraBenar();
+    var el = planetEl[id];
+    if (el){ el.style.transition = 'all .45s ease'; el.style.opacity = '0'; el.style.transform = 'translate(-50%,-50%) scale(.25)';
+      setTimeout(function(){ if (el.parentNode) el.parentNode.removeChild(el); }, 470); }
+    delete planetEl[id];
+    renderSlot(); segarHUD();
+    setTimeout(tampilkanFakta, 500);
+    return 'benar';
+  }
+  salahMisiIni++;
+  gelembung('Ups, itu planet «' + p.nama + '». Yang dicari «' + target.nama + '» ya!', true);
+  suaraSalah();
+  var el2 = planetEl[id];
+  if (el2){ var pos = posisiAcak(); el2.style.left = pos.x + '%'; el2.style.top = pos.y + '%'; }
+  return 'salah';
+}
+function tampilkanFakta(){
+  var t = PLANET[misiIndex];
+  document.getElementById('faktaJudul').textContent = '🎉 ' + t.nama + ' Sudah Pulang!';
+  document.getElementById('faktaIsi').textContent = t.fakta;
+  document.getElementById('layarFakta').classList.remove('tersembunyi');
+}
+document.getElementById('btnLanjut').addEventListener('click', function(){
+  document.getElementById('layarFakta').classList.add('tersembunyi');
+  misiIndex++; salahMisiIni = 0;
+  segarHUD();
+  if (misiIndex >= PLANET.length){
+    document.getElementById('akhirBintang').textContent =
+      '⭐'.repeat(Math.max(1, Math.round(jumlahBintang / 8 * 5))) + ' (' + jumlahBintang + '/8 planet sempurna)';
+    document.getElementById('akhirRingkasan').textContent =
+      'Kedelapan planet sudah pulang ke dekat Matahari. Skor akhir: ' + skor +
+      ' dari 800. Kamu menangkap ' + jumlahBintang + ' planet tanpa satu pun kesalahan. Kerja yang hebat, Penjelajah Antariksa! 🚀';
+    document.getElementById('layarSelesai').classList.remove('tersembunyi');
+    suaraSelesai();
+  }
+});
+function aturUlang(){
+  misiIndex = 0; skor = 0; jumlahBintang = 0; salahMisiIni = 0; yangDiambil = null;
+  sudahPulang = {};
+  document.getElementById('layarFakta').classList.add('tersembunyi');
+  document.getElementById('layarSelesai').classList.add('tersembunyi');
+  renderPlanet(); renderSlot(); segarHUD();
+}
+document.getElementById('btnMainLagi').addEventListener('click', aturUlang);
+document.getElementById('btnUlangi').addEventListener('click', aturUlang);
+document.getElementById('btnAcak').addEventListener('click', function(){
+  Object.keys(planetEl).forEach(function(id){
+    var pos = posisiAcak();
+    planetEl[id].style.left = pos.x + '%'; planetEl[id].style.top = pos.y + '%';
+  });
+});
+
+/* ================= SERET: SENTUH / MOUSE ================= */
+elWadah.addEventListener('pointerdown', function(ev){
+  var t = ev.target.closest('.planet');
+  if (!t) return;
+  ev.preventDefault();
+  if (!ambilPlanet(t.dataset.id)) return;
+  try { t.setPointerCapture(ev.pointerId); } catch(e){}
+  t.dataset.seretan = '1';
+});
+elWadah.addEventListener('pointermove', function(ev){
+  if (!yangDiambil) return;
+  var el = planetEl[yangDiambil];
+  if (!el || el.dataset.seretan !== '1') return;
+  var a = elArea.getBoundingClientRect();
+  if (!a.width) return;
+  var x = (ev.clientX - a.left) / a.width * 100;
+  var y = (ev.clientY - a.top) / a.height * 100;
+  gerakkanPlanet(yangDiambil, x, y);
+  elPanel.classList.toggle('dekat', titikDiPanel(x, y));
+});
+function akhirSeret(ev){
+  if (!yangDiambil) return;
+  var el = planetEl[yangDiambil];
+  if (!el || el.dataset.seretan !== '1') return;
+  delete el.dataset.seretan;
+  var a = elArea.getBoundingClientRect();
+  var x = a.width ? (ev.clientX - a.left) / a.width * 100 : 50;
+  var y = a.height ? (ev.clientY - a.top) / a.height * 100 : 50;
+  elPanel.classList.remove('dekat');
+  lepasPlanet(yangDiambil, titikDiPanel(x, y));
+}
+elWadah.addEventListener('pointerup', akhirSeret);
+elWadah.addEventListener('pointercancel', akhirSeret);
+
+/* ================= MULAI & MODE KAMERA ================= */
+function mulaiMain(kamera){
+  modeKamera = kamera;
+  document.getElementById('layarMulai').classList.add('tersembunyi');
+  aturUlang();
+  if (kamera) mulaiKamera();
+}
+document.getElementById('btnSentuh').addEventListener('click', function(){ mulaiMain(false); });
+document.getElementById('btnKamera').addEventListener('click', function(){
+  var btn = this; btn.disabled = true; btn.textContent = '⏳ Menyiapkan kamera…';
+  setTimeout(function(){
+    mulaiMain(true);
+    btn.disabled = false; btn.textContent = '📷 Main dengan Kamera (Gerakan Tangan)';
+  }, 60);
+});
+var handsSiap = false, cubitSekarang = false;
+function mulaiKamera(){
+  var pesan = document.getElementById('pesanKamera');
+  var video = document.getElementById('videoKamera');
+  if (typeof Hands === 'undefined' || typeof Camera === 'undefined'){
+    document.getElementById('layarMulai').classList.remove('tersembunyi');
+    pesan.textContent = '⚠️ Pelacak tangan tidak termuat (mode kamera butuh internet). Silakan pakai mode tanpa kamera.';
+    pesan.classList.remove('tersembunyi');
+    return;
+  }
+  try {
+    var hands = new Hands({ locateFile: function(f){
+      return 'https://cdn.jsdelivr.net/npm/@mediapipe/hands/' + f; } });
+    hands.setOptions({ maxNumHands: 1, modelComplexity: 0,
+      minDetectionConfidence: 0.6, minTrackingConfidence: 0.5 });
+    hands.onResults(hasilTangan);
+    var cam = new Camera(video, { onFrame: async function(){ await hands.send({ image: video }); },
+      width: 1280, height: 720 });
+    cam.start().then(function(){
+      handsSiap = true;
+      video.style.display = 'block';
+      document.getElementById('lapisanBintang').style.opacity = '0.25';
+    }).catch(function(){
+      document.getElementById('layarMulai').classList.remove('tersembunyi');
+      pesan.textContent = '⚠️ Kamera tidak bisa dibuka (izin ditolak atau tidak ada kamera). Silakan pakai mode tanpa kamera.';
+      pesan.classList.remove('tersembunyi');
+    });
+  } catch(e){
+    document.getElementById('layarMulai').classList.remove('tersembunyi');
+    pesan.textContent = '⚠️ Mode kamera tidak tersedia di perangkat ini. Silakan pakai mode tanpa kamera.';
+    pesan.classList.remove('tersembunyi');
+  }
+}
+function hasilTangan(res){
+  var lm = res && res.multiHandLandmarks && res.multiHandLandmarks[0];
+  if (!lm){ elKursor.style.display = 'none'; return; }
+  var ujung = lm[8], jempol = lm[4];
+  var x = (1 - ujung.x) * 100, y = ujung.y * 100;   /* cermin, mengikuti video */
+  elKursor.style.display = 'block';
+  elKursor.style.left = x + '%'; elKursor.style.top = y + '%';
+  var jarak = Math.hypot(ujung.x - jempol.x, ujung.y - jempol.y);
+  var cubit = jarak < 0.055;
+  elKursor.classList.toggle('cubit', cubit);
+  if (cubit && !cubitSekarang){
+    var terdekat = null, jarakMin = 11;
+    Object.keys(planetEl).forEach(function(id){
+      var el = planetEl[id];
+      var px = parseFloat(el.style.left), py = parseFloat(el.style.top);
+      var d = Math.hypot(px - x, py - y);
+      if (d < jarakMin){ jarakMin = d; terdekat = id; }
+    });
+    if (terdekat) ambilPlanet(terdekat);
+  }
+  if (!cubit && cubitSekarang && yangDiambil){
+    lepasPlanet(yangDiambil, titikDiPanel(x, y));
+    elPanel.classList.remove('dekat');
+  }
+  if (cubit && yangDiambil){
+    gerakkanPlanet(yangDiambil, x, y);
+    elPanel.classList.toggle('dekat', titikDiPanel(x, y));
+  }
+  cubitSekarang = cubit;
+}
+
+/* ================= MULAI ================= */
+buatBintangLatar();
+renderSlot(); segarHUD();
+
+/* Pegangan untuk pengujian otomatis */
+window.__uji = { PLANET: PLANET, mulaiMain: mulaiMain, aturUlang: aturUlang,
+  ambilPlanet: ambilPlanet, gerakkanPlanet: gerakkanPlanet, lepasPlanet: lepasPlanet,
+  nilaiJatuh: nilaiJatuh, titikDiPanel: titikDiPanel,
+  getState: function(){ return { misiIndex: misiIndex, skor: skor, bintang: jumlahBintang,
+    salahMisiIni: salahMisiIni, yangDiambil: yangDiambil,
+    sisaPlanet: Object.keys(planetEl).length,
+    pulang: Object.keys(sudahPulang).filter(function(k){ return sudahPulang[k]; }).length }; } };
+</script>
+</html>
