@@ -1,1 +1,2794 @@
-<!-- penanda -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Petualangan Termokimia: Dinamika Kalor & Perubahan Entalpi (ΔH)</title>
+  <meta name="description" content="Media Pembelajaran Interaktif Kimia SMA Kelas XI Fase F: Peta Konsep Bagan Pohon, Kamus Istilah Termokimia, Teori & Analogi Sehari-hari, 10 Aplikasi Industri, Kalorimeter Virtual, LKPD Praktikum Lengkap, dan Kuis 25 Soal.">
+
+  <!-- Typography & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- KaTeX & mhchem for Professional Scientific Chemistry Formulas -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/mhchem.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif'],
+            mono: ['Fira Code', 'monospace']
+          },
+          colors: {
+            rosepink: {
+              50: '#fff5f7',
+              100: '#ffe4ea',
+              200: '#ffc9d6',
+              300: '#ff9eb5',
+              400: '#ff6b8e',
+              500: '#f43f6e',
+              600: '#e11d53',
+              700: '#be1243',
+              800: '#9f123b',
+              900: '#851435'
+            },
+            softamber: {
+              50: '#fffef0',
+              100: '#fef9c3',
+              200: '#fef08a',
+              300: '#fde047',
+              400: '#facc15',
+              500: '#eab308',
+              600: '#ca8a04',
+              700: '#a16207',
+              800: '#854d0e',
+              900: '#713f12'
+            },
+            genzmint: {
+              50: '#f0fdf9',
+              100: '#ccfbf1',
+              200: '#99f6e4',
+              300: '#5eead4',
+              400: '#2dd4bf',
+              500: '#14b8a6'
+            },
+            genzlavender: {
+              50: '#faf5ff',
+              100: '#f3e8ff',
+              200: '#e9d5ff',
+              300: '#d8b4fe',
+              400: '#c084fc',
+              500: '#a855f7'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style id="gayaUtama">
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #fdfbff;
+      background-image: radial-gradient(at 0% 0%, rgba(255, 228, 234, 0.45) 0px, transparent 50%),
+                        radial-gradient(at 100% 0%, rgba(204, 251, 241, 0.45) 0px, transparent 50%),
+                        radial-gradient(at 100% 100%, rgba(243, 232, 255, 0.45) 0px, transparent 50%),
+                        radial-gradient(at 0% 100%, rgba(254, 249, 195, 0.45) 0px, transparent 50%);
+      background-attachment: fixed;
+    }
+    .font-display { font-family: 'Space Grotesk', sans-serif; }
+    
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #fff5f8; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #ff8fab, #a855f7); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #f43f6e; }
+
+    /* Gen Z Pastel Aurora Mesh */
+    .hero-mesh {
+      background: radial-gradient(900px 450px at 8% 10%, rgba(255, 182, 203, 0.55) 0%, transparent 65%),
+                  radial-gradient(850px 450px at 92% 15%, rgba(167, 243, 208, 0.55) 0%, transparent 60%),
+                  radial-gradient(750px 500px at 50% 95%, rgba(221, 214, 254, 0.6) 0%, transparent 70%),
+                  linear-gradient(135deg, #fff5f8 0%, #fefce8 45%, #f0fdf9 100%);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 18px 40px -12px rgba(168, 85, 247, 0.1), 0 4px 16px -4px rgba(244, 63, 110, 0.08);
+    }
+
+    .card-modern {
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .card-modern:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 22px 38px -10px rgba(192, 132, 252, 0.24), 0 8px 20px -6px rgba(255, 119, 148, 0.18);
+    }
+
+    .tab-pill {
+      transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .tab-pill.active {
+      background: linear-gradient(135deg, #ff7597 0%, #c084fc 55%, #38bdf8 100%);
+      color: #ffffff !important;
+      box-shadow: 0 8px 20px rgba(192, 132, 252, 0.35);
+      border-color: transparent !important;
+    }
+
+    /* Concept Tree Branch Lines */
+    .tree-node {
+      transition: all 0.25s ease;
+      position: relative;
+    }
+    .tree-node:hover {
+      transform: translateY(-3px) scale(1.015);
+      box-shadow: 0 14px 26px -6px rgba(168, 85, 247, 0.22);
+    }
+
+    /* Bright Gen Z Pastel Formula Box (Replaces Dark Formula Boxes) */
+    .formula-bold-box {
+      background: linear-gradient(135deg, #fff0f6 0%, #f3e8ff 50%, #ecfeff 100%);
+      border: 2px solid #d8b4fe;
+      box-shadow: 0 12px 28px -6px rgba(192, 132, 252, 0.22);
+      color: #1e1b4b !important;
+    }
+    .formula-bold-box .katex {
+      font-size: 1.22em !important;
+      font-weight: 800 !important;
+      color: #4c1d95 !important;
+    }
+
+    /* Ambient pulse */
+    @keyframes flameGlow {
+      0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 107, 142, 0.55)); transform: scale(1); }
+      50% { filter: drop-shadow(0 0 18px rgba(250, 204, 21, 0.85)); transform: scale(1.05); }
+    }
+    @keyframes frostGlow {
+      0%, 100% { filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.5)); transform: scale(1); }
+      50% { filter: drop-shadow(0 0 16px rgba(167, 243, 208, 0.9)); transform: scale(0.97); }
+    }
+    .anim-flame { animation: flameGlow 2.5s ease-in-out infinite; }
+    .anim-frost { animation: frostGlow 3s ease-in-out infinite; }
+
+    input[type=range] {
+      accent-color: #ec4899;
+      touch-action: manipulation;
+    }
+
+    .quiz-card-opt {
+      transition: all 0.16s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+    .quiz-card-opt:hover {
+      border-color: #c084fc;
+      background: #faf5ff;
+      transform: translateX(4px);
+    }
+    .quiz-card-opt.picked {
+      border-color: #ec4899;
+      background: linear-gradient(90deg, #fff0f5 0%, #f3e8ff 100%);
+      box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.25);
+    }
+
+    /* KaTeX Chemistry Fine-Tuning */
+    .katex { font-size: 1.08em; line-height: 1.3; }
+    .katex-display { margin: 0.6em 0 !important; font-weight: 700; }
+
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #ffffff !important; color: #000000 !important; }
+      .tab-panel { display: block !important; margin-bottom: 2rem; }
+    }
+  </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-genzlavender-200 selection:text-slate-900">
+
+<!-- ══════════ TOP NAVBAR (BRIGHT GEN Z PASTEL GLASS) ══════════ -->
+<nav class="no-print sticky top-0 z-50 bg-white/85 backdrop-blur-xl border-b-2 border-rosepink-100 text-slate-800 shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between">
+    <a href="#beranda" class="flex items-center gap-3 font-display font-bold text-lg hover:text-rosepink-600 transition">
+      <span class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-rosepink-400 via-genzlavender-400 to-genzmint-400 text-white flex items-center justify-center shadow-md shadow-rosepink-300/50">
+        <i class="fa-solid fa-fire-burner text-base"></i>
+      </span>
+      <div class="flex flex-col">
+        <span class="leading-tight font-extrabold tracking-tight bg-gradient-to-r from-rosepink-600 via-purple-600 to-teal-600 bg-clip-text text-transparent">Petualangan Termokimia</span>
+        <span class="text-[10px] text-purple-600 font-mono font-bold tracking-wider">KIMIA XI • FASE F</span>
+      </div>
+    </a>
+    
+    <!-- Desktop Menu Bar -->
+    <div class="hidden lg:flex items-center gap-1.5 text-xs xl:text-sm font-bold text-slate-600">
+      <a href="#petakonsep" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-softamber-200 via-rosepink-200 to-genzlavender-200 text-slate-900 font-extrabold hover:brightness-105 transition shadow-sm flex items-center gap-1.5 border border-white">
+        <i class="fa-solid fa-tree text-rosepink-600 text-xs"></i>Peta Konsep &amp; Kamus
+      </a>
+      <a href="#teori" class="px-3 py-1.5 rounded-xl hover:bg-rosepink-50 hover:text-rosepink-600 transition">Teori &amp; Analogi</a>
+      <a href="#kalkulator" class="px-3 py-1.5 rounded-xl hover:bg-genzlavender-50 hover:text-purple-600 transition">Kalkulator $\Delta H$</a>
+      <a href="#visualisasi" class="px-3 py-1.5 rounded-xl hover:bg-genzmint-50 hover:text-teal-600 transition">Diagram Energi</a>
+      <a href="#lab" class="px-3 py-1.5 rounded-xl hover:bg-sky-50 hover:text-sky-600 transition">Lab Kalorimeter</a>
+      <a href="#lkpd" class="px-3 py-1.5 rounded-xl hover:bg-softamber-100 hover:text-amber-700 transition">LKPD Praktikum</a>
+      <a href="#kuis" class="px-3 py-1.5 rounded-xl hover:bg-rosepink-50 hover:text-rosepink-600 transition">Kuis 25 Soal</a>
+    </div>
+
+    <button onclick="unduhHTML()" class="bg-gradient-to-r from-softamber-200 via-rosepink-200 to-genzlavender-200 hover:brightness-105 text-slate-900 font-extrabold text-xs md:text-sm px-4 py-2 rounded-xl flex items-center gap-2 transition shadow-sm border border-rosepink-200 active:scale-95">
+      <i class="fa-solid fa-cloud-arrow-down text-rosepink-600"></i><span class="hidden sm:inline">Simpan Modul</span>
+    </button>
+  </div>
+  
+  <!-- Mobile Submenu Bar -->
+  <div class="lg:hidden flex overflow-x-auto gap-2 px-3 py-2 text-xs font-bold border-t border-rosepink-100 bg-rosepink-50/70">
+    <a href="#petakonsep" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-softamber-200 to-rosepink-200 text-slate-900 font-extrabold whitespace-nowrap shadow-sm flex items-center gap-1">
+      <i class="fa-solid fa-tree text-rosepink-600"></i>Peta Konsep &amp; Kamus
+    </a>
+    <a href="#teori" class="px-3 py-1.5 rounded-lg bg-white border border-rosepink-200 text-slate-700 whitespace-nowrap">Teori &amp; Aplikasi</a>
+    <a href="#kalkulator" class="px-3 py-1.5 rounded-lg bg-white border border-genzlavender-200 text-slate-700 whitespace-nowrap">Kalkulator</a>
+    <a href="#visualisasi" class="px-3 py-1.5 rounded-lg bg-white border border-genzmint-200 text-slate-700 whitespace-nowrap">Diagram</a>
+    <a href="#lab" class="px-3 py-1.5 rounded-lg bg-white border border-sky-200 text-slate-700 whitespace-nowrap">Lab Virtual</a>
+    <a href="#lkpd" class="px-3 py-1.5 rounded-lg bg-white border border-softamber-300 text-slate-700 whitespace-nowrap">LKPD Praktikum</a>
+    <a href="#kuis" class="px-3 py-1.5 rounded-lg bg-white border border-rosepink-200 text-slate-700 whitespace-nowrap">Kuis</a>
+  </div>
+</nav>
+
+<!-- ══════════ HERO SECTION ══════════ -->
+<header id="beranda" class="hero-mesh text-slate-900 relative overflow-hidden py-14 md:py-20 border-b-2 border-white">
+  <div class="max-w-7xl mx-auto px-4 relative z-10">
+    <div class="inline-flex items-center gap-2 bg-white/90 border border-genzlavender-300 text-purple-700 text-xs font-extrabold px-4 py-1.5 rounded-full mb-5 shadow-sm">
+      <span class="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-rosepink-500 to-purple-500 animate-ping"></span>
+      KURIKULUM MERDEKA • KIMIA FASE F (KELAS XI)
+    </div>
+    
+    <h1 class="font-display font-extrabold text-3xl sm:text-5xl md:text-6xl leading-tight mb-5 tracking-tight text-slate-900">
+      Dinamika Kalor &amp;<br>
+      <span class="bg-gradient-to-r from-rosepink-500 via-purple-500 to-teal-500 bg-clip-text text-transparent">
+        Perubahan Entalpi ($\Delta H$)
+      </span>
+    </h1>
+
+    <p class="text-slate-700 text-base md:text-lg max-w-2xl mb-8 leading-relaxed font-medium">
+      Pelajari hukum kekekalan energi, pertukaran kalor sistem-lingkungan dengan analogi nyata, 10 aplikasi industri modern, eksperimen kalorimeter cangkir lengkap dengan prosedur LKPD, hingga perumusan Hukum Hess dan energi ikatan berstandar IUPAC.
+    </p>
+
+    <div class="flex flex-wrap items-center gap-3">
+      <a href="#petakonsep" class="bg-gradient-to-r from-softamber-200 via-rosepink-200 to-genzlavender-200 hover:brightness-105 active:scale-95 text-slate-900 font-extrabold px-6 py-3.5 rounded-2xl transition flex items-center gap-2 shadow-md border border-white">
+        <i class="fa-solid fa-tree text-rosepink-600 text-base"></i> Bagan Pohon &amp; Kamus Istilah
+      </a>
+      <a href="#teori" class="bg-gradient-to-r from-rosepink-500 to-purple-500 hover:brightness-105 active:scale-95 text-white font-bold px-6 py-3.5 rounded-2xl transition flex items-center gap-2 shadow-lg shadow-rosepink-300/50">
+        <i class="fa-solid fa-graduation-cap"></i> Teori, Analogi &amp; 10 Aplikasi
+      </a>
+      <a href="#lkpd" class="bg-white/95 hover:bg-white text-slate-800 border-2 border-genzmint-200 active:scale-95 font-bold px-5 py-3.5 rounded-2xl transition flex items-center gap-2 shadow-sm">
+        <i class="fa-solid fa-flask-vial text-teal-500"></i> LKPD Praktikum Kalorimetri
+      </a>
+      <a href="#kuis" class="bg-softamber-100 hover:bg-softamber-200 border-2 border-softamber-300 text-amber-900 active:scale-95 font-bold px-5 py-3.5 rounded-2xl transition flex items-center gap-2 shadow-sm">
+        <i class="fa-solid fa-list-check text-amber-600"></i> Kuis 25 Soal
+      </a>
+    </div>
+
+    <!-- Quick Stats Metric Cards (Bento Pastel) -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5 mt-10 max-w-4xl">
+      <div class="bg-rosepink-50/90 border-2 border-rosepink-200 rounded-2xl p-4 text-center shadow-sm">
+        <div class="font-display font-extrabold text-xl sm:text-2xl text-rosepink-600">Bagan Pohon</div>
+        <div class="text-xs text-slate-600 font-semibold mt-0.5">Peta Konsep &amp; Glosarium</div>
+      </div>
+      <div class="bg-softamber-50/90 border-2 border-softamber-200 rounded-2xl p-4 text-center shadow-sm">
+        <div class="font-display font-extrabold text-xl sm:text-2xl text-amber-600">10 Industri</div>
+        <div class="text-xs text-slate-600 font-semibold mt-0.5">&amp; Analogi Sehari-hari</div>
+      </div>
+      <div class="bg-genzmint-50/90 border-2 border-genzmint-200 rounded-2xl p-4 text-center shadow-sm">
+        <div class="font-display font-extrabold text-xl sm:text-2xl text-teal-600">LKPD Lengkap</div>
+        <div class="text-xs text-slate-600 font-semibold mt-0.5">Prosedur Kalorimetri</div>
+      </div>
+      <div class="bg-genzlavender-50/90 border-2 border-genzlavender-200 rounded-2xl p-4 text-center shadow-sm">
+        <div class="font-display font-extrabold text-xl sm:text-2xl text-purple-600">25 Evaluasi</div>
+        <div class="text-xs text-slate-600 font-semibold mt-0.5">Ujian + Pembahasan KaTeX</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 mt-8 text-slate-600 text-xs sm:text-sm flex items-center gap-2">
+    <span class="inline-block w-2.5 h-2.5 rounded-full bg-genzmint-400 shadow-sm"></span>
+    Disusun oleh <strong class="text-slate-800">Ayu Desi Yanita, S.Pd.</strong> — SMAS Muhammadiyah Kasongan
+  </div>
+</header>
+
+<!-- ══════════ MODUL 0: BAGAN RANTING POHON PETA KONSEP & KAMUS ISTILAH ══════════ -->
+<section id="petakonsep" class="max-w-7xl mx-auto px-4 py-14">
+  <div class="text-center mb-10">
+    <span class="text-purple-700 font-extrabold text-xs uppercase tracking-widest bg-gradient-to-r from-genzlavender-100 via-rosepink-100 to-softamber-100 border border-genzlavender-300 px-4 py-1.5 rounded-full shadow-sm">
+      ARSITEKTUR KEILMUAN TERMOKIMIA
+    </span>
+    <h2 class="font-display font-extrabold text-3xl md:text-4xl text-slate-900 mt-3 mb-3">
+      Bagan Ranting Pohon Peta Konsep &amp; Kamus Istilah
+    </h2>
+    <p class="text-slate-600 max-w-2xl mx-auto text-sm md:text-base">
+      Visualisasi struktur keilmuan Termokimia layaknya pohon bercabang dari akar Hukum I Termodinamika hingga daun penerapan nyata, dilengkapi kamus istilah interaktif di bawahnya.
+    </p>
+  </div>
+
+  <!-- BAGAN RANTING POHON (TREE DIAGRAM PASTEL) -->
+  <div class="glass-card rounded-3xl p-5 sm:p-8 lg:p-10 shadow-xl relative overflow-hidden">
+    <!-- Akar / Batang Utama Pohon -->
+    <div class="flex flex-col items-center">
+      <!-- Puncak / Batang Induk -->
+      <div class="tree-node bg-gradient-to-r from-rosepink-200 via-genzlavender-200 to-genzmint-200 text-slate-900 px-7 py-4 rounded-3xl shadow-md text-center max-w-lg w-full border-2 border-white z-10">
+        <div class="inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-widest bg-white/80 px-3 py-0.5 rounded-full text-purple-800 font-extrabold mb-1 shadow-sm">
+          <i class="fa-solid fa-seedling text-teal-600"></i> BATANG UTAMA: HUKUM I TERMODINAMIKA
+        </div>
+        <h3 class="font-display font-extrabold text-2xl sm:text-3xl tracking-tight text-slate-900">TERMOKIMIA ($\Delta H = q_p$)</h3>
+        <p class="text-xs text-slate-700 font-medium mt-1">Studi kuantitatif perubahan kalor yang menyertai reaksi kimia dan perubahan fase pada tekanan tetap</p>
+      </div>
+
+      <!-- Batang Vertikal Penghubung Utama -->
+      <div class="w-1.5 h-8 bg-gradient-to-b from-genzlavender-300 to-rosepink-300"></div>
+
+      <!-- Palang Cabang Utama Horizontal (Desktop) -->
+      <div class="hidden lg:block w-[84%] h-1.5 bg-gradient-to-r from-rosepink-300 via-softamber-300 to-genzmint-300 rounded-full"></div>
+    </div>
+
+    <!-- 4 Dahan Utama Pohon (Level 1 Branches - Gen Z Pastel Colors) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-2 relative">
+      
+      <!-- DAHAN 1: Sistem & Lingkungan (Pastel Pink) -->
+      <div class="flex flex-col items-center">
+        <div class="hidden lg:block w-1 h-5 bg-rosepink-300"></div>
+        <div class="tree-node w-full bg-gradient-to-b from-rosepink-100 to-rosepink-200 text-rosepink-950 p-4 rounded-2xl shadow-sm text-center border-2 border-rosepink-300">
+          <span class="text-[10px] font-mono uppercase bg-white/80 text-rosepink-700 px-2.5 py-0.5 rounded-full font-extrabold">DAHAN 1</span>
+          <h4 class="font-display font-extrabold text-base mt-1">1. Sistem &amp; Lingkungan</h4>
+          <p class="text-[11px] text-rosepink-800 font-semibold mt-0.5">Interaksi Materi &amp; Energi ($\Delta E = q + w$)</p>
+        </div>
+        <!-- Ranting-ranting Dahan 1 -->
+        <div class="w-0.5 h-4 bg-rosepink-300"></div>
+        <div class="w-full space-y-2.5 pl-3 border-l-2 border-dashed border-rosepink-300">
+          <div class="tree-node bg-white/95 p-3 rounded-xl border border-rosepink-200 shadow-sm">
+            <div class="font-bold text-xs text-rosepink-800 flex items-center justify-between">
+              <span>🌿 Sistem Terbuka</span>
+              <span class="text-[10px] bg-rosepink-100 px-2 py-0.5 rounded-full font-mono font-bold">Materi + Kalor</span>
+            </div>
+            <p class="text-[11px] text-slate-600 mt-1">Contoh: Kopi panas di gelas tanpa tutup, reaksi di gelas kimia terbuka.</p>
+          </div>
+          <div class="tree-node bg-white/95 p-3 rounded-xl border border-rosepink-200 shadow-sm">
+            <div class="font-bold text-xs text-rosepink-800 flex items-center justify-between">
+              <span>🌿 Sistem Tertutup</span>
+              <span class="text-[10px] bg-softamber-100 text-amber-800 px-2 py-0.5 rounded-full font-mono font-bold">Hanya Kalor</span>
+            </div>
+            <p class="text-[11px] text-slate-600 mt-1">Contoh: Botol air mineral hangat tertutup rapat, kantong kompres.</p>
+          </div>
+          <div class="tree-node bg-white/95 p-3 rounded-xl border border-rosepink-200 shadow-sm">
+            <div class="font-bold text-xs text-rosepink-800 flex items-center justify-between">
+              <span>🌿 Sistem Terisolasi</span>
+              <span class="text-[10px] bg-genzmint-100 text-teal-800 px-2 py-0.5 rounded-full font-mono font-bold">Adiabatik ($q=0$)</span>
+            </div>
+            <p class="text-[11px] text-slate-600 mt-1">Contoh: Termos vakum ideal, bejana kalorimeter bom/styrofoam.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- DAHAN 2: Arah Aliran Kalor & Jenis Reaksi (Pastel Buttercream Yellow) -->
+      <div class="flex flex-col items-center">
+        <div class="hidden lg:block w-1 h-5 bg-softamber-300"></div>
+        <div class="tree-node w-full bg-gradient-to-b from-softamber-100 to-softamber-200 text-amber-950 p-4 rounded-2xl shadow-sm text-center border-2 border-softamber-300">
+          <span class="text-[10px] font-mono uppercase bg-white/85 text-amber-800 px-2.5 py-0.5 rounded-full font-extrabold">DAHAN 2</span>
+          <h4 class="font-display font-extrabold text-base mt-1">2. Arah Kalor &amp; Reaksi</h4>
+          <p class="text-[11px] text-amber-900 font-semibold mt-0.5">$\Delta H = H_{\text{produk}} - H_{\text{reaktan}}$</p>
+        </div>
+        <!-- Ranting-ranting Dahan 2 -->
+        <div class="w-0.5 h-4 bg-softamber-300"></div>
+        <div class="w-full space-y-2.5 pl-3 border-l-2 border-dashed border-softamber-400">
+          <div class="tree-node bg-white/95 p-3 rounded-xl border border-rosepink-200 shadow-sm">
+            <div class="font-bold text-xs text-rosepink-700 flex items-center justify-between">
+              <span>🔥 Reaksi Eksoterm</span>
+              <span class="text-[10px] bg-rosepink-100 px-2 py-0.5 rounded-full font-mono font-bold">$\Delta H < 0$ (-)</span>
+            </div>
+            <p class="text-[11px] text-slate-600 mt-1">Sistem melepas kalor ke lingkungan; $H_P < H_R$; suhu lingkungan <strong>naik</strong> (hangat/panas).</p>
+          </div>
+          <div class="tree-node bg-white/95 p-3 rounded-xl border border-sky-200 shadow-sm">
+            <div class="font-bold text-xs text-sky-700 flex items-center justify-between">
+              <span>❄️ Reaksi Endoterm</span>
+              <span class="text-[10px] bg-sky-100 px-2 py-0.5 rounded-full font-mono font-bold">$\Delta H > 0$ (+)</span>
+            </div>
+            <p class="text-[11px] text-slate-600 mt-1">Sistem menyerap kalor dari lingkungan; $H_P > H_R$; suhu lingkungan <strong>turun</strong> (dingin).</p>
+          </div>
+          <div class="tree-node bg-white/95 p-3 rounded-xl border border-softamber-300 shadow-sm">
+            <div class="font-bold text-xs text-amber-900 flex items-center justify-between">
+              <span>📜 Persamaan Termokimia</span>
+              <span class="text-[10px] bg-softamber-100 px-2 py-0.5 rounded-full font-mono font-bold">Koefisien &amp; Fase</span>
+            </div>
+            <p class="text-[11px] text-slate-600 mt-1">Wujud zat $(s, l, g, aq)$ dan nilai $\Delta H$ sebanding lurus dengan mol koefisien reaksi.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- DAHAN 3: Entalpi Molar Standar (Pastel Lavender) -->
+      <div class="flex flex-col items-center">
+        <div class="hidden lg:block w-1 h-5 bg-genzlavender-300"></div>
+        <div class="tree-node w-full bg-gradient-to-b from-genzlavender-100 to-genzlavender-200 text-purple-950 p-4 rounded-2xl shadow-sm text-center border-2 border-genzlavender-300">
+          <span class="text-[10px] font-mono uppercase bg-white/85 text-purple-800 px-2.5 py-0.5 rounded-full font-extrabold">DAHAN 3</span>
+          <h4 class="font-display font-extrabold text-base mt-1">3. Entalpi Standar ($\Delta H^\circ$)</h4>
+          <p class="text-[11px] text-purple-900 font-semibold mt-0.5">Kondisi Standar ($25^\circ\text{C}, 1\text{ atm}$, per $1\text{ mol}$)</p>
+        </div>
+        <!-- Ranting-ranting Dahan 3 -->
+        <div class="w-0.5 h-4 bg-genzlavender-300"></div>
+        <div class="w-full space-y-2 pl-3 border-l-2 border-dashed border-genzlavender-300">
+          <div class="tree-node bg-white/95 p-2.5 rounded-xl border border-genzlavender-200 shadow-sm">
+            <div class="font-bold text-xs text-rosepink-800">🌱 Pembentukan Standar ($\Delta H^\circ_f$)</div>
+            <p class="text-[11px] text-slate-600">Membentuk <strong>1 mol</strong> senyawa dari unsur stabilnya ($\Delta H^\circ_f\text{ unsur bebas} = 0$).</p>
+          </div>
+          <div class="tree-node bg-white/95 p-2.5 rounded-xl border border-genzlavender-200 shadow-sm">
+            <div class="font-bold text-xs text-sky-800">🌱 Penguraian Standar ($\Delta H^\circ_d$)</div>
+            <p class="text-[11px] text-slate-600">Menguraikan <strong>1 mol</strong> senyawa menjadi unsur stabilnya ($\Delta H^\circ_d = -\Delta H^\circ_f$).</p>
+          </div>
+          <div class="tree-node bg-white/95 p-2.5 rounded-xl border border-genzlavender-200 shadow-sm">
+            <div class="font-bold text-xs text-amber-800">🌱 Pembakaran Standar ($\Delta H^\circ_c$)</div>
+            <p class="text-[11px] text-slate-600">Membakar sempurna <strong>1 mol</strong> zat dengan $\ce{O2(g)}$ berlebih (selalu eksoterm).</p>
+          </div>
+          <div class="tree-node bg-white/95 p-2.5 rounded-xl border border-genzlavender-200 shadow-sm">
+            <div class="font-bold text-xs text-teal-800">🌱 Netralisasi &amp; Pelarutan ($\Delta H^\circ_n, \Delta H^\circ_s$)</div>
+            <p class="text-[11px] text-slate-600">Penetralan asam-basa per 1 mol $\ce{H2O}$ &amp; pelarutan 1 mol zat terlarut.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- DAHAN 4: 4 Metode Penentuan ΔH (Pastel Mint Matcha) -->
+      <div class="flex flex-col items-center">
+        <div class="hidden lg:block w-1 h-5 bg-genzmint-300"></div>
+        <div class="tree-node w-full bg-gradient-to-b from-genzmint-100 to-genzmint-200 text-teal-950 p-4 rounded-2xl shadow-sm text-center border-2 border-genzmint-300">
+          <span class="text-[10px] font-mono uppercase bg-white/85 text-teal-800 px-2.5 py-0.5 rounded-full font-extrabold">DAHAN 4</span>
+          <h4 class="font-display font-extrabold text-base mt-1">4. Penentuan Nilai $\Delta H$</h4>
+          <p class="text-[11px] text-teal-900 font-semibold mt-0.5">4 Metode Eksperimen &amp; Komputasi</p>
+        </div>
+        <!-- Ranting-ranting Dahan 4 -->
+        <div class="w-0.5 h-4 bg-genzmint-300"></div>
+        <div class="w-full space-y-2 pl-3 border-l-2 border-dashed border-genzmint-400">
+          <div class="tree-node bg-white/95 p-2.5 rounded-xl border border-genzmint-200 shadow-sm">
+            <div class="font-bold text-xs text-teal-900">🧪 1. Eksperimen Kalorimetri</div>
+            <p class="text-[11px] text-slate-700 font-mono mt-0.5">$q_{\text{lar}} = m \cdot c \cdot \Delta T \implies \Delta H = \frac{-q_{\text{lar}}}{n}$</p>
+          </div>
+          <div class="tree-node bg-white/95 p-2.5 rounded-xl border border-genzmint-200 shadow-sm">
+            <div class="font-bold text-xs text-teal-900">🔄 2. Hukum Hess (Siklus/Tahapan)</div>
+            <p class="text-[11px] text-slate-700 font-mono mt-0.5">$\Delta H_{\text{total}} = \Delta H_1 + \Delta H_2 + \dots + \Delta H_n$</p>
+          </div>
+          <div class="tree-node bg-white/95 p-2.5 rounded-xl border border-genzmint-200 shadow-sm">
+            <div class="font-bold text-xs text-teal-900">📊 3. Tabel Data $\Delta H^\circ_f$ Standar</div>
+            <p class="text-[11px] text-slate-700 font-mono mt-0.5">$\Delta H = \sum n_P \Delta H^\circ_f(\text{Ka}) - \sum n_R \Delta H^\circ_f(\text{Ki})$</p>
+          </div>
+          <div class="tree-node bg-white/95 p-2.5 rounded-xl border border-genzmint-200 shadow-sm">
+            <div class="font-bold text-xs text-teal-900">🔗 4. Energi Ikatan Rata-rata ($D$)</div>
+            <p class="text-[11px] text-slate-700 font-mono mt-0.5">$\Delta H = \sum D_{\text{putus (Ki)}} - \sum D_{\text{bentuk (Ka)}}$</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- KAMUS ISTILAH TERMOKIMIA (GLOSARIUM INTERAKTIF) DI BAWAH PETA KONSEP -->
+  <div class="mt-10 glass-card rounded-3xl p-6 sm:p-8 shadow-lg">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-rosepink-200">
+      <div>
+        <span class="text-[11px] font-extrabold uppercase tracking-widest bg-softamber-200 text-amber-900 px-3 py-1 rounded-full">
+          GLOSARIUM LENGKAP KIMIA FASE F
+        </span>
+        <h3 class="font-display font-extrabold text-2xl text-slate-900 mt-2 flex items-center gap-2">
+          <i class="fa-solid fa-book-bookmark text-rosepink-500"></i>
+          Kamus Istilah Penting Termokimia
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600 mt-0.5">
+          Cari atau ketik kata kunci untuk memahami definisi ilmiah dan rumusan matematis setiap istilah termokimia.
+        </p>
+      </div>
+      <div class="relative w-full md:w-72">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-purple-400 text-sm"></i>
+        <input id="cariKamus" type="text" oninput="filterKamus()" placeholder="Cari istilah (misal: entalpi, adiabatik)..." class="w-full pl-9 pr-4 py-2 rounded-xl border-2 border-genzlavender-200 text-xs sm:text-sm focus:border-purple-400 focus:outline-none bg-white shadow-sm">
+      </div>
+    </div>
+
+    <div id="gridKamus" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Item Kamus 1 -->
+      <div class="kamus-item bg-gradient-to-br from-white to-rosepink-50/60 rounded-2xl p-4 border border-rosepink-200 shadow-sm hover:border-rosepink-400 transition">
+        <div class="flex items-center justify-between mb-1">
+          <span class="font-display font-extrabold text-sm text-rosepink-700">Entalpi ($H$)</span>
+          <span class="text-[10px] font-mono bg-rosepink-100 text-rosepink-800 px-2 py-0.5 rounded-full font-bold">$H = E + PV$</span>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Jumlah total energi dalam ($E$) dan hasil kali tekanan-volume ($PV$) yang dimiliki oleh suatu sistem pada tekanan tetap. Nilai mutlak $H$ tidak dapat diukur, namun perubahannya ($\Delta H$) dapat diukur.
+        </p>
+      </div>
+      <!-- Item Kamus 2 -->
+      <div class="kamus-item bg-gradient-to-br from-white to-softamber-50/70 rounded-2xl p-4 border border-softamber-300 shadow-sm hover:border-amber-400 transition">
+        <div class="flex items-center justify-between mb-1">
+          <span class="font-display font-extrabold text-sm text-amber-800">Perubahan Entalpi ($\Delta H$)</span>
+          <span class="text-[10px] font-mono bg-softamber-200 text-amber-900 px-2 py-0.5 rounded-full font-bold">$\Delta H = q_p$</span>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Selisih antara entalpi akhir (produk) dan entalpi awal (reaktan) pada tekanan konstan ($\Delta H = H_{\text{produk}} - H_{\text{reaktan}}$). Satuannya dinyatakan dalam $\text{Joule (J)}$ atau $\text{kiloJoule (kJ)}$.
+        </p>
+      </div>
+      <!-- Item Kamus 3 -->
+      <div class="kamus-item bg-gradient-to-br from-white to-genzlavender-50/60 rounded-2xl p-4 border border-genzlavender-200 shadow-sm hover:border-purple-400 transition">
+        <div class="flex items-center justify-between mb-1">
+          <span class="font-display font-extrabold text-sm text-purple-800">Kalor ($q$)</span>
+          <span class="text-[10px] font-mono bg-genzlavender-100 text-purple-800 px-2 py-0.5 rounded-full font-bold">Energi Termal</span>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Bentuk energi yang berpindah secara alami dari benda bersuhu tinggi ke benda bersuhu lebih rendah. Bernilai positif ($+q$) bila diserap sistem dan negatif ($-q$) bila dilepas sistem.
+        </p>
+      </div>
+      <!-- Item Kamus 4 -->
+      <div class="kamus-item bg-gradient-to-br from-white to-genzmint-50/60 rounded-2xl p-4 border border-genzmint-200 shadow-sm hover:border-teal-400 transition">
+        <div class="flex items-center justify-between mb-1">
+          <span class="font-display font-extrabold text-sm text-teal-800">Sistem &amp; Lingkungan</span>
+          <span class="text-[10px] font-mono bg-genzmint-100 text-teal-800 px-2 py-0.5 rounded-full font-bold">Semesta</span>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          <strong>Sistem</strong> adalah zat/reaksi yang menjadi pusat pengamatan. <strong>Lingkungan</strong> adalah segala sesuatu di luar batas sistem (tabung reaksi, pelarut air, udara, termometer).
+        </p>
+      </div>
+      <!-- Item Kamus 5 -->
+      <div class="kamus-item bg-gradient-to-br from-white to-rosepink-50/60 rounded-2xl p-4 border border-rosepink-200 shadow-sm hover:border-rosepink-400 transition">
+        <div class="flex items-center justify-between mb-1">
+          <span class="font-display font-extrabold text-sm text-rosepink-700">Eksoterm &amp; Endoterm</span>
+          <span class="text-[10px] font-mono bg-rosepink-100 text-rosepink-800 px-2 py-0.5 rounded-full font-bold">$\Delta H < 0$ / $\Delta H > 0$</span>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          <strong>Eksoterm</strong> adalah reaksi yang membebaskan kalor ke lingkungan ($\Delta H = -$, suhu naik). <strong>Endoterm</strong> adalah reaksi yang menyerap kalor dari lingkungan ($\Delta H = +$, suhu turun).
+        </p>
+      </div>
+      <!-- Item Kamus 6 -->
+      <div class="kamus-item bg-gradient-to-br from-white to-softamber-50/70 rounded-2xl p-4 border border-softamber-300 shadow-sm hover:border-amber-400 transition">
+        <div class="flex items-center justify-between mb-1">
+          <span class="font-display font-extrabold text-sm text-amber-800">Kalor Jenis ($c$) &amp; Kapasitas ($C$)</span>
+          <span class="text-[10px] font-mono bg-softamber-200 text-amber-900 px-2 py-0.5 rounded-full font-bold">$\text{J/g}^\circ\text{C}$ &amp; $\text{J/}^\circ\text{C}$</span>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          <strong>Kalor jenis ($c$)</strong> adalah kalor untuk menaikkan suhu $1\text{ gram}$ zat sebesar $1^\circ\text{C}$ ($c_{\text{air}} = 4{,}18\text{ J/g}^\circ\text{C}$). <strong>Kapasitas kalor ($C$)</strong> adalah kalor untuk menaikkan suhu seluruh benda sebesar $1^\circ\text{C}$.
+        </p>
+      </div>
+      <!-- Item Kamus 7 -->
+      <div class="kamus-item bg-gradient-to-br from-white to-genzlavender-50/60 rounded-2xl p-4 border border-genzlavender-200 shadow-sm hover:border-purple-400 transition">
+        <div class="flex items-center justify-between mb-1">
+          <span class="font-display font-extrabold text-sm text-purple-800">Keadaan Standar ($\Delta H^\circ$)</span>
+          <span class="text-[10px] font-mono bg-genzlavender-100 text-purple-800 px-2 py-0.5 rounded-full font-bold">$25^\circ\text{C}, 1\text{ atm}$</span>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Kondisi pengukuran termokimia yang ditetapkan pada suhu $298{,}15\text{ K}$ ($25^\circ\text{C}$), tekanan $1\text{ atm}$ ($101{,}3\text{ kPa}$), dan konsentrasi larutan $1\text{ M}$, disimbolkan dengan superskrip derajat ($^\circ$).
+        </p>
+      </div>
+      <!-- Item Kamus 8 -->
+      <div class="kamus-item bg-gradient-to-br from-white to-genzmint-50/60 rounded-2xl p-4 border border-genzmint-200 shadow-sm hover:border-teal-400 transition">
+        <div class="flex items-center justify-between mb-1">
+          <span class="font-display font-extrabold text-sm text-teal-800">Fungsi Keadaan &amp; Hukum Hess</span>
+          <span class="text-[10px] font-mono bg-genzmint-100 text-teal-800 px-2 py-0.5 rounded-full font-bold">Lintasan Bebas</span>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Besaran termodinamika yang nilainya hanya bergantung pada keadaan awal (reaktan) dan keadaan akhir (produk), tidak bergantung pada jumlah tahapan reaksi yang dilalui.
+        </p>
+      </div>
+      <!-- Item Kamus 9 -->
+      <div class="kamus-item bg-gradient-to-br from-white to-rosepink-50/60 rounded-2xl p-4 border border-rosepink-200 shadow-sm hover:border-rosepink-400 transition">
+        <div class="flex items-center justify-between mb-1">
+          <span class="font-display font-extrabold text-sm text-rosepink-700">Energi Disosiasi Ikatan ($D$)</span>
+          <span class="text-[10px] font-mono bg-rosepink-100 text-rosepink-800 px-2 py-0.5 rounded-full font-bold">$\text{kJ/mol}$</span>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Energi rata-rata yang dibutuhkan untuk memutuskan $1\text{ mol}$ ikatan kovalen tertentu dalam molekul berwujud gas menjadi atom-atom bebasnya pada keadaan standar.
+        </p>
+      </div>
+      <!-- Item Kamus 10 -->
+      <div class="kamus-item bg-gradient-to-br from-white to-softamber-50/70 rounded-2xl p-4 border border-softamber-300 shadow-sm hover:border-amber-400 transition">
+        <div class="flex items-center justify-between mb-1">
+          <span class="font-display font-extrabold text-sm text-amber-800">Asas Black Kalorimetri</span>
+          <span class="text-[10px] font-mono bg-softamber-200 text-amber-900 px-2 py-0.5 rounded-full font-bold">$q_{\text{lepas}} = q_{\text{terima}}$</span>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Prinsip kekekalan energi panas dalam kalorimeter terisolasi di mana jumlah kalor yang dilepaskan oleh reaksi kimia sama dengan jumlah kalor yang diterima oleh larutan dan kalorimeter ($q_{\text{reaksi}} = -q_{\text{larutan}}$).
+        </p>
+      </div>
+      <!-- Item Kamus 11 -->
+      <div class="kamus-item bg-gradient-to-br from-white to-genzlavender-50/60 rounded-2xl p-4 border border-genzlavender-200 shadow-sm hover:border-purple-400 transition">
+        <div class="flex items-center justify-between mb-1">
+          <span class="font-display font-extrabold text-sm text-purple-800">Unsur Bebas Paling Stabil</span>
+          <span class="text-[10px] font-mono bg-genzlavender-100 text-purple-800 px-2 py-0.5 rounded-full font-bold">$\Delta H^\circ_f = 0$</span>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Wujud alami unsur murni pada $25^\circ\text{C}, 1\text{ atm}$ yang memiliki nilai $\Delta H^\circ_f = 0\text{ kJ/mol}$, seperti gas diatomik ($\ce{O2(g)}, \ce{H2(g)}, \ce{N2(g)}, \ce{Cl2(g)}$), karbon grafit $\ce{C(grafit)}$, belerang rombik $\ce{S(s)}$, dan logam padat $\ce{Fe(s)}, \ce{Na(s)}$.
+        </p>
+      </div>
+      <!-- Item Kamus 12 -->
+      <div class="kamus-item bg-gradient-to-br from-white to-genzmint-50/60 rounded-2xl p-4 border border-genzmint-200 shadow-sm hover:border-teal-400 transition">
+        <div class="flex items-center justify-between mb-1">
+          <span class="font-display font-extrabold text-sm text-teal-800">Proses Adiabatik</span>
+          <span class="text-[10px] font-mono bg-genzmint-100 text-teal-800 px-2 py-0.5 rounded-full font-bold">$q = 0$</span>
+        </div>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Proses termodinamika yang berlangsung di dalam wadah berinsulasi sempurna sehingga tidak ada kalor yang masuk ataupun keluar menembus batas sistem ($q = 0$).
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ MODUL 1: TEORI, ANALOGI SEHARI-HARI & 10 PENERAPAN INDUSTRI ══════════ -->
+<section id="teori" class="max-w-7xl mx-auto px-4 py-14">
+  <div class="text-center mb-10">
+    <span class="text-rosepink-700 font-extrabold text-xs uppercase tracking-widest bg-rosepink-100 border border-rosepink-200 px-3.5 py-1 rounded-full">MODUL 1</span>
+    <h2 class="font-display font-extrabold text-3xl md:text-4xl text-slate-900 mt-2.5 mb-3">
+      Teori Mendalam, Analogi Sehari-hari &amp; 10 Aplikasi Industri
+    </h2>
+    <p class="text-slate-600 max-w-2xl mx-auto text-sm md:text-base">
+      Kuasai konsep termokimia dengan bantuan analogi peristiwa sehari-hari yang mudah dibayangkan, perumusan perubahan entalpi ($\Delta H$) yang dipertegas (*bold*), serta 10 penerapan nyata.
+    </p>
+  </div>
+
+  <!-- Tab Switcher Navigation -->
+  <div class="no-print flex flex-wrap justify-center gap-2 mb-8">
+    <button class="tab-pill active px-4 py-2.5 rounded-2xl border border-rosepink-200 font-bold text-xs sm:text-sm text-slate-700 bg-white shadow-sm" onclick="bukaTab('t1', this)">
+      <i class="fa-solid fa-shapes mr-1.5"></i>1. Sistem &amp; Lingkungan
+    </button>
+    <button class="tab-pill px-4 py-2.5 rounded-2xl border border-rosepink-200 font-bold text-xs sm:text-sm text-slate-700 bg-white shadow-sm" onclick="bukaTab('t2', this)">
+      <i class="fa-solid fa-fire-flame-simple mr-1.5"></i>2. Eksoterm vs Endoterm
+    </button>
+    <button class="tab-pill px-4 py-2.5 rounded-2xl border border-rosepink-200 font-bold text-xs sm:text-sm text-slate-700 bg-white shadow-sm" onclick="bukaTab('t3', this)">
+      <i class="fa-solid fa-equals mr-1.5"></i>3. Persamaan Termokimia
+    </button>
+    <button class="tab-pill px-4 py-2.5 rounded-2xl border border-rosepink-200 font-bold text-xs sm:text-sm text-slate-700 bg-white shadow-sm" onclick="bukaTab('t4', this)">
+      <i class="fa-solid fa-tags mr-1.5"></i>4. Jenis Perubahan $\Delta H^\circ$
+    </button>
+    <button class="tab-pill px-4 py-2.5 rounded-2xl border border-rosepink-200 font-bold text-xs sm:text-sm text-slate-700 bg-white shadow-sm" onclick="bukaTab('t5', this)">
+      <i class="fa-solid fa-calculator mr-1.5"></i>5. Rumus Penentuan $\Delta H$
+    </button>
+    <button class="tab-pill px-4 py-2.5 rounded-2xl border border-rosepink-200 font-bold text-xs sm:text-sm text-slate-700 bg-white shadow-sm" onclick="bukaTab('t6', this)">
+      <i class="fa-solid fa-industry mr-1.5"></i>6. 10 Aplikasi Industri &amp; Nyata
+    </button>
+  </div>
+
+  <div class="max-w-5xl mx-auto">
+    <!-- Tab 1: Sistem & Lingkungan + Analogi -->
+    <div id="t1" class="tab-panel glass-card rounded-3xl p-6 md:p-10">
+      <h3 class="font-display font-bold text-2xl text-slate-900 mb-3 flex items-center gap-2.5">
+        <span class="w-8 h-8 rounded-xl bg-gradient-to-r from-rosepink-500 to-purple-500 text-white flex items-center justify-center text-sm font-bold shadow-md">1</span>
+        Hukum Kekekalan Energi, Sistem, dan Lingkungan
+      </h3>
+      <p class="text-slate-700 leading-relaxed mb-5 text-sm sm:text-base">
+        Berdasarkan <strong>Hukum I Termodinamika</strong>, energi tidak dapat diciptakan maupun dimusnahkan, melainkan hanya dapat diubah dari satu bentuk ke bentuk lainnya. Dalam reaksi kimia, energi potensial ikatan kimia diubah menjadi energi panas (kalor, $q$) atau kerja mekanik ($w$). Bagian zat yang sedang bereaksi disebut <strong>Sistem</strong>, sedangkan wadah, pelarut, udara, dan alat ukur di luar sistem disebut <strong>Lingkungan</strong>.
+      </p>
+
+      <!-- Analogi Peristiwa Sehari-hari -->
+      <div class="bg-gradient-to-r from-softamber-100/90 via-rosepink-50 to-genzlavender-50 border-l-4 border-rosepink-500 rounded-r-2xl p-4 sm:p-5 mb-6 shadow-sm">
+        <div class="font-display font-extrabold text-sm sm:text-base text-rosepink-900 flex items-center gap-2 mb-1.5">
+          <i class="fa-solid fa-mug-saucer text-rosepink-500"></i>
+          Analogi Peristiwa Sehari-hari: "Tiga Wadah Seduhan Kopi Panas"
+        </div>
+        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+          Bayangkan Anda menyeduh 3 cangkir kopi panas pada pagi hari:
+          <br>• <strong>Cangkir 1 (Tanpa Tutup):</strong> Uap air kopi mengepul keluar (materi keluar) dan dinding cangkir terasa panas hingga kopi cepat dingin (kalor keluar). Ini adalah <strong>Sistem Terbuka</strong>.
+          <br>• <strong>Cangkir 2 (Ditutup Rapat dengan Piring Kecil):</strong> Uap air tertahan di dalam cangkir (materi tidak keluar), tetapi dinding keramik tetap menghantarkan panas ke udara meja hingga kopi perlahan dingin (kalor keluar). Ini adalah <strong>Sistem Tertutup</strong>.
+          <br>• <strong>Cangkir 3 (Dimasukkan ke Termos Vakum Berlapis Perak):</strong> Uap air tidak bisa keluar dan panas pun tertahan hingga sore hari karena lapisan hampa udara mencegah perpindahan kalor. Ini adalah <strong>Sistem Terisolasi</strong>.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-4 mb-6">
+        <div class="bg-softamber-50/90 border-2 border-softamber-300 rounded-2xl p-4 card-modern">
+          <div class="w-10 h-10 rounded-xl bg-softamber-200 text-amber-900 flex items-center justify-center text-xl mb-3 shadow-sm">
+            <i class="fa-solid fa-mug-hot"></i>
+          </div>
+          <h4 class="font-bold text-amber-950 text-base mb-1">Sistem Terbuka</h4>
+          <p class="text-xs text-slate-700 leading-relaxed">
+            Terjadi pertukaran <strong>materi ($\Delta m \neq 0$)</strong> sekaligus <strong>energi kalor ($q \neq 0$)</strong> dengan lingkungan. Contoh kimia: reaksi logam $\ce{Mg}$ dengan $\ce{HCl}$ dalam tabung reaksi terbuka.
+          </p>
+        </div>
+
+        <div class="bg-rosepink-50/90 border-2 border-rosepink-200 rounded-2xl p-4 card-modern">
+          <div class="w-10 h-10 rounded-xl bg-rosepink-200 text-rosepink-900 flex items-center justify-center text-xl mb-3 shadow-sm">
+            <i class="fa-solid fa-bottle-water"></i>
+          </div>
+          <h4 class="font-bold text-rosepink-950 text-base mb-1">Sistem Tertutup</h4>
+          <p class="text-xs text-slate-700 leading-relaxed">
+            Hanya terjadi pertukaran <strong>energi kalor ($q \neq 0$)</strong>, sedangkan materi tidak dapat keluar/masuk ($\Delta m = 0$). Contoh kimia: reaksi gas dalam labu Erlenmeyer bersumbat karet rapat.
+          </p>
+        </div>
+
+        <div class="bg-genzmint-50/90 border-2 border-genzmint-200 rounded-2xl p-4 card-modern">
+          <div class="w-10 h-10 rounded-xl bg-genzmint-200 text-teal-900 flex items-center justify-center text-xl mb-3 shadow-sm">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <h4 class="font-bold text-teal-950 text-base mb-1">Sistem Terisolasi</h4>
+          <p class="text-xs text-slate-700 leading-relaxed">
+            <strong>Tidak terjadi</strong> pertukaran materi ($\Delta m = 0$) maupun energi kalor ($q = 0$) sama sekali. Contoh kimia: reaksi di dalam kalorimeter bom atau kalorimeter styrofoam tertutup.
+          </p>
+        </div>
+      </div>
+
+      <!-- Rumus Bold Fokus Perubahan Energi & Entalpi (Bright Gen Z Pastel) -->
+      <div class="formula-bold-box rounded-2xl p-5 text-center">
+        <div class="text-xs font-mono uppercase tracking-widest text-purple-800 font-extrabold mb-2">
+          RUMUS UTAMA PERUBAHAN ENERGI DALAM ($\Delta E$) &amp; PERUBAHAN ENTALPI ($\Delta H$) PADA TEKANAN TETAP:
+        </div>
+        <div>
+          $$\boldsymbol{\Delta E = q + w} \qquad \text{dengan} \qquad \boldsymbol{w = -P \cdot \Delta V}$$
+          $$\boldsymbol{\Delta H = \Delta E + P \cdot \Delta V = q_p \quad (\text{Kalor Reaksi pada Tekanan Tetap})}$$
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: Eksoterm vs Endoterm + Analogi Dompet -->
+    <div id="t2" class="tab-panel hidden glass-card rounded-3xl p-6 md:p-10">
+      <h3 class="font-display font-bold text-2xl text-slate-900 mb-3 flex items-center gap-2.5">
+        <span class="w-8 h-8 rounded-xl bg-gradient-to-r from-rosepink-500 to-purple-500 text-white flex items-center justify-center text-sm font-bold shadow-md">2</span>
+        Reaksi Eksoterm dan Reaksi Endoterm
+      </h3>
+      <p class="text-slate-700 leading-relaxed mb-5 text-sm sm:text-base">
+        Setiap zat kimia menyimpan kandungan energi potensial internal yang disebut <strong>Entalpi ($H$)</strong>. Ketika reaktan berubah menjadi produk, terjadi perubahan entalpi ($\Delta H$). Tanda positif atau negatif pada $\Delta H$ selalu dilihat dari sudut pandang <strong>Sistem</strong>, sedangkan termometer yang kita pegang mengukur perubahan suhu pada <strong>Lingkungan</strong>.
+      </p>
+
+      <!-- Analogi Peristiwa Sehari-hari -->
+      <div class="bg-gradient-to-r from-softamber-100/90 via-rosepink-50 to-genzlavender-50 border-l-4 border-rosepink-500 rounded-r-2xl p-4 sm:p-5 mb-6 shadow-sm">
+        <div class="font-display font-extrabold text-sm sm:text-base text-rosepink-900 flex items-center gap-2 mb-1.5">
+          <i class="fa-solid fa-wallet text-rosepink-500"></i>
+          Analogi Peristiwa Sehari-hari: "Saldo Dompet (Sistem) vs Belanjaan di Meja (Lingkungan)"
+        </div>
+        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+          Mengapa reaksi <strong>Eksoterm</strong> bertanda <strong>negatif ($\Delta H < 0$)</strong> padahal suhunya <strong>naik</strong>?
+          <br>• <strong>Eksoterm = Anda Bersedekah / Mentaktir Teman:</strong> Dompet Anda adalah <em>Sistem</em>, dan teman-teman di sekitar Anda adalah <em>Lingkungan</em>. Saat Anda mengeluarkan uang dari dompet untuk mentraktir teman, <strong>saldo dompet Anda berkurang ($\Delta H$ bertanda negatif, $-$)</strong>, tetapi suasana di sekitar Anda menjadi ramai dan hangat (<strong>suhu lingkungan naik</strong>). Contoh nyata: saat Anda menyalakan api unggun atau melarutkan deterjen bubuk di tangan (terasa hangat).
+          <br>• <strong>Endoterm = Anda Menabung Uang dari Luar ke Dompet:</strong> Saat Anda menarik uang dari saku luar masuk ke dompet, <strong>saldo dompet Anda bertambah ($\Delta H$ bertanda positif, $+$)</strong>, tetapi uang beredar di luar menjadi berkurang/sepi (<strong>suhu lingkungan turun / terasa dingin</strong>). Contoh nyata: saat keringat menguap di kulit seusai olahraga (kulit terasa dingin karena keringat menyerap panas tubuh) atau saat melarutkan pupuk urea di air.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-5 mb-6">
+        <!-- Reaksi Eksoterm -->
+        <div class="bg-gradient-to-br from-rosepink-50 to-softamber-50 border-2 border-rosepink-300 rounded-2xl p-5 card-modern">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-3xl anim-flame">🔥</span>
+            <div>
+              <h4 class="font-display font-bold text-xl text-rosepink-950">Reaksi Eksoterm</h4>
+              <span class="inline-block text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-rosepink-500 text-white">
+                $\boldsymbol{\Delta H < 0}$ (Bertanda Negatif)
+              </span>
+            </div>
+          </div>
+          <ul class="space-y-2 text-xs sm:text-sm text-slate-700">
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-arrow-right-from-bracket text-rosepink-600 mt-1"></i>
+              <span>Kalor mengalir keluar dari <strong>Sistem $\rightarrow$ Lingkungan</strong> ($q_{\text{sistem}} < 0$).</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-temperature-arrow-up text-rosepink-600 mt-1"></i>
+              <span>Suhu lingkungan <strong>naik</strong> ($T_{\text{akhir}} > T_{\text{awal}}$; tabung reaksi terasa panas).</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-chart-line-down text-rosepink-600 mt-1"></i>
+              <span>Entalpi produk lebih kecil daripada reaktan: $\boldsymbol{H_{\text{produk}} < H_{\text{reaktan}}}$.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-flask text-rosepink-600 mt-1"></i>
+              <span>Contoh: Semua reaksi pembakaran, netralisasi asam-basa, pelarutan $\ce{NaOH}$ &amp; $\ce{CaO}$, respirasi sel, pembekuan air.</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Reaksi Endoterm -->
+        <div class="bg-gradient-to-br from-sky-50 to-genzmint-50 border-2 border-sky-300 rounded-2xl p-5 card-modern">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-3xl anim-frost">❄️</span>
+            <div>
+              <h4 class="font-display font-bold text-xl text-sky-950">Reaksi Endoterm</h4>
+              <span class="inline-block text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-sky-500 text-white">
+                $\boldsymbol{\Delta H > 0}$ (Bertanda Positif)
+              </span>
+            </div>
+          </div>
+          <ul class="space-y-2 text-xs sm:text-sm text-slate-700">
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-arrow-right-to-bracket text-sky-600 mt-1"></i>
+              <span>Kalor diserap masuk dari <strong>Lingkungan $\rightarrow$ Sistem</strong> ($q_{\text{sistem}} > 0$).</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-temperature-arrow-down text-sky-600 mt-1"></i>
+              <span>Suhu lingkungan <strong>turun</strong> ($T_{\text{akhir}} < T_{\text{awal}}$; tabung reaksi terasa dingin).</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-chart-line text-sky-600 mt-1"></i>
+              <span>Entalpi produk lebih besar daripada reaktan: $\boldsymbol{H_{\text{produk}} > H_{\text{reaktan}}}$.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fa-solid fa-leaf text-sky-600 mt-1"></i>
+              <span>Contoh: Fotosintesis, dekomposisi termal $\ce{CaCO3}$, pelarutan urea $\ce{CO(NH2)2}$ &amp; $\ce{NH4NO3}$, mencairnya es.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="formula-bold-box rounded-2xl p-5 text-center">
+        <div class="text-xs font-mono uppercase tracking-widest text-purple-800 font-extrabold mb-2">
+          PERSAMAAN FUNDAMENTAL PERUBAHAN ENTALPI ($\Delta H$):
+        </div>
+        <div>
+          $$\boldsymbol{\Delta H = H_{\text{produk (akhir)}} - H_{\text{reaktan (awal)}}}$$
+          $$\boldsymbol{\text{Eksoterm: } H_{\text{produk}} < H_{\text{reaktan}} \implies \Delta H = (-)} \qquad \Big| \qquad \boldsymbol{\text{Endoterm: } H_{\text{produk}} > H_{\text{reaktan}} \implies \Delta H = (+)}$$
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Persamaan Termokimia (Rumus Bold & Fokus Perubahan) -->
+    <div id="t3" class="tab-panel hidden glass-card rounded-3xl p-6 md:p-10">
+      <h3 class="font-display font-bold text-2xl text-slate-900 mb-3 flex items-center gap-2.5">
+        <span class="w-8 h-8 rounded-xl bg-gradient-to-r from-rosepink-500 to-purple-500 text-white flex items-center justify-center text-sm font-bold shadow-md">3</span>
+        Persamaan Termokimia &amp; Hukum Perubahan Stoikiometri $\Delta H$
+      </h3>
+      <p class="text-slate-700 leading-relaxed mb-4 text-sm sm:text-base">
+        <strong>Persamaan Termokimia</strong> adalah persamaan reaksi kimia setara yang menyertakan <strong>fase/wujud zat</strong>—padat $(s)$, cair $(l)$, gas $(g)$, atau larutan berair $(aq)$—beserta nilai <strong>perubahan entalpi ($\Delta H$)</strong> di ruas kanan. Wujud zat wajib ditulis karena perbedaan wujud zat (misalnya $\ce{H2O(l)}$ vs $\ce{H2O(g)}$) menghasilkan nilai $\Delta H$ yang berbeda akibat adanya kalor laten penguapan.
+      </p>
+
+      <!-- Analogi Peristiwa Sehari-hari -->
+      <div class="bg-gradient-to-r from-softamber-100/90 via-rosepink-50 to-genzlavender-50 border-l-4 border-rosepink-500 rounded-r-2xl p-4 sm:p-5 mb-6 shadow-sm">
+        <div class="font-display font-extrabold text-sm sm:text-base text-rosepink-900 flex items-center gap-2 mb-1.5">
+          <i class="fa-solid fa-receipt text-rosepink-500"></i>
+          Analogi Peristiwa Sehari-hari: "Resep Memasak &amp; Struk Belanja Paket Makanan"
+        </div>
+        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+          Persamaan termokimia ibarat <strong>struk paket makanan</strong>: jika untuk membuat <strong>1 porsi</strong> nasi goreng dibutuhkan energi panas sebesar $500\text{ kJ}$, maka untuk memasak <strong>3 porsi</strong> nasi goreng otomatis dibutuhkan panas $3 \times 500 = 1.500\text{ kJ}$ (koefisien dikali $n$, maka $\Delta H$ dikali $n$). Sebaliknya, jika prosesnya dibalik dari produk kembali ke bahan mentah, tanda alirannya berbalik arah dari $(-)$ menjadi $(+)$.
+        </p>
+      </div>
+
+      <!-- 4 Hukum Perubahan Persamaan Termokimia (BRIGHT PASTEL BOLD FOCUS) -->
+      <div class="formula-bold-box rounded-3xl p-5 sm:p-7 mb-6 space-y-4">
+        <div class="text-center border-b border-purple-200 pb-3">
+          <span class="bg-gradient-to-r from-rosepink-500 to-purple-500 text-white text-[11px] font-extrabold px-3.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
+            FOKUS RUMUS PERUBAHAN PERSAMAAN TERMOKIMIA
+          </span>
+          <h4 class="font-display font-extrabold text-lg sm:text-xl text-slate-900 mt-2">
+            Rumus Transformasi &amp; Manipulasi Aljabar Perubahan Entalpi ($\boldsymbol{\Delta H}$)
+          </h4>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <!-- Aturan 1 -->
+          <div class="bg-white/90 border-2 border-rosepink-200 rounded-2xl p-4 shadow-sm">
+            <div class="text-xs font-extrabold text-rosepink-700 uppercase mb-1">1. Hubungan Mol ($n$) &amp; Koefisien Standar:</div>
+            <div class="text-center py-1">
+              $$\boldsymbol{\Delta H_{\text{reaksi}} = n \times \Delta H_{\text{molar}} = \left(\frac{\text{Massa}}{M_r}\right) \times \Delta H_{\text{molar}}}$$
+            </div>
+            <p class="text-[11px] text-slate-600 mt-1">Besarnya kalor reaksi berbanding lurus dengan jumlah mol zat yang bereaksi dibagi koefisiennya dalam persamaan setara.</p>
+          </div>
+
+          <!-- Aturan 2 -->
+          <div class="bg-white/90 border-2 border-genzlavender-200 rounded-2xl p-4 shadow-sm">
+            <div class="text-xs font-extrabold text-purple-700 uppercase mb-1">2. Pembalikan Arah Reaksi (Inversi):</div>
+            <div class="text-center py-1">
+              $$\boldsymbol{\ce{A -> B} \;\; (\Delta H = -x) \implies \ce{B -> A} \;\; (\Delta H_{\text{baru}} = +x)}$$
+            </div>
+            <p class="text-[11px] text-slate-600 mt-1">Jika pereaksi dan hasil reaksi dipertukarkan (reaksi dibalik), besarnya $\Delta H$ tetap sama tetapi <strong>tandanya berubah berlawanan</strong>.</p>
+          </div>
+
+          <!-- Aturan 3 -->
+          <div class="bg-white/90 border-2 border-softamber-300 rounded-2xl p-4 shadow-sm">
+            <div class="text-xs font-extrabold text-amber-800 uppercase mb-1">3. Perkalian &amp; Pembagian Koefisien ($k$):</div>
+            <div class="text-center py-1">
+              $$\boldsymbol{k \cdot (\ce{A -> B}) \implies \Delta H_{\text{baru}} = k \times \Delta H_{\text{awal}}}$$
+            </div>
+            <p class="text-[11px] text-slate-600 mt-1">Jika seluruh koefisien reaksi dikalikan atau dibagi dengan faktor pengali $k$, maka nilai $\Delta H$ wajib dikalikan atau dibagi dengan $k$.</p>
+          </div>
+
+          <!-- Aturan 4 -->
+          <div class="bg-white/90 border-2 border-genzmint-200 rounded-2xl p-4 shadow-sm">
+            <div class="text-xs font-extrabold text-teal-800 uppercase mb-1">4. Penjumlahan Reaksi Bertahap:</div>
+            <div class="text-center py-1">
+              $$\boldsymbol{\Delta H_{\text{total}} = \sum_{i=1}^{m} \Delta H_i = \Delta H_1 + \Delta H_2 + \dots}$$
+            </div>
+            <p class="text-[11px] text-slate-600 mt-1">Jika dua atau lebih persamaan termokimia dijumlahkan, spesi yang sama di ruas berlawanan saling meniadakan dan $\Delta H$ dijumlahkan.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contoh Penerapan Manipulasi Persamaan Termokimia (Bright Pastel Cards) -->
+      <div class="space-y-3">
+        <div class="bg-genzmint-50 text-teal-950 rounded-2xl p-4 shadow-sm border-2 border-genzmint-300">
+          <div class="text-[11px] text-teal-700 font-mono font-extrabold mb-1">// Persamaan Dasar Pembentukan 1 mol Air Cair (Eksoterm):</div>
+          <div class="text-sm md:text-base font-mono font-bold">
+            $$\boldsymbol{\ce{H2(g) + 1/2 O2(g) -> H2O(l)} \qquad \Delta H = -285{,}8\text{ kJ}}$$
+          </div>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-3">
+          <div class="bg-rosepink-50 text-rosepink-950 rounded-2xl p-4 shadow-sm border-2 border-rosepink-200">
+            <div class="text-[11px] text-rosepink-700 font-mono font-extrabold mb-1">// Dikali 2 (Pembentukan 2 mol Air):</div>
+            <div class="text-xs sm:text-sm font-mono font-bold">
+              $$\boldsymbol{\ce{2H2(g) + O2(g) -> 2H2O(l)} \quad \Delta H = -571{,}6\text{ kJ}}$$
+            </div>
+          </div>
+          <div class="bg-sky-50 text-sky-950 rounded-2xl p-4 shadow-sm border-2 border-sky-200">
+            <div class="text-[11px] text-sky-700 font-mono font-extrabold mb-1">// Dibalik (Penguraian 1 mol Air - Endoterm):</div>
+            <div class="text-xs sm:text-sm font-mono font-bold">
+              $$\boldsymbol{\ce{H2O(l) -> H2(g) + 1/2 O2(g)} \quad \Delta H = +285{,}8\text{ kJ}}$$
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 4: Jenis-Jenis ΔH° Standar + Analogi -->
+    <div id="t4" class="tab-panel hidden glass-card rounded-3xl p-6 md:p-10">
+      <h3 class="font-display font-bold text-2xl text-slate-900 mb-3 flex items-center gap-2.5">
+        <span class="w-8 h-8 rounded-xl bg-gradient-to-r from-rosepink-500 to-purple-500 text-white flex items-center justify-center text-sm font-bold shadow-md">4</span>
+        Jenis-Jenis Perubahan Entalpi Molar Standar ($\Delta H^\circ$)
+      </h3>
+      <p class="text-slate-700 leading-relaxed mb-4 text-sm sm:text-base">
+        Perubahan entalpi yang diukur pada kondisi standar IUPAC ($T = 25^\circ\text{C} = 298{,}15\text{ K}$ dan tekanan $P = 1\text{ atm}$) untuk tepat <strong>$1\text{ mol}$</strong> zat yang dimaksud dinamakan <strong>Perubahan Entalpi Standar ($\Delta H^\circ$)</strong> dengan satuan $\text{kJ/mol}$.
+      </p>
+
+      <!-- Analogi Peristiwa Sehari-hari -->
+      <div class="bg-gradient-to-r from-softamber-100/90 via-rosepink-50 to-genzlavender-50 border-l-4 border-rosepink-500 rounded-r-2xl p-4 sm:p-5 mb-6 shadow-sm">
+        <div class="font-display font-extrabold text-sm sm:text-base text-rosepink-900 flex items-center gap-2 mb-1.5">
+          <i class="fa-solid fa-cubes text-rosepink-500"></i>
+          Analogi Peristiwa Sehari-hari: "Merakit &amp; Membongkar Mainan Balok LEGO"
+        </div>
+        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+          • <strong>$\Delta H^\circ_f$ (Pembentukan Standar)</strong> seperti merakit <strong>1 unit mobil LEGO utuh</strong> dari kepingan balok dasar tunggal yang terpisah-pisah (unsur-unsur bebas paling stabil seperti $\ce{C(s)}, \ce{H2(g)}, \ce{O2(g)}$). Kepingan dasar yang belum dirakit memiliki nilai awal nol ($\Delta H^\circ_f\text{ unsur bebas} = 0$).
+          <br>• <strong>$\Delta H^\circ_d$ (Penguraian Standar)</strong> adalah kebalikannya: membongkar <strong>1 unit mobil LEGO</strong> kembali menjadi kepingan-kepingan balok dasar penyusunnya ($\Delta H^\circ_d = -\Delta H^\circ_f$).
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4 text-xs sm:text-sm">
+        <div class="bg-white border-2 border-rosepink-200 rounded-2xl p-4 card-modern shadow-sm">
+          <div class="font-extrabold text-rosepink-800 mb-1 flex items-center justify-between">
+            <span>1. Entalpi Pembentukan Standar ($\boldsymbol{\Delta H^\circ_f}$)</span>
+            <span class="text-[10px] bg-rosepink-100 px-2 py-0.5 rounded-full font-mono">1 mol di Kanan</span>
+          </div>
+          <p class="text-slate-600 mb-2">
+            Kalor yang menyertai pembentukan <strong>$1\text{ mol}$ senyawa</strong> langsung dari unsur-unsur murninya pada wujud paling stabil.
+          </p>
+          <div class="p-3 rounded-xl bg-rosepink-50 border border-rosepink-200 text-rosepink-950 font-mono text-center font-bold">
+            $$\boldsymbol{\ce{C(s) + 2H2(g) + 1/2 O2(g) -> CH3OH(l)}}$$
+            $$\boldsymbol{\Delta H^\circ_f = -238{,}6\text{ kJ/mol}}$$
+          </div>
+        </div>
+
+        <div class="bg-white border-2 border-sky-200 rounded-2xl p-4 card-modern shadow-sm">
+          <div class="font-extrabold text-sky-800 mb-1 flex items-center justify-between">
+            <span>2. Entalpi Penguraian Standar ($\boldsymbol{\Delta H^\circ_d}$)</span>
+            <span class="text-[10px] bg-sky-100 px-2 py-0.5 rounded-full font-mono">1 mol di Kiri</span>
+          </div>
+          <p class="text-slate-600 mb-2">
+            Kalor yang menyertai penguraian <strong>$1\text{ mol}$ senyawa</strong> menjadi unsur-unsur bebasnya ($\boldsymbol{\Delta H^\circ_d = -\Delta H^\circ_f}$).
+          </p>
+          <div class="p-3 rounded-xl bg-sky-50 border border-sky-200 text-sky-950 font-mono text-center font-bold">
+            $$\boldsymbol{\ce{CH3OH(l) -> C(s) + 2H2(g) + 1/2 O2(g)}}$$
+            $$\boldsymbol{\Delta H^\circ_d = +238{,}6\text{ kJ/mol}}$$
+          </div>
+        </div>
+
+        <div class="bg-white border-2 border-softamber-300 rounded-2xl p-4 card-modern shadow-sm">
+          <div class="font-extrabold text-amber-900 mb-1 flex items-center justify-between">
+            <span>3. Entalpi Pembakaran Standar ($\boldsymbol{\Delta H^\circ_c}$)</span>
+            <span class="text-[10px] bg-softamber-100 px-2 py-0.5 rounded-full font-mono">1 mol + $\ce{O2}$</span>
+          </div>
+          <p class="text-slate-600 mb-2">
+            Kalor yang dilepaskan pada pembakaran sempurna <strong>$1\text{ mol}$ zat</strong> dengan gas oksigen ($\ce{O2}$) berlebih. Selalu eksoterm ($\Delta H^\circ_c < 0$).
+          </p>
+          <div class="p-3 rounded-xl bg-softamber-50 border border-softamber-300 text-amber-950 font-mono text-center font-bold">
+            $$\boldsymbol{\ce{CH4(g) + 2O2(g) -> CO2(g) + 2H2O(l)}}$$
+            $$\boldsymbol{\Delta H^\circ_c = -890{,}4\text{ kJ/mol}}$$
+          </div>
+        </div>
+
+        <div class="bg-white border-2 border-genzmint-200 rounded-2xl p-4 card-modern shadow-sm">
+          <div class="font-extrabold text-teal-800 mb-1 flex items-center justify-between">
+            <span>4. Entalpi Netralisasi ($\boldsymbol{\Delta H^\circ_n}$) &amp; Pelarutan ($\boldsymbol{\Delta H^\circ_s}$)</span>
+            <span class="text-[10px] bg-genzmint-100 px-2 py-0.5 rounded-full font-mono">Larutan $(aq)$</span>
+          </div>
+          <p class="text-slate-600 mb-2">
+            Kalor penetralan asam-basa menghasilkan <strong>$1\text{ mol}\ \ce{H2O(l)}$</strong>, serta kalor pelarutan $1\text{ mol}$ zat terlarut dalam pelarut air.
+          </p>
+          <div class="p-3 rounded-xl bg-genzmint-50 border border-genzmint-200 text-teal-950 font-mono text-center font-bold">
+            $$\boldsymbol{\ce{HCl(aq) + NaOH(aq) -> NaCl(aq) + H2O(l)}}$$
+            $$\boldsymbol{\Delta H^\circ_n = -57{,}1\text{ kJ/mol}}$$
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 5: Rumus Penentuan Entalpi (Kalorimetri, Hukum Hess, Energi Ikatan - BRIGHT PASTEL BOLD) -->
+    <div id="t5" class="tab-panel hidden glass-card rounded-3xl p-6 md:p-10">
+      <h3 class="font-display font-bold text-2xl text-slate-900 mb-3 flex items-center gap-2.5">
+        <span class="w-8 h-8 rounded-xl bg-gradient-to-r from-rosepink-500 to-purple-500 text-white flex items-center justify-center text-sm font-bold shadow-md">5</span>
+        4 Pilar Perumusan Penentuan Perubahan Entalpi ($\Delta H$)
+      </h3>
+      <p class="text-slate-700 leading-relaxed mb-5 text-sm sm:text-base">
+        Penentuan nilai perubahan entalpi reaksi ($\Delta H$) dapat dilakukan melalui 4 metode utama: eksperimen langsung dengan <strong>Kalorimeter</strong>, penjumlahan lintasan <strong>Hukum Hess</strong>, selisih data tabel <strong>Entalpi Pembentukan Standar ($\Delta H^\circ_f$)</strong>, dan selisih <strong>Energi Ikatan Rata-rata ($D$)</strong>.
+      </p>
+
+      <!-- Analogi Hukum Hess & Energi Ikatan -->
+      <div class="bg-gradient-to-r from-softamber-100/90 via-rosepink-50 to-genzlavender-50 border-l-4 border-rosepink-500 rounded-r-2xl p-4 sm:p-5 mb-6 shadow-sm">
+        <div class="font-display font-extrabold text-sm sm:text-base text-rosepink-900 flex items-center gap-2 mb-1.5">
+          <i class="fa-solid fa-mountain-sun text-rosepink-500"></i>
+          Analogi Peristiwa Sehari-hari: "Naik Lift Lantai 1 ke Lantai 10 (Hukum Hess)"
+        </div>
+        <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+          • <strong>Analogi Hukum Hess:</strong> Jika Anda ingin naik dari Lantai 1 (Reaktan) ke Lantai 10 (Produk), perubahan ketinggian Anda ($\Delta H$) tetap <strong>$+9\text{ lantai}$</strong>, baik Anda menggunakan lift ekspres langsung ($1 \rightarrow 10$) maupun naik tangga bertahap ($1 \rightarrow 4 \rightarrow 7 \rightarrow 10$). Perubahan ketinggian hanya bergantung pada posisi awal dan akhir!
+          <br>• <strong>Analogi Energi Ikatan vs $\Delta H^\circ_f$:</strong> Ingat jembatan keledai <strong>"Pa-Ki / Ka-Ki"</strong>: untuk Energi Ikatan gunakan <strong>Putus (Kiri) dikurangi Bentuk (Kanan)</strong> karena memutus ikatan selalu butuh modal energi di awal. Sedangkan untuk data $\Delta H^\circ_f$ gunakan <strong>Kanan (Produk) dikurangi Kiri (Reaktan)</strong> karena $\Delta H$ adalah keadaan akhir dikurangi keadaan awal.
+        </p>
+      </div>
+
+      <!-- Kumpulan Kotak Rumus Bold Fokus Perubahan -->
+      <div class="space-y-5">
+        
+        <!-- 1. Rumus Kalorimetri -->
+        <div class="formula-bold-box rounded-2xl p-5">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-purple-200 pb-2 mb-3">
+            <span class="font-display font-extrabold text-base text-purple-900">METODE 1: KALORIMETRI TEKANAN TETAP (ASAS BLACK)</span>
+            <span class="text-[11px] font-mono bg-rosepink-500 text-white px-2.5 py-0.5 rounded-full font-bold">Fokus Perubahan Suhu ($\Delta T$)</span>
+          </div>
+          <div class="text-center overflow-x-auto">
+            $$\boldsymbol{\Delta T = T_{\text{akhir}} - T_{\text{awal}}} \qquad \implies \qquad \boldsymbol{q_{\text{larutan}} = m_{\text{total}} \cdot c \cdot \Delta T} \qquad \text{dan} \qquad \boldsymbol{q_{\text{kalorimeter}} = C_{\text{kal}} \cdot \Delta T}$$
+            $$\boldsymbol{q_{\text{reaksi}} = -\left(q_{\text{larutan}} + q_{\text{kalorimeter}}\right)} \qquad \implies \qquad \boldsymbol{\Delta H = \frac{q_{\text{reaksi}}}{n} = \frac{-m \cdot c \cdot \Delta T}{\text{mol}}}$$
+          </div>
+          <p class="text-xs text-slate-700 font-medium mt-2 text-center">
+            Catatan Penting: Jika suhu naik ($\Delta T > 0$), maka $q_{\text{larutan}}$ bertanda $(+)$ sehingga $\boldsymbol{\Delta H}$ bertanda <strong>negatif (Eksoterm)</strong>.
+          </p>
+        </div>
+
+        <!-- 2. Rumus Hukum Hess & Data Entalpi Pembentukan -->
+        <div class="formula-bold-box rounded-2xl p-5">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-purple-200 pb-2 mb-3">
+            <span class="font-display font-extrabold text-base text-purple-900">METODE 2 &amp; 3: HUKUM HESS &amp; DATA ENTALPI PEMBENTUKAN STANDAR ($\Delta H^\circ_f$)</span>
+            <span class="text-[11px] font-mono bg-softamber-300 text-amber-950 px-2.5 py-0.5 rounded-full font-bold">Produk (Kanan) - Reaktan (Kiri)</span>
+          </div>
+          <div class="text-center overflow-x-auto">
+            $$\boldsymbol{\Delta H_{\text{reaksi}} = \Delta H_1 + \Delta H_2 + \Delta H_3 + \dots \quad (\text{Penjumlahan Siklus Hess})}$$
+            $$\boldsymbol{\Delta H^\circ_{\text{reaksi}} = \sum \left(n_P \times \Delta H^\circ_f\text{ Produk [Kanan]}\right) - \sum \left(n_R \times \Delta H^\circ_f\text{ Reaktan [Kiri]}\right)}$$
+          </div>
+          <p class="text-xs text-slate-700 font-medium mt-2 text-center">
+            Ingat: Unsur bebas murni seperti $\ce{O2(g)}, \ce{H2(g)}, \ce{N2(g)}, \ce{C(s)}, \ce{Fe(s)}$ memiliki nilai $\boldsymbol{\Delta H^\circ_f = 0\text{ kJ/mol}}$.
+          </p>
+        </div>
+
+        <!-- 3. Rumus Energi Ikatan Rata-rata -->
+        <div class="formula-bold-box rounded-2xl p-5">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-purple-200 pb-2 mb-3">
+            <span class="font-display font-extrabold text-base text-purple-900">METODE 4: ENERGI DISOSIASI IKATAN RATA-RATA ($D$)</span>
+            <span class="text-[11px] font-mono bg-genzmint-300 text-teal-950 px-2.5 py-0.5 rounded-full font-bold">Pemutusan (Kiri) - Pembentukan (Kanan)</span>
+          </div>
+          <div class="text-center overflow-x-auto">
+            $$\boldsymbol{\Delta H_{\text{reaksi}} = \sum D_{\text{ikatan putus (Reaktan / Kiri)}} - \sum D_{\text{ikatan terbentuk (Produk / Kanan)}}}$$
+          </div>
+          <div class="grid sm:grid-cols-2 gap-3 mt-3 text-xs font-mono bg-white/85 p-3.5 rounded-xl border border-purple-200 text-slate-800">
+            <div>
+              <strong class="text-purple-800 font-sans block mb-1">Data Energi Ikatan Tunggal Umum:</strong>
+              • $\text{C}-\text{H} = 413\text{ kJ/mol}$ &nbsp;|&nbsp; $\text{C}-\text{C} = 348\text{ kJ/mol}$<br>
+              • $\text{O}-\text{H} = 463\text{ kJ/mol}$ &nbsp;|&nbsp; $\text{H}-\text{H} = 436\text{ kJ/mol}$<br>
+              • $\text{H}-\text{Cl} = 431\text{ kJ/mol}$ &nbsp;|&nbsp; $\text{Cl}-\text{Cl} = 242\text{ kJ/mol}$
+            </div>
+            <div>
+              <strong class="text-purple-800 font-sans block mb-1">Data Energi Ikatan Rangkap Umum:</strong>
+              • $\text{C}=\text{C} = 614\text{ kJ/mol}$ &nbsp;|&nbsp; $\text{C}\equiv\text{C} = 839\text{ kJ/mol}$<br>
+              • $\text{C}=\text{O} = 799\text{ kJ/mol}$ &nbsp;|&nbsp; $\text{O}=\text{O} = 495\text{ kJ/mol}$<br>
+              • $\text{N}\equiv\text{N} = 941\text{ kJ/mol}$ &nbsp;|&nbsp; $\text{C}-\text{O} = 358\text{ kJ/mol}$
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Tab 6: 10 Penerapan Termokimia pada Kehidupan Sehari-hari dan Industri (Bright Pastel Cards) -->
+    <div id="t6" class="tab-panel hidden glass-card rounded-3xl p-6 md:p-10">
+      <h3 class="font-display font-bold text-2xl text-slate-900 mb-2 flex items-center gap-2.5">
+        <span class="w-8 h-8 rounded-xl bg-gradient-to-r from-rosepink-500 to-purple-500 text-white flex items-center justify-center text-sm font-bold shadow-md">6</span>
+        10 Penerapan Termokimia dalam Kehidupan Sehari-hari &amp; Industri
+      </h3>
+      <p class="text-slate-700 leading-relaxed mb-6 text-sm sm:text-base">
+        Prinsip termokimia memegang peranan vital mulai dari alat medis pertolongan pertama, kemasan makanan modern, rekayasa metalurgi, hingga propulsi roket antariksa. Berikut adalah 10 penerapan nyatanya beserta persamaan termokimianya:
+      </p>
+
+      <div class="grid md:grid-cols-2 gap-4">
+        <!-- Aplikasi 1 -->
+        <div class="bg-white border-2 border-sky-200 rounded-2xl p-4 card-modern shadow-sm">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-display font-extrabold text-sm text-sky-900">1. Kantong Kompres Dingin Instan (Cold Pack)</span>
+            <span class="text-[10px] font-bold bg-sky-100 text-sky-800 px-2.5 py-0.5 rounded-full">Endoterm ($\Delta H > 0$)</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed mb-2">
+            Digunakan untuk menangani cedera atlet. Saat kantong ditekan, sekat air pecah dan melarutkan kristal amonium nitrat ($\ce{NH4NO3}$) yang menyerap panas dari bagian tubuh yang memar sehingga suhu turun drastis.
+          </p>
+          <div class="bg-sky-50 border border-sky-200 text-sky-950 font-mono font-bold text-[11px] p-2 rounded-xl text-center">
+            $$\ce{NH4NO3(s) ->[H2O] NH4+(aq) + NO3-(aq)} \quad \Delta H = +25{,}7\text{ kJ/mol}$$
+          </div>
+        </div>
+
+        <!-- Aplikasi 2 -->
+        <div class="bg-white border-2 border-rosepink-200 rounded-2xl p-4 card-modern shadow-sm">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-display font-extrabold text-sm text-rosepink-900">2. Pemanas Makanan Mandiri (Self-Heating Can / MRE)</span>
+            <span class="text-[10px] font-bold bg-rosepink-100 text-rosepink-800 px-2.5 py-0.5 rounded-full">Eksoterm ($\Delta H < 0$)</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed mb-2">
+            Kemasan kopi atau ransum militer/pendaki gunung yang dapat memanaskan makanan tanpa api. Mengandalkan reaksi eksotermik kapur tohor ($\ce{CaO}$) atau serbuk $\ce{Mg-Fe}$ dengan air di dasar kemasan.
+          </p>
+          <div class="bg-rosepink-50 border border-rosepink-200 text-rosepink-950 font-mono font-bold text-[11px] p-2 rounded-xl text-center">
+            $$\ce{CaO(s) + H2O(l) -> Ca(OH)2(aq)} \quad \Delta H = -65{,}2\text{ kJ/mol}$$
+          </div>
+        </div>
+
+        <!-- Aplikasi 3 -->
+        <div class="bg-white border-2 border-rosepink-200 rounded-2xl p-4 card-modern shadow-sm">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-display font-extrabold text-sm text-rosepink-900">3. Pembakaran Gas Elpiji (LPG) Rumah Tangga</span>
+            <span class="text-[10px] font-bold bg-rosepink-100 text-rosepink-800 px-2.5 py-0.5 rounded-full">Eksoterm ($\Delta H < 0$)</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed mb-2">
+            Tabung gas LPG berisi campuran gas propana ($\ce{C3H8}$) dan butana ($\ce{C4H10}$) yang memiliki nilai kalor pembakaran standar ($\Delta H^\circ_c$) sangat tinggi untuk memasak secara efisien.
+          </p>
+          <div class="bg-rosepink-50 border border-rosepink-200 text-rosepink-950 font-mono font-bold text-[11px] p-2 rounded-xl text-center">
+            $$\ce{C3H8(g) + 5O2(g) -> 3CO2(g) + 4H2O(g)} \quad \Delta H^\circ_c = -2.220\text{ kJ/mol}$$
+          </div>
+        </div>
+
+        <!-- Aplikasi 4 -->
+        <div class="bg-white border-2 border-softamber-300 rounded-2xl p-4 card-modern shadow-sm">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-display font-extrabold text-sm text-amber-900">4. Pengelasan Rel Kereta Api (Reaksi Termit)</span>
+            <span class="text-[10px] font-bold bg-softamber-200 text-amber-900 px-2.5 py-0.5 rounded-full">Eksoterm Ekstrem</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed mb-2">
+            Industri perkeretaapian menyambung baja rel kereta api di lapangan menggunakan reaksi serbuk aluminium dan besi(III) oksida yang menghasilkan suhu di atas $2.500^\circ\text{C}$ hingga menghasilkan lelehan besi cair.
+          </p>
+          <div class="bg-softamber-50 border border-softamber-300 text-amber-950 font-mono font-bold text-[11px] p-2 rounded-xl text-center">
+            $$\ce{2Al(s) + Fe2O3(s) -> Al2O3(s) + 2Fe(l)} \quad \Delta H = -851{,}5\text{ kJ}$$
+          </div>
+        </div>
+
+        <!-- Aplikasi 5 -->
+        <div class="bg-white border-2 border-genzmint-200 rounded-2xl p-4 card-modern shadow-sm">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-display font-extrabold text-sm text-teal-900">5. Industri Pupuk Amonia (Proses Haber-Bosch)</span>
+            <span class="text-[10px] font-bold bg-genzmint-100 text-teal-800 px-2.5 py-0.5 rounded-full">Eksoterm ($\Delta H < 0$)</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed mb-2">
+            Pabrik pupuk urea seperti PT Pupuk Kalimantan Timur / Pusri mensintesis gas amonia ($\ce{NH3}$). Karena reaksinya eksoterm, suhu reaktor harus dikendalikan ($450^\circ\text{C}$) agar hasil amonia optimal.
+          </p>
+          <div class="bg-genzmint-50 border border-genzmint-200 text-teal-950 font-mono font-bold text-[11px] p-2 rounded-xl text-center">
+            $$\ce{N2(g) + 3H2(g) <=> 2NH3(g)} \quad \Delta H = -92{,}4\text{ kJ}$$
+          </div>
+        </div>
+
+        <!-- Aplikasi 6 -->
+        <div class="bg-white border-2 border-sky-200 rounded-2xl p-4 card-modern shadow-sm">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-display font-extrabold text-sm text-sky-900">6. Industri Semen &amp; Kalsinasi Batu Kapur</span>
+            <span class="text-[10px] font-bold bg-sky-100 text-sky-800 px-2.5 py-0.5 rounded-full">Endoterm ($\Delta H > 0$)</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed mb-2">
+            Dalam tanur putar (*rotary kiln*) pabrik semen, batu kapur ($\ce{CaCO3}$) dipanaskan pada suhu $900^\circ\text{C}$ (menyerap kalor besar) untuk menghasilkan kapur tohor ($\ce{CaO}$) sebagai bahan utama klinker semen.
+          </p>
+          <div class="bg-sky-50 border border-sky-200 text-sky-950 font-mono font-bold text-[11px] p-2 rounded-xl text-center">
+            $$\ce{CaCO3(s) ->[\Delta] CaO(s) + CO2(g)} \quad \Delta H = +178{,}3\text{ kJ/mol}$$
+          </div>
+        </div>
+
+        <!-- Aplikasi 7 -->
+        <div class="bg-white border-2 border-rosepink-200 rounded-2xl p-4 card-modern shadow-sm">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-display font-extrabold text-sm text-rosepink-900">7. Respirasi Seluler &amp; Kalori Gizi Makanan</span>
+            <span class="text-[10px] font-bold bg-rosepink-100 text-rosepink-800 px-2.5 py-0.5 rounded-full">Eksoterm ($\Delta H < 0$)</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed mb-2">
+            Tubuh manusia mempertahankan suhu tubuh $37^\circ\text{C}$ dan bergerak berkat pembakaran lambat glukosa di mitokondria sel. Kalorimeter bom digunakan di industri pangan untuk mengukur label nilai gizi kalori makanan.
+          </p>
+          <div class="bg-rosepink-50 border border-rosepink-200 text-rosepink-950 font-mono font-bold text-[11px] p-2 rounded-xl text-center">
+            $$\ce{C6H12O6(aq) + 6O2(g) -> 6CO2(g) + 6H2O(l)} \quad \Delta H = -2.803\text{ kJ/mol}$$
+          </div>
+        </div>
+
+        <!-- Aplikasi 8 -->
+        <div class="bg-white border-2 border-genzmint-200 rounded-2xl p-4 card-modern shadow-sm">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-display font-extrabold text-sm text-teal-900">8. Fotosintesis Tumbuhan Hijau &amp; Pertanian</span>
+            <span class="text-[10px] font-bold bg-genzmint-100 text-teal-800 px-2.5 py-0.5 rounded-full">Endoterm ($\Delta H > 0$)</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed mb-2">
+            Klorofil daun menyerap energi foton matahari untuk mengubah gas $\ce{CO2}$ dan air menjadi karbohidrat (glukosa) dan oksigen. Reaksi ini adalah kebalikan eksak dari respirasi seluler.
+          </p>
+          <div class="bg-genzmint-50 border border-genzmint-200 text-teal-950 font-mono font-bold text-[11px] p-2 rounded-xl text-center">
+            $$\ce{6CO2(g) + 6H2O(l) ->[cahaya] C6H12O6(s) + 6O2(g)} \quad \Delta H = +2.803\text{ kJ/mol}$$
+          </div>
+        </div>
+
+        <!-- Aplikasi 9 -->
+        <div class="bg-white border-2 border-genzlavender-200 rounded-2xl p-4 card-modern shadow-sm">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-display font-extrabold text-sm text-purple-900">9. Propulsi Bahan Bakar Roket Hidrogen Cair</span>
+            <span class="text-[10px] font-bold bg-genzlavender-100 text-purple-800 px-2.5 py-0.5 rounded-full">Eksoterm ($\Delta H < 0$)</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed mb-2">
+            Industri kedirgantaraan menggunakan reaksi hidrogen cair ($\ce{H2}$) dan oksigen cair ($\ce{O2}$) yang menghasilkan daya dorong termal luar biasa tinggi per satuan massa dan hanya menyisakan uap air bersih.
+          </p>
+          <div class="bg-genzlavender-50 border border-genzlavender-200 text-purple-950 font-mono font-bold text-[11px] p-2 rounded-xl text-center">
+            $$\ce{2H2(g) + O2(g) -> 2H2O(g)} \quad \Delta H = -483{,}6\text{ kJ}$$
+          </div>
+        </div>
+
+        <!-- Aplikasi 10 -->
+        <div class="bg-white border-2 border-softamber-300 rounded-2xl p-4 card-modern shadow-sm">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-display font-extrabold text-sm text-amber-900">10. Sistem Kantong Udara Keselamatan Mobil (Airbag)</span>
+            <span class="text-[10px] font-bold bg-softamber-200 text-amber-900 px-2.5 py-0.5 rounded-full">Dekomposisi Cepat</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed mb-2">
+            Saat sensor tabrakan mobil aktif, pemantik memicu reaksi eksotermik dekomposisi natrium azida ($\ce{NaN3}$) yang menghasilkan gas nitrogen ($\ce{N2}$) berkecepatan tinggi dalam $0{,}03\text{ detik}$ untuk mengembangkan *airbag*.
+          </p>
+          <div class="bg-softamber-50 border border-softamber-300 text-amber-950 font-mono font-bold text-[11px] p-2 rounded-xl text-center">
+            $$\ce{2NaN3(s) -> 2Na(s) + 3N2(g)} \quad \Delta H = -43{,}5\text{ kJ}$$
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ MODUL 2: KALKULATOR TERMOKIMIA (BRIGHT GEN Z PASTEL SECTION) ══════════ -->
+<section id="kalkulator" class="bg-gradient-to-br from-rosepink-100/75 via-genzlavender-100/75 to-genzmint-100/75 py-16 text-slate-800 border-y-2 border-white">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="text-center mb-12">
+      <span class="text-purple-800 font-extrabold text-xs uppercase tracking-widest bg-white/90 border border-genzlavender-300 px-3.5 py-1 rounded-full shadow-sm">MODUL 2</span>
+      <h2 class="font-display font-extrabold text-3xl md:text-4xl mt-3 mb-3 text-slate-900">
+        Kalkulator Solver Termokimia Presisi
+      </h2>
+      <p class="text-slate-700 max-w-2xl mx-auto text-sm font-medium">
+        Selesaikan kalkulasi kalorimetri larutan ($q = m \cdot c \cdot \Delta T$), data entalpi pembentukan standar ($\Delta H^\circ_f$), energi ikatan molekuler, dan kalor pembakaran bahan bakar.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <!-- Kalkulator 1: Kalorimetri -->
+      <div class="bg-white/95 text-slate-800 rounded-3xl p-6 shadow-lg border-2 border-rosepink-200 card-modern">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="font-display font-bold text-xl text-slate-900">
+            <span class="w-7 h-7 rounded-lg bg-rosepink-100 text-rosepink-700 text-xs font-bold inline-flex items-center justify-center mr-2">1</span>
+            Kalorimetri ($q = m \cdot c \cdot \Delta T$)
+          </h3>
+          <span class="text-[10px] font-mono font-bold bg-softamber-200 text-amber-900 px-2.5 py-0.5 rounded-full">ASAS BLACK</span>
+        </div>
+        <p class="text-xs text-slate-500 mb-4">Hitung kalor serapan larutan serta $\Delta H$ per mol reaksi penetralan/pelarutan.</p>
+
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <label class="text-xs font-bold text-slate-600">Massa Campuran ($m$ gram)
+            <input id="k1m" type="number" step="any" value="100" class="mt-1 w-full border-2 border-rosepink-100 rounded-xl px-3 py-2 font-mono text-sm focus:border-rosepink-400 focus:outline-none">
+          </label>
+          <label class="text-xs font-bold text-slate-600">Kalor Jenis ($c\ \text{J/g}^\circ\text{C}$)
+            <input id="k1c" type="number" step="any" value="4.18" class="mt-1 w-full border-2 border-rosepink-100 rounded-xl px-3 py-2 font-mono text-sm focus:border-rosepink-400 focus:outline-none">
+          </label>
+          <label class="text-xs font-bold text-slate-600">Suhu Awal $T_1$ ($^\circ\text{C}$)
+            <input id="k1t1" type="number" step="any" value="25" class="mt-1 w-full border-2 border-rosepink-100 rounded-xl px-3 py-2 font-mono text-sm focus:border-rosepink-400 focus:outline-none">
+          </label>
+          <label class="text-xs font-bold text-slate-600">Suhu Akhir $T_2$ ($^\circ\text{C}$)
+            <input id="k1t2" type="number" step="any" value="32" class="mt-1 w-full border-2 border-rosepink-100 rounded-xl px-3 py-2 font-mono text-sm focus:border-rosepink-400 focus:outline-none">
+          </label>
+          <label class="text-xs font-bold text-slate-600 col-span-2">Mol Zat Bereaksi ($n$ mol)
+            <input id="k1n" type="number" step="any" value="0.05" class="mt-1 w-full border-2 border-rosepink-100 rounded-xl px-3 py-2 font-mono text-sm focus:border-rosepink-400 focus:outline-none">
+          </label>
+        </div>
+
+        <button onclick="hitungKalorimetri()" class="w-full bg-gradient-to-r from-rosepink-400 to-purple-400 hover:brightness-105 text-white font-extrabold py-2.5 rounded-xl transition shadow-md active:scale-95 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-calculator"></i> Kalkulasi Kalorimeter
+        </button>
+        <div id="h1" class="mt-4 text-xs sm:text-sm"></div>
+      </div>
+
+      <!-- Kalkulator 2: Data ΔH°f -->
+      <div class="bg-white/95 text-slate-800 rounded-3xl p-6 shadow-lg border-2 border-softamber-300 card-modern">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="font-display font-bold text-xl text-slate-900">
+            <span class="w-7 h-7 rounded-lg bg-softamber-200 text-amber-900 text-xs font-bold inline-flex items-center justify-center mr-2">2</span>
+            Hukum Hess dari $\sum \Delta H^\circ_f$
+          </h3>
+          <span class="text-[10px] font-mono font-bold bg-rosepink-100 text-rosepink-800 px-2.5 py-0.5 rounded-full">HESS LAW</span>
+        </div>
+        <p class="text-xs text-slate-500 mb-4">$\Delta H = \sum \Delta H^\circ_f(\text{Produk}) - \sum \Delta H^\circ_f(\text{Reaktan})$.</p>
+
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <label class="text-xs font-bold text-slate-600 col-span-2">Template Reaksi Kimia:
+            <select id="k2Pilih" class="mt-1 w-full border-2 border-softamber-200 rounded-xl px-3 py-2 text-xs sm:text-sm focus:border-amber-400 focus:outline-none bg-white font-medium" onchange="pilihContohHf()">
+              <option value="metana">Pembakaran Metana (CH₄ + 2O₂ ➔ CO₂ + 2H₂O)</option>
+              <option value="etanol">Pembakaran Etanol (C₂H₅OH + 3O₂ ➔ 2CO₂ + 3H₂O)</option>
+              <option value="custom">Kustom Nilai Mandiri</option>
+            </select>
+          </label>
+          <label class="text-xs font-bold text-slate-600">$\sum \Delta H^\circ_f$ Produk ($\text{kJ}$)
+            <input id="k2Prod" type="number" step="any" value="-965.1" class="mt-1 w-full border-2 border-softamber-200 rounded-xl px-3 py-2 font-mono text-sm focus:border-amber-400 focus:outline-none">
+          </label>
+          <label class="text-xs font-bold text-slate-600">$\sum \Delta H^\circ_f$ Reaktan ($\text{kJ}$)
+            <input id="k2Reak" type="number" step="any" value="-74.8" class="mt-1 w-full border-2 border-softamber-200 rounded-xl px-3 py-2 font-mono text-sm focus:border-amber-400 focus:outline-none">
+          </label>
+        </div>
+
+        <button onclick="hitungHf()" class="w-full bg-gradient-to-r from-softamber-300 to-rosepink-300 hover:brightness-105 text-slate-900 font-extrabold py-2.5 rounded-xl transition shadow-md active:scale-95 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-bolt text-rosepink-600"></i> Hitung $\Delta H_{\text{reaksi}}$
+        </button>
+        <div id="h2" class="mt-4 text-xs sm:text-sm"></div>
+      </div>
+
+      <!-- Kalkulator 3: Energi Ikatan Rata-rata -->
+      <div class="bg-white/95 text-slate-800 rounded-3xl p-6 shadow-lg border-2 border-genzlavender-200 card-modern">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="font-display font-bold text-xl text-slate-900">
+            <span class="w-7 h-7 rounded-lg bg-genzlavender-100 text-purple-800 text-xs font-bold inline-flex items-center justify-center mr-2">3</span>
+            Disosiasi Energi Ikatan Rata-rata
+          </h3>
+          <span class="text-[10px] font-mono font-bold bg-genzmint-100 text-teal-900 px-2.5 py-0.5 rounded-full">BOND ENERGY</span>
+        </div>
+        <p class="text-xs text-slate-500 mb-4">$\Delta H = \sum D(\text{Pemutusan}) - \sum D(\text{Pembentukan})$.</p>
+
+        <div class="grid grid-cols-2 gap-3 mb-4">
+          <label class="text-xs font-bold text-slate-600">Total Pemutusan ($\text{kJ}$)
+            <span class="text-[10px] text-slate-400 block font-normal">(Ikatan di Reaktan)</span>
+            <input id="k3Putus" type="number" step="any" value="2648" class="mt-1 w-full border-2 border-genzlavender-200 rounded-xl px-3 py-2 font-mono text-sm focus:border-purple-400 focus:outline-none">
+          </label>
+          <label class="text-xs font-bold text-slate-600">Total Pembentukan ($\text{kJ}$)
+            <span class="text-[10px] text-slate-400 block font-normal">(Ikatan di Produk)</span>
+            <input id="k3Bentuk" type="number" step="any" value="3466" class="mt-1 w-full border-2 border-genzlavender-200 rounded-xl px-3 py-2 font-mono text-sm focus:border-purple-400 focus:outline-none">
+          </label>
+        </div>
+
+        <button onclick="hitungEnergiIkatan()" class="w-full bg-gradient-to-r from-genzlavender-400 to-sky-400 hover:brightness-105 text-white font-extrabold py-2.5 rounded-xl transition shadow-md active:scale-95 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-link-slash"></i> Hitung Entalpi Ikatan
+        </button>
+        <div id="h3" class="mt-4 text-xs sm:text-sm"></div>
+      </div>
+
+      <!-- Kalkulator 4: Kalor Bahan Bakar -->
+      <div class="bg-white/95 text-slate-800 rounded-3xl p-6 shadow-lg border-2 border-genzmint-200 card-modern">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="font-display font-bold text-xl text-slate-900">
+            <span class="w-7 h-7 rounded-lg bg-genzmint-100 text-teal-800 text-xs font-bold inline-flex items-center justify-center mr-2">4</span>
+            Kalor Pembakaran Bahan Bakar
+          </h3>
+          <span class="text-[10px] font-mono font-bold bg-rosepink-100 text-rosepink-800 px-2.5 py-0.5 rounded-full">COMBUSTION</span>
+        </div>
+        <p class="text-xs text-slate-500 mb-4">Hitung total kalor yang dilepaskan berdasarkan massa dan $\Delta H^\circ_c$.</p>
+
+        <div class="grid grid-cols-3 gap-3 mb-4">
+          <label class="text-xs font-bold text-slate-600">Massa ($g$)
+            <input id="k4Massa" type="number" step="any" value="16" class="mt-1 w-full border-2 border-genzmint-200 rounded-xl px-3 py-2 font-mono text-sm focus:border-teal-400 focus:outline-none">
+          </label>
+          <label class="text-xs font-bold text-slate-600">$M_r$ ($\text{g/mol}$)
+            <input id="k4Mr" type="number" step="any" value="16" class="mt-1 w-full border-2 border-genzmint-200 rounded-xl px-3 py-2 font-mono text-sm focus:border-teal-400 focus:outline-none">
+          </label>
+          <label class="text-xs font-bold text-slate-600">$\Delta H^\circ_c$ ($\text{kJ/mol}$)
+            <input id="k4Dhc" type="number" step="any" value="-890.4" class="mt-1 w-full border-2 border-genzmint-200 rounded-xl px-3 py-2 font-mono text-sm focus:border-teal-400 focus:outline-none">
+          </label>
+        </div>
+
+        <button onclick="hitungBahanBakar()" class="w-full bg-gradient-to-r from-genzmint-300 to-softamber-200 hover:brightness-105 text-slate-900 font-extrabold py-2.5 rounded-xl transition shadow-md active:scale-95 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-gas-pump text-teal-700"></i> Hitung Kalor Pembakaran
+        </button>
+        <div id="h4" class="mt-4 text-xs sm:text-sm"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ MODUL 3: VISUALISASI DIAGRAM TINGKAT ENERGI ══════════ -->
+<section id="visualisasi" class="max-w-7xl mx-auto px-4 py-16">
+  <div class="text-center mb-10">
+    <span class="text-teal-700 font-extrabold text-xs uppercase tracking-widest bg-genzmint-100 border border-genzmint-300 px-3.5 py-1 rounded-full">MODUL 3</span>
+    <h2 class="font-display font-extrabold text-3xl md:text-4xl text-slate-900 mt-2.5 mb-3">
+      Visualisasi Diagram Tingkat Energi Interaktif
+    </h2>
+    <p class="text-slate-600 max-w-2xl mx-auto text-sm">
+      Amati posisi entalpi awal ($H_{\text{reaktan}}$) dan entalpi akhir ($H_{\text{produk}}$) serta arah panah transisi entalpi $\Delta H$ secara dinamis.
+    </p>
+  </div>
+
+  <div class="grid lg:grid-cols-12 gap-8 items-center">
+    <!-- Kontrol Diagram -->
+    <div class="lg:col-span-5 glass-card rounded-3xl p-6 sm:p-8 space-y-5">
+      <div>
+        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Pilih Jenis Reaksi</label>
+        <select id="vTipe" class="w-full border-2 border-rosepink-200 rounded-xl px-3.5 py-2.5 text-sm font-semibold focus:border-rosepink-400 focus:outline-none bg-white" onchange="updateVisualisasi()">
+          <option value="ekso">Reaksi Eksoterm (Contoh: Pembakaran CH₄, ΔH &lt; 0)</option>
+          <option value="endo">Reaksi Endoterm (Contoh: Penguraian CaCO₃, ΔH &gt; 0)</option>
+        </select>
+      </div>
+
+      <div>
+        <div class="flex justify-between text-xs sm:text-sm font-bold text-slate-700 mb-1">
+          <span>Besaran Entalpi ($|\Delta H|$):</span>
+          <span id="vBesarVal" class="font-mono text-rosepink-600 font-extrabold">150 kJ/mol</span>
+        </div>
+        <input id="vBesar" type="range" min="50" max="300" step="10" value="150" class="w-full" oninput="updateVisualisasi()">
+      </div>
+
+      <!-- Bright Gen Z Pastel Thermo Status Card -->
+      <div class="bg-gradient-to-br from-rosepink-50 via-genzlavender-50 to-softamber-50 border-2 border-genzlavender-200 rounded-2xl p-5 text-slate-800 shadow-sm">
+        <div class="text-[11px] text-purple-700 font-extrabold uppercase tracking-wider mb-2">Status Termodinamika:</div>
+        <div class="flex flex-wrap justify-between items-center gap-2">
+          <span id="vTeksDh" class="font-mono text-xl text-rosepink-700 font-extrabold">$$\Delta H = -150\text{ kJ/mol}$$</span>
+          <span id="vTeksArah" class="text-xs font-bold px-3 py-1 rounded-full bg-rosepink-100 text-rosepink-800 border border-rosepink-300">
+            Eksoterm (Lepas Kalor)
+          </span>
+        </div>
+        <p id="vDeskripsi" class="text-xs text-slate-600 mt-3 leading-relaxed">
+          Entalpi produk lebih rendah dibandingkan reaktan. Selisih energi dilepas ke lingkungan sebagai kalor ($q_{\text{reaksi}} < 0$).
+        </p>
+      </div>
+    </div>
+
+    <!-- Canvas Rendering -->
+    <div class="lg:col-span-7 glass-card rounded-3xl p-6 sm:p-8 flex flex-col items-center">
+      <div class="w-full max-w-md bg-white border-2 border-genzlavender-100 rounded-2xl p-3 shadow-inner relative">
+        <canvas id="energyCanvas" width="400" height="300" class="w-full h-auto rounded-xl"></canvas>
+      </div>
+      <div class="mt-4 flex flex-wrap justify-center gap-4 text-xs font-semibold text-slate-600">
+        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-rose-500 inline-block"></span> Garis Reaktan</span>
+        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-sky-500 inline-block"></span> Garis Produk</span>
+        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-amber-400 inline-block"></span> Vektor $\Delta H$</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ MODUL 4: LAB VIRTUAL KALORIMETER (BRIGHT PASTEL SKY & MINT) ══════════ -->
+<section id="lab" class="bg-gradient-to-b from-sky-50/80 via-genzmint-50/60 to-rosepink-50/70 py-16 border-t-2 border-white">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="text-center mb-10">
+      <span class="text-sky-700 font-extrabold text-xs uppercase tracking-widest bg-sky-100 border border-sky-200 px-3.5 py-1 rounded-full">MODUL 4</span>
+      <h2 class="font-display font-extrabold text-3xl md:text-4xl text-slate-900 mt-2.5 mb-3">
+        Laboratorium Virtual Kalorimeter Sederhana
+      </h2>
+      <p class="text-slate-600 max-w-2xl mx-auto text-sm">
+        Campurkan zat kimia ke dalam cangkir kalorimeter berisolator styrofoam, amati pergerakan air raksa pada termometer, dan hitung $\Delta H_{\text{pelarutan}}$ yang otomatis masuk ke tabel pengamatan LKPD di Modul 5.
+      </p>
+    </div>
+
+    <div class="grid lg:grid-cols-12 gap-8 items-start">
+      <!-- Pengaturan Eksperimen -->
+      <div class="lg:col-span-5 glass-card rounded-3xl p-6 md:p-8 space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wide">Pilih Senyawa Terlarut / Reaksi:</label>
+          <select id="labBahan" class="w-full border-2 border-sky-200 rounded-xl px-3 py-2.5 text-xs sm:text-sm font-semibold bg-white focus:border-sky-400 focus:outline-none" onchange="gantiBahanLab()">
+            <option value="naoh">Natrium Hidroksida (NaOH) — Pelarutan Eksoterm</option>
+            <option value="urea">Urea (CO(NH₂)₂) — Pelarutan Endoterm</option>
+            <option value="nh4no3">Amonium Nitrat (NH₄NO₃) — Pelarutan Endoterm Kuat</option>
+            <option value="kalsium">Kalsium Oksida (CaO) — Eksoterm Kuat (Kapur Tohor)</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-bold text-slate-600 block mb-1">Massa Air ($m_{\text{air}}\ \text{g}$):</label>
+            <input id="labMassaAir" type="number" value="100" class="w-full border-2 border-sky-100 rounded-xl px-3 py-2 font-mono text-sm focus:border-sky-400 focus:outline-none">
+          </div>
+          <div>
+            <label class="text-xs font-bold text-slate-600 block mb-1">Massa Zat ($m_{\text{zat}}\ \text{g}$):</label>
+            <input id="labMassaZat" type="number" step="any" value="4" class="w-full border-2 border-sky-100 rounded-xl px-3 py-2 font-mono text-sm focus:border-sky-400 focus:outline-none">
+          </div>
+        </div>
+
+        <div class="p-3.5 bg-sky-50/90 rounded-2xl text-xs space-y-1.5 border border-sky-200 text-slate-700">
+          <div class="flex justify-between"><span>Suhu Awal Pelarut ($T_1$):</span><strong id="labT1Val" class="font-mono text-rosepink-700">25.0 °C</strong></div>
+          <div class="flex justify-between"><span>Kalor Jenis Larutan ($c$):</span><strong class="font-mono">4,18 J/g·°C</strong></div>
+          <div class="flex justify-between"><span>Massa Molar ($M_r$ zat):</span><strong id="labMrVal" class="font-mono text-rosepink-700">40 g/mol</strong></div>
+        </div>
+
+        <div class="space-y-2 pt-1">
+          <button onclick="campurkanLabKalorimeter()" class="w-full bg-gradient-to-r from-rosepink-400 via-purple-400 to-sky-400 hover:brightness-105 active:scale-95 text-white font-extrabold py-3 rounded-xl transition shadow-md flex items-center justify-center gap-2">
+            <i class="fa-solid fa-play"></i> Mulai Reaksi Kalorimeter
+          </button>
+          <button onclick="resetLabKalorimeter()" class="w-full bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 font-bold py-2 rounded-xl transition text-xs sm:text-sm border border-slate-200">
+            <i class="fa-solid fa-rotate-left mr-1"></i> Reset Wadah Kalorimeter
+          </button>
+        </div>
+
+        <div id="labHasil" class="text-xs sm:text-sm"></div>
+
+        <div id="labLkpdNotif" class="hidden bg-genzmint-100 border border-genzmint-300 rounded-2xl p-3 text-xs text-teal-900 font-semibold flex items-center justify-between shadow-sm">
+          <span><i class="fa-solid fa-circle-check text-teal-600 mr-1.5"></i>Data otomatis masuk ke Tabel LKPD!</span>
+          <a href="#lkpd" class="text-rosepink-700 underline font-bold">Buka LKPD →</a>
+        </div>
+      </div>
+
+      <!-- Alat Kalorimeter Visual Modern -->
+      <div class="lg:col-span-7 glass-card rounded-3xl p-6 md:p-8 text-center flex flex-col items-center">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-8 w-full">
+          <!-- Ilustrasi Kalorimeter Cangkir -->
+          <div class="relative w-56 h-64 bg-slate-100 border-4 border-genzlavender-200 rounded-b-3xl shadow-md flex flex-col justify-end p-2 overflow-hidden">
+            <!-- Tutup Gabus / Isolator -->
+            <div class="absolute top-0 left-0 right-0 h-7 bg-softamber-200 border-b-2 border-softamber-300 flex items-center justify-center text-[10px] font-extrabold text-amber-900 tracking-wider">
+              TUTUP ISOLATOR STYROFOAM
+            </div>
+            
+            <!-- Batang Pengaduk Kaca -->
+            <div id="labStirrer" class="absolute top-7 left-12 w-2 h-44 bg-slate-400/70 rounded-b-full shadow"></div>
+            
+            <!-- Tabung Termometer Raksa -->
+            <div class="absolute top-5 right-10 w-4 h-52 bg-white border border-slate-300 rounded-full flex flex-col justify-end p-0.5 shadow-inner">
+              <div id="labMercury" class="w-full bg-rosepink-500 rounded-b-full transition-all duration-700" style="height: 35%;"></div>
+            </div>
+
+            <!-- Cairan Larutan Interaktif -->
+            <div id="labWater" class="w-full h-36 bg-sky-200/60 rounded-b-2xl transition-colors duration-500 flex items-center justify-center relative">
+              <span id="labBubbles" class="hidden text-2xl animate-bounce">🫧</span>
+            </div>
+          </div>
+
+          <!-- Digital Readout Gauge Panel (Pastel) -->
+          <div class="flex flex-col gap-3 w-full sm:w-52 text-left">
+            <div class="bg-gradient-to-br from-genzlavender-100 via-rosepink-50 to-softamber-100 text-slate-900 p-4 rounded-2xl shadow-sm border-2 border-genzlavender-200">
+              <div class="text-[10px] text-purple-700 font-extrabold uppercase tracking-wider">Suhu Larutan ($T_2$)</div>
+              <div id="labT2Val" class="font-display font-extrabold text-3xl text-rosepink-600 mt-1">25.0 °C</div>
+              <div id="labDeltaTVal" class="text-xs font-mono text-teal-700 font-bold mt-1">$$\Delta T = 0{,}0\text{ }^\circ\text{C}$$</div>
+            </div>
+
+            <div id="labBadgeSifat" class="text-xs font-bold px-3 py-2.5 rounded-xl bg-white text-slate-600 text-center border-2 border-slate-200 shadow-sm">
+              Menunggu Pencampuran...
+            </div>
+          </div>
+        </div>
+
+        <div id="labStatus" class="mt-6 font-display font-bold text-base md:text-lg text-slate-600">
+          Atur parameter reaksi di panel kiri lalu tekan "Mulai Reaksi Kalorimeter".
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ MODUL 5: LKPD PRAKTIKUM KALORIMETRI LENGKAP DENGAN LANGKAH KERJA ══════════ -->
+<section id="lkpd" class="max-w-5xl mx-auto px-4 py-16">
+  <div class="text-center mb-10 no-print">
+    <span class="text-amber-800 font-extrabold text-xs uppercase tracking-widest bg-softamber-200 border border-softamber-300 px-3.5 py-1 rounded-full">MODUL 5</span>
+    <h2 class="font-display font-extrabold text-3xl md:text-4xl text-slate-900 mt-2.5 mb-3">
+      LKPD Praktikum Kalorimetri &amp; Penentuan $\Delta H$
+    </h2>
+    <p class="text-slate-600 max-w-2xl mx-auto text-sm">
+      Lembar Kerja Peserta Didik (LKPD) praktikum kalorimeter sederhana lengkap dengan daftar alat &amp; bahan, langkah-langkah prosedur praktikum, tabel data pengamatan otomatis, perhitungan terstruktur, dan pengiriman ke Telegram Guru.
+    </p>
+  </div>
+
+  <div class="bg-white rounded-3xl shadow-xl border-2 border-rosepink-200 overflow-hidden">
+    <!-- Header LKPD (Bright Gen Z Pastel Gradient) -->
+    <div class="bg-gradient-to-r from-rosepink-200 via-genzlavender-200 to-softamber-200 text-slate-900 px-6 md:px-10 py-6 border-b-2 border-rosepink-200">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h3 class="font-display font-extrabold text-xl md:text-2xl text-slate-900">LEMBAR KERJA PESERTA DIDIK (LKPD) PRAKTIKUM</h3>
+        <span class="text-xs font-extrabold bg-white/90 text-purple-800 px-3 py-1 rounded-full shadow-sm">PRAKTIKUM KALORIMETRI FASE F</span>
+      </div>
+      <p class="text-slate-700 font-medium text-xs sm:text-sm mt-1">Judul Praktikum: Penentuan Perubahan Entalpi Pelarutan ($\Delta H^\circ_s$) &amp; Penetralan ($\Delta H^\circ_n$) dengan Kalorimeter Sederhana</p>
+
+      <div class="grid sm:grid-cols-3 gap-3 mt-4 no-print">
+        <input id="lkpdNama" placeholder="Nama Lengkap Siswa / Kelompok" class="rounded-xl px-3.5 py-2 text-slate-800 text-xs sm:text-sm font-semibold focus:outline-none shadow-sm bg-white/95 border border-white">
+        <input id="lkpdKelas" placeholder="Kelas (misal: XI-MIPA 1)" class="rounded-xl px-3.5 py-2 text-slate-800 text-xs sm:text-sm font-semibold focus:outline-none shadow-sm bg-white/95 border border-white">
+        <input id="lkpdTanggal" type="date" class="rounded-xl px-3.5 py-2 text-slate-800 text-xs sm:text-sm font-semibold focus:outline-none shadow-sm bg-white/95 border border-white">
+      </div>
+
+      <p class="text-slate-800 text-xs sm:text-sm mt-3 print:block hidden">
+        Nama: <span id="lkpdNamaPrint" class="font-bold underline"></span> &nbsp;•&nbsp;
+        Kelas: <span id="lkpdKelasPrint" class="font-bold underline"></span> &nbsp;•&nbsp;
+        Tanggal: <span id="lkpdTanggalPrint" class="font-bold underline"></span>
+      </p>
+    </div>
+
+    <!-- Konten LKPD Lengkap -->
+    <div class="px-6 md:px-10 py-8 space-y-8">
+      <!-- Bagian A: Tujuan Praktikum -->
+      <div>
+        <div class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <span class="bg-gradient-to-r from-rosepink-500 to-purple-500 text-white rounded-lg px-2.5 py-0.5 text-xs font-bold">A</span>
+          Tujuan Praktikum Kalorimetri
+        </div>
+        <ol class="list-decimal ml-6 text-xs sm:text-sm text-slate-700 space-y-1">
+          <li>Merangkai dan mengoperasikan alat kalorimeter cangkir styrofoam sederhana sebagai pendekatan sistem terisolasi.</li>
+          <li>Mengukur perubahan suhu ($\Delta T = T_2 - T_1$) pada proses pelarutan zat eksoterm ($\ce{NaOH}$ / $\ce{CaO}$) dan endoterm ($\ce{CO(NH2)2}$ / $\ce{NH4NO3}$).</li>
+          <li>Menghitung kalor yang diserap/dilepas larutan ($q_{\text{larutan}} = m \cdot c \cdot \Delta T$) serta menentukan nilai perubahan entalpi molar ($\Delta H = -q_{\text{larutan}} / n$).</li>
+        </ol>
+      </div>
+
+      <!-- Bagian B: Alat dan Bahan Praktikum -->
+      <div>
+        <div class="font-bold text-slate-900 mb-3 flex items-center gap-2">
+          <span class="bg-gradient-to-r from-rosepink-500 to-purple-500 text-white rounded-lg px-2.5 py-0.5 text-xs font-bold">B</span>
+          Alat dan Bahan Praktikum
+        </div>
+        <div class="grid md:grid-cols-2 gap-4 text-xs sm:text-sm">
+          <div class="bg-rosepink-50/70 border border-rosepink-200 rounded-2xl p-4">
+            <h4 class="font-extrabold text-rosepink-900 mb-2 flex items-center gap-1.5">
+              <i class="fa-solid fa-screwdriver-wrench text-rosepink-500"></i> Daftar Alat Laboratorium:
+            </h4>
+            <ul class="list-disc ml-5 space-y-1 text-slate-700">
+              <li>1 set Kalorimeter sederhana (atau 2 buah gelas styrofoam rangkap bertutup gabus).</li>
+              <li>1 buah Termometer alkohol/air raksa skala $-10^\circ\text{C}$ s.d. $110^\circ\text{C}$.</li>
+              <li>1 buah Batang pengaduk kaca berujung cincin.</li>
+              <li>1 buah Gelas ukur $100\text{ mL}$ dan Neraca analitik digital.</li>
+              <li>Spatula kaca, kaca arloji, dan stopwatch.</li>
+            </ul>
+          </div>
+          <div class="bg-softamber-50/80 border border-softamber-300 rounded-2xl p-4">
+            <h4 class="font-extrabold text-amber-900 mb-2 flex items-center gap-1.5">
+              <i class="fa-solid fa-vials text-amber-600"></i> Daftar Bahan Kimia:
+            </h4>
+            <ul class="list-disc ml-5 space-y-1 text-slate-700">
+              <li>Akuades ($\ce{H2O(l)}$) sebanyak $100\text{ mL}$ ($\rho = 1\text{ g/mL}, c = 4{,}18\text{ J/g}^\circ\text{C}$) untuk tiap percobaan.</li>
+              <li>Padatan kristal Natrium Hidroksida ($\ce{NaOH(s)}$, $M_r = 40\text{ g/mol}$) sebanyak $4{,}0\text{ gram}$.</li>
+              <li>Padatan butiran Urea ($\ce{CO(NH2)2(s)}$, $M_r = 60\text{ g/mol}$) sebanyak $6{,}0\text{ gram}$ atau $\ce{NH4NO3(s)}$ ($M_r = 80$).</li>
+              <li>Larutan $\ce{HCl}\ 1\text{ M}$ ($50\text{ mL}$) dan $\ce{NaOH}\ 1\text{ M}$ ($50\text{ mL}$) untuk uji penetralan opsional.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bagian C: Langkah-Langkah Prosedur Praktikum Kalorimetri -->
+      <div>
+        <div class="font-bold text-slate-900 mb-3 flex items-center gap-2">
+          <span class="bg-gradient-to-r from-rosepink-500 to-purple-500 text-white rounded-lg px-2.5 py-0.5 text-xs font-bold">C</span>
+          Prosedur &amp; Langkah-Langkah Kerja Praktikum Kalorimetri
+        </div>
+        <div class="bg-genzlavender-50/50 border border-genzlavender-200 rounded-2xl p-4 sm:p-5 space-y-4 text-xs sm:text-sm">
+          <div>
+            <span class="inline-block bg-rosepink-500 text-white font-extrabold text-[11px] px-2.5 py-0.5 rounded-md mb-1.5">
+              TAHAP 1: PERCOBAAN REAKSI EKSOTERM (PELARUTAN PADATAN $\ce{NaOH}$)
+            </span>
+            <ol class="list-decimal ml-5 space-y-1.5 text-slate-700">
+              <li>Siapkan cangkir kalorimeter styrofoam yang bersih dan kering. Ukur tepat $100\text{ mL}$ akuades ($m_{\text{air}} = 100\text{ g}$) menggunakan gelas ukur, lalu tuangkan ke dalam kalorimeter.</li>
+              <li>Masukkan termometer ke dalam air di kalorimeter, diamkan selama 2 menit hingga stabil, kemudian catat <strong>Suhu Awal ($T_1$)</strong> pada tabel pengamatan.</li>
+              <li>Timbang dengan cepat $4{,}0\text{ gram}$ kristal $\ce{NaOH}$ ($0{,}1\text{ mol}$) di atas kaca arloji menggunakan neraca analitik (<em>hati-hati: $\ce{NaOH}$ bersifat higroskopis dan korosif, gunakan spatula!</em>).</li>
+              <li>Masukkan seluruh kristal $\ce{NaOH}$ ke dalam kalorimeter berisi air, segera pasang penutup isolator styrofoam secara rapat, dan aduk perlahan secara konstan menggunakan batang pengaduk hingga seluruh padatan larut sempurna.</li>
+              <li>Amati pergerakan cairan termometer dan catat <strong>Suhu Tertinggi / Suhu Akhir Maksimum ($T_2$)</strong> yang dicapai larutan.</li>
+            </ol>
+          </div>
+
+          <div class="pt-3 border-t border-genzlavender-200">
+            <span class="inline-block bg-sky-500 text-white font-extrabold text-[11px] px-2.5 py-0.5 rounded-md mb-1.5">
+              TAHAP 2: PERCOBAAN REAKSI ENDOTERM (PELARUTAN UREA $\ce{CO(NH2)2}$ ATAU $\ce{NH4NO3}$)
+            </span>
+            <ol class="list-decimal ml-5 space-y-1.5 text-slate-700">
+              <li>Bilas bejana kalorimeter dengan akuades hingga bersih dan keringkan dengan tisu laboratorium.</li>
+              <li>Tuangkan kembali $100\text{ mL}$ akuades baru ($m_{\text{air}} = 100\text{ g}$) ke dalam kalorimeter dan ukur kembali <strong>Suhu Awal ($T_1$)</strong>.</li>
+              <li>Timbang $6{,}0\text{ gram}$ butiran urea $\ce{CO(NH2)2}$ (atau $4{,}0\text{ g}\ \ce{NH4NO3}$), masukkan ke dalam kalorimeter, lalu segera tutup rapat.</li>
+              <li>Aduk campuran secara merata hingga larut sempurna, perhatikan penurunan skala termometer, dan catat <strong>Suhu Terendah / Suhu Akhir Minimum ($T_2$)</strong> yang tercapai.</li>
+              <li>Lakukan simulasi kedua tahap di atas pada <strong>Modul 4 (Lab Virtual Kalorimeter)</strong> agar data angka otomatis terekam ke kolom di bawah ini!</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bagian D: Data Pengamatan Praktikum Kalorimeter -->
+      <div>
+        <div class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <span class="bg-gradient-to-r from-rosepink-500 to-purple-500 text-white rounded-lg px-2.5 py-0.5 text-xs font-bold">D</span>
+          Tabel &amp; Rekaman Data Pengamatan Praktikum Kalorimeter
+        </div>
+        <p class="text-xs text-slate-500 mb-3">
+          Hasil dari Modul 4 Lab Virtual akan <strong>tercatat secara otomatis</strong> setiap kali tombol reaksi dijalankan (juga dapat Anda isi/sunting manual sesuai data laboratorium nyata):
+        </p>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="border-2 border-dashed border-rosepink-300 rounded-2xl p-4 bg-rosepink-50/40">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-extrabold text-rosepink-700">DATA PERCOBAAN 1 (EKSOTERM)</span>
+              <span id="badgeP1" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-slate-600 border border-rosepink-200">Menunggu Lab</span>
+            </div>
+            <textarea id="lkpdPercobaan1" rows="4" placeholder="Data percobaan pertama (misal NaOH / CaO) otomatis terekam di sini..." class="w-full text-xs sm:text-sm border border-rosepink-200 rounded-xl p-3 focus:border-rosepink-400 focus:outline-none bg-white font-mono"></textarea>
+          </div>
+
+          <div class="border-2 border-dashed border-sky-300 rounded-2xl p-4 bg-sky-50/40">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-extrabold text-sky-700">DATA PERCOBAAN 2 (ENDOTERM)</span>
+              <span id="badgeP2" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white text-slate-600 border border-sky-200">Menunggu Lab</span>
+            </div>
+            <textarea id="lkpdPercobaan2" rows="4" placeholder="Data percobaan kedua (misal Urea / NH₄NO₃) otomatis terekam di sini..." class="w-full text-xs sm:text-sm border border-sky-200 rounded-xl p-3 focus:border-sky-400 focus:outline-none bg-white font-mono"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bagian E: Analisis Data & Perhitungan Kalorimetri -->
+      <div>
+        <div class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <span class="bg-gradient-to-r from-rosepink-500 to-purple-500 text-white rounded-lg px-2.5 py-0.5 text-xs font-bold">E</span>
+          Pengolahan Data, Perhitungan $\Delta H$, dan Pertanyaan Diskusi
+        </div>
+        <div class="space-y-4">
+          <div>
+            <p class="text-xs sm:text-sm font-semibold text-slate-800 mb-1">
+              1. Tuliskan langkah perhitungan lengkap nilai $q_{\text{larutan}} = m_{\text{total}} \cdot c \cdot \Delta T$, nilai $q_{\text{reaksi}} = -q_{\text{larutan}}$, serta perubahan entalpi molar ($\Delta H = q_{\text{reaksi}} / n$) untuk <strong>Percobaan 1</strong> dan <strong>Percobaan 2</strong> beserta persamaan termokimianya!
+            </p>
+            <textarea id="lkpdJawab1" rows="3" class="w-full text-xs sm:text-sm border-2 border-slate-100 rounded-xl p-3 focus:border-purple-400 focus:outline-none" placeholder="Tuliskan perhitungan q_larutan, mol zat (n), dan ΔH untuk Percobaan 1 & 2..."></textarea>
+          </div>
+
+          <div>
+            <p class="text-xs sm:text-sm font-semibold text-slate-800 mb-1">
+              2. Mengapa pada praktikum kalorimetri digunakan wadah berbahan styrofoam berlapis ganda dan harus segera ditutup rapat selama pengadukan? Jelaskan sumber kesalahan (*error*) yang mungkin terjadi jika penutup kalorimeter dibiarkan terbuka!
+            </p>
+            <textarea id="lkpdJawab2" rows="3" class="w-full text-xs sm:text-sm border-2 border-slate-100 rounded-xl p-3 focus:border-purple-400 focus:outline-none" placeholder="Analisis fungsi isolator styrofoam dan potensi kebocoran kalor ke lingkungan..."></textarea>
+          </div>
+
+          <div>
+            <p class="text-xs sm:text-sm font-semibold text-slate-800 mb-1">
+              3. Diketahui $\Delta H^\circ_f\ \ce{CO2(g)} = -393{,}5\text{ kJ/mol}$, $\Delta H^\circ_f\ \ce{H2O(l)} = -285{,}8\text{ kJ/mol}$, dan $\Delta H^\circ_f\ \ce{C2H6(g)} = -84{,}7\text{ kJ/mol}$. Tuliskan persamaan termokimia pembakaran sempurna 1 mol gas etana ($\ce{C2H6}$) dan hitung nilai $\Delta H^\circ_c$-nya!
+            </p>
+            <textarea id="lkpdJawab3" rows="3" class="w-full text-xs sm:text-sm border-2 border-slate-100 rounded-xl p-3 focus:border-purple-400 focus:outline-none" placeholder="Langkah perhitungan Hukum Hess pembakaran C₂H₆..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bagian F: Kesimpulan -->
+      <div>
+        <div class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <span class="bg-gradient-to-r from-rosepink-500 to-purple-500 text-white rounded-lg px-2.5 py-0.5 text-xs font-bold">F</span>
+          Kesimpulan Praktikum &amp; Pembelajaran
+        </div>
+        <textarea id="lkpdKesimpulan" rows="3" placeholder="Tuliskan kesimpulan menyeluruh mengenai hubungan perubahan suhu (ΔT) pada kalorimeter, arah perpindahan kalor sistem-lingkungan, serta tanda (±) nilai ΔH..." class="w-full text-xs sm:text-sm border-2 border-slate-100 rounded-xl p-3 focus:border-purple-400 focus:outline-none"></textarea>
+      </div>
+    </div>
+
+    <!-- Tombol Aksi LKPD -->
+    <div class="no-print bg-rosepink-50/60 border-t border-rosepink-100 px-6 md:px-10 py-5 flex flex-wrap gap-3 justify-center items-center">
+      <button onclick="siapkanCetak()" class="bg-gradient-to-r from-rosepink-500 to-purple-500 hover:brightness-105 active:scale-95 text-white font-bold px-6 py-2.5 rounded-full transition shadow-md flex items-center gap-2">
+        <i class="fa-solid fa-print"></i> Cetak / Simpan PDF
+      </button>
+      <button onclick="kirimLkpdKeTelegram()" class="bg-sky-500 hover:bg-sky-400 active:scale-95 text-white font-bold px-6 py-2.5 rounded-full transition shadow-md flex items-center gap-2">
+        <i class="fa-brands fa-telegram text-white"></i> Kirim LKPD ke Telegram Guru
+      </button>
+      <button onclick="unduhHTML()" class="bg-softamber-300 hover:bg-softamber-200 active:scale-95 text-slate-900 font-extrabold px-6 py-2.5 rounded-full transition shadow-sm border border-softamber-400 flex items-center gap-2">
+        <i class="fa-solid fa-download text-amber-800"></i> Unduh File HTML
+      </button>
+      <div id="lkpdTgStatus" class="w-full text-center text-xs min-h-[1.25rem] mt-1 font-semibold"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ MODUL 6: KUIS 25 SOAL (BRIGHT GEN Z PASTEL SECTION) ══════════ -->
+<section id="kuis" class="bg-gradient-to-br from-genzlavender-100/80 via-rosepink-100/70 to-softamber-100/80 py-16 text-slate-800 border-t-2 border-white">
+  <div class="max-w-5xl mx-auto px-4">
+    <div class="text-center mb-10">
+      <span class="text-purple-800 font-extrabold text-xs uppercase tracking-widest bg-white/90 border border-genzlavender-300 px-3.5 py-1 rounded-full shadow-sm">MODUL 6</span>
+      <h2 class="font-display font-extrabold text-3xl md:text-4xl mt-3 mb-3 text-slate-900">
+        Kuis Evaluasi Termokimia (25 Soal)
+      </h2>
+      <p class="text-slate-700 max-w-2xl mx-auto text-sm font-medium">
+        Uji komprehensif konsep termokimia mencakup kalorimetri, Hukum Hess, entalpi standar, dan energi ikatan dengan rendering KaTeX presisi.
+      </p>
+    </div>
+
+    <!-- Layar Awal Kuis -->
+    <div id="kuisStart" class="bg-white/95 text-slate-800 rounded-3xl shadow-xl border-2 border-genzlavender-200 p-8 md:p-12 text-center card-modern">
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-rosepink-200 to-softamber-200 text-rosepink-600 text-3xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+        <i class="fa-solid fa-fire"></i>
+      </div>
+      <h3 class="font-display font-bold text-2xl text-slate-900 mb-2">Siap Menguji Penguasaan Termokimia?</h3>
+      <p class="text-slate-600 text-xs sm:text-sm mb-6 max-w-md mx-auto">
+        Tersedia 25 butir soal pilihan ganda berstandar kurikulum nasional lengkap dengan pembahasan ilmiah mendalam. Hasil evaluasi otomatis tersinkronisasi ke bot Telegram (@XIIchemist_bot).
+      </p>
+
+      <div class="grid sm:grid-cols-2 gap-3 max-w-md mx-auto mb-6 text-left">
+        <input id="kuisNama" placeholder="Nama Lengkap Siswa" class="border-2 border-rosepink-100 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-semibold focus:border-rosepink-400 focus:outline-none">
+        <input id="kuisKelas" placeholder="Kelas (misal: XI-1)" class="border-2 border-rosepink-100 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-semibold focus:border-rosepink-400 focus:outline-none">
+      </div>
+
+      <button onclick="mulaiKuis()" class="bg-gradient-to-r from-rosepink-500 via-purple-500 to-sky-500 hover:brightness-105 active:scale-95 text-white font-extrabold px-10 py-3.5 rounded-full transition text-base shadow-lg shadow-purple-300/50">
+        <i class="fa-solid fa-play mr-2"></i> Mulai Ujian Sekarang
+      </button>
+    </div>
+
+    <!-- Layar Utama Pengerjaan Soal -->
+    <div id="kuisMain" class="hidden">
+      <div class="bg-white/95 text-slate-800 rounded-3xl shadow-xl border-2 border-genzlavender-200 p-6 md:p-8 card-modern">
+        <div class="flex flex-wrap justify-between items-center gap-2 mb-4 pb-3 border-b border-rosepink-100">
+          <div id="kuisNo" class="font-display font-bold text-slate-900 text-lg">Soal 1 / 25</div>
+          <div id="kuisProgress" class="text-xs font-bold text-purple-800 bg-genzlavender-100 rounded-full px-3.5 py-1.5 font-mono">
+            0 / 25 terjawab
+          </div>
+        </div>
+
+        <div id="kuisTanya" class="font-semibold text-slate-800 mb-6 leading-relaxed text-sm sm:text-base"></div>
+        <div id="kuisOpsi" class="space-y-3 mb-6"></div>
+
+        <div class="flex justify-between items-center pt-2">
+          <button id="btnKuisPrev" onclick="kuisIdx--;tampilSoal()" class="bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 font-bold px-5 py-2.5 rounded-xl transition text-xs sm:text-sm">
+            <i class="fa-solid fa-chevron-left mr-1.5"></i>Sebelumnya
+          </button>
+          <button onclick="kuisIdx=Math.min(KUIS.length-1,kuisIdx+1);tampilSoal()" class="bg-gradient-to-r from-rosepink-500 to-purple-500 hover:brightness-105 active:scale-95 text-white font-bold px-5 py-2.5 rounded-xl transition text-xs sm:text-sm shadow">
+            Berikutnya<i class="fa-solid fa-chevron-right ml-1.5"></i>
+          </button>
+        </div>
+
+        <!-- Kisi Nomor Soal -->
+        <div class="mt-8 pt-6 border-t border-rosepink-100">
+          <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2.5">NAVIGASI NOMOR SOAL:</div>
+          <div id="kuisNav" class="flex flex-wrap gap-2 mb-6"></div>
+          
+          <button onclick="selesaiKuis()" class="w-full bg-gradient-to-r from-rosepink-500 via-purple-500 to-teal-500 hover:brightness-105 active:scale-95 text-white font-extrabold py-3.5 rounded-2xl transition shadow-lg flex items-center justify-center gap-2">
+            <i class="fa-solid fa-flag-checkered"></i> Selesaikan Kuis &amp; Tampilkan Skor
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layar Hasil Rekapitulasi & Pembahasan -->
+    <div id="kuisHasil" class="hidden">
+      <div class="bg-white text-slate-800 rounded-3xl shadow-xl border-2 border-genzlavender-200 overflow-hidden card-modern">
+        <div class="bg-gradient-to-r from-rosepink-200 via-genzlavender-200 to-genzmint-200 text-slate-900 text-center px-6 py-10 border-b-2 border-white">
+          <div id="kuisSkor" class="font-display font-extrabold text-6xl text-rosepink-600 mb-1">0</div>
+          <div id="kuisPredikat" class="inline-block bg-white/85 text-purple-900 rounded-full px-5 py-1 font-extrabold text-sm mb-2 shadow-sm">-</div>
+          <div class="text-slate-700 font-semibold text-xs sm:text-sm">Hasil Akhir: <span id="kuisBenar">0</span> dari 25 butir soal terjawab benar</div>
+          <div id="tgStatus" class="mt-3 text-xs sm:text-sm min-h-6 font-bold"></div>
+
+          <div class="mt-5 flex flex-wrap justify-center gap-3 no-print">
+            <button onclick="window.print()" class="bg-white/90 hover:bg-white border border-purple-200 text-slate-800 font-bold px-5 py-2.5 rounded-full text-xs sm:text-sm transition shadow-sm">
+              <i class="fa-solid fa-print mr-1.5 text-rosepink-600"></i>Cetak Rekap Nilai
+            </button>
+            <button onclick="kirimUlangTg()" class="bg-white/90 hover:bg-white border border-sky-200 text-slate-800 font-bold px-5 py-2.5 rounded-full text-xs sm:text-sm transition shadow-sm">
+              <i class="fa-brands fa-telegram mr-1.5 text-sky-500"></i>Kirimkan ke Telegram
+            </button>
+            <button onclick="mulaiKuis()" class="bg-gradient-to-r from-rosepink-500 to-purple-500 hover:brightness-105 text-white font-extrabold px-5 py-2.5 rounded-full text-xs sm:text-sm transition shadow">
+              <i class="fa-solid fa-rotate-right mr-1.5"></i>Ulangi Kuis
+            </button>
+          </div>
+        </div>
+
+        <div class="p-6 md:p-8">
+          <h3 class="font-display font-bold text-xl text-slate-900 mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-book-open-reader text-rosepink-500"></i>
+            Pembahasan Rinci Tiap Butir Soal
+          </h3>
+          <div id="kuisReview" class="space-y-4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FOOTER (BRIGHT GEN Z PASTEL FOOTER) ══════════ -->
+<footer class="bg-gradient-to-r from-rosepink-50 via-white to-genzmint-50 text-slate-600 border-t-2 border-rosepink-100">
+  <div class="max-w-7xl mx-auto px-4 py-12 text-center text-xs sm:text-sm">
+    <div class="font-display font-extrabold text-slate-900 text-lg mb-2 flex items-center justify-center gap-2">
+      <span class="w-7 h-7 rounded-lg bg-gradient-to-tr from-rosepink-400 to-purple-400 text-white flex items-center justify-center text-xs shadow-sm">
+        <i class="fa-solid fa-fire"></i>
+      </span>
+      Petualangan Termokimia Fase F
+    </div>
+    <p>Media Pembelajaran Interaktif Kimia SMA Kelas XI Berbasis Kurikulum Merdeka</p>
+    <p class="mt-1">Disusun oleh <strong class="text-slate-900">Ayu Desi Yanita, S.Pd.</strong> — SMAS Muhammadiyah Kasongan</p>
+
+    <button onclick="unduhHTML()" class="no-print mt-6 bg-gradient-to-r from-softamber-200 via-rosepink-200 to-genzlavender-200 hover:brightness-105 text-slate-900 font-extrabold px-6 py-2.5 rounded-full transition text-xs sm:text-sm shadow-sm border border-rosepink-200">
+      <i class="fa-solid fa-download mr-1.5 text-rosepink-600"></i> Unduh File Pembelajaran HTML Utuh
+    </button>
+  </div>
+</footer>
+
+<!-- ══════════ JAVASCRIPT ENGINE ══════════ -->
+<script>
+/* ═════════ KONFIGURASI TELEGRAM ═════════ */
+const TG_CONFIG = {
+  token: '8859774121:AAH9kkV1c9MDnGRSkLrZB8zs2GikOSOPE4I',
+  chat_id: '882416188',
+  bot_user: '@XIIchemist_bot'
+};
+
+async function kirimPesanTelegram(pesan){
+  const url = `https://api.telegram.org/bot${TG_CONFIG.token}/sendMessage`;
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: TG_CONFIG.chat_id, text: pesan, parse_mode: 'HTML' })
+    });
+    const data = await res.json();
+    if(data.ok) return { ok: true, msg: 'Terkirim ke Telegram!' };
+    return { ok: false, msg: 'Gagal kirim: ' + (data.description || 'Respon tidak valid.') };
+  } catch(err){
+    return { ok: false, msg: 'Koneksi gagal: ' + err.message };
+  }
+}
+
+/* ═════════ HELPER FUNCTIONS & KAMUS FILTER ═════════ */
+function fmtNum(n, d=2){
+  if(!isFinite(n)) return '—';
+  return Number(n).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: d });
+}
+
+function hasilBox(id, html){
+  const el = document.getElementById(id);
+  el.innerHTML = '<div class="fade-in bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-sm">' + html + '</div>';
+  renderMath(el);
+}
+
+function renderMath(targetEl = document.body){
+  if(window.renderMathInElement){
+    renderMathInElement(targetEl, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      throwOnError: false
+    });
+  }
+}
+
+function bukaTab(id, btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.add('hidden'));
+  const target = document.getElementById(id);
+  target.classList.remove('hidden');
+  document.querySelectorAll('.tab-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMath(target);
+}
+
+function filterKamus(){
+  const q = (document.getElementById('cariKamus').value || '').toLowerCase();
+  document.querySelectorAll('.kamus-item').forEach(card => {
+    const txt = card.textContent.toLowerCase();
+    card.style.display = txt.includes(q) ? '' : 'none';
+  });
+}
+
+/* ═════════ KALKULATOR TERMOKIMIA ═════════ */
+function hitungKalorimetri(){
+  const m = parseFloat(document.getElementById('k1m').value);
+  const c = parseFloat(document.getElementById('k1c').value);
+  const t1 = parseFloat(document.getElementById('k1t1').value);
+  const t2 = parseFloat(document.getElementById('k1t2').value);
+  const n = parseFloat(document.getElementById('k1n').value);
+
+  if(!(m>0) || !(c>0) || !(n>0) || isNaN(t1) || isNaN(t2)){
+    hasilBox('h1', '<span class="text-rose-600 font-bold">Harap masukkan angka parameter yang valid.</span>');
+    return;
+  }
+
+  const dt = t2 - t1;
+  const qLarutan = m * c * dt; // Joule
+  const qReaksi = -qLarutan;   // Wadah terisolasi
+  const deltaH_kJ = (qReaksi / 1000) / n; // kJ/mol
+  const sifat = deltaH_kJ < 0 ? 'Eksoterm (Melepas Kalor ke Lingkungan)' : 'Endoterm (Menyerap Kalor dari Lingkungan)';
+  const badgeCls = deltaH_kJ < 0 ? 'text-rose-700' : 'text-sky-700';
+
+  hasilBox('h1',
+    '<div class="text-[11px] font-bold text-slate-500 mb-2 uppercase">Langkah Perhitungan Kalorimetri:</div>'+
+    '<div class="font-mono text-xs leading-relaxed space-y-1">'+
+    '$$\\Delta T = T_2 - T_1 = ' + t2 + ' - ' + t1 + ' = ' + fmtNum(dt) + '^\\circ\\text{C}$$' +
+    '$$q_{\\text{larutan}} = m \\cdot c \\cdot \\Delta T = ' + m + ' \\times ' + c + ' \\times ' + fmtNum(dt) + ' = ' + fmtNum(qLarutan) + '\\text{ J}$$' +
+    '$$q_{\\text{reaksi}} = -q_{\\text{larutan}} = ' + fmtNum(qReaksi) + '\\text{ J} = ' + fmtNum(qReaksi/1000, 3) + '\\text{ kJ}$$' +
+    '$$\\Delta H = \\frac{q_{\\text{reaksi}}}{n} = \\frac{' + fmtNum(qReaksi/1000, 3) + '\\text{ kJ}}{' + n + '\\text{ mol}} = ' + fmtNum(deltaH_kJ, 2) + '\\text{ kJ/mol}$$' +
+    '</div>'+
+    '<div class="mt-3 text-sm font-extrabold ' + badgeCls + '">$$\\Delta H = ' + fmtNum(deltaH_kJ, 2) + '\\text{ kJ/mol} \\quad (\\text{' + sifat + '})$$</div>'
+  );
+}
+
+function pilihContohHf(){
+  const p = document.getElementById('k2Pilih').value;
+  if(p === 'metana'){
+    document.getElementById('k2Prod').value = -965.1;
+    document.getElementById('k2Reak').value = -74.8;
+  } else if(p === 'etanol'){
+    document.getElementById('k2Prod').value = -1644.4;
+    document.getElementById('k2Reak').value = -277.7;
+  }
+}
+
+function hitungHf(){
+  const p = parseFloat(document.getElementById('k2Prod').value);
+  const r = parseFloat(document.getElementById('k2Reak').value);
+  if(isNaN(p) || isNaN(r)){
+    hasilBox('h2', '<span class="text-rose-600 font-bold">Masukkan nilai entalpi produk dan reaktan.</span>');
+    return;
+  }
+  const dh = p - r;
+  const sifat = dh < 0 ? 'Eksoterm' : 'Endoterm';
+  const badgeCls = dh < 0 ? 'text-rose-700' : 'text-sky-700';
+
+  hasilBox('h2',
+    '<div class="text-[11px] font-bold text-slate-500 mb-2 uppercase">Langkah Perhitungan Hukum Hess:</div>'+
+    '<div class="font-mono text-xs leading-relaxed space-y-1">'+
+    '$$\\Delta H_{\\text{reaksi}} = \\sum \\Delta H^\\circ_f(\\text{Produk}) - \\sum \\Delta H^\\circ_f(\\text{Reaktan})$$' +
+    '$$\\Delta H_{\\text{reaksi}} = (' + p + ') - (' + r + ') = ' + fmtNum(dh) + '\\text{ kJ/mol}$$' +
+    '</div>'+
+    '<div class="mt-3 text-sm font-extrabold ' + badgeCls + '">$$\\Delta H_{\\text{reaksi}} = ' + fmtNum(dh) + '\\text{ kJ/mol} \\quad (\\text{' + sifat + '})$$</div>'
+  );
+}
+
+function hitungEnergiIkatan(){
+  const putus = parseFloat(document.getElementById('k3Putus').value);
+  const bentuk = parseFloat(document.getElementById('k3Bentuk').value);
+  if(!(putus>0) || !(bentuk>0)){
+    hasilBox('h3', '<span class="text-rose-600 font-bold">Masukkan total energi pemutusan dan pembentukan yang valid.</span>');
+    return;
+  }
+  const dh = putus - bentuk;
+  const sifat = dh < 0 ? 'Eksoterm (Pembentukan > Pemutusan)' : 'Endoterm (Pemutusan > Pembentukan)';
+  const badgeCls = dh < 0 ? 'text-rose-700' : 'text-sky-700';
+
+  hasilBox('h3',
+    '<div class="text-[11px] font-bold text-slate-500 mb-2 uppercase">Langkah Perhitungan Energi Ikatan:</div>'+
+    '<div class="font-mono text-xs leading-relaxed space-y-1">'+
+    '$$\\Delta H_{\\text{reaksi}} = \\sum D(\\text{Pemutusan/Reaktan}) - \\sum D(\\text{Pembentukan/Produk})$$' +
+    '$$\\Delta H_{\\text{reaksi}} = ' + putus + ' - ' + bentuk + ' = ' + fmtNum(dh) + '\\text{ kJ}$$' +
+    '</div>'+
+    '<div class="mt-3 text-sm font-extrabold ' + badgeCls + '">$$\\Delta H = ' + fmtNum(dh) + '\\text{ kJ} \\quad (\\text{' + sifat + '})$$</div>'
+  );
+}
+
+function hitungBahanBakar(){
+  const m = parseFloat(document.getElementById('k4Massa').value);
+  const mr = parseFloat(document.getElementById('k4Mr').value);
+  const dhc = parseFloat(document.getElementById('k4Dhc').value);
+
+  if(!(m>0) || !(mr>0) || isNaN(dhc)){
+    hasilBox('h4', '<span class="text-rose-600 font-bold">Harap masukkan parameter yang valid.</span>');
+    return;
+  }
+
+  const mol = m / mr;
+  const qDilepas = Math.abs(mol * dhc);
+
+  hasilBox('h4',
+    '<div class="text-[11px] font-bold text-slate-500 mb-2 uppercase">Perhitungan Kalor Pembakaran:</div>'+
+    '<div class="font-mono text-xs leading-relaxed space-y-1">'+
+    '$$n = \\frac{m}{M_r} = \\frac{' + m + '}{' + mr + '} = ' + fmtNum(mol, 3) + '\\text{ mol}$$' +
+    '$$q_{\\text{dilepas}} = n \\times |\\Delta H^\\circ_c| = ' + fmtNum(mol, 3) + ' \\times ' + Math.abs(dhc) + ' = ' + fmtNum(qDilepas) + '\\text{ kJ}$$' +
+    '</div>'+
+    '<div class="mt-3 text-sm font-extrabold text-amber-700">$$\\text{Kalor Pembakaran Terbebas} = ' + fmtNum(qDilepas) + '\\text{ kJ}$$</div>'
+  );
+}
+
+/* ═════════ DIAGRAM TINGKAT ENERGI (CANVAS) ═════════ */
+function updateVisualisasi(){
+  const tipe = document.getElementById('vTipe').value;
+  const besar = parseFloat(document.getElementById('vBesar').value);
+  const teksDh = document.getElementById('vTeksDh');
+  const teksArah = document.getElementById('vTeksArah');
+  const deskripsi = document.getElementById('vDeskripsi');
+  const valSpan = document.getElementById('vBesarVal');
+
+  valSpan.textContent = besar + ' kJ/mol';
+
+  const cv = document.getElementById('energyCanvas');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Background grid halus
+  ctx.strokeStyle = '#f1f5f9';
+  ctx.lineWidth = 1;
+  for(let x = 40; x < W; x += 30){
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+  for(let y = 0; y < H; y += 30){
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+
+  // Sumbu Entalpi (H)
+  ctx.strokeStyle = '#64748b';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(50, H - 30);
+  ctx.lineTo(50, 25);
+  ctx.lineTo(44, 35);
+  ctx.moveTo(50, 25);
+  ctx.lineTo(56, 35);
+  ctx.stroke();
+
+  ctx.fillStyle = '#1e293b';
+  ctx.font = 'bold 13px Space Grotesk';
+  ctx.fillText('Entalpi (H)', 20, 20);
+
+  let yReaktan, yProduk, deltaH;
+  if(tipe === 'ekso'){
+    deltaH = -besar;
+    teksDh.innerHTML = '$$\\Delta H = -' + besar + '\\text{ kJ/mol}$$';
+    teksArah.textContent = 'Eksoterm: Kalor Dilepas (ΔH < 0)';
+    teksArah.className = 'text-xs font-bold px-3 py-1 rounded-full bg-rosepink-100 text-rosepink-800 border border-rosepink-300';
+    deskripsi.textContent = 'Tingkat entalpi produk lebih rendah daripada reaktan (H_produk < H_reaktan). Selisih kalor dilepaskan ke lingkungan sehingga suhu naik.';
+
+    yReaktan = 80;
+    yProduk = 80 + (besar / 300) * 140;
+  } else {
+    deltaH = besar;
+    teksDh.innerHTML = '$$\\Delta H = +' + besar + '\\text{ kJ/mol}$$';
+    teksArah.textContent = 'Endoterm: Kalor Diserap (ΔH > 0)';
+    teksArah.className = 'text-xs font-bold px-3 py-1 rounded-full bg-sky-100 text-sky-800 border border-sky-300';
+    deskripsi.textContent = 'Tingkat entalpi produk lebih tinggi daripada reaktan (H_produk > H_reaktan). Sistem menyerap kalor dari lingkungan sehingga suhu wadah turun.';
+
+    yReaktan = 220;
+    yProduk = 220 - (besar / 300) * 140;
+  }
+
+  renderMath(teksDh);
+
+  // Garis Reaktan
+  ctx.strokeStyle = '#e11d48';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(80, yReaktan);
+  ctx.lineTo(190, yReaktan);
+  ctx.stroke();
+
+  ctx.fillStyle = '#be123c';
+  ctx.font = 'bold 13px Plus Jakarta Sans';
+  ctx.fillText('Reaktan', 105, yReaktan - 10);
+
+  // Garis Produk
+  ctx.strokeStyle = '#0284c7';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(230, yProduk);
+  ctx.lineTo(340, yProduk);
+  ctx.stroke();
+
+  ctx.fillStyle = '#0369a1';
+  ctx.fillText('Produk', 260, yProduk - 10);
+
+  // Panah Vektor ΔH
+  ctx.strokeStyle = tipe === 'ekso' ? '#dc2626' : '#2563eb';
+  ctx.lineWidth = 2.5;
+  ctx.setLineDash([5, 4]);
+  ctx.beginPath();
+  ctx.moveTo(210, yReaktan);
+  ctx.lineTo(210, yProduk);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Kepala Panah
+  ctx.fillStyle = tipe === 'ekso' ? '#dc2626' : '#2563eb';
+  ctx.beginPath();
+  if(tipe === 'ekso'){
+    ctx.moveTo(210, yProduk);
+    ctx.lineTo(204, yProduk - 10);
+    ctx.lineTo(216, yProduk - 10);
+  } else {
+    ctx.moveTo(210, yProduk);
+    ctx.lineTo(204, yProduk + 10);
+    ctx.lineTo(216, yProduk + 10);
+  }
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = '#0f172a';
+  ctx.font = 'bold 12px Fira Code';
+  const labelText = (deltaH > 0 ? '+' : '') + besar + ' kJ';
+  ctx.fillText(labelText, 218, (yReaktan + yProduk) / 2 + 4);
+}
+
+/* ═════════ LAB VIRTUAL KALORIMETRI ═════════ */
+const DATA_LAB_BAHAN = {
+  naoh: {
+    nama: 'NaOH (Natrium Hidroksida)',
+    rumus: 'NaOH',
+    mr: 40,
+    deltaH_kJ_mol: -44.5,
+    sifat: 'Eksoterm',
+    warna: 'rgba(254, 205, 211, 0.7)'
+  },
+  urea: {
+    nama: 'CO(NH₂)₂ (Urea)',
+    rumus: 'CO(NH2)2',
+    mr: 60,
+    deltaH_kJ_mol: +15.3,
+    sifat: 'Endoterm',
+    warna: 'rgba(186, 230, 253, 0.7)'
+  },
+  nh4no3: {
+    nama: 'NH₄NO₃ (Amonium Nitrat)',
+    rumus: 'NH4NO3',
+    mr: 80,
+    deltaH_kJ_mol: +25.7,
+    sifat: 'Endoterm Kuat',
+    warna: 'rgba(224, 242, 254, 0.8)'
+  },
+  kalsium: {
+    nama: 'CaO (Kalsium Oksida)',
+    rumus: 'CaO',
+    mr: 56,
+    deltaH_kJ_mol: -65.2,
+    sifat: 'Eksoterm Kuat',
+    warna: 'rgba(254, 215, 170, 0.75)'
+  }
+};
+
+let labPercobaanKe = 0;
+
+function gantiBahanLab(){
+  const k = document.getElementById('labBahan').value;
+  const d = DATA_LAB_BAHAN[k];
+  document.getElementById('labMrVal').textContent = d.mr + ' g/mol';
+}
+
+function campurkanLabKalorimeter(){
+  const k = document.getElementById('labBahan').value;
+  const d = DATA_LAB_BAHAN[k];
+  const mAir = parseFloat(document.getElementById('labMassaAir').value) || 100;
+  const mZat = parseFloat(document.getElementById('labMassaZat').value) || 4;
+
+  const mol = mZat / d.mr;
+  const qReaksi_J = -(mol * d.deltaH_kJ_mol * 1000); // Joule
+  const mTotal = mAir + mZat;
+  const c = 4.18; // J/g·°C
+  const deltaT = qReaksi_J / (mTotal * c);
+
+  const t1 = 25.0;
+  const t2 = t1 + deltaT;
+
+  // Animasi Termometer & Wadah
+  const mercuryPct = Math.max(8, Math.min(94, 35 + deltaT * 3.6));
+  document.getElementById('labMercury').style.height = mercuryPct + '%';
+  document.getElementById('labWater').style.backgroundColor = d.warna;
+  document.getElementById('labBubbles').classList.remove('hidden');
+
+  document.getElementById('labT2Val').textContent = fmtNum(t2, 1) + ' °C';
+  document.getElementById('labDeltaTVal').innerHTML = '$$\\Delta T = ' + (deltaT >= 0 ? '+' : '') + fmtNum(deltaT, 2) + '^\\circ\\text{C}$$';
+  renderMath(document.getElementById('labDeltaTVal'));
+
+  const badge = document.getElementById('labBadgeSifat');
+  badge.textContent = d.sifat + ' (' + (deltaT >= 0 ? 'Suhu Naik' : 'Suhu Turun') + ')';
+  badge.className = deltaT >= 0
+    ? 'text-xs font-bold px-3 py-2 rounded-xl bg-rose-100 text-rose-700 text-center border border-rose-200'
+    : 'text-xs font-bold px-3 py-2 rounded-xl bg-sky-100 text-sky-700 text-center border border-sky-200';
+
+  const statusEl = document.getElementById('labStatus');
+  statusEl.innerHTML = deltaT >= 0
+    ? '<span class="text-rose-600 font-bold">🔥 Reaksi Eksoterm: Kalor dilepaskan dari pelarutan zat ke dalam medium air!</span>'
+    : '<span class="text-sky-600 font-bold">❄️ Reaksi Endoterm: Sistem menyerap kalor dari medium air sehingga suhu turun!</span>';
+
+  hasilBox('labHasil',
+    '<div class="font-mono text-xs leading-relaxed space-y-1">'+
+    'Senyawa: <strong>' + d.nama + '</strong> (' + mZat + ' g / ' + d.mr + ' g/mol = ' + fmtNum(mol, 3) + ' mol)<br>'+
+    'Massa total campuran = ' + mTotal + ' g | Suhu: 25,0 °C ➔ ' + fmtNum(t2, 1) + ' °C (ΔT = ' + fmtNum(deltaT, 2) + ' °C)<br>'+
+    '$$q_{\\text{larutan}} = ' + mTotal + ' \\times 4{,}18 \\times ' + fmtNum(deltaT, 2) + ' = ' + fmtNum(mTotal*c*deltaT) + '\\text{ J}$$' +
+    '$$\\Delta H_{\\text{pelarutan}} = \\frac{-q_{\\text{larutan}}}{n} = ' + fmtNum(d.deltaH_kJ_mol, 1) + '\\text{ kJ/mol}$$' +
+    '</div>'
+  );
+
+  catatHasilKalorimeter({
+    nama: d.nama,
+    mZat: mZat + ' g',
+    mAir: mAir + ' g',
+    mol: fmtNum(mol, 3) + ' mol',
+    qLar: fmtNum(mTotal*c*deltaT) + ' J',
+    t1: '25,0 °C',
+    t2: fmtNum(t2, 1) + ' °C',
+    dt: fmtNum(deltaT, 2) + ' °C',
+    sifat: d.sifat,
+    dh: fmtNum(d.deltaH_kJ_mol, 1) + ' kJ/mol',
+    isEkso: deltaT >= 0
+  });
+}
+
+function catatHasilKalorimeter(data){
+  labPercobaanKe++;
+  const ringkasan = `• Bahan Uji: ${data.nama} (${data.mol})\n` +
+    `• Massa: Zat (${data.mZat}) + Air (${data.mAir})\n` +
+    `• Suhu: T1 = ${data.t1} ➔ T2 = ${data.t2} (ΔT = ${data.dt})\n` +
+    `• Kalor Larutan (q) = ${data.qLar} | Sifat: ${data.sifat} | ΔH = ${data.dh}`;
+
+  const p1 = document.getElementById('lkpdPercobaan1');
+  const p2 = document.getElementById('lkpdPercobaan2');
+  const b1 = document.getElementById('badgeP1');
+  const b2 = document.getElementById('badgeP2');
+
+  if(data.isEkso || (!p1.value.trim() && labPercobaanKe === 1)){
+    p1.value = ringkasan;
+    if(b1){ b1.textContent = 'Terisi Otomatis ✓'; b1.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700'; }
+  } else {
+    p2.value = ringkasan;
+    if(b2){ b2.textContent = 'Terisi Otomatis ✓'; b2.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700'; }
+  }
+
+  const notif = document.getElementById('labLkpdNotif');
+  if(notif){
+    notif.classList.remove('hidden');
+    clearTimeout(window._notifTimer);
+    window._notifTimer = setTimeout(()=>{ notif.classList.add('hidden'); }, 4000);
+  }
+}
+
+function resetLabKalorimeter(){
+  document.getElementById('labMercury').style.height = '35%';
+  document.getElementById('labWater').style.backgroundColor = 'rgba(224, 242, 254, 0.6)';
+  document.getElementById('labBubbles').classList.add('hidden');
+  document.getElementById('labT2Val').textContent = '25.0 °C';
+  document.getElementById('labDeltaTVal').innerHTML = '$$\\Delta T = 0{,}0\\text{ }^\\circ\\text{C}$$';
+  renderMath(document.getElementById('labDeltaTVal'));
+  document.getElementById('labBadgeSifat').textContent = 'Menunggu Pencampuran...';
+  document.getElementById('labBadgeSifat').className = 'text-xs font-bold px-3 py-2 rounded-xl bg-slate-100 text-slate-600 text-center border border-slate-200';
+  document.getElementById('labHasil').innerHTML = '';
+  document.getElementById('labStatus').textContent = 'Kalorimeter siap digunakan.';
+}
+
+/* ═════════ LKPD REPORT & TELEGRAM ═════════ */
+function siapkanCetak(){
+  document.getElementById('lkpdNamaPrint').textContent = document.getElementById('lkpdNama').value || '................';
+  document.getElementById('lkpdKelasPrint').textContent = document.getElementById('lkpdKelas').value || '................';
+  document.getElementById('lkpdTanggalPrint').textContent = document.getElementById('lkpdTanggal').value || '................';
+  window.print();
+}
+
+async function kirimLkpdKeTelegram(){
+  const nama = document.getElementById('lkpdNama').value.trim() || document.getElementById('kuisNama').value.trim() || 'Siswa Anonim';
+  const kelas = document.getElementById('lkpdKelas').value.trim() || document.getElementById('kuisKelas').value.trim() || '-';
+  const tgl = document.getElementById('lkpdTanggal').value || new Date().toISOString().split('T')[0];
+
+  const p1 = document.getElementById('lkpdPercobaan1').value.trim() || '(Kosong)';
+  const p2 = document.getElementById('lkpdPercobaan2').value.trim() || '(Kosong)';
+  const j1 = document.getElementById('lkpdJawab1').value.trim() || '(Kosong)';
+  const j2 = document.getElementById('lkpdJawab2').value.trim() || '(Kosong)';
+  const j3 = document.getElementById('lkpdJawab3').value.trim() || '(Kosong)';
+  const kesimpulan = document.getElementById('lkpdKesimpulan').value.trim() || '(Kosong)';
+
+  const statusEl = document.getElementById('lkpdTgStatus');
+  statusEl.className = 'w-full text-center text-xs min-h-[1.25rem] mt-1 font-semibold text-rose-700';
+  statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>Mengirimkan berkas LKPD ke Telegram Guru...';
+
+  const pesan = `📑 <b>LKPD PRAKTIKUM KALORIMETRI TERMOKIMIA</b>\n` +
+    `👤 <b>Nama:</b> ${nama}\n` +
+    `🏫 <b>Kelas:</b> ${kelas}\n` +
+    `📅 <b>Tanggal:</b> ${tgl}\n\n` +
+    `🧪 <b>DATA PRAKTIKUM KALORIMETER:</b>\n` +
+    `<b>[Percobaan 1 - Eksoterm]</b>\n${p1}\n\n` +
+    `<b>[Percobaan 2 - Endoterm]</b>\n${p2}\n\n` +
+    `✏️ <b>ANALISIS & PERHITUNGAN:</b>\n` +
+    `1. ${j1}\n` +
+    `2. ${j2}\n` +
+    `3. ${j3}\n\n` +
+    `📌 <b>KESIMPULAN:</b>\n${kesimpulan}`;
+
+  const res = await kirimPesanTelegram(pesan);
+  if(res.ok){
+    statusEl.className = 'w-full text-center text-xs min-h-[1.25rem] mt-1 font-semibold text-emerald-600';
+    statusEl.innerHTML = '✓ Laporan LKPD Praktikum Kalorimetri berhasil dikirim ke Telegram Guru!';
+  } else {
+    statusEl.className = 'w-full text-center text-xs min-h-[1.25rem] mt-1 font-semibold text-rose-600';
+    statusEl.innerHTML = '✗ Gagal kirim LKPD: ' + res.msg;
+  }
+}
+
+/* ═════════ BANK SOAL KUIS (25 BUTIR LENGKAP) ═════════ */
+const KUIS = [
+  {
+    t: 'Pernyataan yang tepat mengenai konsep sistem dan lingkungan dalam kajian termokimia adalah…',
+    p: [
+      'Sistem adalah segala sesuatu di luar zat yang diamati',
+      'Lingkungan adalah bagian dari alam semesta yang menjadi pusat perhatian',
+      'Sistem adalah bagian spesifik dari alam semesta yang menjadi fokus pengamatan kimia',
+      'Batas sistem tidak pernah memungkinkan terjadinya perpindahan kalor',
+      'Sistem terisolasi selalu melepaskan uap partikel ke udara terbuka'
+    ],
+    k: 2,
+    b: 'Sistem didefinisikan sebagai zat atau proses reaksi kimia yang sedang diamati perubahannya, sedangkan lingkungan adalah seluruh bagian di luar sistem.'
+  },
+  {
+    t: 'Air panas yang disimpan di dalam termos ideal berpenutup rapat dengan dinding isolator berlapis vakum merupakan analogi representasi dari…',
+    p: ['Sistem terbuka', 'Sistem tertutup', 'Sistem terisolasi', 'Sistem adiabatik bocor', 'Sistem homogen terdispersi'],
+    k: 2,
+    b: 'Termos ideal mencegah pertukaran materi maupun energi (kalor) dengan lingkungan, sehingga memenuhi syarat sistem terisolasi.'
+  },
+  {
+    t: 'Ciri utama dari suatu reaksi eksotermik ditinjau dari arah perpindahan energi dan nilai entalpi adalah…',
+    p: [
+      'Entalpi sistem bertambah dan $\\Delta H > 0$',
+      'Sistem menyerap energi kalor dari lingkungan sehingga wadah terasa dingin',
+      'Kalor berpindah dari sistem ke lingkungan dan $\\Delta H < 0$',
+      'Energi reaktan selalu lebih rendah dibandingkan energi produk reaksi',
+      'Tidak terjadi perubahan temperatur sama sekali'
+    ],
+    k: 2,
+    b: 'Reaksi eksoterm melepaskan kalor ke lingkungan, menyebabkan suhu lingkungan meningkat dan entalpi sistem berkurang ($\\Delta H < 0$).'
+  },
+  {
+    t: 'Peristiwa berikut dalam kehidupan nyata yang tergolong ke dalam proses endoterm adalah…',
+    p: [
+      'Pembakaran gas elpiji pada kompor dapur',
+      'Pelarutan kapur tohor ($\\ce{CaO}$) dalam air yang memicu air mendidih',
+      'Pelelehan es batu menjadi air cair pada suhu ruang',
+      'Respirasi glukosa dalam sel tubuh makhluk hidup',
+      'Reaksi penetralan asam klorida oleh larutan $\\ce{NaOH}$'
+    ],
+    k: 2,
+    b: 'Pelelehan es membutuhkan/menyerap kalor dari lingkungan agar ikatan antarmolekul dapat terputus, sehingga $\\Delta H > 0$ (endoterm).'
+  },
+  {
+    t: 'Diketahui persamaan termokimia: $$\\ce{2C(s) + O2(g) -> 2CO(g)} \\quad \\Delta H = -221\\text{ kJ}$$ Pernyataan yang benar untuk reaksi tersebut adalah…',
+    p: [
+      'Pembakaran 1 mol C membebaskan kalor sebesar 221 kJ',
+      'Pembentukan 1 mol gas CO melepaskan kalor sebesar 110,5 kJ',
+      'Penguraian CO bersifat eksoterm dengan $\\Delta H = -221\\text{ kJ}$',
+      'Entalpi produk reaksi lebih besar 221 kJ dibandingkan reaktan',
+      'Pembentukan 2 mol gas CO membutuhkan kalor sebesar 221 kJ'
+    ],
+    k: 1,
+    b: 'Koefisien $\\ce{CO}$ adalah 2 mol dengan $\\Delta H = -221\\text{ kJ}$. Maka untuk pembentukan 1 mol $\\ce{CO}$ kalor yang dilepas adalah $221 / 2 = 110{,}5\\text{ kJ}$.'
+  },
+  {
+    t: 'Persamaan termokimia yang menyatakan entalpi pembentukan standar ($\\Delta H^\\circ_f$) garam kristal $\\ce{Na2SO4}$ adalah…',
+    p: [
+      '$$\\ce{2Na+(aq) + SO4^2-(aq) -> Na2SO4(s)}$$',
+      '$$\\ce{Na2O(s) + SO3(g) -> Na2SO4(s)}$$',
+      '$$\\ce{2Na(s) + S(s) + 2O2(g) -> Na2SO4(s)}$$',
+      '$$\\ce{4Na(s) + 2S(s) + 4O2(g) -> 2Na2SO4(s)}$$',
+      '$$\\ce{2Na(s) + SO2(g) + O2(g) -> Na2SO4(s)}$$'
+    ],
+    k: 2,
+    b: '$\\Delta H^\\circ_f$ mensyaratkan pembentukan 1 mol senyawa murni langsung dari unsur-unsur bebasnya dalam bentuk paling stabil di alam ($\\ce{Na(s)}$, $\\ce{S(s)}$, dan $\\ce{O2(g)}$).'
+  },
+  {
+    t: 'Jika entalpi pembentukan standar gas $\\ce{CO2}$ adalah $-393{,}5\\text{ kJ/mol}$, maka entalpi penguraian standar ($\\Delta H^\\circ_d$) gas $\\ce{CO2}$ adalah…',
+    p: [
+      '$-393{,}5\\text{ kJ/mol}$',
+      '$+393{,}5\\text{ kJ/mol}$',
+      '$-787{,}0\\text{ kJ/mol}$',
+      '$+196{,}75\\text{ kJ/mol}$',
+      '$+787{,}0\\text{ kJ/mol}$'
+    ],
+    k: 1,
+    b: 'Reaksi penguraian standar adalah kebalikan langsung dari reaksi pembentukan standar: $\\Delta H^\\circ_d = -\\Delta H^\\circ_f = +393{,}5\\text{ kJ/mol}$.'
+  },
+  {
+    t: 'Dalam kalorimeter cangkir styrofoam dicampurkan $50\\text{ mL}$ larutan $\\ce{HCl}\\ 1\\text{ M}$ dan $50\\text{ mL}\\ \\ce{NaOH}\\ 1\\text{ M}$. Suhu larutan naik dari $25^\\circ\\text{C}$ menjadi $31^\\circ\\text{C}$. Jika kalor jenis air $c = 4{,}2\\text{ J/g}^\\circ\\text{C}$ dan massa jenis larutan $1\\text{ g/mL}$, maka kalor reaksi penetralan tersebut adalah…',
+    p: ['$1.260\\text{ J}$', '$2.520\\text{ J}$', '$5.040\\text{ J}$', '$252\\text{ J}$', '$12.600\\text{ J}$'],
+    k: 1,
+    b: 'Massa total campuran = $50 + 50 = 100\\text{ g}$. $\\Delta T = 31 - 25 = 6^\\circ\\text{C}$. Kalor: $q = m \\cdot c \\cdot \\Delta T = 100 \\times 4{,}2 \\times 6 = 2.520\\text{ J}$.'
+  },
+  {
+    t: 'Pada pembakaran $1{,}6\\text{ gram}$ gas metana ($\\ce{CH4}$, $M_r = 16$) dalam kalorimeter dibebaskan kalor sebanyak $89\\text{ kJ}$. Berapakah entalpi pembakaran molar ($\\Delta H^\\circ_c$) gas metana?',
+    p: ['$-89\\text{ kJ/mol}$', '$-890\\text{ kJ/mol}$', '$+890\\text{ kJ/mol}$', '$-445\\text{ kJ/mol}$', '$-1.424\\text{ kJ/mol}$'],
+    k: 1,
+    b: 'Jumlah mol $\\ce{CH4} = 1{,}6 / 16 = 0{,}1\\text{ mol}$. Karena reaksi melepas kalor (eksoterm), maka $\\Delta H = -89\\text{ kJ} / 0{,}1\\text{ mol} = -890\\text{ kJ/mol}$.'
+  },
+  {
+    t: 'Hukum Hess menegaskan bahwa perubahan entalpi suatu reaksi kimia hanya ditentukan oleh…',
+    p: [
+      'Jumlah tahapan reaksi dan luas permukaan bejana',
+      'Keadaan awal (reaktan) dan keadaan akhir (produk) reaksi',
+      'Kecepatan pengadukan larutan di dalam kalorimeter',
+      'Tekanan parsial uap zat di udara',
+      'Waktu reaksi hingga mencapai kesetimbangan'
+    ],
+    k: 1,
+    b: 'Entalpi merupakan fungsi keadaan, sehingga nilainya semata-mata bergantung pada keadaan awal dan akhir sistem, bukan jalannya lintasan reaksi.'
+  },
+  {
+    t: 'Diketahui:\n(1) $\\ce{S(s) + O2(g) -> SO2(g)} \\quad \\Delta H = -297\\text{ kJ}$\n(2) $\\ce{2SO2(g) + O2(g) -> 2SO3(g)} \\quad \\Delta H = -198\\text{ kJ}$\nMaka $\\Delta H$ untuk reaksi $\\ce{2S(s) + 3O2(g) -> 2SO3(g)}$ adalah…',
+    p: ['$-495\\text{ kJ}$', '$-792\\text{ kJ}$', '$-396\\text{ kJ}$', '$+792\\text{ kJ}$', '$-594\\text{ kJ}$'],
+    k: 1,
+    b: 'Reaksi (1) dikalikan 2: $2\\ce{S} + 2\\ce{O2} \\rightarrow 2\\ce{SO2}$ ($\\Delta H = -594\\text{ kJ}$). Ditambah reaksi (2): $\\Delta H = -594 + (-198) = -792\\text{ kJ}$.'
+  },
+  {
+    t: 'Diketahui entalpi pembentukan standar:\n$\\Delta H^\\circ_f\\ \\ce{C3H8(g)} = -104\\text{ kJ/mol}$\n$\\Delta H^\\circ_f\\ \\ce{CO2(g)} = -394\\text{ kJ/mol}$\n$\\Delta H^\\circ_f\\ \\ce{H2O(l)} = -286\\text{ kJ/mol}$\nPerubahan entalpi pembakaran propana $\\ce{C3H8(g) + 5O2(g) -> 3CO2(g) + 4H2O(l)}$ adalah…',
+    p: ['$-2.222\\text{ kJ/mol}$', '$-1.034\\text{ kJ/mol}$', '$+2.222\\text{ kJ/mol}$', '$-2.430\\text{ kJ/mol}$', '$-1.182\\text{ kJ/mol}$'],
+    k: 0,
+    b: '$\\Delta H = [3(-394) + 4(-286)] - [-104 + 0] = [-1.182 - 1.144] + 104 = -2.326 + 104 = -2.222\\text{ kJ/mol}$.'
+  },
+  {
+    t: 'Energi yang diperlukan untuk memutuskan 1 mol ikatan kovalen tertentu dalam wujud gas menjadi atom-atom netralnya disebut…',
+    p: ['Energi ionisasi', 'Energi disosiasi ikatan', 'Afinitas elektron', 'Entalpi hidrasi', 'Energi kisi kristal'],
+    k: 1,
+    b: 'Energi disosiasi ikatan (energi ikatan rata-rata) adalah energi yang diserap untuk memutuskan 1 mol ikatan kovalen gas menjadi atom-atom penyusunnya.'
+  },
+  {
+    t: 'Diketahui energi ikatan rata-rata:\n$\\text{H}-\\text{H} = 436\\text{ kJ/mol}$\n$\\text{Cl}-\\text{Cl} = 242\\text{ kJ/mol}$\n$\\text{H}-\\text{Cl} = 431\\text{ kJ/mol}$\nKalor reaksi pembentukan 2 mol gas $\\ce{HCl}$ menurut reaksi $\\ce{H2(g) + Cl2(g) -> 2HCl(g)}$ adalah…',
+    p: ['$-184\\text{ kJ}$', '$+184\\text{ kJ}$', '$-92\\text{ kJ}$', '$+92\\text{ kJ}$', '$-247\\text{ kJ}$'],
+    k: 0,
+    b: '$\\Delta H = \\sum D(\\text{pemutusan}) - \\sum D(\\text{pembentukan}) = [436 + 242] - [2 \\times 431] = 678 - 862 = -184\\text{ kJ}$.'
+  },
+  {
+    t: 'Pada diagram tingkat energi reaksi eksotermik, posisi garis entalpi reaktan berada…',
+    p: [
+      'Lebih rendah daripada garis entalpi produk reaksi',
+      'Lebih tinggi daripada garis entalpi produk reaksi dengan panah $\\Delta H$ mengarah ke bawah',
+      'Tepat sejajar horizontal dengan garis produk reaksi',
+      'Mula-mula di bawah kemudian memotong garis produk',
+      'Tidak dapat diprediksi tanpa data kalor jenis'
+    ],
+    k: 1,
+    b: 'Pada eksoterm $H_{\\text{reaktan}} > H_{\\text{produk}}$, sehingga posisi reaktan di atas dan panah transisi mengarah ke bawah ($\\Delta H < 0$).'
+  },
+  {
+    t: 'Pada pelarutan padatan amonium nitrat ($\\ce{NH4NO3}$) di dalam air pada kantong kompres dingin (*cold pack*), dinding wadah terasa sangat dingin. Pernyataan termokimia yang tepat adalah…',
+    p: [
+      'Reaksi membebaskan kalor ke lingkungan (eksoterm)',
+      'Kalor diserap oleh sistem dari lingkungan dan prosesnya endoterm',
+      'Entalpi sistem berkurang secara spontan',
+      'Temperatur lingkungan bertambah tinggi',
+      'Terjadi pembentukan ikatan kovalen kuat'
+    ],
+    k: 1,
+    b: 'Rasa dingin membuktikan terjadinya penyerapan energi kalor dari lingkungan ke dalam sistem larutan, yang merupakan ciri proses endoterm ($\\Delta H > 0$).'
+  },
+  {
+    t: 'Diketahui: $\\ce{N2(g) + 3H2(g) -> 2NH3(g)} \\quad \\Delta H = -92\\text{ kJ}$. Kalor yang menyertai penguraian $17\\text{ gram}$ amonia ($\\ce{NH3}$, $M_r = 17$) menjadi unsur-unsurnya adalah…',
+    p: ['Dilepaskan kalor 92 kJ', 'Dibutuhkan kalor 46 kJ', 'Dilepaskan kalor 46 kJ', 'Dibutuhkan kalor 92 kJ', 'Dibutuhkan kalor 184 kJ'],
+    k: 1,
+    b: 'Penguraian 2 mol $\\ce{NH3}$ membutuhkan $+92\\text{ kJ}$. Untuk 17 gram (1 mol), kalor yang dibutuhkan adalah $+92 / 2 = +46\\text{ kJ}$.'
+  },
+  {
+    t: 'Satuan standar internasional untuk nilai perubahan entalpi molar reaksi dalam termokimia adalah…',
+    p: ['Kalori/gram', 'Joule/detik', 'kJ/mol', 'Watt/Kelvin', 'Liter·atm'],
+    k: 2,
+    b: 'Perubahan entalpi molar reaksi dinyatakan dalam satuan kiloJoule per mol ($\\text{kJ/mol}$).'
+  },
+  {
+    t: 'Pernyataan yang tepat mengenai nilai entalpi pembentukan standar ($\\Delta H^\\circ_f$) unsur bebas dalam bentuk paling stabilnya pada $25^\\circ\\text{C}$ adalah…',
+    p: [
+      'Selalu bernilai positif sangat besar',
+      'Tepat bernilai nol ($0\\text{ kJ/mol}$)',
+      'Selalu bernilai negatif karena stabil',
+      'Bergantung pada nomor atom unsur',
+      'Hanya dapat dihitung melalui spektroskopi sinar-X'
+    ],
+    k: 1,
+    b: 'Berdasarkan konvensi IUPAC, entalpi pembentukan standar untuk unsur murni dalam wujud alotrop paling stabilnya pada keadaan standar didefinisikan tepat sama dengan $0\\text{ kJ/mol}$.'
+  },
+  {
+    t: 'Jika sepotong pita magnesium dimasukkan ke dalam tabung reaksi berisi $\\ce{HCl}$, terbentuk gas hidrogen dan tabung terasa panas. Komponen yang berperan sebagai sistem adalah…',
+    p: [
+      'Tabung reaksi kaca dan udara sekitar',
+      'Pita $\\ce{Mg}$, larutan $\\ce{HCl}$, gas $\\ce{H2}$, dan larutan $\\ce{MgCl2}$ yang terbentuk',
+      'Tangan pengamat yang menyentuh tabung',
+      'Meja laboratorium dan penjepit kayu tabung',
+      'Hanya molekul udara di atas tabung'
+    ],
+    k: 1,
+    b: 'Sistem adalah zat-zat yang bereaksi dan produk yang dihasilkan ($\\ce{Mg}$, $\\ce{HCl}$, $\\ce{H2}$, dan $\\ce{MgCl2}$), sedangkan tabung dan udara adalah lingkungan.'
+  },
+  {
+    t: 'Peristiwa pembentukan ikatan kimia baru antaratom netral selalu bersifat…',
+    p: ['Eksoterm (membebaskan energi)', 'Endoterm (menyerap energi)', 'Isotermik tanpa perubahan kalor', 'Adiabatik terisolir', 'Reversibel spontan'],
+    k: 0,
+    b: 'Pembentukan ikatan kimia menghasilkan sistem yang berenergi potensial lebih rendah dan lebih stabil, sehingga selalu membebaskan energi (eksoterm).'
+  },
+  {
+    t: 'Untuk proses perubahan wujud penguapan air: $\\ce{H2O(l) -> H2O(g)}$, perubahan entalpinya bertanda…',
+    p: [
+      'Negatif, karena air melepaskan kalor ke udara',
+      'Positif, karena diperlukan kalor untuk memutuskan gaya antarmolekul',
+      'Nol, karena tidak terjadi reaksi kimia',
+      'Negatif pada siang hari dan positif pada malam hari',
+      'Tidak dapat diprediksi secara termodinamika'
+    ],
+    k: 1,
+    b: 'Penguapan molekul cairan memerlukan masukan energi kalor untuk mengatasi gaya tarik hidrogen antarmolekul, sehingga $\\Delta H > 0$ (endoterm).'
+  },
+  {
+    t: 'Gas asetilena dibakar menurut reaksi: $$\\ce{2C2H2(g) + 5O2(g) -> 4CO2(g) + 2H2O(l)} \\quad \\Delta H = -2.600\\text{ kJ}$$ Nilai entalpi pembakaran standar ($\\Delta H^\\circ_c$) gas asetilena adalah…',
+    p: ['$-2.600\\text{ kJ/mol}$', '$-1.300\\text{ kJ/mol}$', '$-5.200\\text{ kJ/mol}$', '$+1.300\\text{ kJ/mol}$', '$-650\\text{ kJ/mol}$'],
+    k: 1,
+    b: 'Koefisien asetilena pada persamaan reaksi adalah 2 mol dengan $\\Delta H = -2.600\\text{ kJ}$. Maka entalpi pembakaran per mol adalah $-2.600 / 2 = -1.300\\text{ kJ/mol}$.'
+  },
+  {
+    t: 'Fungsi utama pengadukan konstan di dalam alat kalorimeter sederhana adalah…',
+    p: [
+      'Meningkatkan suhu lingkungan secara mekanis',
+      'Meratakan distribusi temperatur larutan agar pembacaan termometer akurat dan homogen',
+      'Mempercepat pelepasan kalor ke udara luar',
+      'Menghilangkan pengaruh gaya gravitasi',
+      'Menurunkan massa larutan uji'
+    ],
+    k: 1,
+    b: 'Pengadukan mendistribusikan energi panas secara merata ke seluruh volume cairan sehingga suhu akhir ($T_2$) yang terukur benar-benar homogen.'
+  },
+  {
+    t: 'Persamaan termokimia: $$\\ce{C(s) + 2H2(g) -> CH4(g)} \\quad \\Delta H = -74{,}8\\text{ kJ}$$ Menunjukkan bahwa pada pembentukan 1 mol gas metana…',
+    p: [
+      'Dibutuhkan energi kalor sebesar 74,8 kJ',
+      'Dilepaskan energi kalor sebesar 74,8 kJ ke lingkungan',
+      'Temperatur lingkungan akan turun drastis',
+      'Entalpi gas metana lebih tinggi dari reaktannya',
+      'Reaksi tidak mematuhi hukum kekekalan massa'
+    ],
+    k: 1,
+    b: 'Tanda minus pada $\\Delta H$ mengindikasikan reaksi eksotermik, yaitu pelepasan kalor sebesar $74{,}8\\text{ kJ}$ ke lingkungan.'
+  }
+];
+
+let kuisIdx = 0, kuisJawab = [];
+
+function mulaiKuis(){
+  kuisIdx = 0;
+  kuisJawab = Array(KUIS.length).fill(null);
+  document.getElementById('kuisStart').classList.add('hidden');
+  document.getElementById('kuisHasil').classList.add('hidden');
+  document.getElementById('kuisMain').classList.remove('hidden');
+  tampilSoal();
+  document.getElementById('kuis').scrollIntoView({ behavior: 'smooth' });
+}
+
+function tampilSoal(){
+  const q = KUIS[kuisIdx];
+  document.getElementById('kuisNo').textContent = 'Soal ' + (kuisIdx+1) + ' / ' + KUIS.length;
+  
+  const tanyaEl = document.getElementById('kuisTanya');
+  tanyaEl.innerHTML = q.t.replace(/\n/g, '<br>');
+
+  const box = document.getElementById('kuisOpsi');
+  box.innerHTML = '';
+  const abjad = ['A', 'B', 'C', 'D', 'E'];
+
+  q.p.forEach((opt, i) => {
+    const d = document.createElement('button');
+    d.type = 'button';
+    d.className = 'quiz-card-opt w-full text-left border border-slate-200 rounded-2xl px-4 py-3 text-xs sm:text-sm text-slate-700' + (kuisJawab[kuisIdx] === i ? ' picked' : '');
+    d.innerHTML = '<span class="font-extrabold text-rose-700 mr-2.5">' + abjad[i] + '.</span><span>' + opt + '</span>';
+    d.onclick = (e) => {
+      if(e) e.preventDefault();
+      kuisJawab[kuisIdx] = i;
+      tampilSoal();
+    };
+    box.appendChild(d);
+  });
+
+  document.getElementById('btnKuisPrev').disabled = (kuisIdx === 0);
+  document.getElementById('btnKuisPrev').classList.toggle('opacity-40', kuisIdx === 0);
+  buatNavKuis();
+  renderMath(document.getElementById('kuisMain'));
+}
+
+function buatNavKuis(){
+  const nav = document.getElementById('kuisNav');
+  nav.innerHTML = '';
+  KUIS.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    let cls = 'bg-white border-slate-200 text-slate-600 hover:border-rose-400';
+    if(kuisJawab[i] !== null) cls = 'bg-rose-600 border-rose-600 text-white shadow-sm';
+    if(i === kuisIdx) cls += ' ring-2 ring-offset-2 ring-amber-400';
+    b.className = 'w-9 h-9 sm:w-10 sm:h-10 rounded-xl border font-bold text-xs sm:text-sm transition-all ' + cls;
+    b.textContent = i+1;
+    b.onclick = (e) => {
+      if(e) e.preventDefault();
+      kuisIdx = i;
+      tampilSoal();
+    };
+    nav.appendChild(b);
+  });
+  const dj = kuisJawab.filter(x => x !== null).length;
+  document.getElementById('kuisProgress').textContent = dj + ' / ' + KUIS.length + ' terjawab';
+}
+
+async function selesaiKuis(){
+  const kosong = kuisJawab.filter(x => x === null).length;
+  const msg = kosong > 0
+    ? 'Masih ada ' + kosong + ' nomor soal belum diisi. Anda yakin ingin mengakhiri kuis?'
+    : 'Apakah Anda yakin ingin menyelesaikan kuis termokimia dan melihat nilai akhir?';
+  
+  if(!confirm(msg)) return;
+
+  let benar = 0;
+  const abjad = ['A', 'B', 'C', 'D', 'E'];
+  let html = '';
+
+  KUIS.forEach((q, i) => {
+    const ok = kuisJawab[i] === q.k;
+    if(ok) benar++;
+    const userTxt = kuisJawab[i] === null
+      ? '<span class="text-slate-400 italic">Tidak dijawab</span>'
+      : '<strong>' + abjad[kuisJawab[i]] + '.</strong> ' + q.p[kuisJawab[i]];
+
+    html += '<div class="border rounded-2xl p-4 sm:p-5 ' + (ok ? 'border-emerald-300 bg-emerald-50/50' : 'border-rose-200 bg-rose-50/50') + '">'+
+      '<div class="flex items-center justify-between mb-2">'+
+        '<span class="font-display font-bold text-slate-900 text-sm sm:text-base">Nomor ' + (i+1) + '</span>'+
+        '<span class="text-[11px] font-extrabold px-3 py-0.5 rounded-full ' + (ok ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white') + '">' + (ok ? 'BENAR' : 'SALAH') + '</span>'+
+      '</div>'+
+      '<div class="text-xs sm:text-sm text-slate-800 mb-3">' + q.t.replace(/\n/g, '<br>') + '</div>'+
+      '<div class="grid sm:grid-cols-2 gap-2 text-xs mb-3">'+
+        '<div class="bg-white rounded-xl border p-2.5 shadow-sm"><div class="font-bold text-slate-400 text-[10px] uppercase mb-1">Jawaban Anda</div>' + userTxt + '</div>'+
+        '<div class="bg-white rounded-xl border border-rose-300 p-2.5 shadow-sm"><div class="font-bold text-slate-400 text-[10px] uppercase mb-1">Kunci Jawaban</div><strong>' + abjad[q.k] + '.</strong> ' + q.p[q.k] + '</div>'+
+      '</div>'+
+      '<div class="bg-amber-50/90 border-l-4 border-amber-400 rounded-r-xl p-3 text-xs text-slate-700 leading-relaxed"><strong><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i>Pembahasan Ilmiah:</strong> ' + q.b + '</div>'+
+    '</div>';
+  });
+
+  const skor = Math.round(benar / KUIS.length * 100);
+  const pred = skor >= 90 ? 'Sangat Baik' : skor >= 75 ? 'Baik' : skor >= 60 ? 'Cukup' : 'Perlu Bimbingan';
+  document.getElementById('kuisSkor').textContent = skor;
+  document.getElementById('kuisPredikat').textContent = predikatIcon(skor) + ' ' + pred;
+  document.getElementById('kuisBenar').textContent = benar;
+  document.getElementById('kuisReview').innerHTML = html;
+  document.getElementById('kuisMain').classList.add('hidden');
+  document.getElementById('kuisHasil').classList.remove('hidden');
+  document.getElementById('kuisHasil').scrollIntoView({ behavior: 'smooth' });
+
+  renderMath(document.getElementById('kuisReview'));
+
+  // Kirim Nilai ke Telegram
+  const nama = document.getElementById('kuisNama').value.trim() || 'Siswa Anonim';
+  const kls = document.getElementById('kuisKelas').value.trim() || 'Kelas Tidak Disebut';
+  const statusEl = document.getElementById('tgStatus');
+  statusEl.innerHTML = '<span class="text-purple-700"><i class="fa-solid fa-spinner fa-spin mr-1"></i>Mengirim skor ke Telegram Guru...</span>';
+
+  const pesan = `🔥 <b>HASIL EVALUASI TERMOKIMIA</b>\n\n` +
+    `👤 <b>Nama:</b> ${nama}\n` +
+    `🏫 <b>Kelas:</b> ${kls}\n` +
+    `📊 <b>Nilai:</b> ${skor} / 100\n` +
+    `✅ <b>Benar:</b> ${benar} dari 25 Soal\n` +
+    `🏆 <b>Predikat:</b> ${predikatIcon(skor)} ${pred}\n` +
+    `🤖 <i>Dikirim via Web Kimia Fase F (@XIIchemist_bot)</i>`;
+
+  const res = await kirimPesanTelegram(pesan);
+  if(res.ok){
+    statusEl.innerHTML = '<span class="text-teal-700 font-extrabold"><i class="fa-solid fa-check mr-1"></i>Skor berhasil dilaporkan ke Telegram guru (@XIIchemist_bot)!</span>';
+  } else {
+    statusEl.innerHTML = `<span class="text-rosepink-700 text-xs">${res.msg}</span>`;
+  }
+}
+
+async function kirimUlangTg(){
+  const nama = document.getElementById('kuisNama').value.trim() || 'Siswa';
+  const kls = document.getElementById('kuisKelas').value.trim() || '-';
+  const skor = document.getElementById('kuisSkor').textContent;
+  const benar = document.getElementById('kuisBenar').textContent;
+  const pred = document.getElementById('kuisPredikat').textContent;
+  const statusEl = document.getElementById('tgStatus');
+  statusEl.innerHTML = '<span class="text-purple-700"><i class="fa-solid fa-spinner fa-spin mr-1"></i>Mengirimkan ulang ke bot...</span>';
+
+  const pesan = `🔥 <b>KIRIM ULANG: NILAI TERMOKIMIA</b>\n\n` +
+    `👤 <b>Nama:</b> ${nama}\n` +
+    `🏫 <b>Kelas:</b> ${kls}\n` +
+    `📊 <b>Skor:</b> ${skor} / 100\n` +
+    `✅ <b>Benar:</b> ${benar} dari 25 Soal\n` +
+    `🏆 <b>Predikat:</b> ${pred}\n` +
+    `🤖 <i>Dikirim via @XIIchemist_bot</i>`;
+
+  const res = await kirimPesanTelegram(pesan);
+  if(res.ok){
+    statusEl.innerHTML = '<span class="text-teal-700 font-extrabold"><i class="fa-solid fa-check mr-1"></i>Berhasil terkirim ulang ke Telegram!</span>';
+  } else {
+    statusEl.innerHTML = `<span class="text-rosepink-700 text-xs">${res.msg}</span>`;
+  }
+}
+
+async function kirimUlangTg(){
+  const nama = document.getElementById('kuisNama').value.trim() || 'Siswa';
+  const kls = document.getElementById('kuisKelas').value.trim() || '-';
+  const skor = document.getElementById('kuisSkor').textContent;
+  const benar = document.getElementById('kuisBenar').textContent;
+  const pred = document.getElementById('kuisPredikat').textContent;
+  const statusEl = document.getElementById('tgStatus');
+  statusEl.innerHTML = '<span class="text-slate-300"><i class="fa-solid fa-spinner fa-spin mr-1"></i>Mengirimkan ulang ke bot...</span>';
+
+  const pesan = `🔥 <b>KIRIM ULANG: NILAI TERMOKIMIA</b>\n\n` +
+    `👤 <b>Nama:</b> ${nama}\n` +
+    `🏫 <b>Kelas:</b> ${kls}\n` +
+    `📊 <b>Skor:</b> ${skor} / 100\n` +
+    `✅ <b>Benar:</b> ${benar} dari 25 Soal\n` +
+    `🏆 <b>Predikat:</b> ${pred}\n` +
+    `🤖 <i>Dikirim via @XIIchemist_bot</i>`;
+
+  const res = await kirimPesanTelegram(pesan);
+  if(res.ok){
+    statusEl.innerHTML = '<span class="text-emerald-300 font-semibold"><i class="fa-solid fa-check mr-1"></i>Berhasil terkirim ulang ke Telegram!</span>';
+  } else {
+    statusEl.innerHTML = `<span class="text-amber-300 text-xs">${res.msg}</span>`;
+  }
+}
+
+function predikatIcon(s){ return s>=90?'🌟':s>=75?'👍':s>=60?'💪':'📚'; }
+
+/* ═════════ EKSPOR FILE HTML UTUH ═════════ */
+function unduhHTML(){
+  const blob = new Blob(['<!DOCTYPE html>\n' + document.documentElement.outerHTML], { type: 'text/html;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'termokimia-entalpi-interaktif.html';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+}
+
+/* ═════════ INIT PADA LOAD ═════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  renderMath(document.body);
+  updateVisualisasi();
+  gantiBahanLab();
+});
+</script>
+</body>
+</html>
