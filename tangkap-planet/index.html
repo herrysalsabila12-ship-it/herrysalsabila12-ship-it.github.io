@@ -184,6 +184,8 @@
   <div class="kontrol">
     <button class="btn btn-biasa" id="btnAcak" type="button">🔀 Acak Posisi Planet</button>
     <button class="btn btn-biasa" id="btnUlangi" type="button">↺ Mulai Ulang Misi</button>
+    <button class="btn btn-biasa" id="btnMusik" type="button">🎵 Musik: Nyala</button>
+    <button class="btn btn-biasa" id="btnSuara" type="button">🔊 Suara: Nyala</button>
   </div>
   <p class="kecil">Cara main mode kamera: hadapkan telapak tangan ke kamera, dekatkan ujung ibu jari dan
      telunjuk (gerakan mencubit) untuk memegang planet, gerakkan tanganmu, lalu jauhkan lagi kedua jari untuk melepaskannya.
@@ -218,27 +220,98 @@ function planetDariId(id){ for (var i=0;i<PLANET.length;i++) if (PLANET[i].id===
 function planetDariId(id){ for (var i=0;i<PLANET.length;i++) if (PLANET[i].id===id) return PLANET[i]; return null; }
 
 /* ================= SUARA ================= */
-var ctxAudio = null;
-function nada(freq, dur, tipe, jeda){
+var ctxAudio = null, gainSuara = null, gainMusik = null;
+var musikNyala = true, suaraNyala = true;
+function siapkanAudio(){
+  if (ctxAudio){ if (ctxAudio.resume) ctxAudio.resume(); return true; }
   try {
     var AC = window.AudioContext || window.webkitAudioContext;
-    if (!AC) return;
-    if (!ctxAudio) ctxAudio = new AC();
-    if (ctxAudio.resume) ctxAudio.resume();
+    if (!AC) return false;
+    ctxAudio = new AC();
+    gainSuara = ctxAudio.createGain(); gainSuara.gain.value = suaraNyala ? 0.9 : 0;
+    gainSuara.connect(ctxAudio.destination);
+    gainMusik = ctxAudio.createGain(); gainMusik.gain.value = 0.8;
+    gainMusik.connect(ctxAudio.destination);
+    return true;
+  } catch(e){ ctxAudio = null; return false; }
+}
+function mainkanNada(freq, dur, tipe, jeda, vol, modeMusik){
+  try {
+    if (!siapkanAudio()) return;
     var t = ctxAudio.currentTime + (jeda || 0);
     var o = ctxAudio.createOscillator(), g = ctxAudio.createGain();
     o.type = tipe || 'sine'; o.frequency.value = freq;
     g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(0.22, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(vol || 0.2, t + 0.03);
     g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    o.connect(g); g.connect(ctxAudio.destination);
+    o.connect(g); g.connect(modeMusik ? gainMusik : gainSuara);
     o.start(t); o.stop(t + dur + 0.05);
   } catch(e){}
 }
+function nada(freq, dur, tipe, jeda){ mainkanNada(freq, dur, tipe, jeda, 0.22, false); }
 function suaraAmbil(){ nada(520, 0.09, 'triangle'); }
 function suaraBenar(){ nada(660, 0.12, 'triangle'); nada(880, 0.16, 'triangle', 0.1); }
 function suaraSalah(){ nada(160, 0.22, 'sawtooth'); }
 function suaraSelesai(){ [523,659,784,1046].forEach(function(f,i){ nada(f, 0.22, 'triangle', i * 0.13); }); }
+function suaraJatuh(){ nada(340, 0.08, 'sine'); nada(240, 0.1, 'sine', 0.06); }
+
+/* ================= MUSIK LATAR (WebAudio) =================
+   Melodi ceria orisinal 4 bar (akor C–F–G–C), berputar terus.       */
+var SEMI_MP = {'C':0,'C#':1,'D':2,'D#':3,'E':4,'F':5,'F#':6,'G':7,'G#':8,'A':9,'A#':10,'B':11};
+function freqDariNama(n){
+  var m = /^([A-G]#?)(\d)$/.exec(n); if (!m) return 440;
+  var midi = 12 * (parseInt(m[2],10) + 1) + SEMI_MP[m[1]];
+  return 440 * Math.pow(2, (midi - 69) / 12);
+}
+var TEMPO_MUSIK = 112;
+var LANGKAH_MS = Math.round(60000 / TEMPO_MUSIK / 2);   /* ketuk 1/8 */
+var MELODI_MUSIK = [
+  ['E4',null,'G4',null,'A4',null,'G4',null],
+  ['A4',null,'C5',null,'A4',null,'F4',null],
+  ['B4',null,'D5',null,'B4',null,'G4',null],
+  ['A4',null,'G4',null,'E4','D4','C4',null]
+];
+var BASS_MUSIK = [ ['C3','G3'], ['F3','C3'], ['G3','D3'], ['C3','G3'] ];
+var AKOR_MUSIK = [ ['C4','E4','G4'], ['F4','A4','C5'], ['G4','B4','D5'], ['C4','E4','G4'] ];
+var musikJalan = false, langkahMusik = 0, timerMusik = null;
+function langkahMusikFn(){
+  var s = langkahMusik % 32;
+  var bar = Math.floor(s / 8), dlm = s % 8;
+  var durBar = LANGKAH_MS * 8 / 1000;
+  if (dlm === 0){
+    AKOR_MUSIK[bar].forEach(function(n){ mainkanNada(freqDariNama(n), durBar * 0.95, 'sine', 0, 0.045, true); });
+    mainkanNada(freqDariNama(BASS_MUSIK[bar][0]), durBar / 2 * 0.9, 'triangle', 0, 0.16, true);
+  }
+  if (dlm === 4)
+    mainkanNada(freqDariNama(BASS_MUSIK[bar][1]), durBar / 2 * 0.9, 'triangle', 0, 0.14, true);
+  var m = MELODI_MUSIK[bar][dlm];
+  if (m) mainkanNada(freqDariNama(m), LANGKAH_MS / 1000 * 1.7, 'triangle', 0, 0.13, true);
+  langkahMusik++;
+}
+function mulaiMusik(){
+  if (!musikNyala || musikJalan) return;
+  if (!siapkanAudio()) return;
+  musikJalan = true; langkahMusik = 0;
+  langkahMusikFn();
+  timerMusik = setInterval(langkahMusikFn, LANGKAH_MS);
+}
+function berhentiMusik(){
+  musikJalan = false;
+  if (timerMusik) clearInterval(timerMusik);
+  timerMusik = null;
+}
+var elBtnMusik = document.getElementById('btnMusik');
+var elBtnSuara = document.getElementById('btnSuara');
+elBtnMusik.addEventListener('click', function(){
+  musikNyala = !musikNyala;
+  elBtnMusik.textContent = musikNyala ? '🎵 Musik: Nyala' : '🎵 Musik: Mati';
+  if (musikNyala) mulaiMusik(); else berhentiMusik();
+});
+elBtnSuara.addEventListener('click', function(){
+  suaraNyala = !suaraNyala;
+  elBtnSuara.textContent = suaraNyala ? '🔊 Suara: Nyala' : '🔊 Suara: Mati';
+  if (gainSuara) gainSuara.gain.value = suaraNyala ? 0.9 : 0;
+});
 
 /* ================= KEADAAN & ELEMEN ================= */
 var elArea = document.getElementById('areaGame');
@@ -340,7 +413,7 @@ function lepasPlanet(id, diPanel){
   var el = planetEl[id];
   if (el) el.classList.remove('diambil');
   if (yangDiambil === id) yangDiambil = null;
-  if (!diPanel) return 'melayang';
+  if (!diPanel){ suaraJatuh(); return 'melayang'; }
   return nilaiJatuh(id);
 }
 function nilaiJatuh(id){
@@ -444,6 +517,7 @@ function mulaiMain(kamera){
   modeKamera = kamera;
   document.getElementById('layarMulai').classList.add('tersembunyi');
   aturUlang();
+  mulaiMusik();
   if (kamera) mulaiKamera();
 }
 document.getElementById('btnSentuh').addEventListener('click', function(){ mulaiMain(false); });
@@ -526,7 +600,9 @@ renderSlot(); segarHUD();
 window.__uji = { PLANET: PLANET, mulaiMain: mulaiMain, aturUlang: aturUlang,
   ambilPlanet: ambilPlanet, gerakkanPlanet: gerakkanPlanet, lepasPlanet: lepasPlanet,
   nilaiJatuh: nilaiJatuh, titikDiPanel: titikDiPanel,
+  mulaiMusik: mulaiMusik, berhentiMusik: berhentiMusik,
   getState: function(){ return { misiIndex: misiIndex, skor: skor, bintang: jumlahBintang,
+    musik: musikNyala, suara: suaraNyala, musikJalan: musikJalan,
     salahMisiIni: salahMisiIni, yangDiambil: yangDiambil,
     sisaPlanet: Object.keys(planetEl).length,
     pulang: Object.keys(sudahPulang).filter(function(k){ return sudahPulang[k]; }).length }; } };
