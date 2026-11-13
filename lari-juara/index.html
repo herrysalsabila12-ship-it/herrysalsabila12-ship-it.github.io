@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Lari Juara — Game Balap Lari Kelas untuk Layar Besar</title>
+<style>
+  :root{
+    --bg:#0b1e3a; --bg2:#10315f; --kartu:#14294d; --garis:#274a7c;
+    --teks:#eef4ff; --redup:#a9bde0; --emas:#fbbf24; --hijau:#34d399;
+    --merah:#f87171; --biru:#60a5fa;
+    --w1:#f87171; --w2:#60a5fa; --w3:#34d399; --w4:#fbbf24;
+  }
+  html{box-sizing:border-box}
+  *,*::before,*::after{box-sizing:inherit}
+  body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;
+    background:linear-gradient(170deg,var(--bg),var(--bg2) 55%,#0a2e22);color:var(--teks);
+    min-height:100vh;-webkit-tap-highlight-color:transparent}
+  .bungkus{max-width:1080px;margin:0 auto;padding:14px 12px 40px}
+  header.kepala{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  header.kepala .logo{font-size:36px}
+  header.kepala h1{margin:0;font-size:26px}
+  header.kepala h1 .emas{color:var(--emas)}
+  header.kepala p{margin:2px 0 0;color:var(--redup);font-size:13px}
+  .kartu{background:var(--kartu);border:1px solid var(--garis);border-radius:16px;
+    padding:16px;margin-top:13px;box-shadow:0 10px 26px rgba(0,0,0,.35)}
+  .baris{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+  .tumbuh{flex:1 1 auto}
+  .kecil{font-size:12.5px;color:var(--redup);line-height:1.6}
+  .btn{border:0;border-radius:11px;padding:11px 18px;font-size:15px;font-weight:800;cursor:pointer}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn-emas{background:var(--emas);color:#2a1503}
+  .btn-teal{background:#2dd4bf;color:#04241f}
+  .btn-biasa{background:#1d3a68;color:var(--teks);border:1px solid var(--garis)}
+  .btn.kecil{padding:7px 12px;font-size:13px}
+  .pil{display:inline-flex;flex-wrap:wrap;background:#0d2142;border:1px solid var(--garis);
+    border-radius:999px;padding:4px;gap:4px}
+  .pil button{border:0;background:transparent;color:var(--redup);padding:8px 15px;border-radius:999px;
+    font-size:14px;font-weight:700;cursor:pointer}
+  .pil button.aktif{background:var(--emas);color:#2a1503}
+  label.lbl{font-size:12px;color:var(--redup);display:block;margin-bottom:4px}
+  input[type=text]{background:#0d2142;color:var(--teks);border:1px solid var(--garis);
+    border-radius:10px;padding:9px 11px;font-size:14.5px;width:100%;font-family:inherit}
+  .modeKartu{flex:1 1 230px;border:2px solid var(--garis);border-radius:15px;padding:14px;
+    background:#0d2142;cursor:pointer}
+  .modeKartu.aktif{border-color:var(--emas);background:rgba(251,191,36,.10)}
+  .modeKartu h3{margin:0 0 4px;font-size:17px}
+  .modeKartu p{margin:0;color:var(--redup);font-size:13px;line-height:1.55}
+  /* arena */
+  .arenaBungkus{position:relative;margin-top:13px}
+  canvas#arena{width:100%;height:auto;display:block;border-radius:16px;border:1px solid var(--garis);
+    background:#7ec8f7;box-shadow:0 12px 30px rgba(0,0,0,.4)}
+  .hitungMundur{position:absolute;inset:0;display:none;place-items:center;border-radius:16px;
+    background:rgba(4,12,28,.45);font-size:19vw;font-weight:900;color:#fff;
+    text-shadow:0 6px 30px rgba(0,0,0,.6);z-index:3}
+  @media(min-width:700px){.hitungMundur{font-size:120px}}
+  .hitungMundur.tampil{display:grid}
+  .hud{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:11px}
+  .hudKartu{border-radius:12px;padding:8px 11px;background:var(--kartu);border:1px solid var(--garis)}
+  .hudKartu .nama{font-weight:800;font-size:14px;display:flex;gap:7px;align-items:center}
+  .hudKartu .titik{width:11px;height:11px;border-radius:50%;flex:0 0 11px}
+  .hudKartu .jarak{font-size:12.5px;color:var(--redup)}
+  .relKemajuan{height:8px;background:#0d2142;border-radius:99px;margin-top:5px;overflow:hidden}
+  .relKemajuan i{display:block;height:100%;border-radius:99px;transition:width .15s}
+  /* zona ketuk */
+  .zonaKetuk{display:grid;gap:9px;margin-top:11px}
+  .zonaKetuk button{border:0;border-radius:15px;padding:20px 10px;font-size:19px;font-weight:900;
+    color:#101828;cursor:pointer;touch-action:manipulation;user-select:none;line-height:1.25}
+  .zonaKetuk button small{display:block;font-size:12px;font-weight:700;opacity:.75}
+  .zonaKetuk button:active{transform:scale(.975)}
+  /* kuis */
+  .kartuKuis{margin-top:12px}
+  .kartuKuis .giliran{font-weight:800;font-size:15px}
+  .kartuKuis .tanya{font-size:18.5px;line-height:1.5;margin:7px 0 11px}
+  .opsiKuis{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  @media(max-width:560px){.opsiKuis{grid-template-columns:1fr}}
+  .opsiKuis button{border:1.5px solid var(--garis);background:#0d2142;color:var(--teks);
+    border-radius:12px;padding:12px 13px;font-size:15.5px;text-align:left;cursor:pointer;line-height:1.45}
+  .opsiKuis button.benar{background:rgba(52,211,153,.25);border-color:var(--hijau)}
+  .opsiKuis button.salah{background:rgba(248,113,113,.25);border-color:var(--merah)}
+  .opsiKuis button:disabled{cursor:default;opacity:.92}
+  /* podium */
+  .podium{display:none;margin-top:13px}
+  .podium.tampil{display:block}
+  .podium .tempat{display:flex;gap:11px;align-items:center;border:1px solid var(--garis);
+    border-radius:13px;padding:11px 14px;margin-top:8px;background:#0d2142}
+  .podium .medali{font-size:27px}
+  .podium .siapa{font-weight:800;font-size:16.5px}
+  .podium .catatan{color:var(--redup);font-size:13px}
+  .tersembunyi{display:none !important}
+</style>
+</head>
+<body>
+<div class="bungkus">
+
+  <header class="kepala">
+    <div class="logo">🏃</div>
+    <div class="tumbuh">
+      <h1>Lari <span class="emas">Juara</span></h1>
+      <p>Game balap lari untuk kelas — main di layar besar/IFP atau HP. Cuaca panas? Larinya di dalam game saja!</p>
+    </div>
+    <button class="btn btn-biasa kecil" id="btnSuara" type="button">🔊 Suara: Nyala</button>
+  </header>
+
+  <!-- ===== PENGATURAN ===== -->
+  <section class="kartu" id="layarAtur">
+    <h2 style="margin:0 0 10px;font-size:19px">Pengaturan Balapan</h2>
+    <label class="lbl">Mode permainan</label>
+    <div class="baris" style="align-items:stretch">
+      <div class="modeKartu aktif" id="modeKetuk" role="button" tabindex="0">
+        <h3>👆 Balap Ketuk</h3>
+        <p>Setiap pemain mengetuk tombolnya secepat-cepatnya untuk berlari. Paling seru di layar sentuh IFP — sampai 4 pemain sekaligus!</p>
+      </div>
+      <div class="modeKartu" id="modeKuis" role="button" tabindex="0">
+        <h3>🧠 Balap Kuis</h3>
+        <p>Pemain bergiliran menjawab soal olahraga &amp; pengetahuan umum. Jawaban benar = lari 10 meter. Siapa dulu sampai garis akhir, dia juara!</p>
+      </div>
+    </div>
+
+    <div class="baris" style="margin-top:14px">
+      <div>
+        <label class="lbl">Jumlah pemain</label>
+        <div class="pil" id="pilPemain">
+          <button type="button" data-n="2" class="aktif">2</button>
+          <button type="button" data-n="3">3</button>
+          <button type="button" data-n="4">4</button>
+        </div>
+      </div>
+      <div id="wadahJarak">
+        <label class="lbl">Jarak lomba (mode ketuk)</label>
+        <div class="pil" id="pilJarak">
+          <button type="button" data-j="60">60 m</button>
+          <button type="button" data-j="100" class="aktif">100 m</button>
+          <button type="button" data-j="200">200 m</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="namaPemain" style="margin-top:13px"></div>
+
+    <div class="baris" style="margin-top:15px">
+      <button class="btn btn-emas" id="btnMulai" type="button">🏁 Mulai Balapan</button>
+      <span class="kecil" id="petunjukTombol"></span>
+    </div>
+  </section>
+
+  <!-- ===== ARENA ===== -->
+  <section id="layarBalap" class="tersembunyi">
+    <div class="arenaBungkus">
+      <canvas id="arena" width="1000" height="430"></canvas>
+      <div class="hitungMundur" id="hitungMundur">3</div>
+    </div>
+    <div class="hud" id="hud"></div>
+    <div class="zonaKetuk" id="zonaKetuk"></div>
+
+    <div class="kartu kartuKuis tersembunyi" id="kartuKuis">
+      <div class="baris">
+        <span class="giliran" id="kuisGiliran"></span><span class="tumbuh"></span>
+        <span class="kecil" id="kuisSkor"></span>
+      </div>
+      <p class="tanya" id="kuisTanya"></p>
+      <div class="opsiKuis" id="kuisOpsi"></div>
+      <p class="kecil" id="kuisUmpan"></p>
+    </div>
+
+    <div class="kartu podium" id="podium">
+      <h2 style="margin:0;font-size:20px">🏆 Hasil Balapan</h2>
+      <div id="daftarPodium"></div>
+      <div class="baris" style="margin-top:13px">
+        <button class="btn btn-emas" id="btnLagi" type="button">🔁 Balap Lagi</button>
+        <button class="btn btn-biasa" id="btnAturUlang" type="button">⚙ Ganti Pengaturan</button>
+      </div>
+    </div>
+
+    <div class="baris" style="margin-top:12px">
+      <button class="btn btn-biasa kecil" id="btnBerhenti" type="button">⏹ Akhiri Balapan</button>
+      <span class="kecil" id="jamBalap"></span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+'use strict';
+/* ================= DATA ================= */
+var WARNA = ['#f87171', '#60a5fa', '#34d399', '#fbbf24'];
+var NAMA_WARNA = ['Merah', 'Biru', 'Hijau', 'Kuning'];
+var PELARI = ['🏃‍♂️', '🏃‍♀️', '🏃‍♂️', '🏃‍♀️'];
+var TOMBOL = ['A', 'S', 'K', 'L'];
+var NAMA_TOMBOL = ['Tombol A', 'Tombol S', 'Tombol K', 'Tombol L'];
+var SOAL_KUIS = [
+  { t: 'Berapa pemain dalam satu tim sepak bola di lapangan?', o: ['9', '10', '11', '12'], k: 2 },
+  { t: 'Lari jarak pendek disebut juga lari…', o: ['Maraton', 'Sprint', 'Estafet', 'Joging'], k: 1 },
+  { t: 'Alat untuk mengukur waktu lari adalah…', o: ['Termometer', 'Stopwatch', 'Meteran', 'Timbangan'], k: 1 },
+  { t: 'Sebelum berolahraga, kita sebaiknya melakukan…', o: ['Pendinginan', 'Pemanasan', 'Tidur', 'Makan besar'], k: 1 },
+  { t: 'Induk organisasi sepak bola dunia adalah…', o: ['FIFA', 'NBA', 'FIBA', 'IOI'], k: 0 },
+  { t: 'Berapa jumlah pemain bola voli dalam satu tim di lapangan?', o: ['5', '6', '7', '11'], k: 1 },
+  { t: 'Olahraga renang gaya dada disebut juga gaya…', o: ['Kupu-kupu', 'Bebas', 'Katak', 'Punggung'], k: 2 },
+  { t: 'Setelah berolahraga, tubuh memerlukan…', o: ['Istirahat dan air minum', 'Begadang', 'Makanan pedas', 'Bermain HP terus'], k: 0 },
+  { t: 'Lari estafet menggunakan alat berupa…', o: ['Bola', 'Tongkat estafet', 'Raket', 'Peluit'], k: 1 },
+  { t: 'Gerakan push-up melatih otot…', o: ['Kaki', 'Lengan dan dada', 'Leher saja', 'Jari'], k: 1 },
+  { t: 'Ibu kota Indonesia adalah…', o: ['Bandung', 'Surabaya', 'Jakarta', 'Medan'], k: 2 },
+  { t: 'Hasil dari 7 × 8 adalah…', o: ['54', '56', '63', '48'], k: 1 },
+  { t: 'Planet tempat kita tinggal adalah…', o: ['Mars', 'Venus', 'Bumi', 'Jupiter'], k: 2 },
+  { t: 'Air mendidih pada suhu…', o: ['50°C', '80°C', '100°C', '120°C'], k: 2 },
+  { t: 'Hewan yang disebut raja hutan adalah…', o: ['Gajah', 'Singa', 'Harimau', 'Serigala'], k: 1 },
+  { t: 'Bahasa resmi negara Indonesia adalah…', o: ['Bahasa Jawa', 'Bahasa Indonesia', 'Bahasa Sunda', 'Bahasa Inggris'], k: 1 },
+  { t: 'Benda yang menarik besi disebut…', o: ['Karet', 'Magnet', 'Plastik', 'Kayu'], k: 1 },
+  { t: 'Ibu kota Provinsi Kalimantan Tengah adalah…', o: ['Kasongan', 'Palangka Raya', 'Sampit', 'Pangkalan Bun'], k: 1 },
+  { t: 'Sungai terpanjang di Kalimantan adalah…', o: ['Sungai Kapuas', 'Sungai Katingan', 'Sungai Barito', 'Sungai Mahakam'], k: 0 },
+  { t: 'Warna bendera Indonesia adalah…', o: ['Merah dan biru', 'Merah dan putih', 'Hijau dan putih', 'Merah dan kuning'], k: 1 },
+  { t: 'Alat musik tradisional petik dari Kalimantan adalah…', o: ['Gamelan', 'Sape', 'Angklung', 'Kolintang'], k: 1 },
+  { t: 'Tubuh kita bernapas menghirup gas…', o: ['Karbon dioksida', 'Oksigen', 'Nitrogen saja', 'Hidrogen'], k: 1 },
+  { t: 'Gerakan sit-up melatih otot…', o: ['Perut', 'Betis', 'Bahu', 'Punggung kaki'], k: 0 },
+  { t: 'Permainan tradisional lompat tali menggunakan…', o: ['Bola bekel', 'Karet gelang', 'Gasing', 'Layang-layang'], k: 1 }
+];
+
+/* ================= KEADAAN ================= */
+var atur = { mode: 'ketuk', pemain: 2, jarak: 100 };
+var balap = null;
+var suaraNyala = true;
+var audioCtx = null;
+function bunyi(frekuensi, durasi, tipe, keras){
+  if (!suaraNyala) return;
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = tipe || 'sine'; o.frequency.value = frekuensi;
+    g.gain.setValueAtTime(keras || 0.12, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + (durasi || 0.15));
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); o.stop(audioCtx.currentTime + (durasi || 0.15));
+  } catch(e){}
+}
+function bunyiKlik(){ bunyi(620, 0.06, 'square', 0.05); }
+function bunyiBenar(){ bunyi(523, 0.11, 'sine', 0.12); setTimeout(function(){ bunyi(784, 0.16, 'sine', 0.12); }, 95); }
+function bunyiSalah(){ bunyi(196, 0.2, 'sawtooth', 0.07); }
+function bunyiPeluit(){ bunyi(2350, 0.16, 'square', 0.08); setTimeout(function(){ bunyi(2350, 0.3, 'square', 0.08); }, 190); }
+
+function namaPemainDariForm(){
+  var nama = [];
+  for (var i = 0; i < atur.pemain; i++){
+    var el = document.getElementById('namaP' + i);
+    var v = el ? el.value.trim() : '';
+    nama.push(v || ('Pemain ' + (i + 1)));
+  }
+  return nama;
+}
+
+/* ================= PENGATURAN ================= */
+function renderFormNama(){
+  var wadah = document.getElementById('namaPemain');
+  var html = '<div class="baris" style="align-items:flex-start">';
+  for (var i = 0; i < atur.pemain; i++){
+    html += '<div style="flex:1 1 150px"><label class="lbl">' +
+      '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + WARNA[i] + '"></span> ' +
+      'Pemain ' + (i + 1) + ' (' + NAMA_WARNA[i] + ')</label>' +
+      '<input type="text" id="namaP' + i + '" placeholder="Pemain ' + (i + 1) + '"></div>';
+  }
+  html += '</div>';
+  wadah.innerHTML = html;
+  document.getElementById('petunjukTombol').textContent = atur.mode === 'ketuk'
+    ? 'Di papan ketik: ' + TOMBOL.slice(0, atur.pemain).join(', ') + ' — atau ketuk tombol warna di layar.'
+    : 'Pemain menjawab bergiliran di layar yang sama.';
+  document.getElementById('wadahJarak').style.display = atur.mode === 'ketuk' ? '' : 'none';
+}
+function pilihMode(mode){
+  atur.mode = mode;
+  document.getElementById('modeKetuk').classList.toggle('aktif', mode === 'ketuk');
+  document.getElementById('modeKuis').classList.toggle('aktif', mode === 'kuis');
+  renderFormNama();
+}
+document.getElementById('modeKetuk').addEventListener('click', function(){ pilihMode('ketuk'); });
+document.getElementById('modeKuis').addEventListener('click', function(){ pilihMode('kuis'); });
+document.querySelectorAll('#pilPemain button').forEach(function(b){
+  b.addEventListener('click', function(){
+    atur.pemain = parseInt(b.dataset.n, 10);
+    document.querySelectorAll('#pilPemain button').forEach(function(x){
+      x.classList.toggle('aktif', x === b); });
+    renderFormNama();
+  });
+});
+document.querySelectorAll('#pilJarak button').forEach(function(b){
+  b.addEventListener('click', function(){
+    atur.jarak = parseInt(b.dataset.j, 10);
+    document.querySelectorAll('#pilJarak button').forEach(function(x){
+      x.classList.toggle('aktif', x === b); });
+  });
+});
+document.getElementById('btnSuara').addEventListener('click', function(){
+  suaraNyala = !suaraNyala;
+  this.textContent = suaraNyala ? '🔊 Suara: Nyala' : '🔇 Suara: Mati';
+});
+
+/* ================= MESIN BALAPAN ================= */
+var kerumunan = [];
+function buatKerumunan(){
+  kerumunan = [];
+  var warnaKerumunan = ['#fca5a5', '#93c5fd', '#fcd34d', '#a7f3d0', '#e9d5ff', '#fbcfe8', '#ffffff'];
+  for (var i = 0; i < 340; i++)
+    kerumunan.push({ x: Math.random(), y: Math.random(),
+      c: warnaKerumunan[Math.floor(Math.random() * warnaKerumunan.length)] });
+}
+function mulaiBalapan(denganHitung){
+  var nama = namaPemainDariForm();
+  balap = {
+    mode: atur.mode,
+    target: atur.mode === 'kuis' ? 100 : atur.jarak,
+    pemain: nama.map(function(n, i){
+      return { nama: n, warna: WARNA[i], emoji: PELARI[i], jarakM: 0,
+        selesai: false, waktu: null, ketukan: 0, kecepatan: 0 };
+    }),
+    fase: 'siap', tJalan: 0, tFinPertama: null,
+    urutanSoal: [], idxSoal: 0, giliran: 0, sibuk: false
+  };
+  buatKerumunan();
+  document.getElementById('layarAtur').classList.add('tersembunyi');
+  document.getElementById('layarBalap').classList.remove('tersembunyi');
+  document.getElementById('podium').classList.remove('tampil');
+  document.getElementById('kartuKuis').classList.toggle('tersembunyi', atur.mode !== 'kuis');
+  document.getElementById('zonaKetuk').classList.toggle('tersembunyi', atur.mode !== 'ketuk');
+  bangunZonaKetuk(); renderHud(); gambarArena();
+  if (denganHitung === false){ balap.fase = 'jalan'; balap.tJalan = performance.now(); }
+  else jalankanHitungMundur();
+  mulaiPutaran();
+  if (atur.mode === 'kuis') siapkanKuis();
+}
+function jalankanHitungMundur(){
+  var el = document.getElementById('hitungMundur');
+  var angka = ['3', '2', '1', 'LARI!'];
+  var i = 0;
+  balap.fase = 'hitung';
+  el.classList.add('tampil');
+  (function berikut(){
+    if (!balap || balap.fase !== 'hitung') { el.classList.remove('tampil'); return; }
+    if (i < angka.length){
+      el.textContent = angka[i];
+      bunyi(i < 3 ? 440 : 880, 0.14, 'sine', 0.12);
+      i++;
+      setTimeout(berikut, i <= 3 ? 720 : 480);
+    } else {
+      el.classList.remove('tampil');
+      balap.fase = 'jalan';
+      balap.tJalan = performance.now();
+      bunyiPeluit();
+    }
+  })();
+}
+function detikBerjalan(){
+  if (!balap || !balap.tJalan) return 0;
+  return (performance.now() - balap.tJalan) / 1000;
+}
+function ketuk(i){
+  if (!balap || balap.fase !== 'jalan' || balap.mode !== 'ketuk') return;
+  var p = balap.pemain[i];
+  if (!p || p.selesai) return;
+  p.jarakM += 0.8 * (0.92 + Math.random() * 0.16);
+  p.ketukan++;
+  p.kecepatan = Math.min(12, p.kecepatan + 2.4);
+  if (p.jarakM >= balap.target){
+    p.jarakM = balap.target; p.selesai = true; p.waktu = detikBerjalan();
+    if (balap.tFinPertama === null) balap.tFinPertama = p.waktu;
+    bunyiBenar();
+  }
+  periksaAkhir();
+}
+function periksaAkhir(){
+  if (!balap || balap.fase !== 'jalan') return;
+  var semua = balap.pemain.every(function(p){ return p.selesai; });
+  if (semua) return akhiriBalapan();
+  if (balap.mode === 'ketuk' && balap.tFinPertama !== null &&
+      detikBerjalan() - balap.tFinPertama > 5) akhiriBalapan();
+}
+function peringkat(){
+  return balap.pemain.map(function(p, i){ return { p: p, i: i }; }).sort(function(a, b){
+    if (a.p.selesai && b.p.selesai) return a.p.waktu - b.p.waktu;
+    if (a.p.selesai) return -1;
+    if (b.p.selesai) return 1;
+    return b.p.jarakM - a.p.jarakM;
+  });
+}
+function akhiriBalapan(){
+  if (!balap || balap.fase === 'selesai') return;
+  balap.fase = 'selesai';
+  bunyiPeluit();
+  var urut = peringkat();
+  var medali = ['🥇', '🥈', '🥉', '🎖'];
+  document.getElementById('daftarPodium').innerHTML = urut.map(function(u, r){
+    return '<div class="tempat"><span class="medali">' + medali[r] + '</span>' +
+      '<span style="width:12px;height:12px;border-radius:50%;background:' + u.p.warna + ';flex:0 0 12px"></span>' +
+      '<div><div class="siapa">' + esc(u.p.nama) + '</div>' +
+      '<div class="catatan">' + (u.p.selesai
+        ? (balap.mode === 'kuis' ? 'Selesai pada soal ke-' + Math.round(u.p.waktu)
+                                 : 'Selesai dalam ' + u.p.waktu.toFixed(1) + ' detik')
+        : 'Berhenti di ' + Math.floor(u.p.jarakM) + ' m dari ' + balap.target + ' m') +
+      (balap.mode === 'ketuk' ? ' · ' + u.p.ketukan + ' ketukan' : '') + '</div></div></div>';
+  }).join('');
+  document.getElementById('podium').classList.add('tampil');
+  document.getElementById('zonaKetuk').classList.add('tersembunyi');
+  document.getElementById('kartuKuis').classList.add('tersembunyi');
+  renderHud();
+}
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; });
+}
+
+/* ================= TAMPILAN ARENA ================= */
+var kanvas = document.getElementById('arena');
+var ctx = kanvas.getContext ? kanvas.getContext('2d') : null;
+function gambarArena(){
+  if (!ctx || !balap) return;
+  var W = kanvas.width, H = kanvas.height;
+  var sekarang = performance.now() / 1000;
+  /* langit */
+  var langit = ctx.createLinearGradient(0, 0, 0, H * 0.52);
+  langit.addColorStop(0, '#38bdf8'); langit.addColorStop(1, '#bae6fd');
+  ctx.fillStyle = langit; ctx.fillRect(0, 0, W, H * 0.52);
+  ctx.fillStyle = '#fde68a';
+  ctx.beginPath(); ctx.arc(W * 0.88, 44, 24, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,.85)';
+  [0.12, 0.42, 0.66].forEach(function(fx, i){
+    var cx = ((fx * W + sekarang * (4 + i * 2)) % (W + 160)) - 80, cy = 30 + i * 22;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, 34, 12, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx + 24, cy + 3, 24, 9, 0, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  /* tribun penonton */
+  var tribunY = H * 0.16, tribunH = H * 0.30;
+  ctx.fillStyle = '#1e3a5f'; ctx.fillRect(0, tribunY, W, tribunH);
+  ctx.fillStyle = '#0f2544'; ctx.fillRect(0, tribunY, W, 16);
+  ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 13px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('🏟  STADION LARI JUARA  🏟', W / 2, tribunY + 13);
+  kerumunan.forEach(function(k){
+    ctx.fillStyle = k.c;
+    ctx.fillRect(k.x * W, tribunY + 22 + k.y * (tribunH - 30), 5, 5);
+  });
+  /* lintasan */
+  var trekY = H * 0.46, trekH = H - trekY;
+  ctx.fillStyle = '#16a34a'; ctx.fillRect(0, trekY, W, 10);
+  ctx.fillStyle = '#ea580c'; ctx.fillRect(0, trekY + 10, W, trekH - 10);
+  var n = balap.pemain.length;
+  var tinggiJalur = (trekH - 18) / n;
+  /* kamera mengikuti pemimpin */
+  var pemimpin = Math.max.apply(null, balap.pemain.map(function(p){ return p.jarakM; }));
+  var tampakM = 38;
+  var skala = W / tampakM;
+  var camM = Math.max(0, Math.min(balap.target + 6 - tampakM, pemimpin - 9));
+  function keX(m){ return (m - camM) * skala; }
+  /* penanda jarak */
+  ctx.textAlign = 'center';
+  for (var m = 0; m <= balap.target; m += 5){
+    var x = keX(m);
+    if (x < -30 || x > W + 30) continue;
+    ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x, trekY + 12); ctx.lineTo(x, H - 4); ctx.stroke();
+    if (m % 25 === 0 || m === balap.target){
+      ctx.fillStyle = '#fff'; ctx.font = 'bold 12px sans-serif';
+      ctx.fillText(m + ' m', x, trekY + 26);
+    }
+  }
+  /* garis jalur */
+  for (var j = 0; j <= n; j++){
+    var y = trekY + 14 + j * tinggiJalur;
+    ctx.strokeStyle = 'rgba(255,255,255,.75)'; ctx.lineWidth = j === 0 || j === n ? 3 : 1.6;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+  }
+  /* garis akhir */
+  var xFin = keX(balap.target);
+  if (xFin > -20 && xFin < W + 20){
+    var kotak = 9;
+    for (var r2 = 0; r2 < (trekH - 14) / kotak; r2++)
+      for (var c2 = 0; c2 < 2; c2++){
+        ctx.fillStyle = (r2 + c2) % 2 ? '#111827' : '#f8fafc';
+        ctx.fillRect(xFin + c2 * kotak, trekY + 14 + r2 * kotak, kotak, kotak);
+      }
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 13px sans-serif';
+    ctx.fillText('FINIS', xFin + 9, trekY + 8);
+  }
+  /* pelari */
+  balap.pemain.forEach(function(p, i){
+    var dasarY = trekY + 14 + i * tinggiJalur + tinggiJalur * 0.88;
+    var x = keX(p.jarakM);
+    if (x < -60 || x > W + 60) return;
+    var lari = balap.fase === 'jalan' && !p.selesai;
+    var bob = lari ? Math.abs(Math.sin(sekarang * (7 + p.kecepatan))) * 5
+                   : Math.sin(sekarang * 2 + i) * 1.4;
+    ctx.fillStyle = 'rgba(0,0,0,.28)';
+    ctx.beginPath(); ctx.ellipse(x, dasarY + 3, 17, 4.5, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.font = Math.round(tinggiJalur * 0.92) + 'px serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(p.emoji, x, dasarY - bob);
+    /* label nama */
+    var label = p.nama + (p.selesai ? ' ✔' : '');
+    ctx.font = 'bold 12.5px sans-serif';
+    var lebar = ctx.measureText(label).width + 14;
+    ctx.fillStyle = p.warna;
+    ctx.beginPath();
+    var lx = Math.max(lebar / 2, Math.min(W - lebar / 2, x)), ly = trekY + 20 + i * tinggiJalur;
+    ctx.roundRect(lx - lebar / 2, ly - 12, lebar, 19, 9); ctx.fill();
+    ctx.fillStyle = '#101828';
+    ctx.fillText(label, lx, ly + 2);
+  });
+}
+var putaranAktif = false;
+function mulaiPutaran(){
+  if (putaranAktif) return;
+  putaranAktif = true;
+  (function putar(){
+    if (!balap){ putaranAktif = false; return; }
+    if (balap && balap.fase === 'jalan'){
+      balap.pemain.forEach(function(p){ p.kecepatan = Math.max(0, p.kecepatan - 0.09); });
+      periksaAkhir();
+      renderHud();
+      var jam = document.getElementById('jamBalap');
+      if (jam) jam.textContent = '⏱ ' + detikBerjalan().toFixed(1) + ' detik';
+    }
+    gambarArena();
+    if (balap && (balap.fase === 'hitung' || balap.fase === 'jalan')) requestAnimationFrame(putar);
+    else putaranAktif = false;
+  })();
+}
+
+/* ================= HUD & ZONA KETUK ================= */
+function renderHud(){
+  if (!balap) return;
+  var urut = peringkat();
+  var posisi = {};
+  urut.forEach(function(u, r){ posisi[u.i] = r + 1; });
+  document.getElementById('hud').innerHTML = balap.pemain.map(function(p, i){
+    var persen = Math.min(100, Math.round(p.jarakM / balap.target * 100));
+    return '<div class="hudKartu"><div class="nama"><span class="titik" style="background:' + p.warna + '"></span>' +
+      esc(p.nama) + '<span style="margin-left:auto">#' + posisi[i] + '</span></div>' +
+      '<div class="jarak">' + Math.floor(p.jarakM) + ' / ' + balap.target + ' m' +
+      (p.selesai ? ' · ✔ ' + p.waktu.toFixed(1) + ' dtk' : '') + '</div>' +
+      '<div class="relKemajuan"><i style="width:' + persen + '%;background:' + p.warna + '"></i></div></div>';
+  }).join('');
+}
+function bangunZonaKetuk(){
+  var zona = document.getElementById('zonaKetuk');
+  zona.style.gridTemplateColumns = 'repeat(' + balap.pemain.length + ', 1fr)';
+  zona.innerHTML = '';
+  balap.pemain.forEach(function(p, i){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.style.background = p.warna;
+    b.innerHTML = '👆 KETUK! ' + esc(p.nama) + '<small>' + NAMA_TOMBOL[i] + ' di papan ketik, atau sentuh tombol ini</small>';
+    b.addEventListener('pointerdown', function(ev){
+      ev.preventDefault();
+      ketuk(i); bunyiKlik();
+    });
+    zona.appendChild(b);
+  });
+}
+document.addEventListener('keydown', function(ev){
+  if (!balap || balap.mode !== 'ketuk' || balap.fase !== 'jalan') return;
+  var idx = TOMBOL.indexOf((ev.key || '').toUpperCase());
+  if (idx >= 0 && idx < balap.pemain.length){ ketuk(idx); bunyiKlik(); }
+});
+
+/* ================= MODE KUIS ================= */
+function acakUrutan(n){
+  var a = [];
+  for (var i = 0; i < n; i++) a.push(i);
+  for (var j = a.length - 1; j > 0; j--){
+    var k = Math.floor(Math.random() * (j + 1));
+    var t = a[j]; a[j] = a[k]; a[k] = t;
+  }
+  return a;
+}
+function siapkanKuis(){
+  balap.urutanSoal = acakUrutan(SOAL_KUIS.length);
+  balap.idxSoal = 0;
+  balap.giliran = 0;
+  balap.sibuk = false;
+  tampilSoalKuis();
+}
+function soalKuisKini(){
+  return SOAL_KUIS[balap.urutanSoal[balap.idxSoal]];
+}
+function tampilSoalKuis(){
+  if (!balap) return;
+  if (balap.idxSoal >= balap.urutanSoal.length) return akhiriBalapan();
+  var p = balap.pemain[balap.giliran];
+  var s = soalKuisKini();
+  document.getElementById('kuisGiliran').innerHTML =
+    '🎤 Giliran: <span style="color:' + p.warna + '">' + esc(p.nama) + '</span> — jawab benar untuk lari 10 meter!';
+  var pemuncak = peringkat()[0];
+  document.getElementById('kuisSkor').textContent = 'Soal ke-' + (balap.idxSoal + 1) +
+    ' · Memimpin: ' + pemuncak.p.nama + ' (' + Math.floor(pemuncak.p.jarakM) + ' m)';
+  document.getElementById('kuisTanya').textContent = s.t;
+  document.getElementById('kuisUmpan').textContent = '';
+  var wadah = document.getElementById('kuisOpsi');
+  wadah.innerHTML = '';
+  var urutanTampil = acakUrutan(s.o.length);
+  balap.urutanTampil = urutanTampil;
+  urutanTampil.forEach(function(idxAsli){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = s.o[idxAsli];
+    b.dataset.asli = idxAsli;
+    b.addEventListener('click', function(){ jawabKuis(idxAsli); });
+    wadah.appendChild(b);
+  });
+}
+function jawabKuis(idxAsli){
+  if (!balap || balap.mode !== 'kuis' || balap.fase !== 'jalan' || balap.sibuk) return false;
+  balap.sibuk = true;
+  var s = soalKuisKini();
+  var p = balap.pemain[balap.giliran];
+  var benar = idxAsli === s.k;
+  document.querySelectorAll('#kuisOpsi button').forEach(function(b){
+    b.disabled = true;
+    var asli = parseInt(b.dataset.asli, 10);
+    if (asli === s.k) b.classList.add('benar');
+    else if (asli === idxAsli) b.classList.add('salah');
+  });
+  if (benar){
+    p.jarakM = Math.min(balap.target, p.jarakM + 10);
+    bunyiBenar();
+    document.getElementById('kuisUmpan').textContent =
+      '✔ Benar! ' + p.nama + ' berlari 10 meter (sekarang ' + Math.floor(p.jarakM) + ' m).';
+    if (p.jarakM >= balap.target){
+      p.selesai = true; p.waktu = balap.idxSoal + 1;
+    }
+  } else {
+    bunyiSalah();
+    document.getElementById('kuisUmpan').textContent =
+      '✘ Kurang tepat — jawaban yang benar: «' + s.o[s.k] + '». ' + p.nama + ' tetap di tempat. Semangat, masih ada giliran berikutnya!';
+  }
+  renderHud(); gambarArena();
+  setTimeout(function(){
+    if (!balap || balap.fase !== 'jalan') return;
+    if (p.selesai) return akhiriBalapan();
+    balap.idxSoal++;
+    balap.giliran = (balap.giliran + 1) % balap.pemain.length;
+    balap.sibuk = false;
+    tampilSoalKuis();
+  }, 1000);
+  return benar;
+}
+
+/* ================= TOMBOL-TOMBOL ================= */
+document.getElementById('btnMulai').addEventListener('click', function(){ mulaiBalapan(true); });
+document.getElementById('btnLagi').addEventListener('click', function(){ mulaiBalapan(true); });
+document.getElementById('btnAturUlang').addEventListener('click', function(){
+  balap = null;
+  document.getElementById('layarBalap').classList.add('tersembunyi');
+  document.getElementById('layarAtur').classList.remove('tersembunyi');
+});
+document.getElementById('btnBerhenti').addEventListener('click', function(){
+  if (!balap) return;
+  document.getElementById('hitungMundur').classList.remove('tampil');
+  if (balap.fase !== 'selesai') akhiriBalapan();
+});
+
+/* ================= MULAI ================= */
+renderFormNama();
+
+/* Pegangan untuk pengujian otomatis */
+window.__uji = { atur: atur, SOAL_KUIS: SOAL_KUIS,
+  getBalap: function(){ return balap; },
+  pilihMode: pilihMode, mulaiBalapan: mulaiBalapan, ketuk: ketuk,
+  jawabKuis: jawabKuis, peringkat: peringkat, akhiriBalapan: akhiriBalapan,
+  namaPemainDariForm: namaPemainDariForm };
+</script>
+</body>
+</html>
