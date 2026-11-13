@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>e-Rapor SMK — Aplikasi Rapor Kurikulum Merdeka untuk SMK</title>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --ungu:#7c3aed; --pink:#d946ef; --gelap:#17102e; --gelap2:#241645;
+    --latar:#f4f2fb; --kartu:#ffffff; --garis:#e4def5; --teks:#221c35; --redup:#6f6890;
+    --hijau:#16a34a; --merah:#dc2626; --kuning:#d97706; --biru:#2563eb;
+  }
+  html{box-sizing:border-box}
+  *,*::before,*::after{box-sizing:inherit}
+  body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;
+    background:var(--latar);color:var(--teks)}
+  .tersembunyi{display:none !important}
+
+  /* ===== LOGIN ===== */
+  #layarLogin{min-height:100vh;display:grid;place-items:center;padding:18px;
+    background:radial-gradient(900px 500px at 15% 0%,rgba(217,70,239,.35),transparent 60%),
+      radial-gradient(800px 500px at 90% 100%,rgba(124,58,237,.4),transparent 60%),
+      linear-gradient(140deg,#1b0f38,#3b115e 55%,#5b1140)}
+  .kartuLogin{width:min(400px,100%);background:rgba(23,13,46,.82);border:1px solid rgba(216,180,254,.35);
+    border-radius:22px;padding:30px 26px;color:#f3efff;box-shadow:0 30px 60px rgba(0,0,0,.45);text-align:center}
+  .kartuLogin .ikon{width:66px;height:66px;margin:0 auto 12px;border-radius:18px;display:grid;place-items:center;
+    font-size:33px;background:linear-gradient(135deg,var(--ungu),var(--pink));box-shadow:0 12px 26px rgba(217,70,239,.4)}
+  .kartuLogin h1{margin:0;font-size:25px}
+  .kartuLogin p{margin:5px 0 20px;color:#cfc4f5;font-size:13px;line-height:1.55}
+  .kartuLogin label{display:block;text-align:left;font-size:12.5px;color:#cfc4f5;margin:12px 0 5px}
+  .kartuLogin input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(216,180,254,.4);
+    background:rgba(255,255,255,.08);color:#fff;font-size:15px;font-family:inherit}
+  .kartuLogin input::placeholder{color:#9d8fc9}
+  .btnMasuk{width:100%;margin-top:18px;padding:13px;border:0;border-radius:12px;cursor:pointer;
+    background:linear-gradient(90deg,var(--ungu),var(--pink));color:#fff;font-size:16px;font-weight:800}
+  #loginGalat{color:#fda4af;font-size:13px;min-height:18px;margin-top:10px}
+  .kartuLogin .kaki{margin-top:16px;font-size:11.5px;color:#8f83b8;line-height:1.6}
+
+  /* ===== APLIKASI ===== */
+  #aplikasi{display:flex;min-height:100vh}
+  aside{width:248px;flex:0 0 248px;background:linear-gradient(180deg,var(--gelap),var(--gelap2));
+    color:#e9e4ff;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+  aside .merek{padding:18px 18px 12px;display:flex;gap:11px;align-items:center}
+  aside .merek .ikon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:21px;
+    background:linear-gradient(135deg,var(--ungu),var(--pink));flex:0 0 42px}
+  aside .merek b{font-size:16.5px;display:block;line-height:1.2}
+  aside .merek span{font-size:11px;color:#b7abdf}
+  aside nav{padding:8px 12px;overflow-y:auto;flex:1}
+  aside nav button{display:flex;gap:10px;align-items:center;width:100%;text-align:left;border:0;cursor:pointer;
+    background:transparent;color:#cdc3f2;padding:10px 12px;border-radius:10px;font-size:14px;margin-bottom:3px;font-family:inherit}
+  aside nav button:hover{background:rgba(255,255,255,.07)}
+  aside nav button.aktif{background:linear-gradient(90deg,rgba(124,58,237,.85),rgba(217,70,239,.65));color:#fff;font-weight:700}
+  aside .bawah{padding:13px 18px;border-top:1px solid rgba(255,255,255,.12);font-size:12px;color:#b7abdf;line-height:1.6}
+  aside .bawah button{margin-top:8px;background:rgba(255,255,255,.1);color:#fff;border:0;border-radius:9px;
+    padding:8px 13px;cursor:pointer;font-size:13px}
+  main{flex:1;min-width:0;padding:20px 22px 50px}
+  .kepalaHalaman{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:15px}
+  .kepalaHalaman h2{margin:0;font-size:22px}
+  .kepalaHalaman p{margin:3px 0 0;color:var(--redup);font-size:13px;width:100%}
+  .kartu{background:var(--kartu);border:1px solid var(--garis);border-radius:15px;padding:17px;
+    box-shadow:0 4px 16px rgba(64,30,140,.05);margin-bottom:15px}
+  .kartu h3{margin:0 0 11px;font-size:16.5px}
+  .gridStat{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:13px;margin-bottom:15px}
+  .stat{background:var(--kartu);border:1px solid var(--garis);border-radius:15px;padding:15px 16px;
+    box-shadow:0 4px 16px rgba(64,30,140,.05)}
+  .stat .ikon{font-size:21px}
+  .stat .angka{font-size:27px;font-weight:900;margin:3px 0 1px}
+  .stat .label{font-size:12.5px;color:var(--redup)}
+  .baris{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+  .tumbuh{flex:1 1 auto}
+  .kecil{font-size:12.5px;color:var(--redup);line-height:1.6}
+  .btn{border:0;border-radius:10px;padding:9px 15px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit}
+  .btn-ungu{background:linear-gradient(90deg,var(--ungu),var(--pink));color:#fff}
+  .btn-biasa{background:#efeafd;color:#4c1d95;border:1px solid var(--garis)}
+  .btn-hijau{background:var(--hijau);color:#fff}
+  .btn-merah{background:#fdecec;color:var(--merah);border:1px solid #f5c6c6}
+  .btn.kecil{padding:6px 11px;font-size:12.5px}
+  input[type=text],input[type=number],input[type=password],select,textarea{
+    background:#fff;color:var(--teks);border:1px solid #cfc6ec;border-radius:10px;
+    padding:8px 10px;font-size:14px;font-family:inherit}
+  textarea{width:100%;resize:vertical}
+  label.lbl{font-size:12px;color:var(--redup);display:block;margin-bottom:4px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{border:1px solid var(--garis);padding:7px 9px;text-align:left;vertical-align:top}
+  th{background:#f1ebfd;font-size:12.5px}
+  .gulir{overflow-x:auto}
+  .batang{display:flex;align-items:center;gap:10px;margin:7px 0}
+  .batang .nm{width:190px;flex:0 0 190px;font-size:13px}
+  .batang .rel{flex:1;background:#eee9fb;border-radius:99px;height:15px;overflow:hidden}
+  .batang .rel i{display:block;height:100%;background:linear-gradient(90deg,var(--ungu),var(--pink))}
+  .batang .jml{width:44px;text-align:right;font-weight:800;font-size:13px}
+  dialog{border:1px solid var(--garis);border-radius:16px;padding:0;max-width:min(480px,94vw);width:100%;
+    box-shadow:0 24px 60px rgba(30,10,80,.3)}
+  dialog::backdrop{background:rgba(20,8,50,.5)}
+  .isiModal{padding:19px}
+  .isiModal h3{margin:0 0 13px}
+  .isiModal .kolom{margin-bottom:11px}
+  .chip{display:inline-block;background:#efeafd;border:1px solid var(--garis);color:#4c1d95;
+    border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700}
+  .pred{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;font-weight:900;color:#fff;font-size:13px}
+  .predA{background:#16a34a}.predB{background:#2563eb}.predC{background:#d97706}.predD{background:#dc2626}
+  @media(max-width:820px){
+    #aplikasi{flex-direction:column}
+    aside{width:100%;flex:none;height:auto;position:static}
+    aside nav{display:flex;flex-wrap:wrap}
+    aside nav button{width:auto}
+    aside .bawah{display:none}
+    main{padding:15px 13px 40px}
+    .batang .nm{width:120px;flex-basis:120px}
+  }
+
+  /* ===== CETAK ===== */
+  #areaCetak{display:none}
+  @media print{
+    body>*{display:none !important}
+    body>#areaCetak{display:block !important}
+    #areaCetak{display:block;color:#000;background:#fff;font-size:13px}
+    #areaCetak table{font-size:12.5px}
+    #areaCetak th,#areaCetak td{border-color:#555}
+    #areaCetak th{background:#eee !important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    @page{margin:14mm}
+    .landscape{page:landscape}
+    @page landscape{size:A4 landscape;margin:11mm}
+  }
+  .kop{text-align:center;border-bottom:3px double #000;padding-bottom:8px;margin-bottom:14px}
+  .kop h1{margin:0;font-size:19px;text-transform:uppercase}
+  .kop p{margin:2px 0;font-size:12px}
+  .judulDok{text-align:center;font-weight:800;font-size:15px;margin:10px 0 12px;text-transform:uppercase}
+  .ttd{display:flex;justify-content:space-between;gap:20px;margin-top:26px;font-size:12.5px}
+  .ttd div{width:32%}
+  .ttd .ruang{height:64px}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<div id="layarLogin">
+  <form class="kartuLogin" id="formLogin">
+    <div class="ikon">🎓</div>
+    <h1>e-Rapor SMK</h1>
+    <p>Aplikasi Penilaian &amp; Rapor Kurikulum Merdeka untuk Sekolah Menengah Kejuruan</p>
+    <div id="loginGalat"></div>
+    <label for="loginUser">Nama Pengguna</label>
+    <input type="text" id="loginUser" placeholder="Masukkan nama pengguna" autocomplete="username" required>
+    <label for="loginSandi">Kata Sandi</label>
+    <input type="password" id="loginSandi" placeholder="Masukkan kata sandi" autocomplete="current-password" required>
+    <button class="btnMasuk" type="submit">Masuk ke Sistem →</button>
+    <div class="kaki">Versi mandiri &amp; gratis — semua data tersimpan aman di perangkat ini (tidak dikirim ke server mana pun).<br>Pengguna awal: <b>admin</b> · sandi awal: <b>admin123</b> — segera ganti di menu Pengaturan.</div>
+  </form>
+</div>
+
+<!-- ================= APLIKASI ================= -->
+<div id="aplikasi" class="tersembunyi">
+  <aside>
+    <div class="merek">
+      <div class="ikon">🎓</div>
+      <div><b>e-Rapor SMK</b><span id="merekSekolah">SMK Negeri Contoh</span></div>
+    </div>
+    <nav id="daftarNav"></nav>
+    <div class="bawah">
+      <div id="infoSemester">Semester Ganjil · 2026/2027</div>
+      <button type="button" id="btnKeluar">⏏ Keluar</button>
+    </div>
+  </aside>
+  <main id="konten"></main>
+</div>
+
+<div id="areaCetak"></div>
+
+<!-- Modal umum -->
+<dialog id="modalUmum">
+  <form method="dialog" class="isiModal" id="isiModal"></form>
+</dialog>
+
+<script>
+'use strict';
+var KUNCI_DB = 'erapor_smk_v1';
+var MENU = [
+  { id: 'dashboard', ikon: '🏠', label: 'Dashboard' },
+  { id: 'siswa', ikon: '🧑‍🎓', label: 'Data Siswa' },
+  { id: 'rombel', ikon: '🏫', label: 'Jurusan & Rombel' },
+  { id: 'mapel', ikon: '📚', label: 'Mata Pelajaran' },
+  { id: 'nilai', ikon: '✏️', label: 'Input Nilai' },
+  { id: 'pkl', ikon: '🏭', label: 'Nilai PKL' },
+  { id: 'absensi', ikon: '🗓️', label: 'Absensi & Catatan' },
+  { id: 'ekskul', ikon: '🏅', label: 'Ekstrakurikuler' },
+  { id: 'rapor', ikon: '🖨️', label: 'Cetak Rapor' },
+  { id: 'leger', ikon: '📊', label: 'Leger Nilai' },
+  { id: 'pengaturan', ikon: '⚙️', label: 'Pengaturan' }
+];
+var KELOMPOK_MAPEL = ['Umum', 'Kejuruan', 'Projek'];
+
+function idBaru(){ return 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; });
+}
+
+function dataAwal(){
+  var j1 = idBaru(), j2 = idBaru(), j3 = idBaru();
+  var r1 = idBaru(), r2 = idBaru();
+  var db = {
+    sandi: 'admin123',
+    sekolah: { nama: 'SMK Negeri Contoh', npsn: '20104567', alamat: 'Jl. Pendidikan No. 10, Kasongan, Kab. Katingan, Kalimantan Tengah',
+      kepsek: 'Drs. Contoh Wijaya, M.Pd.', nipKepsek: '19700101 200001 1 001',
+      semester: 'Ganjil', tahun: '2026/2027', kota: 'Kasongan', tanggalRapor: '20 Desember 2026' },
+    jurusan: [
+      { id: j1, nama: 'Teknik Komputer dan Jaringan' },
+      { id: j2, nama: 'Akuntansi dan Keuangan Lembaga' },
+      { id: j3, nama: 'Rekayasa Perangkat Lunak' }
+    ],
+    rombel: [
+      { id: r1, tingkat: 'X', jurusanId: j1, nomor: '1', waliKelas: 'Budi Santoso, S.Kom.', nipWali: '19850505 201001 1 002' },
+      { id: r2, tingkat: 'XI', jurusanId: j2, nomor: '1', waliKelas: 'Sari Wulandari, S.E.', nipWali: '19900202 201501 2 003' }
+    ],
+    siswa: [],
+    mapel: [],
+    nilai: {}, pkl: {}, absensi: {}, ekskul: {}
+  };
+  var namaSiswa = [
+    ['1001', 'Ahmad Fauzi Ramadhan', 'L', r1], ['1002', 'Dewi Anggraini', 'P', r1],
+    ['1003', 'Rizky Pratama', 'L', r1], ['1004', 'Siti Nurhaliza', 'P', r1],
+    ['1005', 'Bagas Dwi Saputra', 'L', r1], ['1006', 'Putri Ayu Lestari', 'P', r1],
+    ['2001', 'Rina Marlina', 'P', r2], ['2002', 'Andi Kurniawan', 'L', r2],
+    ['2003', 'Fitri Rahmawati', 'P', r2], ['2004', 'Dedi Supriadi', 'L', r2]
+  ];
+  namaSiswa.forEach(function(s){
+    db.siswa.push({ id: idBaru(), nis: s[0], nisn: '00' + s[0] + '1234', nama: s[1], jk: s[2], rombelId: s[3] });
+  });
+  var mapelUmum = ['Pendidikan Agama dan Budi Pekerti', 'Pendidikan Pancasila', 'Bahasa Indonesia',
+    'Matematika', 'Bahasa Inggris', 'Pendidikan Jasmani, Olahraga, dan Kesehatan', 'Sejarah', 'Seni Budaya', 'Informatika'];
+  mapelUmum.forEach(function(m){ db.mapel.push({ id: idBaru(), nama: m, kelompok: 'Umum', jurusanId: '', kktp: 75 }); });
+  db.mapel.push({ id: idBaru(), nama: 'Projek IPAS', kelompok: 'Projek', jurusanId: '', kktp: 75 });
+  db.mapel.push({ id: idBaru(), nama: 'Projek Kreatif dan Kewirausahaan', kelompok: 'Projek', jurusanId: '', kktp: 75 });
+  var kej = [
+    [j1, 'Dasar-Dasar Teknik Komputer dan Jaringan'], [j1, 'Jaringan Komputer dan Internet'],
+    [j2, 'Dasar-Dasar Akuntansi'], [j2, 'Akuntansi Keuangan'],
+    [j3, 'Dasar-Dasar Pemrograman'], [j3, 'Basis Data']
+  ];
+  kej.forEach(function(k){ db.mapel.push({ id: idBaru(), nama: k[1], kelompok: 'Kejuruan', jurusanId: k[0], kktp: 75 }); });
+  return db;
+}
+
+var db;
+function simpan(){ try { localStorage.setItem(KUNCI_DB, JSON.stringify(db)); } catch(e){} }
+function muat(){
+  try {
+    var mentah = localStorage.getItem(KUNCI_DB);
+    if (mentah){ db = JSON.parse(mentah); if (db && db.sekolah) return; }
+  } catch(e){}
+  db = dataAwal(); simpan();
+}
+muat();
+
+var halamanAktif = 'dashboard';
+var pilihan = { nilaiRombel: '', nilaiMapel: '', pklRombel: '', absenRombel: '',
+  ekskulRombel: '', ekskulSiswa: '', raporRombel: '', raporSiswa: '', legerRombel: '', siswaRombel: 'semua' };
+
+function cariJurusan(id){ return db.jurusan.find(function(j){ return j.id === id; }) || { nama: '-' }; }
+function cariRombel(id){ return db.rombel.find(function(r){ return r.id === id; }); }
+function cariSiswa(id){ return db.siswa.find(function(s){ return s.id === id; }); }
+function cariMapel(id){ return db.mapel.find(function(m){ return m.id === id; }); }
+function namaRombel(r){
+  if (!r) return '-';
+  var singkatan = cariJurusan(r.jurusanId).nama.split(' ')
+    .filter(function(k){ return k.length > 3; })
+    .map(function(k){ return k[0]; }).join('').replace(/[^A-Z]/g, '');
+  return r.tingkat + ' ' + (singkatan || 'Jurusan') + ' ' + r.nomor;
+}
+function faseDariTingkat(t){ return t === 'X' ? 'Fase E' : 'Fase F'; }
+function siswaDiRombel(rombelId){
+  return db.siswa.filter(function(s){ return s.rombelId === rombelId; })
+    .sort(function(a, b){ return a.nama.localeCompare(b.nama); });
+}
+function mapelUntukRombel(r){
+  if (!r) return [];
+  return db.mapel.filter(function(m){ return !m.jurusanId || m.jurusanId === r.jurusanId; });
+}
+function predikat(n){
+  if (n == null || n === '') return null;
+  if (n >= 90) return 'A';
+  if (n >= 80) return 'B';
+  if (n >= 70) return 'C';
+  return 'D';
+}
+function kelasPred(p){ return { A: 'predA', B: 'predB', C: 'predC', D: 'predD' }[p] || 'predD'; }
+function deskripsiOtomatis(mapel, n){
+  var m = mapel ? mapel.nama : 'mata pelajaran ini';
+  if (n >= 90) return 'Menunjukkan penguasaan yang sangat baik dalam memahami dan menerapkan materi ' + m + ' secara mandiri dan konsisten.';
+  if (n >= 80) return 'Menunjukkan penguasaan yang baik dalam memahami dan menerapkan materi ' + m + ' dengan sedikit bimbingan.';
+  if (n >= 70) return 'Menunjukkan penguasaan yang cukup dalam memahami materi dasar ' + m + '; masih perlu latihan dan pendampingan pada bagian yang lebih kompleks.';
+  return 'Masih perlu bimbingan intensif dalam memahami materi dasar ' + m + '; dianjurkan mengikuti program remedial dan pendalaman materi.';
+}
+function nilaiSiswa(siswaId, mapelId){
+  var per = db.nilai[siswaId];
+  return per && per[mapelId] ? per[mapelId] : null;
+}
+function rataRataSiswa(siswa){
+  var r = cariRombel(siswa.rombelId);
+  var mapels = mapelUntukRombel(r);
+  var jumlah = 0, hitung = 0;
+  mapels.forEach(function(m){
+    var n = nilaiSiswa(siswa.id, m.id);
+    if (n && n.nilai !== '' && n.nilai != null){ jumlah += Number(n.nilai); hitung++; }
+  });
+  return hitung ? { rata: jumlah / hitung, terisi: hitung, total: mapels.length } : { rata: null, terisi: 0, total: mapels.length };
+}
+
+/* ================= LOGIN & NAVIGASI ================= */
+var masuk = false;
+document.getElementById('formLogin').addEventListener('submit', function(ev){
+  ev.preventDefault();
+  var u = document.getElementById('loginUser').value.trim();
+  var s = document.getElementById('loginSandi').value;
+  if (u === 'admin' && s === db.sandi){
+    masuk = true;
+    document.getElementById('layarLogin').classList.add('tersembunyi');
+    document.getElementById('aplikasi').classList.remove('tersembunyi');
+    segarkanKepala(); tampil();
+  } else {
+    document.getElementById('loginGalat').textContent = 'Nama pengguna atau kata sandi salah. Coba lagi ya.';
+  }
+});
+document.getElementById('btnKeluar').addEventListener('click', function(){
+  masuk = false;
+  document.getElementById('aplikasi').classList.add('tersembunyi');
+  document.getElementById('layarLogin').classList.remove('tersembunyi');
+  document.getElementById('loginSandi').value = '';
+});
+function segarkanKepala(){
+  document.getElementById('merekSekolah').textContent = db.sekolah.nama;
+  document.getElementById('infoSemester').textContent =
+    'Semester ' + db.sekolah.semester + ' · ' + db.sekolah.tahun;
+}
+function bangunNav(){
+  var nav = document.getElementById('daftarNav');
+  nav.innerHTML = '';
+  MENU.forEach(function(m){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.innerHTML = m.ikon + ' ' + esc(m.label);
+    if (m.id === halamanAktif) b.classList.add('aktif');
+    b.addEventListener('click', function(){ halamanAktif = m.id; tampil(); });
+    nav.appendChild(b);
+  });
+}
+function tampil(){
+  if (!masuk) return;
+  bangunNav(); segarkanKepala();
+  var k = document.getElementById('konten');
+  var fn = { dashboard: halDashboard, siswa: halSiswa, rombel: halRombel, mapel: halMapel,
+    nilai: halNilai, pkl: halPkl, absensi: halAbsensi, ekskul: halEkskul,
+    rapor: halRapor, leger: halLeger, pengaturan: halPengaturan }[halamanAktif];
+  if (fn) fn(k);
+  k.scrollTop = 0; window.scrollTo(0, 0);
+}
+function kepala(judul, sub){
+  return '<div class="kepalaHalaman"><h2>' + judul + '</h2><p>' + sub + '</p></div>';
+}
+function opsiRombel(terpilih, idEl){
+  return '<select id="' + idEl + '">' + db.rombel.map(function(r){
+    return '<option value="' + r.id + '"' + (r.id === terpilih ? ' selected' : '') + '>' +
+      esc(namaRombel(r)) + ' — ' + esc(cariJurusan(r.jurusanId).nama) + '</option>';
+  }).join('') + '</select>';
+}
+
+/* ================= MODAL ================= */
+var modal = document.getElementById('modalUmum');
+function bukaModal(html){
+  document.getElementById('isiModal').innerHTML = html;
+  if (!modal.open) modal.showModal();
+}
+function tutupModal(){ if (modal.open) modal.close(); }
+function kolomModal(label, kontrol){
+  return '<div class="kolom"><label class="lbl">' + label + '</label>' + kontrol + '</div>';
+}
+function tombolModal(simpanLabel){
+  return '<div class="baris" style="margin-top:6px"><button class="btn btn-ungu" type="submit">' +
+    (simpanLabel || 'Simpan') + '</button>' +
+    '<button class="btn btn-biasa" type="button" id="btnBatalModal">Batal</button></div>';
+}
+modal.addEventListener('click', function(ev){ if (ev.target === modal) tutupModal(); });
+
+/* ================= DASHBOARD ================= */
+function halDashboard(k){
+  var totalSiswa = db.siswa.length;
+  var terisi = 0, sumNilai = 0, cntNilai = 0;
+  db.siswa.forEach(function(s){
+    var rr = rataRataSiswa(s);
+    if (rr.rata != null){ terisi++; sumNilai += rr.rata; cntNilai++; }
+  });
+  var rataSemua = cntNilai ? (sumNilai / cntNilai) : null;
+  var persen = totalSiswa ? Math.round(terisi / totalSiswa * 100) : 0;
+  var maksJur = Math.max.apply(null, db.jurusan.map(function(j){
+    return db.siswa.filter(function(s){
+      var r = cariRombel(s.rombelId); return r && r.jurusanId === j.id; }).length;
+  }).concat([1]));
+  var html = kepala('🏠 Dashboard', 'Ringkasan e-Rapor ' + esc(db.sekolah.nama) +
+    ' · Semester ' + esc(db.sekolah.semester) + ' Tahun Ajaran ' + esc(db.sekolah.tahun));
+  html += '<div class="gridStat">' +
+    statKartu('🧑‍🎓', totalSiswa, 'Total Siswa') +
+    statKartu('🏫', db.rombel.length, 'Rombongan Belajar') +
+    statKartu('🎯', db.jurusan.length, 'Kompetensi Keahlian') +
+    statKartu('📚', db.mapel.length, 'Mata Pelajaran') +
+    statKartu('📈', rataSemua == null ? '—' : rataSemua.toFixed(1), 'Rata-rata Nilai Siswa') +
+    statKartu('✅', persen + '%', 'Siswa dengan Nilai Terisi') +
+    '</div>';
+  html += '<div class="kartu"><h3>Siswa per Kompetensi Keahlian</h3>' +
+    db.jurusan.map(function(j){
+      var n = db.siswa.filter(function(s){
+        var r = cariRombel(s.rombelId); return r && r.jurusanId === j.id; }).length;
+      return '<div class="batang"><span class="nm">' + esc(j.nama) + '</span>' +
+        '<span class="rel"><i style="width:' + Math.round(n / maksJur * 100) + '%"></i></span>' +
+        '<span class="jml">' + n + '</span></div>';
+    }).join('') + '</div>';
+  html += '<div class="kartu"><h3>Identitas Sekolah</h3><table>' +
+    '<tr><th style="width:170px">Nama Sekolah</th><td>' + esc(db.sekolah.nama) + '</td></tr>' +
+    '<tr><th>NPSN</th><td>' + esc(db.sekolah.npsn) + '</td></tr>' +
+    '<tr><th>Alamat</th><td>' + esc(db.sekolah.alamat) + '</td></tr>' +
+    '<tr><th>Kepala Sekolah</th><td>' + esc(db.sekolah.kepsek) + '</td></tr></table>' +
+    '<p class="kecil" style="margin-top:10px">ℹ️ Data bawaan aplikasi ini adalah data contoh fiktif. Ganti dengan data sekolah Anda melalui menu Data Siswa, Jurusan &amp; Rombel, dan Pengaturan.</p></div>';
+  k.innerHTML = html;
+}
+function statKartu(ikon, angka, label){
+  return '<div class="stat"><div class="ikon">' + ikon + '</div><div class="angka">' + angka +
+    '</div><div class="label">' + label + '</div></div>';
+}
+
+/* ================= DATA SISWA ================= */
+function halSiswa(k){
+  var saring = pilihan.siswaRombel;
+  var daftar = db.siswa.filter(function(s){ return saring === 'semua' || s.rombelId === saring; })
+    .sort(function(a, b){ return a.nama.localeCompare(b.nama); });
+  var html = kepala('🧑‍🎓 Data Siswa', 'Kelola data peserta didik. Impor/ekspor Excel tersedia untuk bekerja cepat bersama operator.');
+  html += '<div class="kartu"><div class="baris">' +
+    '<div><label class="lbl">Tampilkan rombel</label><select id="saringSiswa">' +
+    '<option value="semua"' + (saring === 'semua' ? ' selected' : '') + '>Semua rombel</option>' +
+    db.rombel.map(function(r){
+      return '<option value="' + r.id + '"' + (r.id === saring ? ' selected' : '') + '>' + esc(namaRombel(r)) + '</option>';
+    }).join('') + '</select></div>' +
+    '<span class="tumbuh"></span>' +
+    '<button class="btn btn-ungu" id="btnTambahSiswa">＋ Tambah Siswa</button>' +
+    '<button class="btn btn-biasa" id="btnUnduhContoh">⬇ Contoh Excel</button>' +
+    '<label class="btn btn-biasa" style="cursor:pointer">⬆ Impor Excel/CSV<input type="file" id="imporSiswa" accept=".xlsx,.xls,.csv" class="tersembunyi"></label>' +
+    '<button class="btn btn-biasa" id="btnEksporSiswa">⬇ Ekspor Excel</button>' +
+    '</div></div>';
+  html += '<div class="kartu"><div class="gulir"><table><tr><th>No</th><th>NIS</th><th>NISN</th><th>Nama</th><th>L/P</th><th>Rombel</th><th>Jurusan</th><th style="width:150px">Aksi</th></tr>' +
+    (daftar.length ? daftar.map(function(s, i){
+      var r = cariRombel(s.rombelId);
+      return '<tr><td>' + (i + 1) + '</td><td>' + esc(s.nis) + '</td><td>' + esc(s.nisn) + '</td>' +
+        '<td><b>' + esc(s.nama) + '</b></td><td>' + esc(s.jk) + '</td><td>' + esc(namaRombel(r)) + '</td>' +
+        '<td>' + esc(r ? cariJurusan(r.jurusanId).nama : '-') + '</td>' +
+        '<td><button class="btn btn-biasa kecil" data-ubah-siswa="' + s.id + '">Ubah</button> ' +
+        '<button class="btn btn-merah kecil" data-hapus-siswa="' + s.id + '">Hapus</button></td></tr>';
+    }).join('') : '<tr><td colspan="8" class="kecil">Belum ada siswa pada tampilan ini.</td></tr>') +
+    '</table></div><p class="kecil" style="margin-top:9px">Total tampil: ' + daftar.length + ' siswa.</p></div>';
+  k.innerHTML = html;
+  k.querySelector('#saringSiswa').addEventListener('change', function(){
+    pilihan.siswaRombel = this.value; tampil(); });
+  k.querySelector('#btnTambahSiswa').addEventListener('click', function(){ modalSiswa(null); });
+  k.querySelectorAll('[data-ubah-siswa]').forEach(function(b){
+    b.addEventListener('click', function(){ modalSiswa(cariSiswa(b.dataset.ubahSiswa)); }); });
+  k.querySelectorAll('[data-hapus-siswa]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var s = cariSiswa(b.dataset.hapusSiswa);
+      if (s && confirm('Hapus siswa ' + s.nama + '? Nilai, PKL, absensi, dan ekstrakurikulernya ikut terhapus.')){
+        db.siswa = db.siswa.filter(function(x){ return x.id !== s.id; });
+        delete db.nilai[s.id]; delete db.pkl[s.id]; delete db.absensi[s.id]; delete db.ekskul[s.id];
+        simpan(); tampil();
+      }
+    }); });
+  k.querySelector('#btnUnduhContoh').addEventListener('click', unduhContohSiswa);
+  k.querySelector('#btnEksporSiswa').addEventListener('click', eksporSiswa);
+  k.querySelector('#imporSiswa').addEventListener('change', imporSiswaDariBerkas);
+}
+function modalSiswa(s){
+  var baru = !s;
+  s = s || { nis: '', nisn: '', nama: '', jk: 'L', rombelId: db.rombel.length ? db.rombel[0].id : '' };
+  bukaModal('<h3>' + (baru ? 'Tambah Siswa' : 'Ubah Siswa') + '</h3>' +
+    kolomModal('Nama lengkap', '<input type="text" id="mNama" value="' + esc(s.nama) + '" style="width:100%">') +
+    '<div class="baris">' +
+    '<div style="flex:1">' + kolomModal('NIS', '<input type="text" id="mNis" value="' + esc(s.nis) + '" style="width:100%">') + '</div>' +
+    '<div style="flex:1">' + kolomModal('NISN', '<input type="text" id="mNisn" value="' + esc(s.nisn) + '" style="width:100%">') + '</div></div>' +
+    '<div class="baris">' +
+    '<div style="flex:1">' + kolomModal('Jenis kelamin',
+      '<select id="mJk" style="width:100%"><option value="L"' + (s.jk === 'L' ? ' selected' : '') + '>Laki-laki</option><option value="P"' + (s.jk === 'P' ? ' selected' : '') + '>Perempuan</option></select>') + '</div>' +
+    '<div style="flex:2">' + kolomModal('Rombel',
+      '<select id="mRombel" style="width:100%">' + db.rombel.map(function(r){
+        return '<option value="' + r.id + '"' + (r.id === s.rombelId ? ' selected' : '') + '>' + esc(namaRombel(r)) + '</option>'; }).join('') + '</select>') + '</div></div>' +
+    tombolModal('Simpan Siswa'));
+  document.getElementById('btnBatalModal').addEventListener('click', tutupModal);
+  document.getElementById('isiModal').onsubmit = function(ev){
+    ev.preventDefault();
+    var nama = document.getElementById('mNama').value.trim();
+    if (!nama) return;
+    var data = { nis: document.getElementById('mNis').value.trim(),
+      nisn: document.getElementById('mNisn').value.trim(), nama: nama,
+      jk: document.getElementById('mJk').value, rombelId: document.getElementById('mRombel').value };
+    if (baru){ data.id = idBaru(); db.siswa.push(data); }
+    else { var lama = cariSiswa(s.id); Object.keys(data).forEach(function(kunci){ lama[kunci] = data[kunci]; }); }
+    simpan(); tutupModal(); tampil();
+  };
+}
+function barisContohSiswa(){
+  return [ { NIS: '1001', NISN: '0010011234', Nama: 'Nama Siswa Contoh', LP: 'L', Rombel: db.rombel.length ? namaRombel(db.rombel[0]) : 'X TKJ 1' } ];
+}
+function unduhContohSiswa(){
+  if (!window.XLSX){ alert('Pustaka Excel belum termuat (butuh internet sekali). Gunakan berkas CSV dari Ekspor sebagai contoh format.'); return; }
+  var ws = XLSX.utils.json_to_sheet(barisContohSiswa());
+  var wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Siswa');
+  XLSX.writeFile(wb, 'contoh-impor-siswa.xlsx');
+}
+function eksporSiswa(){
+  var data = db.siswa.map(function(s){
+    var r = cariRombel(s.rombelId);
+    return { NIS: s.nis, NISN: s.nisn, Nama: s.nama, LP: s.jk, Rombel: namaRombel(r) };
+  });
+  if (!window.XLSX){
+    var csv = 'NIS,NISN,Nama,LP,Rombel\n' + data.map(function(d){
+      return [d.NIS, d.NISN, '"' + d.Nama.replace(/"/g, '""') + '"', d.LP, '"' + d.Rombel + '"'].join(','); }).join('\n');
+    unduhTeks(csv, 'data-siswa.csv', 'text/csv');
+    return;
+  }
+  var ws = XLSX.utils.json_to_sheet(data);
+  var wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Siswa');
+  XLSX.writeFile(wb, 'data-siswa.xlsx');
+}
+function unduhTeks(teks, nama, tipe){
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([teks], { type: tipe || 'text/plain' }));
+  a.download = nama; a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+}
+function rombelDariNama(nama){
+  nama = String(nama || '').trim().toLowerCase();
+  return db.rombel.find(function(r){ return namaRombel(r).toLowerCase() === nama; });
+}
+function terapkanBarisSiswa(baris){
+  var masuk = 0, dilewati = 0;
+  baris.forEach(function(b){
+    var nama = String(b.Nama || b.nama || '').trim();
+    if (!nama){ dilewati++; return; }
+    var r = rombelDariNama(b.Rombel || b.rombel) || (db.rombel.length ? db.rombel[0] : null);
+    if (!r){ dilewati++; return; }
+    db.siswa.push({ id: idBaru(), nis: String(b.NIS || '').trim(), nisn: String(b.NISN || '').trim(),
+      nama: nama, jk: String(b.LP || b['L/P'] || 'L').trim().toUpperCase() === 'P' ? 'P' : 'L', rombelId: r.id });
+    masuk++;
+  });
+  return { masuk: masuk, dilewati: dilewati };
+}
+function imporSiswaDariBerkas(ev){
+  var berkas = ev.target.files[0];
+  if (!berkas) return;
+  var selesai = function(baris){
+    var hasil = terapkanBarisSiswa(baris);
+    simpan(); tampil();
+    alert('Impor selesai: ' + hasil.masuk + ' siswa masuk, ' + hasil.dilewati + ' baris dilewati. Baris dengan nama rombel tidak dikenal dimasukkan ke rombel pertama.');
+  };
+  if (/\.csv$/i.test(berkas.name)){
+    berkas.text().then(function(teks){
+      var baris = teks.trim().split(/\r?\n/).slice(1).map(function(l){
+        var c = l.split(/[,;]/).map(function(x){ return x.replace(/^"|"$/g, '').trim(); });
+        return { NIS: c[0], NISN: c[1], Nama: c[2], LP: c[3], Rombel: c[4] };
+      });
+      selesai(baris);
+    });
+  } else if (window.XLSX){
+    berkas.arrayBuffer().then(function(buf){
+      var wb = XLSX.read(buf);
+      var ws = wb.Sheets[wb.SheetNames[0]];
+      selesai(XLSX.utils.sheet_to_json(ws));
+    });
+  } else {
+    alert('Pustaka Excel belum termuat. Sambungkan internet sekali, atau gunakan berkas .csv.');
+  }
+}
+
+/* ================= JURUSAN & ROMBEL ================= */
+function halRombel(k){
+  var html = kepala('🏫 Jurusan & Rombel', 'Atur kompetensi keahlian (jurusan) dan rombongan belajar. Fase otomatis: kelas X = Fase E, kelas XI–XII = Fase F.');
+  html += '<div class="kartu"><div class="baris"><h3 style="margin:0">Kompetensi Keahlian</h3><span class="tumbuh"></span>' +
+    '<button class="btn btn-ungu" id="btnTambahJurusan">＋ Tambah Jurusan</button></div>' +
+    '<div class="gulir" style="margin-top:11px"><table><tr><th>Nama Jurusan</th><th>Rombel</th><th>Siswa</th><th style="width:150px">Aksi</th></tr>' +
+    db.jurusan.map(function(j){
+      var rb = db.rombel.filter(function(r){ return r.jurusanId === j.id; });
+      var sw = db.siswa.filter(function(s){
+        var r = cariRombel(s.rombelId); return r && r.jurusanId === j.id; }).length;
+      return '<tr><td><b>' + esc(j.nama) + '</b></td><td>' + rb.length + '</td><td>' + sw + '</td>' +
+        '<td><button class="btn btn-biasa kecil" data-ubah-jurusan="' + j.id + '">Ubah</button> ' +
+        '<button class="btn btn-merah kecil" data-hapus-jurusan="' + j.id + '">Hapus</button></td></tr>';
+    }).join('') + '</table></div></div>';
+  html += '<div class="kartu"><div class="baris"><h3 style="margin:0">Rombongan Belajar</h3><span class="tumbuh"></span>' +
+    '<button class="btn btn-ungu" id="btnTambahRombel">＋ Tambah Rombel</button></div>' +
+    '<div class="gulir" style="margin-top:11px"><table><tr><th>Rombel</th><th>Fase</th><th>Jurusan</th><th>Wali Kelas</th><th>Siswa</th><th style="width:150px">Aksi</th></tr>' +
+    db.rombel.map(function(r){
+      return '<tr><td><b>' + esc(namaRombel(r)) + '</b></td><td><span class="chip">' + faseDariTingkat(r.tingkat) + '</span></td>' +
+        '<td>' + esc(cariJurusan(r.jurusanId).nama) + '</td><td>' + esc(r.waliKelas) + '</td>' +
+        '<td>' + siswaDiRombel(r.id).length + '</td>' +
+        '<td><button class="btn btn-biasa kecil" data-ubah-rombel="' + r.id + '">Ubah</button> ' +
+        '<button class="btn btn-merah kecil" data-hapus-rombel="' + r.id + '">Hapus</button></td></tr>';
+    }).join('') + '</table></div></div>';
+  k.innerHTML = html;
+  k.querySelector('#btnTambahJurusan').addEventListener('click', function(){ modalJurusan(null); });
+  k.querySelectorAll('[data-ubah-jurusan]').forEach(function(b){
+    b.addEventListener('click', function(){ modalJurusan(cariJurusan(b.dataset.ubahJurusan)); }); });
+  k.querySelectorAll('[data-hapus-jurusan]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var j = cariJurusan(b.dataset.hapusJurusan);
+      if (db.rombel.some(function(r){ return r.jurusanId === j.id; }))
+        return alert('Jurusan ini masih dipakai rombel. Hapus/pindahkan rombelnya dulu.');
+      if (confirm('Hapus jurusan ' + j.nama + '?')){
+        db.jurusan = db.jurusan.filter(function(x){ return x.id !== j.id; });
+        db.mapel = db.mapel.filter(function(m){ return m.jurusanId !== j.id; });
+        simpan(); tampil();
+      }
+    }); });
+  k.querySelector('#btnTambahRombel').addEventListener('click', function(){ modalRombel(null); });
+  k.querySelectorAll('[data-ubah-rombel]').forEach(function(b){
+    b.addEventListener('click', function(){ modalRombel(cariRombel(b.dataset.ubahRombel)); }); });
+  k.querySelectorAll('[data-hapus-rombel]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var r = cariRombel(b.dataset.hapusRombel);
+      if (siswaDiRombel(r.id).length)
+        return alert('Rombel ini masih berisi siswa. Pindahkan/hapus siswanya dulu.');
+      if (confirm('Hapus rombel ' + namaRombel(r) + '?')){
+        db.rombel = db.rombel.filter(function(x){ return x.id !== r.id; });
+        simpan(); tampil();
+      }
+    }); });
+}
+function modalJurusan(j){
+  var baru = !j;
+  j = j || { nama: '' };
+  bukaModal('<h3>' + (baru ? 'Tambah Jurusan' : 'Ubah Jurusan') + '</h3>' +
+    kolomModal('Nama kompetensi keahlian', '<input type="text" id="mNama" value="' + esc(j.nama) + '" style="width:100%" placeholder="cth. Teknik Komputer dan Jaringan">') +
+    tombolModal('Simpan'));
+  document.getElementById('btnBatalModal').addEventListener('click', tutupModal);
+  document.getElementById('isiModal').onsubmit = function(ev){
+    ev.preventDefault();
+    var nama = document.getElementById('mNama').value.trim();
+    if (!nama) return;
+    if (baru) db.jurusan.push({ id: idBaru(), nama: nama });
+    else cariJurusan(j.id).nama = nama;
+    simpan(); tutupModal(); tampil();
+  };
+}
+function modalRombel(r){
+  var baru = !r;
+  r = r || { tingkat: 'X', jurusanId: db.jurusan.length ? db.jurusan[0].id : '', nomor: '1', waliKelas: '', nipWali: '' };
+  bukaModal('<h3>' + (baru ? 'Tambah Rombel' : 'Ubah Rombel') + '</h3>' +
+    '<div class="baris">' +
+    '<div style="flex:1">' + kolomModal('Tingkat',
+      '<select id="mTingkat" style="width:100%">' + ['X', 'XI', 'XII'].map(function(t){
+        return '<option value="' + t + '"' + (r.tingkat === t ? ' selected' : '') + '>' + t + '</option>'; }).join('') + '</select>') + '</div>' +
+    '<div style="flex:1">' + kolomModal('Nomor rombel', '<input type="text" id="mNomor" value="' + esc(r.nomor) + '" style="width:100%">') + '</div></div>' +
+    kolomModal('Jurusan', '<select id="mJurusan" style="width:100%">' + db.jurusan.map(function(j){
+      return '<option value="' + j.id + '"' + (r.jurusanId === j.id ? ' selected' : '') + '>' + esc(j.nama) + '</option>'; }).join('') + '</select>') +
+    kolomModal('Nama wali kelas', '<input type="text" id="mWali" value="' + esc(r.waliKelas) + '" style="width:100%">') +
+    kolomModal('NIP wali kelas', '<input type="text" id="mNipWali" value="' + esc(r.nipWali || '') + '" style="width:100%">') +
+    tombolModal('Simpan'));
+  document.getElementById('btnBatalModal').addEventListener('click', tutupModal);
+  document.getElementById('isiModal').onsubmit = function(ev){
+    ev.preventDefault();
+    var data = { tingkat: document.getElementById('mTingkat').value,
+      jurusanId: document.getElementById('mJurusan').value,
+      nomor: document.getElementById('mNomor').value.trim() || '1',
+      waliKelas: document.getElementById('mWali').value.trim(),
+      nipWali: document.getElementById('mNipWali').value.trim() };
+    if (baru){ data.id = idBaru(); db.rombel.push(data); }
+    else { var lama = cariRombel(r.id); Object.keys(data).forEach(function(kunci){ lama[kunci] = data[kunci]; }); }
+    simpan(); tutupModal(); tampil();
+  };
+}
+
+/* ================= MATA PELAJARAN ================= */
+function halMapel(k){
+  var html = kepala('📚 Mata Pelajaran', 'Mapel umum & projek berlaku untuk semua jurusan; mapel kejuruan terikat pada jurusannya. KKTP menjadi acuan deskripsi capaian.');
+  html += '<div class="kartu"><div class="baris"><span class="kecil">Total ' + db.mapel.length + ' mata pelajaran</span><span class="tumbuh"></span>' +
+    '<button class="btn btn-ungu" id="btnTambahMapel">＋ Tambah Mapel</button></div>' +
+    '<div class="gulir" style="margin-top:11px"><table><tr><th>Mata Pelajaran</th><th>Kelompok</th><th>Jurusan</th><th>KKTP</th><th style="width:150px">Aksi</th></tr>' +
+    db.mapel.map(function(m){
+      return '<tr><td><b>' + esc(m.nama) + '</b></td><td><span class="chip">' + esc(m.kelompok) + '</span></td>' +
+        '<td>' + (m.jurusanId ? esc(cariJurusan(m.jurusanId).nama) : 'Semua jurusan') + '</td>' +
+        '<td>' + esc(m.kktp) + '</td>' +
+        '<td><button class="btn btn-biasa kecil" data-ubah-mapel="' + m.id + '">Ubah</button> ' +
+        '<button class="btn btn-merah kecil" data-hapus-mapel="' + m.id + '">Hapus</button></td></tr>';
+    }).join('') + '</table></div></div>';
+  k.innerHTML = html;
+  k.querySelector('#btnTambahMapel').addEventListener('click', function(){ modalMapel(null); });
+  k.querySelectorAll('[data-ubah-mapel]').forEach(function(b){
+    b.addEventListener('click', function(){ modalMapel(cariMapel(b.dataset.ubahMapel)); }); });
+  k.querySelectorAll('[data-hapus-mapel]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var m = cariMapel(b.dataset.hapusMapel);
+      if (confirm('Hapus mapel ' + m.nama + '? Nilai mapel ini pada semua siswa ikut terhapus.')){
+        db.mapel = db.mapel.filter(function(x){ return x.id !== m.id; });
+        Object.keys(db.nilai).forEach(function(sid){ delete db.nilai[sid][m.id]; });
+        simpan(); tampil();
+      }
+    }); });
+}
+function modalMapel(m){
+  var baru = !m;
+  m = m || { nama: '', kelompok: 'Umum', jurusanId: '', kktp: 75 };
+  bukaModal('<h3>' + (baru ? 'Tambah Mapel' : 'Ubah Mapel') + '</h3>' +
+    kolomModal('Nama mata pelajaran', '<input type="text" id="mNama" value="' + esc(m.nama) + '" style="width:100%">') +
+    kolomModal('Kelompok', '<select id="mKelompok" style="width:100%">' + KELOMPOK_MAPEL.map(function(g){
+      return '<option value="' + g + '"' + (m.kelompok === g ? ' selected' : '') + '>' + g + '</option>'; }).join('') + '</select>') +
+    kolomModal('Khusus jurusan (mapel kejuruan)', '<select id="mJurusan" style="width:100%">' +
+      '<option value="">Semua jurusan</option>' + db.jurusan.map(function(j){
+        return '<option value="' + j.id + '"' + (m.jurusanId === j.id ? ' selected' : '') + '>' + esc(j.nama) + '</option>'; }).join('') + '</select>') +
+    kolomModal('KKTP (kriteria ketercapaian, 0–100)', '<input type="number" id="mKktp" min="0" max="100" value="' + esc(m.kktp) + '" style="width:100%">') +
+    tombolModal('Simpan'));
+  document.getElementById('btnBatalModal').addEventListener('click', tutupModal);
+  document.getElementById('isiModal').onsubmit = function(ev){
+    ev.preventDefault();
+    var nama = document.getElementById('mNama').value.trim();
+    if (!nama) return;
+    var data = { nama: nama, kelompok: document.getElementById('mKelompok').value,
+      jurusanId: document.getElementById('mJurusan').value,
+      kktp: Math.max(0, Math.min(100, Number(document.getElementById('mKktp').value) || 75)) };
+    if (baru){ data.id = idBaru(); db.mapel.push(data); }
+    else { var lama = cariMapel(m.id); Object.keys(data).forEach(function(kunci){ lama[kunci] = data[kunci]; }); }
+    simpan(); tutupModal(); tampil();
+  };
+}
+
+/* ================= INPUT NILAI ================= */
+function halNilai(k){
+  if (!db.rombel.length){
+    k.innerHTML = kepala('✏️ Input Nilai', 'Tambahkan rombel dulu di menu Jurusan & Rombel.');
+    return;
+  }
+  if (!pilihan.nilaiRombel || !cariRombel(pilihan.nilaiRombel)) pilihan.nilaiRombel = db.rombel[0].id;
+  var r = cariRombel(pilihan.nilaiRombel);
+  var mapels = mapelUntukRombel(r);
+  if (!pilihan.nilaiMapel || !mapels.some(function(m){ return m.id === pilihan.nilaiMapel; }))
+    pilihan.nilaiMapel = mapels.length ? mapels[0].id : '';
+  var mapel = cariMapel(pilihan.nilaiMapel);
+  var siswa = siswaDiRombel(r.id);
+  var html = kepala('✏️ Input Nilai', 'Isi nilai akhir (0–100). Predikat muncul otomatis; deskripsi terisi otomatis dari predikat dan dapat diubah sebelum disimpan.');
+  html += '<div class="kartu"><div class="baris">' +
+    '<div><label class="lbl">Rombel</label>' + opsiRombel(r.id, 'pilihNilaiRombel') + '</div>' +
+    '<div><label class="lbl">Mata pelajaran</label><select id="pilihNilaiMapel">' +
+    mapels.map(function(m){
+      return '<option value="' + m.id + '"' + (m.id === pilihan.nilaiMapel ? ' selected' : '') + '>' +
+        esc(m.nama) + ' (' + esc(m.kelompok) + ')</option>'; }).join('') + '</select></div>' +
+    (mapel ? '<span class="chip">KKTP ' + esc(mapel.kktp) + '</span>' : '') +
+    '<span class="tumbuh"></span><button class="btn btn-hijau" id="btnSimpanNilai">💾 Simpan Nilai</button></div></div>';
+  html += '<div class="kartu"><div class="gulir"><table><tr><th style="width:36px">No</th><th>Nama Siswa</th><th style="width:96px">Nilai</th><th style="width:52px">Pred</th><th>Deskripsi Capaian</th></tr>' +
+    (siswa.length ? siswa.map(function(s, i){
+      var n = nilaiSiswa(s.id, pilihan.nilaiMapel);
+      var p = n ? predikat(n.nilai) : null;
+      return '<tr><td>' + (i + 1) + '</td><td><b>' + esc(s.nama) + '</b></td>' +
+        '<td><input type="number" min="0" max="100" step="1" style="width:82px" data-nilai-siswa="' + s.id + '" value="' + (n && n.nilai != null ? esc(n.nilai) : '') + '"></td>' +
+        '<td>' + (p ? '<span class="pred ' + kelasPred(p) + '">' + p + '</span>' : '—') + '</td>' +
+        '<td><textarea rows="2" data-desk-siswa="' + s.id + '" placeholder="Terisi otomatis bila dikosongkan">' + esc(n ? n.deskripsi : '') + '</textarea></td></tr>';
+    }).join('') : '<tr><td colspan="5" class="kecil">Belum ada siswa di rombel ini.</td></tr>') +
+    '</table></div>' +
+    '<p class="kecil" style="margin-top:9px">Predikat: A ≥ 90 · B 80–89 · C 70–79 · D &lt; 70. Nilai di bawah KKTP (' + (mapel ? esc(mapel.kktp) : '-') + ') disarankan mengikuti remedial — cantumkan pada deskripsi bila perlu.</p></div>';
+  k.innerHTML = html;
+  k.querySelector('#pilihNilaiRombel').addEventListener('change', function(){
+    pilihan.nilaiRombel = this.value; pilihan.nilaiMapel = ''; tampil(); });
+  k.querySelector('#pilihNilaiMapel').addEventListener('change', function(){
+    pilihan.nilaiMapel = this.value; tampil(); });
+  k.querySelector('#btnSimpanNilai').addEventListener('click', function(){
+    if (!mapel) return;
+    k.querySelectorAll('[data-nilai-siswa]').forEach(function(inp){
+      var sid = inp.dataset.nilaiSiswa;
+      var mentah = inp.value.trim();
+      var deskEl = k.querySelector('[data-desk-siswa="' + sid + '"]');
+      if (mentah === ''){ if (db.nilai[sid]) delete db.nilai[sid][mapel.id]; return; }
+      var n = Math.max(0, Math.min(100, Number(mentah)));
+      var desk = deskEl ? deskEl.value.trim() : '';
+      if (!desk) desk = deskripsiOtomatis(mapel, n);
+      if (!db.nilai[sid]) db.nilai[sid] = {};
+      db.nilai[sid][mapel.id] = { nilai: n, deskripsi: desk };
+    });
+    simpan(); tampil();
+    alert('Nilai ' + mapel.nama + ' untuk rombel ' + namaRombel(r) + ' tersimpan.');
+  });
+}
+
+/* ================= NILAI PKL ================= */
+function halPkl(k){
+  if (!db.rombel.length){
+    k.innerHTML = kepala('🏭 Nilai PKL', 'Tambahkan rombel dulu di menu Jurusan & Rombel.');
+    return;
+  }
+  if (!pilihan.pklRombel || !cariRombel(pilihan.pklRombel)) pilihan.pklRombel = db.rombel[0].id;
+  var r = cariRombel(pilihan.pklRombel);
+  var siswa = siswaDiRombel(r.id);
+  var html = kepala('🏭 Nilai PKL', 'Praktik Kerja Lapangan: tempat industri, nilai dari pembimbing industri/sekolah, dan keterangan. Nilai PKL tampil pada rapor sebagai bagian tersendiri.');
+  html += '<div class="kartu"><div class="baris">' +
+    '<div><label class="lbl">Rombel</label>' + opsiRombel(r.id, 'pilihPklRombel') + '</div>' +
+    '<span class="tumbuh"></span><button class="btn btn-hijau" id="btnSimpanPkl">💾 Simpan PKL</button></div></div>';
+  html += '<div class="kartu"><div class="gulir"><table><tr><th style="width:36px">No</th><th>Nama Siswa</th><th>Tempat PKL (DU/DI)</th><th style="width:90px">Nilai</th><th>Keterangan</th></tr>' +
+    (siswa.length ? siswa.map(function(s, i){
+      var p = db.pkl[s.id] || {};
+      return '<tr><td>' + (i + 1) + '</td><td><b>' + esc(s.nama) + '</b></td>' +
+        '<td><input type="text" style="width:100%" data-pkl-tempat="' + s.id + '" value="' + esc(p.tempat || '') + '" placeholder="cth. PT Contoh Sejahtera"></td>' +
+        '<td><input type="number" min="0" max="100" style="width:78px" data-pkl-nilai="' + s.id + '" value="' + (p.nilai != null ? esc(p.nilai) : '') + '"></td>' +
+        '<td><input type="text" style="width:100%" data-pkl-ket="' + s.id + '" value="' + esc(p.keterangan || '') + '" placeholder="Sikap & kinerja selama PKL"></td></tr>';
+    }).join('') : '<tr><td colspan="5" class="kecil">Belum ada siswa di rombel ini.</td></tr>') +
+    '</table></div></div>';
+  k.innerHTML = html;
+  k.querySelector('#pilihPklRombel').addEventListener('change', function(){
+    pilihan.pklRombel = this.value; tampil(); });
+  k.querySelector('#btnSimpanPkl').addEventListener('click', function(){
+    siswa.forEach(function(s){
+      var tempat = k.querySelector('[data-pkl-tempat="' + s.id + '"]').value.trim();
+      var mentah = k.querySelector('[data-pkl-nilai="' + s.id + '"]').value.trim();
+      var ket = k.querySelector('[data-pkl-ket="' + s.id + '"]').value.trim();
+      if (!tempat && mentah === '' && !ket){ delete db.pkl[s.id]; return; }
+      db.pkl[s.id] = { tempat: tempat,
+        nilai: mentah === '' ? null : Math.max(0, Math.min(100, Number(mentah))), keterangan: ket };
+    });
+    simpan(); tampil();
+    alert('Data PKL rombel ' + namaRombel(r) + ' tersimpan.');
+  });
+}
+
+/* ================= ABSENSI & CATATAN ================= */
+function halAbsensi(k){
+  if (!db.rombel.length){
+    k.innerHTML = kepala('🗓️ Absensi & Catatan', 'Tambahkan rombel dulu di menu Jurusan & Rombel.');
+    return;
+  }
+  if (!pilihan.absenRombel || !cariRombel(pilihan.absenRombel)) pilihan.absenRombel = db.rombel[0].id;
+  var r = cariRombel(pilihan.absenRombel);
+  var siswa = siswaDiRombel(r.id);
+  var html = kepala('🗓️ Absensi & Catatan Wali Kelas', 'Rekap ketidakhadiran satu semester dan catatan wali kelas untuk setiap siswa — tampil pada rapor.');
+  html += '<div class="kartu"><div class="baris">' +
+    '<div><label class="lbl">Rombel</label>' + opsiRombel(r.id, 'pilihAbsenRombel') + '</div>' +
+    '<span class="tumbuh"></span><button class="btn btn-hijau" id="btnSimpanAbsen">💾 Simpan Absensi</button></div></div>';
+  html += '<div class="kartu"><div class="gulir"><table><tr><th style="width:36px">No</th><th>Nama Siswa</th><th style="width:70px">Sakit</th><th style="width:70px">Izin</th><th style="width:70px">Alpa</th><th>Catatan Wali Kelas</th></tr>' +
+    (siswa.length ? siswa.map(function(s, i){
+      var a = db.absensi[s.id] || {};
+      return '<tr><td>' + (i + 1) + '</td><td><b>' + esc(s.nama) + '</b></td>' +
+        '<td><input type="number" min="0" style="width:58px" data-abs-s="' + s.id + '" value="' + (a.sakit != null ? a.sakit : 0) + '"></td>' +
+        '<td><input type="number" min="0" style="width:58px" data-abs-i="' + s.id + '" value="' + (a.izin != null ? a.izin : 0) + '"></td>' +
+        '<td><input type="number" min="0" style="width:58px" data-abs-a="' + s.id + '" value="' + (a.alpa != null ? a.alpa : 0) + '"></td>' +
+        '<td><textarea rows="2" data-abs-cat="' + s.id + '" placeholder="Catatan perkembangan siswa…">' + esc(a.catatan || '') + '</textarea></td></tr>';
+    }).join('') : '<tr><td colspan="6" class="kecil">Belum ada siswa di rombel ini.</td></tr>') +
+    '</table></div></div>';
+  k.innerHTML = html;
+  k.querySelector('#pilihAbsenRombel').addEventListener('change', function(){
+    pilihan.absenRombel = this.value; tampil(); });
+  k.querySelector('#btnSimpanAbsen').addEventListener('click', function(){
+    siswa.forEach(function(s){
+      var ambil = function(sel){ return Math.max(0, Number(k.querySelector(sel).value) || 0); };
+      db.absensi[s.id] = { sakit: ambil('[data-abs-s="' + s.id + '"]'),
+        izin: ambil('[data-abs-i="' + s.id + '"]'), alpa: ambil('[data-abs-a="' + s.id + '"]'),
+        catatan: k.querySelector('[data-abs-cat="' + s.id + '"]').value.trim() };
+    });
+    simpan(); tampil();
+    alert('Absensi & catatan rombel ' + namaRombel(r) + ' tersimpan.');
+  });
+}
+
+/* ================= EKSTRAKURIKULER ================= */
+function halEkskul(k){
+  if (!db.rombel.length){
+    k.innerHTML = kepala('🏅 Ekstrakurikuler', 'Tambahkan rombel dulu di menu Jurusan & Rombel.');
+    return;
+  }
+  if (!pilihan.ekskulRombel || !cariRombel(pilihan.ekskulRombel)) pilihan.ekskulRombel = db.rombel[0].id;
+  var r = cariRombel(pilihan.ekskulRombel);
+  var siswa = siswaDiRombel(r.id);
+  if (!pilihan.ekskulSiswa || !siswa.some(function(s){ return s.id === pilihan.ekskulSiswa; }))
+    pilihan.ekskulSiswa = siswa.length ? siswa[0].id : '';
+  var s = cariSiswa(pilihan.ekskulSiswa);
+  var daftar = s ? (db.ekskul[s.id] || []) : [];
+  var html = kepala('🏅 Ekstrakurikuler', 'Catat kegiatan ekstrakurikuler setiap siswa beserta predikat dan keterangannya — tampil pada rapor.');
+  html += '<div class="kartu"><div class="baris">' +
+    '<div><label class="lbl">Rombel</label>' + opsiRombel(r.id, 'pilihEkskulRombel') + '</div>' +
+    '<div><label class="lbl">Siswa</label><select id="pilihEkskulSiswa">' +
+    siswa.map(function(x){
+      return '<option value="' + x.id + '"' + (x.id === pilihan.ekskulSiswa ? ' selected' : '') + '>' + esc(x.nama) + '</option>'; }).join('') +
+    '</select></div></div></div>';
+  if (s){
+    html += '<div class="kartu"><h3>Kegiatan ' + esc(s.nama) + '</h3>' +
+      (daftar.length ? '<div class="gulir"><table><tr><th>Kegiatan</th><th>Predikat</th><th>Keterangan</th><th style="width:90px">Aksi</th></tr>' +
+        daftar.map(function(e, i){
+          return '<tr><td><b>' + esc(e.nama) + '</b></td><td>' + esc(e.predikat) + '</td><td>' + esc(e.keterangan) + '</td>' +
+            '<td><button class="btn btn-merah kecil" data-hapus-eks="' + i + '">Hapus</button></td></tr>';
+        }).join('') + '</table></div>' : '<p class="kecil">Belum ada kegiatan tercatat untuk siswa ini.</p>') +
+      '<div class="baris" style="margin-top:13px;align-items:flex-end">' +
+      '<div style="flex:2 1 200px"><label class="lbl">Nama kegiatan</label><input type="text" id="eksNama" style="width:100%" placeholder="cth. Pramuka, Futsal, Rohis…"></div>' +
+      '<div><label class="lbl">Predikat</label><select id="eksPred"><option>Sangat Baik</option><option>Baik</option><option>Cukup</option></select></div>' +
+      '<div style="flex:2 1 200px"><label class="lbl">Keterangan</label><input type="text" id="eksKet" style="width:100%"></div>' +
+      '<button class="btn btn-ungu" id="btnTambahEks">＋ Tambah</button></div></div>';
+  }
+  k.innerHTML = html;
+  k.querySelector('#pilihEkskulRombel').addEventListener('change', function(){
+    pilihan.ekskulRombel = this.value; pilihan.ekskulSiswa = ''; tampil(); });
+  var selS = k.querySelector('#pilihEkskulSiswa');
+  if (selS) selS.addEventListener('change', function(){ pilihan.ekskulSiswa = this.value; tampil(); });
+  var btnT = k.querySelector('#btnTambahEks');
+  if (btnT) btnT.addEventListener('click', function(){
+    var nama = k.querySelector('#eksNama').value.trim();
+    if (!nama) return;
+    if (!db.ekskul[s.id]) db.ekskul[s.id] = [];
+    db.ekskul[s.id].push({ nama: nama, predikat: k.querySelector('#eksPred').value,
+      keterangan: k.querySelector('#eksKet').value.trim() });
+    simpan(); tampil();
+  });
+  k.querySelectorAll('[data-hapus-eks]').forEach(function(b){
+    b.addEventListener('click', function(){
+      db.ekskul[s.id].splice(Number(b.dataset.hapusEks), 1);
+      simpan(); tampil();
+    });
+  });
+}
+
+/* ================= CETAK RAPOR ================= */
+function kataPredikat(p){
+  return { A: 'Sangat Baik', B: 'Baik', C: 'Cukup', D: 'Perlu Bimbingan' }[p] || '-';
+}
+function halRapor(k){
+  if (!db.rombel.length){
+    k.innerHTML = kepala('🖨️ Cetak Rapor', 'Tambahkan rombel dulu di menu Jurusan & Rombel.');
+    return;
+  }
+  if (!pilihan.raporRombel || !cariRombel(pilihan.raporRombel)) pilihan.raporRombel = db.rombel[0].id;
+  var r = cariRombel(pilihan.raporRombel);
+  var siswa = siswaDiRombel(r.id);
+  if (!pilihan.raporSiswa || !siswa.some(function(s){ return s.id === pilihan.raporSiswa; }))
+    pilihan.raporSiswa = siswa.length ? siswa[0].id : '';
+  var s = cariSiswa(pilihan.raporSiswa);
+  var rr = s ? rataRataSiswa(s) : { terisi: 0, total: 0 };
+  var html = kepala('🖨️ Cetak Rapor', 'Pilih siswa lalu cetak rapor A4-nya. Gunakan tombol cetak semua untuk satu rombel sekaligus (setiap siswa satu berkas cetak berurutan).');
+  html += '<div class="kartu"><div class="baris">' +
+    '<div><label class="lbl">Rombel</label>' + opsiRombel(r.id, 'pilihRaporRombel') + '</div>' +
+    '<div><label class="lbl">Siswa</label><select id="pilihRaporSiswa">' +
+    siswa.map(function(x){
+      return '<option value="' + x.id + '"' + (x.id === pilihan.raporSiswa ? ' selected' : '') + '>' + esc(x.nama) + '</option>'; }).join('') +
+    '</select></div>' +
+    '<span class="tumbuh"></span>' +
+    '<button class="btn btn-ungu" id="btnCetakRapor" ' + (s ? '' : 'disabled') + '>🖨️ Cetak Rapor Siswa Ini</button>' +
+    '<button class="btn btn-biasa" id="btnCetakSemua">🖨️ Cetak Semua (1 Rombel)</button></div>' +
+    (s ? '<p class="kecil" style="margin-top:10px">Kelengkapan nilai ' + esc(s.nama) + ': <b>' + rr.terisi + ' dari ' + rr.total + ' mapel</b>' +
+      (rr.rata != null ? ' · rata-rata ' + rr.rata.toFixed(1) : '') + '.</p>' : '') +
+    '</div>';
+  k.innerHTML = html;
+  k.querySelector('#pilihRaporRombel').addEventListener('change', function(){
+    pilihan.raporRombel = this.value; pilihan.raporSiswa = ''; tampil(); });
+  k.querySelector('#pilihRaporSiswa').addEventListener('change', function(){
+    pilihan.raporSiswa = this.value; tampil(); });
+  k.querySelector('#btnCetakRapor').addEventListener('click', function(){
+    cetakHtml(bangunRaporHtml(cariSiswa(pilihan.raporSiswa))); });
+  k.querySelector('#btnCetakSemua').addEventListener('click', function(){
+    cetakHtml(siswaDiRombel(pilihan.raporRombel).map(bangunRaporHtml).join('<div style="page-break-after:always"></div>')); });
+}
+function cetakHtml(html){
+  var area = document.getElementById('areaCetak');
+  area.innerHTML = html;
+  area.classList.remove('landscape');
+  window.print();
+}
+function bangunRaporHtml(s){
+  if (!s) return '';
+  var r = cariRombel(s.rombelId);
+  var j = r ? cariJurusan(r.jurusanId) : { nama: '-' };
+  var sk = db.sekolah;
+  var html = '<div class="kop"><h1>' + esc(sk.nama) + '</h1><p>' + esc(sk.alamat) + '</p>' +
+    '<p>NPSN ' + esc(sk.npsn) + '</p></div>';
+  html += '<div class="judulDok">Laporan Hasil Belajar (Rapor)<br>Semester ' + esc(sk.semester) +
+    ' Tahun Ajaran ' + esc(sk.tahun) + '</div>';
+  html += '<table style="border:0;margin-bottom:10px"><tr>' +
+    '<td style="border:0;width:170px">Nama Peserta Didik</td><td style="border:0">: <b>' + esc(s.nama) + '</b></td>' +
+    '<td style="border:0;width:120px">Kelas</td><td style="border:0">: ' + esc(r ? namaRombel(r) : '-') + '</td></tr>' +
+    '<tr><td style="border:0">NIS / NISN</td><td style="border:0">: ' + esc(s.nis) + ' / ' + esc(s.nisn) + '</td>' +
+    '<td style="border:0">Fase</td><td style="border:0">: ' + (r ? faseDariTingkat(r.tingkat).replace('Fase ', '') : '-') + '</td></tr>' +
+    '<tr><td style="border:0">Kompetensi Keahlian</td><td style="border:0">: ' + esc(j.nama) + '</td>' +
+    '<td style="border:0">Semester</td><td style="border:0">: ' + esc(sk.semester) + '</td></tr></table>';
+  var mapels = mapelUntukRombel(r);
+  var huruf = ['A', 'B', 'C'];
+  KELOMPOK_MAPEL.forEach(function(g, gi){
+    var daftar = mapels.filter(function(m){ return m.kelompok === g; });
+    if (!daftar.length) return;
+    html += '<p style="font-weight:800;margin:13px 0 5px">' + huruf[gi] + '. Kelompok ' + esc(g) + '</p>';
+    html += '<table><tr><th style="width:34px">No</th><th>Mata Pelajaran</th><th style="width:70px">Nilai Akhir</th><th style="width:110px">Predikat</th><th>Deskripsi Capaian</th></tr>' +
+      daftar.map(function(m, i){
+        var n = nilaiSiswa(s.id, m.id);
+        var p = n ? predikat(n.nilai) : null;
+        return '<tr><td>' + (i + 1) + '</td><td>' + esc(m.nama) + '</td>' +
+          '<td style="text-align:center">' + (n && n.nilai != null ? n.nilai : '—') + '</td>' +
+          '<td>' + (p ? p + ' (' + kataPredikat(p) + ')' : '—') + '</td>' +
+          '<td>' + esc(n ? n.deskripsi : '') + '</td></tr>';
+      }).join('') + '</table>';
+  });
+  var pkl = db.pkl[s.id];
+  if (pkl && (pkl.tempat || pkl.nilai != null)){
+    html += '<p style="font-weight:800;margin:13px 0 5px">Praktik Kerja Lapangan (PKL)</p>' +
+      '<table><tr><th>Tempat PKL</th><th style="width:70px">Nilai</th><th style="width:110px">Predikat</th><th>Keterangan</th></tr>' +
+      '<tr><td>' + esc(pkl.tempat || '-') + '</td><td style="text-align:center">' +
+      (pkl.nilai != null ? pkl.nilai : '—') + '</td><td>' +
+      (pkl.nilai != null ? kataPredikat(predikat(pkl.nilai)) : '—') + '</td><td>' + esc(pkl.keterangan || '') + '</td></tr></table>';
+  }
+  var eks = db.ekskul[s.id] || [];
+  html += '<p style="font-weight:800;margin:13px 0 5px">Ekstrakurikuler</p>' +
+    '<table><tr><th style="width:34px">No</th><th>Kegiatan</th><th style="width:110px">Predikat</th><th>Keterangan</th></tr>' +
+    (eks.length ? eks.map(function(e, i){
+      return '<tr><td>' + (i + 1) + '</td><td>' + esc(e.nama) + '</td><td>' + esc(e.predikat) + '</td><td>' + esc(e.keterangan) + '</td></tr>';
+    }).join('') : '<tr><td>—</td><td colspan="3">Tidak mengikuti ekstrakurikuler semester ini</td></tr>') + '</table>';
+  var a = db.absensi[s.id] || { sakit: 0, izin: 0, alpa: 0, catatan: '' };
+  html += '<p style="font-weight:800;margin:13px 0 5px">Ketidakhadiran</p>' +
+    '<table style="width:55%"><tr><th>Sakit</th><th>Izin</th><th>Tanpa Keterangan</th></tr>' +
+    '<tr><td style="text-align:center">' + (a.sakit || 0) + ' hari</td><td style="text-align:center">' + (a.izin || 0) +
+    ' hari</td><td style="text-align:center">' + (a.alpa || 0) + ' hari</td></tr></table>';
+  html += '<p style="font-weight:800;margin:13px 0 5px">Catatan Wali Kelas</p>' +
+    '<div style="border:1px solid #555;padding:9px 11px;min-height:44px">' + esc(a.catatan || '—') + '</div>';
+  html += '<div class="ttd">' +
+    '<div>Orang Tua/Wali,<div class="ruang"></div>( ………………………… )</div>' +
+    '<div>Wali Kelas,<div class="ruang"></div><b><u>' + esc(r ? r.waliKelas : '') + '</u></b><br>NIP. ' + esc(r ? (r.nipWali || '') : '') + '</div>' +
+    '<div>' + esc(sk.kota) + ', ' + esc(sk.tanggalRapor) + '<br>Mengetahui,<br>Kepala Sekolah,<div class="ruang" style="height:52px"></div><b><u>' + esc(sk.kepsek) + '</u></b><br>NIP. ' + esc(sk.nipKepsek) + '</div>' +
+    '</div>';
+  return html;
+}
+
+/* ================= LEGER ================= */
+function halLeger(k){
+  if (!db.rombel.length){
+    k.innerHTML = kepala('📊 Leger Nilai', 'Tambahkan rombel dulu di menu Jurusan & Rombel.');
+    return;
+  }
+  if (!pilihan.legerRombel || !cariRombel(pilihan.legerRombel)) pilihan.legerRombel = db.rombel[0].id;
+  var r = cariRombel(pilihan.legerRombel);
+  var data = hitungLeger(r);
+  var html = kepala('📊 Leger Nilai', 'Rekap nilai satu rombel beserta rata-rata dan peringkat kelas.');
+  html += '<div class="kartu"><div class="baris">' +
+    '<div><label class="lbl">Rombel</label>' + opsiRombel(r.id, 'pilihLegerRombel') + '</div>' +
+    '<span class="tumbuh"></span>' +
+    '<button class="btn btn-ungu" id="btnCetakLeger">🖨️ Cetak Leger</button>' +
+    '<button class="btn btn-biasa" id="btnEksporLeger">⬇ Ekspor Excel</button></div></div>';
+  html += '<div class="kartu"><div class="gulir">' + tabelLegerHtml(data) + '</div></div>';
+  k.innerHTML = html;
+  k.querySelector('#pilihLegerRombel').addEventListener('change', function(){
+    pilihan.legerRombel = this.value; tampil(); });
+  k.querySelector('#btnCetakLeger').addEventListener('click', function(){
+    var area = document.getElementById('areaCetak');
+    area.innerHTML = '<div class="kop"><h1>' + esc(db.sekolah.nama) + '</h1><p>' + esc(db.sekolah.alamat) + '</p></div>' +
+      '<div class="judulDok">Leger Nilai — ' + esc(namaRombel(r)) + ' (' + esc(cariJurusan(r.jurusanId).nama) + ')<br>Semester ' +
+      esc(db.sekolah.semester) + ' Tahun Ajaran ' + esc(db.sekolah.tahun) + '</div>' + tabelLegerHtml(data);
+    area.classList.add('landscape');
+    window.print();
+  });
+  k.querySelector('#btnEksporLeger').addEventListener('click', function(){ eksporLeger(data, r); });
+}
+function hitungLeger(r){
+  var mapels = mapelUntukRombel(r);
+  var baris = siswaDiRombel(r.id).map(function(s){
+    var nilai = mapels.map(function(m){
+      var n = nilaiSiswa(s.id, m.id);
+      return n && n.nilai != null ? Number(n.nilai) : null;
+    });
+    var ada = nilai.filter(function(x){ return x != null; });
+    var rata = ada.length ? ada.reduce(function(a, b){ return a + b; }, 0) / ada.length : null;
+    return { siswa: s, nilai: nilai, rata: rata };
+  });
+  var terurut = baris.filter(function(b){ return b.rata != null; })
+    .slice().sort(function(a, b){ return b.rata - a.rata; });
+  baris.forEach(function(b){
+    b.peringkat = b.rata == null ? null : terurut.indexOf(b) + 1; });
+  return { mapels: mapels, baris: baris };
+}
+function tabelLegerHtml(data){
+  if (!data.baris.length) return '<p class="kecil">Belum ada siswa di rombel ini.</p>';
+  var html = '<table><tr><th style="width:34px">No</th><th>Nama Siswa</th>' +
+    data.mapels.map(function(m){ return '<th style="font-size:11px">' + esc(m.nama) + '</th>'; }).join('') +
+    '<th>Rata-rata</th><th>Peringkat</th></tr>';
+  html += data.baris.map(function(b, i){
+    return '<tr><td>' + (i + 1) + '</td><td><b>' + esc(b.siswa.nama) + '</b></td>' +
+      b.nilai.map(function(n){ return '<td style="text-align:center">' + (n == null ? '—' : n) + '</td>'; }).join('') +
+      '<td style="text-align:center"><b>' + (b.rata == null ? '—' : b.rata.toFixed(1)) + '</b></td>' +
+      '<td style="text-align:center">' + (b.peringkat == null ? '—' : b.peringkat) + '</td></tr>';
+  }).join('') + '</table>';
+  return html;
+}
+function eksporLeger(data, r){
+  var objek = data.baris.map(function(b, i){
+    var o = { No: i + 1, Nama: b.siswa.nama };
+    data.mapels.forEach(function(m, mi){ o[m.nama] = b.nilai[mi]; });
+    o['Rata-rata'] = b.rata == null ? '' : Number(b.rata.toFixed(1));
+    o['Peringkat'] = b.peringkat == null ? '' : b.peringkat;
+    return o;
+  });
+  if (!window.XLSX){
+    var kolom = Object.keys(objek[0] || { Nama: '' });
+    var csv = kolom.join(',') + '\n' + objek.map(function(o){
+      return kolom.map(function(c){ var v = o[c] == null ? '' : String(o[c]); return '"' + v.replace(/"/g, '""') + '"'; }).join(','); }).join('\n');
+    unduhTeks(csv, 'leger-' + namaRombel(r).replace(/\s+/g, '-') + '.csv', 'text/csv');
+    return;
+  }
+  var ws = XLSX.utils.json_to_sheet(objek);
+  var wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Leger');
+  XLSX.writeFile(wb, 'leger-' + namaRombel(r).replace(/\s+/g, '-') + '.xlsx');
+}
+
+/* ================= PENGATURAN ================= */
+function halPengaturan(k){
+  var s = db.sekolah;
+  var html = kepala('⚙️ Pengaturan', 'Identitas sekolah untuk kop rapor, kata sandi admin, dan cadangan data.');
+  html += '<div class="kartu"><h3>Identitas Sekolah</h3>' +
+    '<div class="baris" style="align-items:flex-start">' +
+    lapang('Nama sekolah', 'setNama', s.nama, 'flex:2 1 260px') +
+    lapang('NPSN', 'setNpsn', s.npsn, 'flex:1 1 130px') + '</div>' +
+    lapang('Alamat lengkap', 'setAlamat', s.alamat, '') +
+    '<div class="baris" style="align-items:flex-start">' +
+    lapang('Kepala sekolah', 'setKepsek', s.kepsek, 'flex:2 1 220px') +
+    lapang('NIP kepala sekolah', 'setNipKepsek', s.nipKepsek, 'flex:1 1 180px') + '</div>' +
+    '<div class="baris" style="align-items:flex-start">' +
+    '<div style="flex:1 1 120px;margin-bottom:11px"><label class="lbl">Semester</label><select id="setSemester" style="width:100%">' +
+    ['Ganjil', 'Genap'].map(function(x){ return '<option' + (s.semester === x ? ' selected' : '') + '>' + x + '</option>'; }).join('') + '</select></div>' +
+    lapang('Tahun ajaran', 'setTahun', s.tahun, 'flex:1 1 120px') +
+    lapang('Kota/kabupaten (untuk tanda tangan)', 'setKota', s.kota, 'flex:1 1 150px') +
+    lapang('Tanggal rapor', 'setTanggal', s.tanggalRapor, 'flex:1 1 170px') + '</div>' +
+    '<button class="btn btn-ungu" id="btnSimpanSet" style="margin-top:6px">💾 Simpan Identitas</button></div>';
+  html += '<div class="kartu"><h3>Ganti Kata Sandi Admin</h3>' +
+    '<div class="baris" style="align-items:flex-start">' +
+    lapang('Sandi lama', 'sandiLama', '', 'flex:1 1 160px', 'password') +
+    lapang('Sandi baru', 'sandiBaru', '', 'flex:1 1 160px', 'password') + '</div>' +
+    '<button class="btn btn-biasa" id="btnGantiSandi">🔐 Ganti Sandi</button></div>';
+  html += '<div class="kartu"><h3>Cadangan Data</h3>' +
+    '<p class="kecil">Seluruh data tersimpan lokal di perangkat ini. Unduh cadangan JSON secara berkala dan simpan di tempat aman; pulihkan bila berganti perangkat.</p>' +
+    '<div class="baris"><button class="btn btn-biasa" id="btnBackup">⬇ Unduh Cadangan (JSON)</button>' +
+    '<label class="btn btn-biasa" style="cursor:pointer">⬆ Pulihkan Cadangan<input type="file" id="pulihkanBerkas" accept=".json" class="tersembunyi"></label>' +
+    '<button class="btn btn-merah" id="btnResetData">♻ Atur Ulang ke Data Contoh</button></div></div>';
+  k.innerHTML = html;
+  k.querySelector('#btnSimpanSet').addEventListener('click', function(){
+    var ambil = function(id){ return document.getElementById(id).value.trim(); };
+    db.sekolah = { nama: ambil('setNama'), npsn: ambil('setNpsn'), alamat: ambil('setAlamat'),
+      kepsek: ambil('setKepsek'), nipKepsek: ambil('setNipKepsek'),
+      semester: document.getElementById('setSemester').value, tahun: ambil('setTahun'),
+      kota: ambil('setKota'), tanggalRapor: ambil('setTanggal') };
+    simpan(); tampil();
+    alert('Identitas sekolah tersimpan.');
+  });
+  k.querySelector('#btnGantiSandi').addEventListener('click', function(){
+    var lama = document.getElementById('sandiLama').value;
+    var baru = document.getElementById('sandiBaru').value;
+    if (lama !== db.sandi) return alert('Sandi lama salah.');
+    if (baru.length < 6) return alert('Sandi baru minimal 6 karakter.');
+    db.sandi = baru; simpan();
+    alert('Kata sandi berhasil diganti. Gunakan sandi baru pada masuk berikutnya.');
+    tampil();
+  });
+  k.querySelector('#btnBackup').addEventListener('click', function(){
+    unduhTeks(JSON.stringify(db, null, 1), 'cadangan-erapor-smk.json', 'application/json');
+  });
+  k.querySelector('#pulihkanBerkas').addEventListener('change', function(ev){
+    var berkas = ev.target.files[0];
+    if (!berkas) return;
+    berkas.text().then(function(teks){
+      try {
+        var data = JSON.parse(teks);
+        if (!data || !data.sekolah || !Array.isArray(data.siswa)) throw new Error('format');
+        db = data; simpan(); tampil();
+        alert('Cadangan berhasil dipulihkan.');
+      } catch(e){ alert('Berkas cadangan tidak valid.'); }
+    });
+  });
+  k.querySelector('#btnResetData').addEventListener('click', function(){
+    if (confirm('Atur ulang seluruh data ke data contoh awal? Data saat ini akan hilang (unduh cadangan dulu bila perlu).')){
+      db = dataAwal(); simpan(); halamanAktif = 'dashboard'; tampil();
+    }
+  });
+}
+function lapang(label, id, nilai, gaya, tipe){
+  return '<div style="' + (gaya || '') + ';margin-bottom:11px"><label class="lbl">' + label + '</label>' +
+    '<input type="' + (tipe || 'text') + '" id="' + id + '" value="' + esc(nilai) + '" style="width:100%"></div>';
+}
+
+/* Pegangan untuk pengujian otomatis */
+window.__uji = { getDb: function(){ return db; }, setDb: function(d){ db = d; simpan(); },
+  tampil: tampil, setHalaman: function(id){ halamanAktif = id; tampil(); },
+  getHalaman: function(){ return halamanAktif; },
+  predikat: predikat, deskripsiOtomatis: deskripsiOtomatis, bangunRaporHtml: bangunRaporHtml,
+  namaRombel: namaRombel, faseDariTingkat: faseDariTingkat, rataRataSiswa: rataRataSiswa,
+  hitungLeger: hitungLeger, terapkanBarisSiswa: terapkanBarisSiswa,
+  mapelUntukRombel: mapelUntukRombel, dataAwal: dataAwal };
+</script>
+</body>
+</html>
