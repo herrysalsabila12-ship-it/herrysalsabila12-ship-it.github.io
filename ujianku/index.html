@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UjianKu — Bank Soal &amp; CBT · Impor Word/Excel/PDF Tanpa API Key</title>
+<style>
+  :root{
+    --bg:#eef1f8; --putih:#ffffff; --teks:#17203a; --redup:#64748b;
+    --indigo:#4f46e5; --indigo2:#6366f1; --teal:#0ea5e9; --hijau:#10b981;
+    --emas:#f59e0b; --merah:#ef4444; --garis:#e2e8f0;
+    --bayang:0 10px 28px rgba(23,32,58,.10);
+  }
+  html{box-sizing:border-box}
+  *,*::before,*::after{box-sizing:inherit}
+  body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;
+    background:var(--bg);color:var(--teks)}
+  .tata{display:flex;min-height:100vh}
+  /* ------- sidebar ------- */
+  aside{width:238px;flex:0 0 238px;background:var(--putih);border-right:1px solid var(--garis);
+    padding:18px 14px;display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+  .merek{display:flex;gap:10px;align-items:center;padding:2px 6px 14px}
+  .merek .logo{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:22px;
+    background:linear-gradient(135deg,var(--indigo),var(--teal));color:#fff;box-shadow:var(--bayang)}
+  .merek b{font-size:19px}
+  .merek small{display:block;color:var(--redup);font-size:11.5px}
+  nav.tombol{display:flex;flex-direction:column;gap:5px}
+  nav.tombol button{display:flex;gap:10px;align-items:center;border:0;background:transparent;
+    padding:11px 12px;border-radius:11px;font-size:14.5px;font-weight:600;color:var(--teks);
+    cursor:pointer;text-align:left}
+  nav.tombol button:hover{background:#eef2ff}
+  nav.tombol button.aktif{background:linear-gradient(90deg,#eef2ff,#ecfeff);color:var(--indigo);
+    box-shadow:inset 3px 0 0 var(--indigo)}
+  aside .kaki{margin-top:auto;border-top:1px solid var(--garis);padding-top:12px}
+  aside .kaki .kecil{padding:0 6px}
+  /* ------- utama ------- */
+  main{flex:1;min-width:0;padding:20px 20px 46px;max-width:1060px;margin:0 auto;width:100%}
+  .view{display:none}
+  .view.tampil{display:block}
+  .view>h2{margin:0 0 2px;font-size:23px}
+  .view>.sub{color:var(--redup);font-size:13.5px;margin:0 0 14px}
+  .kartu{background:var(--putih);border:1px solid var(--garis);border-radius:16px;
+    padding:16px;box-shadow:var(--bayang);margin-bottom:14px}
+  .gridStat{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
+  .stat{background:var(--putih);border:1px solid var(--garis);border-radius:16px;padding:15px;box-shadow:var(--bayang)}
+  .stat .angka{font-size:29px;font-weight:800}
+  .stat .label{color:var(--redup);font-size:12.5px}
+  .stat .ikon{font-size:21px}
+  .gridPaket{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+  .paketKartu{background:var(--putih);border:1px solid var(--garis);border-radius:16px;padding:15px;box-shadow:var(--bayang)}
+  .paketKartu h3{margin:0 0 3px;font-size:16.5px}
+  .paketKartu .meta{color:var(--redup);font-size:12.5px;margin-bottom:10px}
+  .baris{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .tumbuh{flex:1 1 auto}
+  .btn{border:0;border-radius:10px;padding:10px 15px;font-size:14px;font-weight:700;cursor:pointer}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn-utama{background:var(--indigo);color:#fff}
+  .btn-utama:hover{background:var(--indigo2)}
+  .btn-teal{background:var(--teal);color:#fff}
+  .btn-emas{background:var(--emas);color:#2a1503}
+  .btn-biasa{background:#eef2ff;color:var(--indigo);border:1px solid #dbe2fe}
+  .btn-netral{background:#f1f5f9;color:var(--teks);border:1px solid var(--garis)}
+  .btn-bahaya{background:#fef2f2;color:var(--merah);border:1px solid #fecaca}
+  .btn.kecil{padding:6px 11px;font-size:12.5px}
+  label.lbl{font-size:12px;color:var(--redup);display:block;margin-bottom:4px;font-weight:600}
+  input[type=text],input[type=number],select,textarea{
+    background:#f8fafc;color:var(--teks);border:1px solid var(--garis);border-radius:10px;
+    padding:9px 11px;font-size:14.5px;width:100%;font-family:inherit}
+  textarea{resize:vertical;line-height:1.55}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:11px}
+  .kecil{font-size:12.5px;color:var(--redup);line-height:1.6}
+  .lencana{display:inline-block;border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:700}
+  .lencana.hijau{background:#ecfdf5;color:#047857}
+  .lencana.indigo{background:#eef2ff;color:var(--indigo)}
+  .lencana.emas{background:#fffbeb;color:#b45309}
+  /* ------- impor ------- */
+  .jatuh{border:2px dashed #c7d2fe;border-radius:14px;padding:16px;text-align:center;background:#f5f7ff;cursor:pointer}
+  .jatuh:hover{background:#eef2ff}
+  .jatuh .besar{font-size:29px}
+  .log{background:#0f172a;color:#a5f3fc;border-radius:12px;padding:12px 14px;font-size:13px;
+    line-height:1.65;white-space:pre-wrap;max-height:220px;overflow:auto}
+  /* ------- bank soal ------- */
+  .soalKartu{border:1px solid var(--garis);border-radius:14px;padding:14px;margin-bottom:11px;background:#fff}
+  .soalKartu .kepala{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:7px}
+  .soalKartu .nomor{width:28px;height:28px;border-radius:9px;background:var(--indigo);color:#fff;
+    display:grid;place-items:center;font-weight:800;font-size:13.5px;flex:0 0 28px}
+  .isiSoal{font-size:15px;line-height:1.65}
+  .isiSoal img{max-width:min(420px,100%);border:1px solid var(--garis);border-radius:9px;margin:6px 0}
+  .opsiTampil{margin:5px 0 0 6px;font-size:14.5px;line-height:1.6}
+  .opsiTampil .benar{color:#047857;font-weight:700}
+  .opsiTampil img{max-width:200px;border:1px solid var(--garis);border-radius:8px;vertical-align:middle}
+  /* ------- CBT ------- */
+  .nomorGrid{display:flex;flex-wrap:wrap;gap:6px}
+  .nomorGrid button{width:37px;height:37px;border-radius:10px;border:1px solid var(--garis);
+    background:#f8fafc;font-weight:700;cursor:pointer;font-size:13.5px}
+  .nomorGrid button.aktif{background:var(--indigo);color:#fff;border-color:var(--indigo)}
+  .nomorGrid button.terjawab{background:var(--hijau);color:#fff;border-color:var(--hijau)}
+  .pilihanCbt{display:block;width:100%;text-align:left;margin-top:8px;background:#f8fafc;
+    border:1.5px solid var(--garis);border-radius:12px;padding:11px 13px;font-size:15px;cursor:pointer;line-height:1.55}
+  .pilihanCbt img{max-width:220px;border-radius:8px}
+  .pilihanCbt.aktif{border-color:var(--indigo);background:#eef2ff}
+  .waktu{font-variant-numeric:tabular-nums;font-weight:800;color:var(--emas);font-size:17px}
+  /* ------- modal ------- */
+  .selubung{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;place-items:start center;
+    overflow:auto;padding:22px 10px;z-index:50}
+  .selubung.tampil{display:grid}
+  .modal{background:#fff;border-radius:17px;max-width:640px;width:100%;padding:19px;box-shadow:var(--bayang)}
+  .modal h3{margin:0 0 10px}
+  .cip{display:inline-flex;gap:6px;align-items:center;background:#eef2ff;border-radius:8px;
+    padding:4px 9px;font-size:12.5px;margin:0 6px 6px 0}
+  .cip button{border:0;background:transparent;color:var(--merah);cursor:pointer;font-weight:800}
+  .tersembunyi{display:none !important}
+  #lembarCetak{display:none}
+  @media print{
+    body{background:#fff}
+    .tata{display:none !important}
+    #lembarCetak{display:block;font-family:Georgia,serif;line-height:1.6}
+    #lembarCetak img{max-width:380px}
+  }
+  @media (max-width:760px){
+    .tata{flex-direction:column}
+    aside{width:100%;flex:none;height:auto;position:static;padding:12px}
+    nav.tombol{flex-direction:row;overflow-x:auto}
+    nav.tombol button{white-space:nowrap}
+    aside .kaki{display:none}
+    main{padding:14px 12px 40px}
+  }
+</style>
+</head>
+<body>
+<div class="tata">
+  <aside>
+    <div class="merek">
+      <div class="logo">🎓</div>
+      <div><b>UjianKu</b><small>Bank Soal &amp; CBT Guru</small></div>
+    </div>
+    <nav class="tombol" id="navUtama">
+      <button type="button" data-view="dashboard" class="aktif">📊 Dasbor</button>
+      <button type="button" data-view="impor">📥 Impor Soal</button>
+      <button type="button" data-view="bank">🗂 Bank Soal</button>
+      <button type="button" data-view="cbt">🖥 Ujian CBT</button>
+      <button type="button" data-view="hasil">🏆 Hasil Ujian</button>
+    </nav>
+    <div class="kaki">
+      <div class="baris">
+        <button class="btn btn-netral kecil" id="btnCadangkan" type="button">⬇ Cadangkan</button>
+        <label class="btn btn-netral kecil" style="cursor:pointer">⬆ Pulihkan
+          <input type="file" id="berkasPulih" accept=".json,application/json" class="tersembunyi">
+        </label>
+      </div>
+      <p class="kecil">Impor berjalan luring di perangkat ini — tanpa API key. Data tersimpan di peramban ini saja.</p>
+    </div>
+  </aside>
+
+  <main>
+    <!-- ===== DASBOR ===== -->
+    <section class="view tampil" id="view-dashboard">
+      <h2>Dasbor</h2>
+      <p class="sub">Semua paket soal dan hasil ujianmu, tersimpan di perangkat ini.</p>
+      <div class="gridStat">
+        <div class="stat"><span class="ikon">📦</span><div class="angka" id="statPaket">0</div><div class="label">Paket soal</div></div>
+        <div class="stat"><span class="ikon">❓</span><div class="angka" id="statSoal">0</div><div class="label">Total soal</div></div>
+        <div class="stat"><span class="ikon">🧑‍🎓</span><div class="angka" id="statHasil">0</div><div class="label">Hasil ujian masuk</div></div>
+        <div class="stat"><span class="ikon">📈</span><div class="angka" id="statRerata">–</div><div class="label">Rata-rata skor</div></div>
+      </div>
+      <div class="baris" style="margin-bottom:12px">
+        <button class="btn btn-utama" id="btnKeImpor" type="button">📥 Impor Soal Baru</button>
+        <button class="btn btn-biasa" id="btnPaketManual" type="button">＋ Paket Kosong</button>
+      </div>
+      <div class="gridPaket" id="gridPaket"></div>
+    </section>
+
+    <!-- ===== IMPOR ===== -->
+    <section class="view" id="view-impor">
+      <h2>Impor Soal</h2>
+      <p class="sub">Tiga jalur impor — semuanya diproses <b>luring di perangkat ini, tanpa API key</b>. Gambar dibaca mengikuti urutan aslinya di dalam soal, rumus Word diubah menjadi rumus tampil (MathML), bukan teks acak.</p>
+      <div class="kartu">
+        <div class="grid">
+          <div><label class="lbl" for="impNamaPaket">Nama paket tujuan</label>
+            <input type="text" id="impNamaPaket" placeholder="mis. PAS MTK Kelas 8"></div>
+          <div><label class="lbl" for="impMapel">Mata pelajaran</label>
+            <input type="text" id="impMapel" placeholder="mis. Matematika"></div>
+        </div>
+        <div class="grid" style="margin-top:13px">
+          <div>
+            <label class="lbl">① Berkas Word (.docx) — gambar &amp; rumus ikut</label>
+            <label class="jatuh" for="fileDocx">
+              <div class="besar">📄</div><b>Pilih naskah .docx</b>
+              <div class="kecil">Soal bernomor, opsi A–E. Gambar menempel di posisi aslinya; rumus Equation Word terbaca sebagai rumus.</div>
+            </label>
+            <input type="file" id="fileDocx" accept=".docx" class="tersembunyi">
+            <div style="margin-top:9px">
+              <label class="lbl" for="fileKunci">Berkas kunci terpisah (opsional, .docx/.txt)</label>
+              <input type="file" id="fileKunci" accept=".docx,.txt">
+              <p class="kecil">Tanpa berkas kunci pun bisa — kunci di akhir naskah (daftar "1. C 2. A …") atau baris "Kunci: C" di bawah soal akan terbaca otomatis.</p>
+            </div>
+          </div>
+          <div>
+            <label class="lbl">② Berkas Excel (.xlsx) — format tabel</label>
+            <label class="jatuh" for="fileXlsx">
+              <div class="besar">📊</div><b>Pilih berkas .xlsx</b>
+              <div class="kecil">Kolom: Soal | A | B | C | D | E | Kunci. Paling stabil untuk bank soal besar. Catatan jujur: gambar melayang di Excel tidak bisa dipetakan ke sel secara andal, jadi jalur ini khusus soal teks.</div>
+            </label>
+            <input type="file" id="fileXlsx" accept=".xlsx,.xls" class="tersembunyi">
+            <div style="margin-top:9px">
+              <button class="btn btn-biasa kecil" id="btnUnduhTemplate" type="button">⬇ Unduh Contoh Template Excel (CSV)</button>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:13px">
+          <label class="lbl">③ Berkas PDF — mode potret (potong per soal)</label>
+          <label class="jatuh" for="filePdf">
+            <div class="besar">✂️</div><b>Pilih berkas .pdf</b>
+            <div class="kecil">PDF tidak punya struktur soal, jadi cara paling setia adalah memotong tampilannya per soal. Hasil potongan menjadi gambar soal — persis sama dengan sumbernya, rumus dan gambar apa pun aman.</div>
+          </label>
+          <input type="file" id="filePdf" accept=".pdf" class="tersembunyi">
+        </div>
+        <div id="pdfPanel" class="tersembunyi" style="margin-top:13px">
+          <div class="baris">
+            <button class="btn btn-netral kecil" id="pdfPrev" type="button">⬅ Halaman</button>
+            <span id="pdfInfo" class="kecil">Halaman –</span>
+            <button class="btn btn-netral kecil" id="pdfNext" type="button">Halaman ➜</button>
+            <span class="tumbuh"></span>
+            <label class="lbl" style="margin:0" for="pdfKunci">Kunci soal potret</label>
+            <select id="pdfKunci" style="width:80px"><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option></select>
+            <button class="btn btn-teal kecil" id="btnPotong" type="button" disabled>✂ Potong &amp; Tambah Soal</button>
+          </div>
+          <p class="kecil">Seret (drag) pada halaman untuk menandai wilayah satu soal beserta opsinya, pilih kuncinya, lalu potong. Ulangi untuk soal berikutnya.</p>
+          <div style="overflow:auto;border:1px solid var(--garis);border-radius:12px;background:#f8fafc">
+            <canvas id="pdfCanvas" style="max-width:100%;display:block;touch-action:none"></canvas>
+          </div>
+          <p class="kecil" id="pdfStatus"></p>
+        </div>
+        <h3 style="margin:16px 0 7px;font-size:15.5px">Catatan Impor</h3>
+        <div class="log" id="impLog">Siap mengimpor. Pilih salah satu berkas di atas.</div>
+      </div>
+    </section>
+
+    <!-- ===== BANK SOAL ===== -->
+    <section class="view" id="view-bank">
+      <h2>Bank Soal</h2>
+      <p class="sub">Periksa hasil impor, sunting bila perlu, lalu pakai untuk ujian CBT atau cetak naskah.</p>
+      <div class="kartu">
+        <div class="baris">
+          <div class="tumbuh" style="min-width:190px">
+            <label class="lbl" for="bankPaket">Paket</label>
+            <select id="bankPaket"></select>
+          </div>
+          <button class="btn btn-teal kecil" id="btnSoalManual" type="button">＋ Soal Tulis Sendiri</button>
+          <button class="btn btn-biasa kecil" id="btnCetakNaskah" type="button">🖨 Cetak Naskah</button>
+          <button class="btn btn-bahaya kecil" id="btnHapusPaket2" type="button">🗑 Hapus Paket</button>
+        </div>
+      </div>
+      <div id="bankDaftar"></div>
+    </section>
+
+    <!-- ===== CBT ===== -->
+    <section class="view" id="view-cbt">
+      <h2>Ujian CBT</h2>
+      <p class="sub">Ujian dari paket soal pilihanmu, berjalan di perangkat ini. Gambar dan rumus tampil seperti aslinya.</p>
+      <div class="kartu" id="cbtSetelan">
+        <div class="grid">
+          <div><label class="lbl" for="cbtPaket">Paket soal</label><select id="cbtPaket"></select></div>
+          <div><label class="lbl" for="cbtDurasi">Durasi (menit)</label><input type="number" id="cbtDurasi" min="5" max="300" value="60"></div>
+          <div><label class="lbl" for="cbtNama">Nama siswa</label><input type="text" id="cbtNama" placeholder="Nama peserta"></div>
+          <div><label class="lbl" for="cbtKelas">Kelas</label><input type="text" id="cbtKelas" placeholder="mis. 8A"></div>
+        </div>
+        <div class="baris" style="margin-top:12px">
+          <button class="btn btn-utama" id="btnMulaiCbt" type="button">▶ Mulai Ujian</button>
+          <span class="kecil" id="cbtInfo"></span>
+        </div>
+      </div>
+      <div class="kartu tersembunyi" id="cbtUjian">
+        <div class="baris"><b id="cbtPeserta"></b><span class="tumbuh"></span>
+          <span>Sisa waktu <span class="waktu" id="cbtWaktu">--:--</span></span></div>
+        <div class="nomorGrid" id="cbtNomor" style="margin-top:11px"></div>
+        <div id="cbtSoalAktif" style="margin-top:13px"></div>
+        <div class="baris" style="margin-top:13px">
+          <button class="btn btn-netral" id="cbtSebelum" type="button">⬅ Sebelumnya</button>
+          <button class="btn btn-netral" id="cbtBerikut" type="button">Berikutnya ➜</button>
+          <span class="tumbuh"></span>
+          <button class="btn btn-emas" id="cbtSelesai" type="button">✔ Selesai &amp; Kumpulkan</button>
+        </div>
+      </div>
+      <div class="kartu tersembunyi" id="cbtHasil"></div>
+    </section>
+
+    <!-- ===== HASIL ===== -->
+    <section class="view" id="view-hasil">
+      <h2>Hasil Ujian</h2>
+      <p class="sub">Semua hasil CBT yang tersimpan di perangkat ini.</p>
+      <div class="baris" style="margin-bottom:12px">
+        <button class="btn btn-teal kecil" id="btnCsvHasil" type="button">⬇ Unduh Rekap CSV</button>
+        <button class="btn btn-bahaya kecil" id="btnBersihHasil" type="button">🗑 Hapus Semua Hasil</button>
+      </div>
+      <div id="hasilDaftar"></div>
+    </section>
+  </main>
+</div>
+
+<!-- ===== MODAL SUNTING ===== -->
+<div class="selubung" id="selubungEdit">
+  <div class="modal">
+    <h3 id="judulEdit">Sunting Soal</h3>
+    <label class="lbl" for="edTeks">Isi soal (teks)</label>
+    <textarea id="edTeks" rows="4"></textarea>
+    <div style="margin-top:9px">
+      <label class="lbl">Lampiran pada soal (gambar/rumus, mengikuti urutan tampil)</label>
+      <div id="edLampiran"></div>
+      <label class="btn btn-netral kecil" style="cursor:pointer">🖼 Tambah Gambar
+        <input type="file" id="edTambahGambar" accept="image/*" class="tersembunyi">
+      </label>
+    </div>
+    <div id="edOpsi"></div>
+    <div style="max-width:200px;margin-top:9px">
+      <label class="lbl" for="edKunci">Kunci jawaban</label>
+      <select id="edKunci"><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option value="">(belum ada)</option></select>
+    </div>
+    <div class="baris" style="margin-top:15px">
+      <button class="btn btn-utama" id="edSimpan" type="button">✔ Simpan</button>
+      <button class="btn btn-netral" id="edBatal" type="button">Batal</button>
+    </div>
+  </div>
+</div>
+
+<div id="lembarCetak"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script>
+  if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+  window.MathJax = { startup: { typeset: false } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/mml-chtml.js" async></script>
+<script>
+'use strict';
+/* ================= UTIL & KEADAAN ================= */
+var KUNCI_DB = 'ujianku_v1';
+var HURUF = ['A','B','C','D','E'];
+var DB = { paket: [], hasil: [] };
+function uid(){ return 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]; });
+}
+function simpanDB(){ try { localStorage.setItem(KUNCI_DB, JSON.stringify(DB)); } catch(e){} }
+function paketBaru(nama, mapel){
+  return { id: uid(), nama: nama || 'Paket Baru', mapel: mapel || '', soal: [] };
+}
+function cariPaket(id){
+  return DB.paket.filter(function(p){ return p.id === id; })[0] || null;
+}
+function soalBaru(batang, opsi, kunci, sumber){
+  return { id: uid(), batang: batang || [{ t: 'x', v: '' }],
+    opsi: opsi || [[{t:'x',v:''}],[{t:'x',v:''}],[{t:'x',v:''}],[{t:'x',v:''}]],
+    kunci: kunci || '', sumber: sumber || 'manual' };
+}
+function muatDB(){
+  try {
+    var d = JSON.parse(localStorage.getItem(KUNCI_DB) || 'null');
+    if (d && Array.isArray(d.paket)){ DB = d; if (!Array.isArray(DB.hasil)) DB.hasil = []; return; }
+  } catch(e){}
+  var p = paketBaru('Contoh — Matematika Kelas 8', 'Matematika');
+  p.soal.push(soalBaru(
+    [{ t: 'x', v: 'Diketahui titik (2, 5). Jarak titik tersebut terhadap sumbu-X adalah…. (contoh)' }],
+    [[{t:'x',v:'2 satuan'}],[{t:'x',v:'3 satuan'}],[{t:'x',v:'5 satuan'}],[{t:'x',v:'7 satuan'}]],
+    'C', 'contoh'));
+  p.soal.push(soalBaru(
+    [{ t: 'x', v: 'Hasil dari ' },
+     { t: 'm', v: '<math xmlns="http://www.w3.org/1998/Math/MathML"><mfrac><mn>3</mn><mn>4</mn></mfrac></math>' },
+     { t: 'x', v: ' + ' },
+     { t: 'm', v: '<math xmlns="http://www.w3.org/1998/Math/MathML"><mfrac><mn>1</mn><mn>2</mn></mfrac></math>' },
+     { t: 'x', v: ' adalah…. (contoh soal berumus)' }],
+    [[{t:'x',v:'1'}],[{t:'x',v:'5/4'}],[{t:'x',v:'4/6'}],[{t:'x',v:'2'}]],
+    'B', 'contoh'));
+  DB.paket = [p]; DB.hasil = [];
+  simpanDB();
+}
+/* Render blok isi (teks/gambar/rumus) menjadi HTML */
+function renderBlok(blok){
+  return (blok || []).map(function(b){
+    if (b.t === 'g') return '<img src="' + b.v + '" alt="gambar soal">';
+    if (b.t === 'm') return b.v;
+    return esc(b.v).replace(/\n/g, '<br>');
+  }).join(' ');
+}
+function teksBlok(blok){
+  return (blok || []).filter(function(b){ return b.t === 'x'; })
+    .map(function(b){ return b.v; }).join(' ');
+}
+function typeset(el){
+  if (window.MathJax && MathJax.typesetPromise)
+    MathJax.typesetPromise(el ? [el] : undefined).catch(function(){});
+}
+
+/* ================= KONVERSI RUMUS WORD (OMML) -> MathML ================= */
+function anakEl(node){
+  var a = [];
+  for (var i = 0; i < node.childNodes.length; i++)
+    if (node.childNodes[i].nodeType === 1) a.push(node.childNodes[i]);
+  return a;
+}
+function anakNama(node, nama){
+  var k = anakEl(node);
+  for (var i = 0; i < k.length; i++) if (k[i].localName === nama) return k[i];
+  return null;
+}
+function nilaiAttr(node){
+  if (!node || !node.attributes) return '';
+  for (var i = 0; i < node.attributes.length; i++){
+    var n = node.attributes[i].name;
+    if (n === 'val' || n.slice(-4) === ':val') return node.attributes[i].value;
+  }
+  return '';
+}
+function chrDariPr(node, namaPr){
+  var pr = anakNama(node, namaPr);
+  if (!pr) return '';
+  var chr = anakNama(pr, 'chr');
+  return chr ? nilaiAttr(chr) : '';
+}
+function teksMath(node){
+  var hasil = '';
+  (function jalan(n){
+    for (var i = 0; i < n.childNodes.length; i++){
+      var c = n.childNodes[i];
+      if (c.nodeType === 3) hasil += c.nodeValue;
+      else if (c.nodeType === 1) jalan(c);
+    }
+  })(node);
+  return hasil;
+}
+function konvMath(node){
+  if (!node) return '';
+  var nama = node.localName;
+  var isi = function(){ return anakEl(node).map(konvMath).join(''); };
+  var ambil = function(nm){ var e = anakNama(node, nm); return e ? konvMath(e) : ''; };
+  switch (nama) {
+    case 'oMath': case 'oMathPara': case 'e': case 'num': case 'den':
+    case 'sub': case 'sup': case 'deg': case 'lim': case 'mr':
+      return anakEl(node).filter(function(k){
+        return ['e','num','den','sub','sup','deg','lim','mr'].indexOf(k.localName) >= 0 || true;
+      }).map(konvMath).join('');
+    case 'r': {
+      var t = teksMath(node).trim();
+      if (!t) return '';
+      if (/^[0-9][0-9.,]*$/.test(t)) return '<mn>' + esc(t) + '</mn>';
+      return '<mi>' + esc(t) + '</mi>';
+    }
+    case 'f': return '<mfrac>' + ambil('num') + ambil('den') + '</mfrac>';
+    case 'rad': {
+      var deg = anakNama(node, 'deg');
+      var isiE = ambil('e');
+      if (deg && teksMath(deg).trim()) return '<mroot>' + isiE + konvMath(deg) + '</mroot>';
+      return '<msqrt>' + isiE + '</msqrt>';
+    }
+    case 'sSup': return '<msup>' + ambil('e') + ambil('sup') + '</msup>';
+    case 'sSub': return '<msub>' + ambil('e') + ambil('sub') + '</msub>';
+    case 'sSubSup': return '<msubsup>' + ambil('e') + ambil('sub') + ambil('sup') + '</msubsup>';
+    case 'nary': {
+      var chr = chrDariPr(node, 'naryPr') || '∫';
+      var sub = anakNama(node, 'sub'), sup = anakNama(node, 'sup'), e2 = ambil('e');
+      var op = '<mo>' + esc(chr) + '</mo>';
+      if (sub && sup) return '<munderover>' + op + konvMath(sub) + konvMath(sup) + '</munderover>' + e2;
+      if (sub) return '<munder>' + op + konvMath(sub) + '</munder>' + e2;
+      if (sup) return '<mover>' + op + konvMath(sup) + '</mover>' + e2;
+      return op + e2;
+    }
+    case 'd': {
+      var awal = chrDariPr(node, 'dPr') || '(';
+      var akhir = (function(){
+        var pr = anakNama(node, 'dPr');
+        if (!pr) return ')';
+        var end = anakNama(pr, 'endChr');
+        return end ? (nilaiAttr(end) || ')') : ')';
+      })();
+      var tengah = anakEl(node).filter(function(k){ return k.localName === 'e'; }).map(konvMath).join('<mo>|</mo>');
+      return '<mrow><mo>' + esc(awal) + '</mo>' + tengah + '<mo>' + esc(akhir) + '</mo></mrow>';
+    }
+    case 'acc': {
+      var chrA = chrDariPr(node, 'accPr') || '̂';
+      return '<mover>' + ambil('e') + '<mo>' + esc(chrA) + '</mo></mover>';
+    }
+    case 'm': return '<mtable>' + isi() + '</mtable>';
+    case 'mr': return '<mtr>' + anakEl(node).map(function(k){
+      return '<mtd>' + konvMath(k) + '</mtd>'; }).join('') + '</mtr>';
+    case 'limLow': return '<munder>' + ambil('e') + ambil('lim') + '</munder>';
+    case 'limUpp': return '<mover>' + ambil('e') + ambil('lim') + '</mover>';
+    case 'func': return '<mrow>' + ambil('fName') + ambil('e') + '</mrow>';
+    case 'bar': return '<mover>' + ambil('e') + '<mo>¯</mo></mover>';
+    default:
+      if (nama && nama.slice(-2) === 'Pr') return '';
+      return isi();
+  }
+}
+function ommlKeMathml(nodeMath){
+  return '<math xmlns="http://www.w3.org/1998/Math/MathML">' + konvMath(nodeMath) + '</math>';
+}
+
+/* ================= PEMBACA DOKUMEN WORD ================= */
+function gabungTeksBlok(blok){
+  /* Gabung blok menjadi teks bertanda: gambar -> §G<i>§, rumus -> §M<i>§ (tanda ditulis sebagai escape \u00a7) */
+  var peta = [], teks = '';
+  (blok || []).forEach(function(b){
+    if (b.t === 'x') teks += b.v;
+    else { peta.push(b); teks += '\u00a7' + (b.t === 'g' ? 'G' : 'M') + (peta.length - 1) + '\u00a7'; }
+  });
+  return { teks: teks, peta: peta };
+}
+function pecahTanda(teks, peta){
+  var blok = [], bagian = String(teks).split(/§([GM])(\d+)§/);
+  for (var i = 0; i < bagian.length; i += 3){
+    if (bagian[i]) blok.push({ t: 'x', v: bagian[i] });
+    if (i + 1 < bagian.length){
+      var asli = peta[parseInt(bagian[i + 2], 10)];
+      if (asli) blok.push(asli);
+    }
+  }
+  return blok.filter(function(b){ return b.t !== 'x' || b.v !== ''; });
+}
+function blokDariParagraf(p, petaGambar, statistik){
+  var blok = [];
+  function tambahTeks(v){
+    if (!v) return;
+    var akhir = blok[blok.length - 1];
+    if (akhir && akhir.t === 'x') akhir.v += v; else blok.push({ t: 'x', v: v });
+  }
+  (function jalan(node){
+    for (var i = 0; i < node.childNodes.length; i++){
+      var c = node.childNodes[i];
+      if (c.nodeType === 3){ tambahTeks(c.nodeValue); continue; }
+      if (c.nodeType !== 1) continue;
+      var nm = c.localName;
+      if (nm === 't') tambahTeks(c.textContent);
+      else if (nm === 'blip'){
+        var rid = '';
+        for (var a = 0; a < c.attributes.length; a++)
+          if (c.attributes[a].name.slice(-6) === ':embed') rid = c.attributes[a].value;
+        if (rid && petaGambar[rid]){ blok.push({ t: 'g', v: petaGambar[rid] }); statistik.gambar++; }
+        else statistik.gambarHilang++;
+      }
+      else if (nm === 'oMath' || nm === 'oMathPara'){
+        blok.push({ t: 'm', v: ommlKeMathml(c) }); statistik.rumus++;
+      }
+      else if (nm === 'br') tambahTeks('\n');
+      else if (nm === 'tab') tambahTeks('  ');
+      else if (nm === 'instrText') { /* kode field Word: lewati */ }
+      else jalan(c);
+    }
+  })(p);
+  return blok;
+}
+function kumpulkanParagraf(akar, petaGambar, statistik){
+  var hasil = [];
+  (function jalan(node){
+    anakEl(node).forEach(function(c){
+      if (c.localName === 'p') hasil.push(blokDariParagraf(c, petaGambar, statistik));
+      else jalan(c);
+    });
+  })(akar);
+  return hasil;
+}
+function parseTeksKunci(teks){
+  var peta = {};
+  var re = /(\d{1,3})\s*[\.\)]\s*([A-Ea-e])/g, m;
+  while ((m = re.exec(teks || '')) !== null) peta[parseInt(m[1], 10)] = m[2].toUpperCase();
+  return peta;
+}
+function belahInline(teks, peta){
+  var bagian = teks.split(/\s(?=[A-E][\.\)]\s)/);
+  var batang = [], opsi = [];
+  bagian.forEach(function(seg, idx){
+    var mAw = seg.match(/^\s*[A-E][\.\)]\s*/);
+    if (idx === 0 && !mAw) batang = pecahTanda(seg, peta);
+    else opsi.push(pecahTanda(seg.replace(/^\s*[A-E][\.\)]\s*/, ''), peta));
+  });
+  return { batang: batang, opsi: opsi };
+}
+function segmentasiSoal(paragraf){
+  var soal = [], kini = null, target = null, modeKunci = false;
+  var petaKunci = {}, diharapkan = 1, dilewati = 0;
+  function tempel(blok){
+    if (!kini) return;
+    if (target === 'opsi' && kini.opsi.length) {
+      var o = kini.opsi[kini.opsi.length - 1];
+      o.push.apply(o, blok);
+    } else kini.batang.push.apply(kini.batang, blok);
+  }
+  paragraf.forEach(function(blok){
+    var g = gabungTeksBlok(blok);
+    var teksRata = g.teks.replace(/§[GM]\d+§/g, ' ').replace(/\s+/g, ' ').trim();
+    if (!teksRata && !blok.some(function(b){ return b.t !== 'x'; })){ 
+      if (kini && blok.length) tempel(blok);
+      return;
+    }
+    if (/^kunci(\s+jawaban)?\s*[:.]?\s*$/i.test(teksRata) ||
+        (/^kunci jawaban/i.test(teksRata) && teksRata.length < 60)){
+      modeKunci = true;
+      var pk = parseTeksKunci(teksRata);
+      Object.keys(pk).forEach(function(k){ petaKunci[k] = pk[k]; });
+      return;
+    }
+    if (modeKunci){
+      var pk2 = parseTeksKunci(teksRata);
+      if (Object.keys(pk2).length){ 
+        Object.keys(pk2).forEach(function(k){ petaKunci[k] = pk2[k]; });
+        return;
+      }
+      modeKunci = false;
+    }
+    var mKunciBaris = teksRata.match(/^kunci(\s+jawaban)?\s*[:=]\s*([A-E])\s*$/i);
+    if (mKunciBaris && kini){ kini.kunci = mKunciBaris[2].toUpperCase(); return; }
+    var mSoal = teksRata.match(/^(\d{1,3})\s*[\.\)]\s+\S/) ||
+                teksRata.match(/^soal\s+(\d{1,3})\s*[:\.\)]?\s+/i);
+    if (mSoal){
+      var no = parseInt(mSoal[1], 10);
+      if (no === diharapkan || !kini){
+        var bersih = g.teks.replace(/^\s*(\d{1,3}\s*[\.\)]\s*|soal\s+\d{1,3}\s*[:\.\)]?\s*)/i, '');
+        kini = soalBaru(pecahTanda(bersih, g.peta), [], '', 'word');
+        var ganda = bersih.match(/(^|\s)([A-E])[\.\)]\s/g);
+        if (ganda && ganda.length >= 2){
+          var belahQ = belahInline(bersih, g.peta);
+          if (belahQ.opsi.length >= 2){ kini.batang = belahQ.batang; kini.opsi = belahQ.opsi; }
+        }
+        soal.push(kini); target = kini.opsi.length ? 'opsi' : 'batang'; diharapkan = no + 1;
+        return;
+      }
+    }
+    /* opsi menyatu dalam satu paragraf */
+    var tandaOpsi = g.teks.match(/(^|\s)([A-E])[\.\)]\s/g);
+    if (kini && kini.opsi.length === 0 && tandaOpsi && tandaOpsi.length >= 2){
+      var belahP = belahInline(g.teks, g.peta);
+      kini.batang.push.apply(kini.batang, belahP.batang);
+      kini.opsi.push.apply(kini.opsi, belahP.opsi);
+      if (kini.opsi.length) target = 'opsi';
+      return;
+    }
+    var mOpsi = teksRata.match(/^([A-E])\s*[\.\)]\s+\S/i);
+    if (mOpsi && kini){
+      var hurufKe = HURUF.indexOf(mOpsi[1].toUpperCase());
+      if (hurufKe === kini.opsi.length || kini.opsi.length === 0){
+        var bersihO = g.teks.replace(/^\s*[A-E]\s*[\.\)]\s*/i, '');
+        kini.opsi.push(pecahTanda(bersihO, g.peta));
+        target = 'opsi';
+        return;
+      }
+    }
+    if (kini) tempel(blok); else dilewati++;
+  });
+  soal.forEach(function(s, i){
+    if (petaKunci[i + 1]) s.kunci = petaKunci[i + 1];
+    while (s.opsi.length < 4) s.opsi.push([{ t: 'x', v: '' }]);
+  });
+  return { soal: soal, petaKunci: petaKunci, dilewati: dilewati };
+}
+function parseDokumenXml(xmlStr, petaGambar){
+  var dok = new DOMParser().parseFromString(xmlStr, 'text/xml');
+  var body = null;
+  (function cari(n){
+    if (body || n.nodeType !== 1) return;
+    if (n.localName === 'body'){ body = n; return; }
+    anakEl(n).forEach(cari);
+  })(dok.documentElement);
+  var statistik = { gambar: 0, gambarHilang: 0, rumus: 0 };
+  var paragraf = kumpulkanParagraf(body || dok.documentElement, petaGambar || {}, statistik);
+  var hasil = segmentasiSoal(paragraf);
+  hasil.statistik = statistik;
+  hasil.jumlahParagraf = paragraf.length;
+  return hasil;
+}
+
+/* ================= IMPOR: CATATAN & TARGET ================= */
+function catatLog(teks){
+  var el = document.getElementById('impLog');
+  if (el.dataset.kosong !== 'tidak') el.textContent = '';
+  el.dataset.kosong = 'tidak';
+  el.textContent += teks + '\n';
+  el.scrollTop = el.scrollHeight;
+}
+function targetPaketImpor(cadanganNama){
+  var nama = document.getElementById('impNamaPaket').value.trim() || cadanganNama || 'Paket Impor';
+  var mapel = document.getElementById('impMapel').value.trim();
+  var ada = DB.paket.filter(function(p){ return p.nama === nama; })[0];
+  if (!ada){ ada = paketBaru(nama, mapel); DB.paket.push(ada); }
+  else if (mapel) ada.mapel = mapel;
+  return ada;
+}
+function selesaiImpor(paket, jumlah){
+  simpanDB(); segarSemua();
+  catatLog('✔ ' + jumlah + ' soal masuk ke paket «' + paket.nama + '» (total paket: ' +
+    paket.soal.length + ' soal). Periksa di menu Bank Soal.');
+}
+
+/* ================= IMPOR WORD ================= */
+var MIME_GAMBAR = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg',
+  gif: 'image/gif', bmp: 'image/bmp', svg: 'image/svg+xml' };
+async function bacaDocx(file){
+  var zip = await JSZip.loadAsync(file);
+  var xmlDok = await zip.file('word/document.xml').async('string');
+  var petaGambar = {}, takDidukung = 0;
+  var berkasRels = zip.file('word/_rels/document.xml.rels');
+  if (berkasRels){
+    var xmlRels = await berkasRels.async('string');
+    var dokRels = new DOMParser().parseFromString(xmlRels, 'text/xml');
+    var rels = dokRels.getElementsByTagName('Relationship');
+    for (var i = 0; i < rels.length; i++){
+      var id = rels[i].getAttribute('Id'), target = rels[i].getAttribute('Target') || '';
+      if (target.indexOf('media/') < 0) continue;
+      var jalur = target.charAt(0) === '/' ? target.slice(1) : 'word/' + target.replace(/^\.\//, '');
+      var berkas = zip.file(jalur);
+      if (!berkas) continue;
+      var ext = jalur.split('.').pop().toLowerCase();
+      if (!MIME_GAMBAR[ext]){ takDidukung++; continue; }
+      var b64 = await berkas.async('base64');
+      petaGambar[id] = 'data:' + MIME_GAMBAR[ext] + ';base64,' + b64;
+    }
+  }
+  var hasil = parseDokumenXml(xmlDok, petaGambar);
+  hasil.statistik.gambarTakDidukung = takDidukung;
+  return hasil;
+}
+async function bacaKunciDariBerkas(file){
+  if (/\.txt$/i.test(file.name)){
+    return parseTeksKunci(await file.text());
+  }
+  var zip = await JSZip.loadAsync(file);
+  var xmlDok = await zip.file('word/document.xml').async('string');
+  var dok = new DOMParser().parseFromString(xmlDok, 'text/xml');
+  var semuaTeks = '';
+  (function jalan(n){
+    for (var i = 0; i < n.childNodes.length; i++){
+      var c = n.childNodes[i];
+      if (c.nodeType === 3) semuaTeks += c.nodeValue + ' ';
+      else if (c.nodeType === 1) jalan(c);
+    }
+  })(dok.documentElement);
+  return parseTeksKunci(semuaTeks);
+}
+document.getElementById('fileDocx').addEventListener('change', async function(){
+  var file = this.files && this.files[0];
+  this.value = '';
+  if (!file) return;
+  if (!window.JSZip){ catatLog('✘ Pustaka pembaca Word belum termuat — periksa koneksi internet, lalu muat ulang halaman.'); return; }
+  catatLog('Membaca «' + file.name + '» secara luring…');
+  try {
+    var hasil = await bacaDocx(file);
+    var berkasKunci = document.getElementById('fileKunci').files[0];
+    if (berkasKunci){
+      var peta = await bacaKunciDariBerkas(berkasKunci);
+      var terpasang = 0;
+      hasil.soal.forEach(function(s, i){ if (peta[i + 1]){ s.kunci = peta[i + 1]; terpasang++; } });
+      catatLog('Kunci dari berkas terpisah terpasang untuk ' + terpasang + ' soal.');
+    }
+    if (!hasil.soal.length){
+      catatLog('✘ Tidak ada soal yang terbaca. Pastikan penomoran soal konsisten (1. 2. 3. …) dan opsi diawali huruf A. B. C. D.');
+      return;
+    }
+    var paket = targetPaketImpor(file.name.replace(/\.docx$/i, ''));
+    paket.soal.push.apply(paket.soal, hasil.soal);
+    catatLog('Dari «' + file.name + '»: ' + hasil.statistik.gambar + ' gambar menempel di dalam soal, ' +
+      hasil.statistik.rumus + ' rumus terbaca sebagai rumus' +
+      (hasil.statistik.gambarHilang ? ', ' + hasil.statistik.gambarHilang + ' gambar tidak ditemukan berkasnya' : '') +
+      (hasil.statistik.gambarTakDidukung ? ', ' + hasil.statistik.gambarTakDidukung + ' gambar berformat lama (EMF/WMF) dilewati' : '') + '.');
+    selesaiImpor(paket, hasil.soal.length);
+  } catch(e){
+    catatLog('✘ Gagal membaca berkas: ' + (e && e.message ? e.message : e));
+  }
+});
+
+/* ================= IMPOR EXCEL ================= */
+function normalKunciExcel(nilai, opsiTeks){
+  var v = String(nilai == null ? '' : nilai).trim();
+  if (!v) return '';
+  if (/^[A-Ea-e]$/.test(v)) return v.toUpperCase();
+  if (/^[1-5]$/.test(v)) return HURUF[parseInt(v, 10) - 1];
+  for (var i = 0; i < opsiTeks.length; i++)
+    if (String(opsiTeks[i]).trim().toLowerCase() === v.toLowerCase()) return HURUF[i];
+  return '';
+}
+function parseBarisExcel(baris){
+  var petaKolom = null, mulai = 0;
+  for (var r = 0; r < Math.min(6, baris.length); r++){
+    var sel = (baris[r] || []).map(function(c){ return String(c == null ? '' : c).trim().toLowerCase(); });
+    var idxSoal = sel.findIndex(function(c){ return c === 'soal' || c.indexOf('pertanyaan') === 0; });
+    var idxKunci = sel.findIndex(function(c){ return c.indexOf('kunci') >= 0 || c.indexOf('jawaban') >= 0; });
+    if (idxSoal >= 0 && idxKunci >= 0){
+      petaKolom = { soal: idxSoal, kunci: idxKunci, opsi: [] };
+      for (var j = 0; j < sel.length; j++){
+        var m = sel[j].match(/^(?:opsi|pilihan)?\s*([a-e])$/);
+        if (m) petaKolom.opsi[HURUF.indexOf(m[1].toUpperCase())] = j;
+      }
+      mulai = r + 1;
+      break;
+    }
+  }
+  if (!petaKolom) petaKolom = { soal: 0, opsi: [1, 2, 3, 4, 5], kunci: 6 };
+  var soal = [];
+  for (var i = mulai; i < baris.length; i++){
+    var row = baris[i] || [];
+    var teksSoal = String(row[petaKolom.soal] == null ? '' : row[petaKolom.soal]).trim();
+    if (!teksSoal) continue;
+    var opsi = [], opsiTeks = [];
+    for (var k = 0; k < 5; k++){
+      var idx = petaKolom.opsi[k];
+      var t = idx == null ? '' : String(row[idx] == null ? '' : row[idx]).trim();
+      opsiTeks.push(t);
+      if (t || k < 4) opsi.push([{ t: 'x', v: t }]);
+    }
+    soal.push(soalBaru([{ t: 'x', v: teksSoal }], opsi, normalKunciExcel(row[petaKolom.kunci], opsiTeks), 'excel'));
+  }
+  return soal;
+}
+document.getElementById('fileXlsx').addEventListener('change', async function(){
+  var file = this.files && this.files[0];
+  this.value = '';
+  if (!file) return;
+  if (!window.XLSX){ catatLog('✘ Pustaka pembaca Excel belum termuat — periksa koneksi internet, lalu muat ulang halaman.'); return; }
+  catatLog('Membaca «' + file.name + '» secara luring…');
+  try {
+    var buf = await file.arrayBuffer();
+    var wb = XLSX.read(buf, { type: 'array' });
+    var ws = wb.Sheets[wb.SheetNames[0]];
+    var baris = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+    var soal = parseBarisExcel(baris);
+    if (!soal.length){ catatLog('✘ Tidak ada baris soal yang terbaca. Gunakan template: Soal | A | B | C | D | E | Kunci.'); return; }
+    var paket = targetPaketImpor(file.name.replace(/\.xlsx?$/i, ''));
+    paket.soal.push.apply(paket.soal, soal);
+    selesaiImpor(paket, soal.length);
+  } catch(e){
+    catatLog('✘ Gagal membaca berkas: ' + (e && e.message ? e.message : e));
+  }
+});
+document.getElementById('btnUnduhTemplate').addEventListener('click', function(){
+  var csv = 'Soal,A,B,C,D,E,Kunci\n' +
+    '"Ibu kota Indonesia adalah….","Bandung","Jakarta","Surabaya","Medan","Semarang",B\n' +
+    '"Hasil dari 7 x 8 adalah….","54","56","63","48","72",B\n';
+  var blob = new Blob([csv], { type: 'text/csv' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'template-impor-ujianku.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 800);
+});
+
+/* ================= IMPOR PDF (MODE POTRET) ================= */
+var pdfState = { doc: null, halaman: 1, total: 0, bitmap: null, rect: null, awal: null };
+function gambarHalamanPdf(){
+  if (!pdfState.doc) return;
+  pdfState.doc.getPage(pdfState.halaman).then(function(page){
+    var lebarDasar = page.getViewport({ scale: 1 }).width;
+    var skala = Math.min(2, 920 / lebarDasar);
+    var vp = page.getViewport({ scale: skala });
+    var canvas = document.getElementById('pdfCanvas');
+    canvas.width = vp.width; canvas.height = vp.height;
+    var ctx = canvas.getContext('2d');
+    page.render({ canvasContext: ctx, viewport: vp }).promise.then(function(){
+      var bmp = document.createElement('canvas');
+      bmp.width = canvas.width; bmp.height = canvas.height;
+      bmp.getContext('2d').drawImage(canvas, 0, 0);
+      pdfState.bitmap = bmp; pdfState.rect = null;
+      document.getElementById('btnPotong').disabled = true;
+    });
+    document.getElementById('pdfInfo').textContent =
+      'Halaman ' + pdfState.halaman + ' dari ' + pdfState.total;
+  });
+}
+document.getElementById('filePdf').addEventListener('change', async function(){
+  var file = this.files && this.files[0];
+  this.value = '';
+  if (!file) return;
+  if (!window.pdfjsLib){ catatLog('✘ Pustaka pembaca PDF belum termuat — periksa koneksi internet, lalu muat ulang halaman.'); return; }
+  catatLog('Membuka «' + file.name + '» untuk mode potret…');
+  try {
+    var buf = await file.arrayBuffer();
+    pdfState.doc = await pdfjsLib.getDocument({ data: buf }).promise;
+    pdfState.total = pdfState.doc.numPages; pdfState.halaman = 1;
+    document.getElementById('pdfPanel').classList.remove('tersembunyi');
+    document.getElementById('pdfStatus').textContent =
+      'PDF terbuka: ' + pdfState.total + ' halaman. Seret pada halaman untuk menandai satu soal.';
+    gambarHalamanPdf();
+  } catch(e){
+    catatLog('✘ Gagal membuka PDF: ' + (e && e.message ? e.message : e));
+  }
+});
+document.getElementById('pdfPrev').addEventListener('click', function(){
+  if (pdfState.halaman > 1){ pdfState.halaman--; gambarHalamanPdf(); }
+});
+document.getElementById('pdfNext').addEventListener('click', function(){
+  if (pdfState.halaman < pdfState.total){ pdfState.halaman++; gambarHalamanPdf(); }
+});
+(function(){
+  var canvas = document.getElementById('pdfCanvas');
+  function posisi(ev){
+    var r = canvas.getBoundingClientRect();
+    return { x: (ev.clientX - r.left) * canvas.width / r.width,
+             y: (ev.clientY - r.top) * canvas.height / r.height };
+  }
+  function gambarUlang(){
+    if (!pdfState.bitmap) return;
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(pdfState.bitmap, 0, 0);
+    if (pdfState.rect){
+      ctx.strokeStyle = '#4f46e5'; ctx.lineWidth = 3;
+      ctx.strokeRect(pdfState.rect.x, pdfState.rect.y, pdfState.rect.w, pdfState.rect.h);
+    }
+  }
+  canvas.addEventListener('pointerdown', function(ev){
+    if (!pdfState.bitmap) return;
+    pdfState.awal = posisi(ev);
+    pdfState.rect = null;
+  });
+  canvas.addEventListener('pointermove', function(ev){
+    if (!pdfState.awal) return;
+    var p = posisi(ev);
+    pdfState.rect = { x: Math.min(pdfState.awal.x, p.x), y: Math.min(pdfState.awal.y, p.y),
+      w: Math.abs(p.x - pdfState.awal.x), h: Math.abs(p.y - pdfState.awal.y) };
+    gambarUlang();
+  });
+  canvas.addEventListener('pointerup', function(){
+    pdfState.awal = null;
+    document.getElementById('btnPotong').disabled =
+      !(pdfState.rect && pdfState.rect.w > 12 && pdfState.rect.h > 12);
+  });
+})();
+document.getElementById('btnPotong').addEventListener('click', function(){
+  if (!pdfState.bitmap || !pdfState.rect) return;
+  var r = pdfState.rect;
+  var potong = document.createElement('canvas');
+  potong.width = Math.round(r.w); potong.height = Math.round(r.h);
+  potong.getContext('2d').drawImage(pdfState.bitmap, r.x, r.y, r.w, r.h, 0, 0, r.w, r.h);
+  var dataUrl = potong.toDataURL('image/jpeg', 0.86);
+  var paket = targetPaketImpor('Soal Potret PDF');
+  var s = soalBaru([{ t: 'g', v: dataUrl }],
+    [[{t:'x',v:''}],[{t:'x',v:''}],[{t:'x',v:''}],[{t:'x',v:''}]],
+    document.getElementById('pdfKunci').value, 'pdf');
+  paket.soal.push(s);
+  simpanDB(); segarSemua();
+  catatLog('✔ Satu soal potret dari halaman ' + pdfState.halaman + ' ditambahkan ke paket «' + paket.nama +
+    '» dengan kunci ' + s.kunci + '. Tandai soal berikutnya atau ganti halaman.');
+  pdfState.rect = null;
+  var ctx = document.getElementById('pdfCanvas').getContext('2d');
+  ctx.drawImage(pdfState.bitmap, 0, 0);
+  this.disabled = true;
+});
+
+/* ================= NAVIGASI & DASBOR ================= */
+function tampilView(nama){
+  document.querySelectorAll('#navUtama button').forEach(function(b){
+    b.classList.toggle('aktif', b.dataset.view === nama);
+  });
+  ['dashboard','impor','bank','cbt','hasil'].forEach(function(v){
+    document.getElementById('view-' + v).classList.toggle('tampil', v === nama);
+  });
+  if (nama === 'dashboard') renderDasbor();
+  if (nama === 'bank') renderBank();
+  if (nama === 'hasil') renderHasilView();
+  if (nama === 'cbt') segarInfoCbt();
+  window.scrollTo({ top: 0 });
+}
+document.querySelectorAll('#navUtama button').forEach(function(b){
+  b.addEventListener('click', function(){ tampilView(b.dataset.view); });
+});
+document.getElementById('btnKeImpor').addEventListener('click', function(){ tampilView('impor'); });
+function renderDasbor(){
+  document.getElementById('statPaket').textContent = DB.paket.length;
+  var totalSoal = DB.paket.reduce(function(a, p){ return a + p.soal.length; }, 0);
+  document.getElementById('statSoal').textContent = totalSoal;
+  document.getElementById('statHasil').textContent = DB.hasil.length;
+  document.getElementById('statRerata').textContent = DB.hasil.length
+    ? Math.round(DB.hasil.reduce(function(a, h){ return a + h.skor; }, 0) / DB.hasil.length) : '–';
+  var grid = document.getElementById('gridPaket');
+  grid.innerHTML = DB.paket.map(function(p){
+    return '<div class="paketKartu"><h3>' + esc(p.nama) + '</h3>' +
+      '<div class="meta">' + esc(p.mapel || 'Tanpa mapel') + ' · ' + p.soal.length + ' soal</div>' +
+      '<div class="baris"><button class="btn btn-biasa kecil" data-aksi="bank" data-id="' + p.id + '">🗂 Bank Soal</button>' +
+      '<button class="btn btn-teal kecil" data-aksi="cbt" data-id="' + p.id + '">🖥 CBT</button>' +
+      '<button class="btn btn-bahaya kecil" data-aksi="hapus" data-id="' + p.id + '">🗑</button></div></div>';
+  }).join('') || '<p class="kecil">Belum ada paket. Mulai dari Impor Soal.</p>';
+  grid.querySelectorAll('[data-aksi]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var p = cariPaket(b.dataset.id);
+      if (b.dataset.aksi === 'bank'){ aturPaketTerpilih(b.dataset.id); tampilView('bank'); }
+      if (b.dataset.aksi === 'cbt'){
+        aturPaketTerpilih(b.dataset.id);
+        document.getElementById('cbtPaket').value = b.dataset.id;
+        tampilView('cbt'); segarInfoCbt();
+      }
+      if (b.dataset.aksi === 'hapus' && p){
+        if (confirm('Hapus paket «' + p.nama + '» beserta ' + p.soal.length + ' soalnya?')){
+          DB.paket = DB.paket.filter(function(x){ return x.id !== p.id; });
+          simpanDB(); segarSemua(); renderDasbor();
+        }
+      }
+    });
+  });
+}
+document.getElementById('btnPaketManual').addEventListener('click', function(){
+  var p = paketBaru('Paket Baru ' + (DB.paket.length + 1), '');
+  DB.paket.push(p); simpanDB(); segarSemua();
+  aturPaketTerpilih(p.id); tampilView('bank');
+});
+function segarSemua(){
+  segarPilihanPaket();
+  renderDasbor();
+}
+function segarPilihanPaket(){
+  var bankSel = document.getElementById('bankPaket');
+  var cbtSel = document.getElementById('cbtPaket');
+  var nilaiBank = bankSel.value, nilaiCbt = cbtSel.value;
+  [bankSel, cbtSel].forEach(function(sel){
+    sel.innerHTML = DB.paket.map(function(p){
+      return '<option value="' + p.id + '">' + esc(p.nama) + ' (' + p.soal.length + ' soal)</option>';
+    }).join('');
+  });
+  if (cariPaket(nilaiBank)) bankSel.value = nilaiBank;
+  if (cariPaket(nilaiCbt)) cbtSel.value = nilaiCbt;
+}
+function aturPaketTerpilih(id){
+  document.getElementById('bankPaket').value = id;
+  document.getElementById('cbtPaket').value = id;
+}
+
+/* ================= BANK SOAL ================= */
+document.getElementById('bankPaket').addEventListener('change', renderBank);
+function renderBank(){
+  segarPilihanPaketSaja();
+  var id = document.getElementById('bankPaket').value;
+  var p = cariPaket(id);
+  var wadah = document.getElementById('bankDaftar');
+  if (!p){ wadah.innerHTML = '<p class="kecil">Tidak ada paket terpilih.</p>'; return; }
+  if (!p.soal.length){
+    wadah.innerHTML = '<div class="kartu"><p class="kecil">Paket ini masih kosong. Impor soal atau tulis soal sendiri.</p></div>';
+    return;
+  }
+  wadah.innerHTML = '';
+  p.soal.forEach(function(s, i){
+    var kartu = document.createElement('div');
+    kartu.className = 'soalKartu';
+    var opsiHtml = s.opsi.map(function(o, j){
+      if (!teksBlok(o).trim() && !o.some(function(b){ return b.t !== 'x'; })) return '';
+      return '<div class="opsiTampil' + (s.kunci === HURUF[j] ? ' benar' : '') + '">' +
+        HURUF[j] + '. ' + renderBlok(o) + (s.kunci === HURUF[j] ? ' ✔' : '') + '</div>';
+    }).join('');
+    kartu.innerHTML =
+      '<div class="kepala"><span class="nomor">' + (i + 1) + '</span>' +
+      '<span class="lencana indigo">' + esc(s.sumber) + '</span>' +
+      (s.kunci ? '<span class="lencana hijau">Kunci ' + esc(s.kunci) + '</span>' :
+                 '<span class="lencana emas">Tanpa kunci</span>') +
+      '<span class="tumbuh"></span>' +
+      '<button class="btn btn-biasa kecil" data-sunting="' + s.id + '">✏ Sunting</button>' +
+      '<button class="btn btn-bahaya kecil" data-hapus-soal="' + s.id + '">🗑</button></div>' +
+      '<div class="isiSoal">' + renderBlok(s.batang) + '</div>' + opsiHtml;
+    wadah.appendChild(kartu);
+  });
+  typeset(wadah);
+  wadah.querySelectorAll('[data-sunting]').forEach(function(b){
+    b.addEventListener('click', function(){ bukaEdit(p.id, b.dataset.sunting); });
+  });
+  wadah.querySelectorAll('[data-hapus-soal]').forEach(function(b){
+    b.addEventListener('click', function(){
+      if (confirm('Hapus soal ini?')){
+        p.soal = p.soal.filter(function(x){ return x.id !== b.dataset.hapusSoal; });
+        simpanDB(); segarSemua(); renderBank();
+      }
+    });
+  });
+}
+function segarPilihanPaketSaja(){
+  var sel = document.getElementById('bankPaket');
+  var nilai = sel.value;
+  sel.innerHTML = DB.paket.map(function(p){
+    return '<option value="' + p.id + '">' + esc(p.nama) + ' (' + p.soal.length + ' soal)</option>';
+  }).join('');
+  if (cariPaket(nilai)) sel.value = nilai;
+}
+document.getElementById('btnHapusPaket2').addEventListener('click', function(){
+  var p = cariPaket(document.getElementById('bankPaket').value);
+  if (!p) return;
+  if (confirm('Hapus paket «' + p.nama + '» beserta seluruh soalnya?')){
+    DB.paket = DB.paket.filter(function(x){ return x.id !== p.id; });
+    simpanDB(); segarSemua(); renderBank();
+  }
+});
+
+/* ---------- Sunting soal ---------- */
+var edState = null;
+function bukaEdit(paketId, soalId){
+  var p = cariPaket(paketId); if (!p) return;
+  var s = soalId ? p.soal.filter(function(x){ return x.id === soalId; })[0]
+                 : soalBaru([{ t: 'x', v: '' }], null, '', 'manual');
+  edState = { paketId: paketId, soalId: soalId,
+    soal: JSON.parse(JSON.stringify(s)) };
+  document.getElementById('judulEdit').textContent = soalId ? 'Sunting Soal' : 'Soal Baru';
+  document.getElementById('edTeks').value = teksBlok(edState.soal.batang);
+  renderEdLampiran();
+  var wadahOpsi = document.getElementById('edOpsi');
+  wadahOpsi.innerHTML = '';
+  edState.soal.opsi.forEach(function(o, j){
+    var div = document.createElement('div');
+    div.style.marginTop = '9px';
+    div.innerHTML = '<label class="lbl">Opsi ' + HURUF[j] + '</label>' +
+      '<textarea rows="2" data-ed-opsi="' + j + '">' + esc(teksBlok(o)) + '</textarea>';
+    wadahOpsi.appendChild(div);
+  });
+  document.getElementById('edKunci').value = edState.soal.kunci || '';
+  document.getElementById('selubungEdit').classList.add('tampil');
+}
+function renderEdLampiran(){
+  var wadah = document.getElementById('edLampiran');
+  var lampiran = edState.soal.batang.filter(function(b){ return b.t !== 'x'; });
+  wadah.innerHTML = lampiran.length ? '' : '<span class="kecil">Tidak ada lampiran.</span>';
+  edState.soal.batang.forEach(function(b, idx){
+    if (b.t === 'x') return;
+    var cip = document.createElement('span');
+    cip.className = 'cip';
+    cip.innerHTML = (b.t === 'g' ? '🖼 Gambar' : '∑ Rumus') +
+      ' <button type="button" data-cip="' + idx + '">✕</button>';
+    wadah.appendChild(cip);
+  });
+  wadah.querySelectorAll('[data-cip]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      edState.soal.batang.splice(parseInt(btn.dataset.cip, 10), 1);
+      renderEdLampiran();
+    });
+  });
+}
+document.getElementById('edTambahGambar').addEventListener('change', function(){
+  var f = this.files && this.files[0];
+  this.value = '';
+  if (!f || !edState) return;
+  var r = new FileReader();
+  r.onload = function(){
+    edState.soal.batang.push({ t: 'g', v: r.result });
+    renderEdLampiran();
+  };
+  r.readAsDataURL(f);
+});
+document.getElementById('edSimpan').addEventListener('click', function(){
+  if (!edState) return;
+  var p = cariPaket(edState.paketId); if (!p) return;
+  var s = edState.soal;
+  var teks = document.getElementById('edTeks').value;
+  var lampiran = s.batang.filter(function(b){ return b.t !== 'x'; });
+  s.batang = (teks.trim() ? [{ t: 'x', v: teks }] : []).concat(lampiran);
+  document.querySelectorAll('[data-ed-opsi]').forEach(function(ta){
+    var j = parseInt(ta.dataset.edOpsi, 10);
+    var lampOpsi = (s.opsi[j] || []).filter(function(b){ return b.t !== 'x'; });
+    s.opsi[j] = (ta.value.trim() ? [{ t: 'x', v: ta.value }] : []).concat(lampOpsi);
+  });
+  s.kunci = document.getElementById('edKunci').value;
+  if (edState.soalId){
+    var idx = p.soal.findIndex(function(x){ return x.id === edState.soalId; });
+    if (idx >= 0) p.soal[idx] = s;
+  } else p.soal.push(s);
+  simpanDB();
+  document.getElementById('selubungEdit').classList.remove('tampil');
+  edState = null;
+  segarSemua(); renderBank();
+});
+document.getElementById('edBatal').addEventListener('click', function(){
+  document.getElementById('selubungEdit').classList.remove('tampil');
+  edState = null;
+});
+document.getElementById('btnSoalManual').addEventListener('click', function(){
+  bukaEdit(document.getElementById('bankPaket').value, null);
+});
+
+/* ---------- Cetak naskah ---------- */
+document.getElementById('btnCetakNaskah').addEventListener('click', function(){
+  var p = cariPaket(document.getElementById('bankPaket').value);
+  if (!p || !p.soal.length){ alert('Paket kosong — tidak ada yang dicetak.'); return; }
+  var html = '<h2 style="text-align:center;margin-bottom:2px">NASKAH SOAL</h2>' +
+    '<h3 style="text-align:center;margin-top:0;font-weight:normal">' + esc(p.nama) +
+    (p.mapel ? ' · ' + esc(p.mapel) : '') + '</h3>' +
+    '<p>Nama: ………………………… &nbsp; Kelas: …………………………</p>' +
+    '<p><b>Petunjuk:</b> Pilihlah jawaban yang paling tepat.</p>';
+  p.soal.forEach(function(s, i){
+    html += '<div style="margin-top:14px"><b>' + (i + 1) + '.</b> ' + renderBlok(s.batang);
+    s.opsi.forEach(function(o, j){
+      if (!teksBlok(o).trim() && !o.some(function(b){ return b.t !== 'x'; })) return;
+      html += '<div style="margin-left:20px">' + HURUF[j] + '. ' + renderBlok(o) + '</div>';
+    });
+    html += '</div>';
+  });
+  var lembar = document.getElementById('lembarCetak');
+  lembar.innerHTML = html;
+  typeset(lembar);
+  setTimeout(function(){ window.print(); }, 350);
+});
+
+/* ---------- Cadangan ---------- */
+document.getElementById('btnCadangkan').addEventListener('click', function(){
+  var blob = new Blob([JSON.stringify(DB, null, 2)], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'cadangan-ujianku.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 800);
+});
+document.getElementById('berkasPulih').addEventListener('change', function(){
+  var f = this.files && this.files[0];
+  this.value = '';
+  if (!f) return;
+  var r = new FileReader();
+  r.onload = function(){
+    try {
+      var d = JSON.parse(r.result);
+      if (!d || !Array.isArray(d.paket)) throw new Error('format');
+      DB = d; if (!Array.isArray(DB.hasil)) DB.hasil = [];
+      simpanDB(); segarSemua();
+      alert('Cadangan dipulihkan: ' + DB.paket.length + ' paket.');
+    } catch(e){ alert('Berkas cadangan tidak valid.'); }
+  };
+  r.readAsText(f);
+});
+
+/* ================= UJIAN CBT ================= */
+var cbt = { jalan: false, paketId: null, idx: 0, jawaban: {}, sisa: 0, timer: null, nama: '', kelas: '' };
+function segarInfoCbt(){
+  var p = cariPaket(document.getElementById('cbtPaket').value);
+  document.getElementById('cbtInfo').textContent = p
+    ? 'Paket «' + p.nama + '» berisi ' + p.soal.length + ' soal.' +
+      (p.soal.length ? '' : ' Impor atau tulis soal dulu.')
+    : 'Belum ada paket.';
+}
+document.getElementById('cbtPaket').addEventListener('change', segarInfoCbt);
+function opsiTampilCbt(s){
+  var ada = [];
+  s.opsi.forEach(function(o, j){
+    if (teksBlok(o).trim() || o.some(function(b){ return b.t !== 'x'; })) ada.push(j);
+  });
+  if (ada.length >= 2 || s.sumber === 'pdf') return ada.length ? ada : s.opsi.map(function(_, j){ return j; });
+  return s.opsi.map(function(_, j){ return j; });
+}
+function mulaiCbt(){
+  var p = cariPaket(document.getElementById('cbtPaket').value);
+  if (!p || !p.soal.length){ alert('Paket ini belum memiliki soal.'); return false; }
+  cbt.paketId = p.id; cbt.idx = 0; cbt.jawaban = {};
+  cbt.nama = document.getElementById('cbtNama').value.trim() || 'Tanpa Nama';
+  cbt.kelas = document.getElementById('cbtKelas').value.trim();
+  cbt.sisa = Math.max(1, parseInt(document.getElementById('cbtDurasi').value, 10) || 60) * 60;
+  cbt.jalan = true;
+  document.getElementById('cbtSetelan').classList.add('tersembunyi');
+  document.getElementById('cbtHasil').classList.add('tersembunyi');
+  document.getElementById('cbtUjian').classList.remove('tersembunyi');
+  document.getElementById('cbtPeserta').textContent = '👤 ' + cbt.nama + (cbt.kelas ? ' · Kelas ' + cbt.kelas : '') + ' · ' + p.nama;
+  segarWaktuCbt(); renderCbt();
+  if (cbt.timer) clearInterval(cbt.timer);
+  cbt.timer = setInterval(function(){
+    cbt.sisa--; segarWaktuCbt();
+    if (cbt.sisa <= 0) selesaiCbt(false);
+  }, 1000);
+  return true;
+}
+function segarWaktuCbt(){
+  var m = Math.floor(Math.max(0, cbt.sisa) / 60), d = Math.max(0, cbt.sisa) % 60;
+  document.getElementById('cbtWaktu').textContent = (m < 10 ? '0' : '') + m + ':' + (d < 10 ? '0' : '') + d;
+}
+function jawabCbt(idx, huruf){
+  var p = cariPaket(cbt.paketId); if (!p) return;
+  cbt.jawaban[p.soal[idx].id] = huruf;
+}
+function renderCbt(){
+  var p = cariPaket(cbt.paketId); if (!p) return;
+  var grid = document.getElementById('cbtNomor');
+  grid.innerHTML = '';
+  p.soal.forEach(function(s, i){
+    var b = document.createElement('button');
+    b.type = 'button'; b.textContent = i + 1;
+    b.className = (i === cbt.idx ? 'aktif' : '') + (cbt.jawaban[s.id] ? ' terjawab' : '');
+    b.addEventListener('click', function(){ cbt.idx = i; renderCbt(); });
+    grid.appendChild(b);
+  });
+  var s = p.soal[cbt.idx];
+  var wadah = document.getElementById('cbtSoalAktif');
+  wadah.innerHTML = '<p class="kecil" style="margin:0 0 4px">Soal ' + (cbt.idx + 1) + ' dari ' + p.soal.length + '</p>' +
+    '<div class="isiSoal">' + renderBlok(s.batang) + '</div>';
+  opsiTampilCbt(s).forEach(function(j){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'pilihanCbt' + (cbt.jawaban[s.id] === HURUF[j] ? ' aktif' : '');
+    b.innerHTML = '<b>' + HURUF[j] + '.</b> ' + (renderBlok(s.opsi[j]) || '<i>(pilihan pada gambar)</i>');
+    b.addEventListener('click', function(){ jawabCbt(cbt.idx, HURUF[j]); renderCbt(); });
+    wadah.appendChild(b);
+  });
+  typeset(wadah);
+  document.getElementById('cbtSebelum').disabled = cbt.idx === 0;
+  document.getElementById('cbtBerikut').disabled = cbt.idx === p.soal.length - 1;
+}
+document.getElementById('cbtSebelum').addEventListener('click', function(){
+  if (cbt.idx > 0){ cbt.idx--; renderCbt(); }
+});
+document.getElementById('cbtBerikut').addEventListener('click', function(){
+  var p = cariPaket(cbt.paketId);
+  if (p && cbt.idx < p.soal.length - 1){ cbt.idx++; renderCbt(); }
+});
+document.getElementById('btnMulaiCbt').addEventListener('click', mulaiCbt);
+document.getElementById('cbtSelesai').addEventListener('click', function(){ selesaiCbt(true); });
+function selesaiCbt(tanyaDulu){
+  if (!cbt.jalan) return;
+  if (tanyaDulu && !confirm('Kumpulkan jawaban sekarang?')) return;
+  cbt.jalan = false;
+  if (cbt.timer) clearInterval(cbt.timer);
+  var p = cariPaket(cbt.paketId); if (!p) return;
+  var benar = 0, totalDinilai = 0;
+  var rincian = p.soal.map(function(s){
+    var dinilai = !!s.kunci;
+    var betulan = dinilai && cbt.jawaban[s.id] === s.kunci;
+    if (dinilai){ totalDinilai++; if (betulan) benar++; }
+    return { s: s, dinilai: dinilai, benar: betulan };
+  });
+  var skor = totalDinilai ? Math.round(benar / totalDinilai * 100) : 0;
+  DB.hasil.unshift({ id: uid(), paketId: p.id, paketNama: p.nama, nama: cbt.nama,
+    kelas: cbt.kelas, skor: skor, benar: benar, total: totalDinilai,
+    waktu: new Date().toLocaleString('id-ID') });
+  simpanDB();
+  document.getElementById('cbtUjian').classList.add('tersembunyi');
+  var wadah = document.getElementById('cbtHasil');
+  wadah.classList.remove('tersembunyi');
+  var html = '<div style="text-align:center"><div style="font-size:36px">🎓</div>' +
+    '<h3 style="margin:4px 0">Hasil — ' + esc(cbt.nama) + '</h3>' +
+    '<p style="font-size:18px;margin:4px 0">Skor: <b style="color:var(--indigo)">' + skor + '</b> (' +
+    benar + ' benar dari ' + totalDinilai + ' soal berkunci)</p></div>';
+  rincian.forEach(function(r, i){
+    html += '<div class="soalKartu"><div class="kepala"><span class="nomor">' + (i + 1) + '</span>' +
+      (r.dinilai ? (r.benar ? '<span class="lencana hijau">✔ Benar</span>' : '<span class="lencana emas">✘ Salah</span>')
+                 : '<span class="lencana indigo">Tanpa kunci</span>') + '</div>' +
+      '<div class="isiSoal">' + renderBlok(r.s.batang) + '</div>' +
+      '<p class="kecil" style="margin:4px 0 0">Jawabanmu: ' + esc(cbt.jawaban[r.s.id] || '(kosong)') +
+      ' · Kunci: <b>' + esc(r.s.kunci || '—') + '</b></p></div>';
+  });
+  html += '<div class="baris"><button class="btn btn-utama" type="button" id="btnCbtUlang">⬅ Kembali</button></div>';
+  wadah.innerHTML = html;
+  typeset(wadah);
+  document.getElementById('btnCbtUlang').addEventListener('click', function(){
+    wadah.classList.add('tersembunyi');
+    document.getElementById('cbtSetelan').classList.remove('tersembunyi');
+    segarInfoCbt();
+  });
+}
+
+/* ================= HASIL UJIAN ================= */
+function renderHasilView(){
+  var wadah = document.getElementById('hasilDaftar');
+  if (!DB.hasil.length){
+    wadah.innerHTML = '<div class="kartu"><p class="kecil">Belum ada hasil ujian tersimpan.</p></div>';
+    return;
+  }
+  wadah.innerHTML = DB.hasil.map(function(h){
+    return '<div class="soalKartu"><div class="baris"><b>' + esc(h.nama) + '</b>' +
+      (h.kelas ? '<span class="kecil">Kelas ' + esc(h.kelas) + '</span>' : '') +
+      '<span class="lencana indigo">' + esc(h.paketNama) + '</span>' +
+      '<span class="tumbuh"></span><b style="color:var(--indigo);font-size:17px">Skor ' + h.skor + '</b></div>' +
+      '<p class="kecil" style="margin:3px 0 0">' + h.benar + ' benar dari ' + h.total + ' soal berkunci · ' + esc(h.waktu) + '</p></div>';
+  }).join('');
+}
+document.getElementById('btnBersihHasil').addEventListener('click', function(){
+  if (confirm('Hapus semua hasil ujian?')){ DB.hasil = []; simpanDB(); renderHasilView(); renderDasbor(); }
+});
+document.getElementById('btnCsvHasil').addEventListener('click', function(){
+  if (!DB.hasil.length){ alert('Belum ada hasil.'); return; }
+  function q(v){ return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; }
+  var csv = 'Nama,Kelas,Paket,Skor,Benar,Total Soal Berkunci,Waktu\n' + DB.hasil.map(function(h){
+    return [q(h.nama), q(h.kelas), q(h.paketNama), h.skor, h.benar, h.total, q(h.waktu)].join(',');
+  }).join('\n');
+  var blob = new Blob(['\ufeff' + csv], { type: 'text/csv' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'rekap-hasil-ujianku.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 800);
+});
+
+/* ================= MULAI ================= */
+muatDB();
+segarSemua();
+segarInfoCbt();
+
+/* Pegangan untuk pengujian otomatis */
+window.__uji = { DB: function(){ return DB; }, cariPaket: cariPaket,
+  parseDokumenXml: parseDokumenXml, parseTeksKunci: parseTeksKunci,
+  segmentasiSoal: segmentasiSoal, parseBarisExcel: parseBarisExcel,
+  normalKunciExcel: normalKunciExcel, renderBlok: renderBlok, teksBlok: teksBlok,
+  ommlDariXml: function(xml){
+    var dok = new DOMParser().parseFromString(xml, 'text/xml');
+    var m = dok.getElementsByTagNameNS('*', 'oMath')[0] ||
+            dok.getElementsByTagName('m:oMath')[0];
+    return m ? ommlKeMathml(m) : '';
+  },
+  tampilView: tampilView, mulaiCbt: mulaiCbt, jawabCbt: jawabCbt, selesaiCbt: selesaiCbt,
+  getCbt: function(){ return { jalan: cbt.jalan, idx: cbt.idx }; } };
+</script>
+</body>
+</html>
