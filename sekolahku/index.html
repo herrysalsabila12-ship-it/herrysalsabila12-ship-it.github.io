@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SekolahKu — Ruang Kerja Satu Sekolah</title>
+<style>
+  :root{
+    --latar:#eef2f7; --kartu:#ffffff; --garis:#d8e0ea; --teks:#1d2a3a; --redup:#647689;
+    --biru:#1d4ed8; --biruGelap:#1e3a8a; --aksen:#e3ecfd; --hijau:#0d9d63; --merah:#dc2626;
+    --kuning:#b45309; --bayang:0 4px 16px rgba(25,50,90,.07);
+  }
+  html{box-sizing:border-box}
+  *,*::before,*::after{box-sizing:inherit}
+  body{margin:0;font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;
+    background:var(--latar);color:var(--teks)}
+  .tersembunyi{display:none !important}
+
+  /* ===== HALAMAN MASUK ===== */
+  #layarLogin{min-height:100vh;display:grid;place-items:center;padding:18px;
+    background:radial-gradient(820px 480px at 85% -10%,rgba(96,165,250,.4),transparent 60%),
+      linear-gradient(160deg,#0b1e4b,#1e3a8a 55%,#17306e)}
+  .bungkusLogin{width:min(880px,100%);display:grid;grid-template-columns:1.05fr .95fr;gap:0;
+    background:#fff;border-radius:24px;overflow:hidden;box-shadow:0 34px 70px rgba(0,0,0,.45)}
+  .sisiInfo{padding:32px 30px;color:#eaf1ff;background:linear-gradient(165deg,#1e40af,#172554)}
+  .sisiInfo .ikon{width:56px;height:56px;border-radius:15px;background:rgba(255,255,255,.14);
+    display:grid;place-items:center;font-size:27px;margin-bottom:14px}
+  .sisiInfo h1{margin:0;font-size:27px;line-height:1.2;font-style:italic;letter-spacing:.01em}
+  .sisiInfo p{font-size:14px;line-height:1.65;color:#c7d6f5;margin:11px 0 16px}
+  .sisiInfo ul{margin:0;padding-left:19px;font-size:13.5px;line-height:1.9;color:#dbe7ff}
+  .sisiForm{padding:30px 28px;color:#1d2a3a}
+  .sisiForm h2{margin:0;font-size:23px;font-style:italic}
+  .sisiForm p{margin:6px 0 15px;color:#647689;font-size:13.5px;line-height:1.6}
+  .sisiForm label{display:block;font-size:12.5px;color:#647689;margin:11px 0 5px}
+  .sisiForm input{width:100%;padding:12px 13px;border-radius:11px;border:1px solid #c4d0de;font-size:15px;font-family:inherit}
+  .btnMasuk{width:100%;margin-top:17px;padding:13px;border:0;border-radius:11px;cursor:pointer;
+    background:linear-gradient(90deg,#3b82f6,var(--biru));color:#fff;font-size:16px;font-weight:800}
+  #loginGalat{color:var(--merah);font-size:13px;min-height:18px;margin-top:9px}
+  .sisiForm .demo{margin-top:14px;background:#f1f6ff;border:1px dashed #a9c2ec;border-radius:11px;
+    padding:10px 12px;font-size:12.5px;line-height:1.75;color:#33475e}
+  @media(max-width:720px){ .bungkusLogin{grid-template-columns:1fr} .sisiInfo{padding:24px} }
+
+  /* ===== APLIKASI ===== */
+  #aplikasi{display:flex;min-height:100vh}
+  aside{width:240px;flex:0 0 240px;background:#fff;border-right:1px solid var(--garis);
+    display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+  aside .merek{padding:16px;display:flex;gap:11px;align-items:center;border-bottom:1px solid var(--garis)}
+  aside .merek .ikon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:20px;
+    color:#fff;background:linear-gradient(135deg,#3b82f6,var(--biruGelap));flex:0 0 42px}
+  aside .merek b{font-size:16.5px;display:block;line-height:1.15}
+  aside .merek span{font-size:11px;color:var(--redup)}
+  aside nav{padding:11px;overflow-y:auto;flex:1}
+  aside nav button{display:flex;gap:10px;align-items:center;width:100%;text-align:left;border:0;cursor:pointer;
+    background:transparent;color:var(--teks);padding:10px 12px;border-radius:10px;font-size:14px;margin-bottom:3px;font-family:inherit}
+  aside nav button:hover{background:var(--aksen)}
+  aside nav button.aktif{background:var(--aksen);color:var(--biruGelap);font-weight:800}
+  aside .siapa{padding:13px 16px;border-top:1px solid var(--garis);font-size:12.5px;line-height:1.6;color:var(--redup)}
+  aside .siapa b{color:var(--teks);font-size:13.5px}
+  aside .siapa button{margin-top:8px;background:var(--aksen);border:1px solid var(--garis);color:var(--teks);
+    border-radius:9px;padding:8px 12px;cursor:pointer;font-size:13px}
+  main{flex:1;min-width:0;padding:20px 22px 50px}
+  .kepalaHalaman{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:15px}
+  .kepalaHalaman h2{margin:0;font-size:22px}
+  .kepalaHalaman p{margin:3px 0 0;color:var(--redup);font-size:13px;width:100%}
+  .kartu{background:var(--kartu);border:1px solid var(--garis);border-radius:15px;padding:17px;
+    box-shadow:var(--bayang);margin-bottom:15px}
+  .kartu h3{margin:0 0 11px;font-size:16.5px}
+  .gridStat{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:13px;margin-bottom:15px}
+  .stat{background:var(--kartu);border:1px solid var(--garis);border-radius:15px;padding:15px 16px;box-shadow:var(--bayang)}
+  .stat .ikon{font-size:21px}
+  .stat .angka{font-size:23px;font-weight:900;margin:3px 0 1px}
+  .stat .label{font-size:12.5px;color:var(--redup)}
+  .baris{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+  .tumbuh{flex:1 1 auto}
+  .kecil{font-size:12.5px;color:var(--redup);line-height:1.6}
+  .btn{border:0;border-radius:10px;padding:9px 15px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit}
+  .btn-biru{background:linear-gradient(90deg,#3b82f6,var(--biru));color:#fff}
+  .btn-biasa{background:var(--aksen);color:var(--teks);border:1px solid var(--garis)}
+  .btn-merah{background:#fdecec;color:var(--merah);border:1px solid #f0c4c4}
+  .btn-hijau{background:#e5f6ee;color:#0b7a4d;border:1px solid #bfe6d2}
+  .btn.kecil{padding:6px 11px;font-size:12.5px}
+  input[type=text],input[type=number],input[type=password],input[type=date],select,textarea{
+    background:#fff;color:var(--teks);border:1px solid var(--garis);border-radius:10px;
+    padding:8px 10px;font-size:14px;font-family:inherit}
+  textarea{width:100%;resize:vertical}
+  label.lbl{font-size:12px;color:var(--redup);display:block;margin-bottom:4px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{border:1px solid var(--garis);padding:7px 9px;text-align:left;vertical-align:top}
+  th{background:var(--aksen);font-size:12.5px}
+  .gulir{overflow-x:auto}
+  .kanan{text-align:right}.tengah{text-align:center}
+  .chip{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700;border:1px solid var(--garis)}
+  .chip.admin{background:#ede9fe;color:#5b21b6}
+  .chip.wali{background:#e3ecfd;color:var(--biruGelap)}
+  .chip.guru{background:#e5f6ee;color:#0b7a4d}
+  .chip.ketua{background:#fef3c7;color:#92400e}
+  .chip.statusH{background:#e5f6ee;color:#0b7a4d}
+  .chip.statusLain{background:#fef3c7;color:#92400e}
+  dialog{border:1px solid var(--garis);border-radius:16px;padding:0;max-width:min(500px,94vw);width:100%;
+    background:#fff;color:var(--teks);box-shadow:0 24px 60px rgba(0,0,0,.3)}
+  dialog::backdrop{background:rgba(8,25,60,.5)}
+  .isiModal{padding:19px}
+  .isiModal h3{margin:0 0 13px}
+  .isiModal .kolom{margin-bottom:11px}
+  .tabTugas{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:13px}
+  .posPresensi{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px}
+  .kotakSiswa{border:1px solid var(--garis);border-radius:12px;padding:10px 12px}
+  .kotakSiswa b{font-size:13.5px;display:block;margin-bottom:7px}
+  .kotakSiswa .pilihan{display:flex;gap:5px}
+  .kotakSiswa .pilihan button{flex:1;border:1px solid var(--garis);background:#fff;border-radius:8px;
+    padding:6px 0;font-size:12.5px;font-weight:800;cursor:pointer;color:var(--redup)}
+  .kotakSiswa .pilihan button.pilihH{background:#0d9d63;color:#fff;border-color:#0d9d63}
+  .kotakSiswa .pilihan button.pilihI{background:#2563eb;color:#fff;border-color:#2563eb}
+  .kotakSiswa .pilihan button.pilihS{background:#d97706;color:#fff;border-color:#d97706}
+  .kotakSiswa .pilihan button.pilihA{background:#dc2626;color:#fff;border-color:#dc2626}
+  @media(max-width:820px){
+    #aplikasi{flex-direction:column}
+    aside{width:100%;flex:none;height:auto;position:static;border-right:0;border-bottom:1px solid var(--garis)}
+    aside nav{display:flex;flex-wrap:wrap}
+    aside nav button{width:auto}
+    aside .siapa{display:none}
+    main{padding:15px 13px 40px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= MASUK ================= -->
+<div id="layarLogin">
+  <div class="bungkusLogin">
+    <div class="sisiInfo">
+      <div class="ikon">🏫</div>
+      <h1>MASUK KE SEKOLAHKU</h1>
+      <p>SekolahKu dirancang untuk satu sekolah dengan ruang kerja bersama bagi admin, wali kelas, guru mata pelajaran, dan ketua kelas.</p>
+      <ul>
+        <li>Akun dibuat oleh admin sekolah — tanpa email</li>
+        <li>Pengumuman, tugas &amp; jadwal dalam satu tempat</li>
+        <li>Presensi kelas oleh wali kelas / ketua kelas</li>
+      </ul>
+    </div>
+    <form class="sisiForm" id="formLogin">
+      <h2>Selamat datang 👋</h2>
+      <p>Gunakan akun yang dibuat oleh admin sekolah Anda. Email tidak diperlukan.</p>
+      <div id="loginGalat"></div>
+      <label for="loginUser">Nama Pengguna</label>
+      <input type="text" id="loginUser" placeholder="cth. admin" autocomplete="username" required>
+      <label for="loginSandi">Kata Sandi</label>
+      <input type="password" id="loginSandi" placeholder="Kata sandi Anda" autocomplete="current-password" required>
+      <button class="btnMasuk" type="submit">Masuk →</button>
+      <div class="demo"><b>Akun contoh untuk mencoba:</b><br>
+        Admin — <b>admin / admin123</b><br>
+        Wali Kelas VII-A — <b>wali7a / wali123</b><br>
+        Guru IPA — <b>guruipa / guru123</b><br>
+        Ketua Kelas VII-A — <b>ketua7a / ketua123</b></div>
+    </form>
+  </div>
+</div>
+
+<!-- ================= APLIKASI ================= -->
+<div id="aplikasi" class="tersembunyi">
+  <aside>
+    <div class="merek">
+      <div class="ikon">🏫</div>
+      <div><b>SekolahKu</b><span id="merekSekolah">Sekolah Contoh</span></div>
+    </div>
+    <nav id="daftarNav"></nav>
+    <div class="siapa">
+      <div>Masuk sebagai<br><b id="siapaNama">-</b><br><span id="siapaPeran"></span></div>
+      <button type="button" id="btnKeluar">⏏ Keluar</button>
+    </div>
+  </aside>
+  <main id="konten"></main>
+</div>
+
+<dialog id="modalUmum">
+  <form method="dialog" class="isiModal" id="isiModal"></form>
+</dialog>
+
+<script>
+'use strict';
+var KUNCI_DB = 'sekolahku_v1';
+var PERAN = ['Admin', 'Wali Kelas', 'Guru', 'Ketua Kelas'];
+var HARI = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+var STATUS_PRESENSI = ['H', 'I', 'S', 'A'];
+
+function idBaru(){ return 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; });
+}
+function tglIndo(iso){
+  if (!iso) return '-';
+  var b = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+  var p = String(iso).split('-');
+  if (p.length !== 3) return iso;
+  return Number(p[2]) + ' ' + b[Number(p[1]) - 1] + ' ' + p[0];
+}
+function hariIni(){ return new Date().toISOString().slice(0, 10); }
+function kelasChip(peran){
+  return { 'Admin': 'admin', 'Wali Kelas': 'wali', 'Guru': 'guru', 'Ketua Kelas': 'ketua' }[peran] || 'wali';
+}
+
+function dataAwal(){
+  var kA = idBaru(), kB = idBaru();
+  var db = {
+    sekolah: { nama: 'SMP Negeri Contoh', alamat: 'Jl. Pendidikan No. 10, Kasongan, Kab. Katingan',
+      tahunAjaran: '2026/2027 — Semester Ganjil' },
+    pengguna: [
+      { id: idBaru(), username: 'admin', sandi: 'admin123', nama: 'Admin Sekolah', peran: 'Admin', kelasId: '' },
+      { id: idBaru(), username: 'wali7a', sandi: 'wali123', nama: 'Ibu Ratna (contoh)', peran: 'Wali Kelas', kelasId: kA },
+      { id: idBaru(), username: 'guruipa', sandi: 'guru123', nama: 'Pak Danu (contoh)', peran: 'Guru', kelasId: '' },
+      { id: idBaru(), username: 'ketua7a', sandi: 'ketua123', nama: 'Salsa (contoh)', peran: 'Ketua Kelas', kelasId: kA }
+    ],
+    kelas: [
+      { id: kA, nama: 'VII-A', waliUsername: 'wali7a' },
+      { id: kB, nama: 'VII-B', waliUsername: '' }
+    ],
+    mapel: [
+      { id: idBaru(), nama: 'IPA', guruUsername: 'guruipa' },
+      { id: idBaru(), nama: 'Matematika', guruUsername: '' },
+      { id: idBaru(), nama: 'Bahasa Indonesia', guruUsername: '' }
+    ],
+    siswa: [],
+    pengumuman: [],
+    tugas: [],
+    presensi: [],
+    jadwal: []
+  };
+  ['Andi Pratama', 'Bela Safitri', 'Citra Lestari', 'Dedi Kurnia', 'Eka Putri', 'Fajar Ramadhan'].forEach(function(n){
+    db.siswa.push({ id: idBaru(), nama: n + ' (contoh)', kelasId: kA });
+  });
+  ['Gita Maharani', 'Hadi Saputra', 'Intan Permata'].forEach(function(n){
+    db.siswa.push({ id: idBaru(), nama: n + ' (contoh)', kelasId: kB });
+  });
+  db.pengumuman.push({ id: idBaru(), judul: 'Selamat datang di SekolahKu',
+    isi: 'Ini pengumuman contoh. Admin, wali kelas, dan guru dapat membuat pengumuman untuk seluruh sekolah di menu Pengumuman.',
+    olehNama: 'Admin Sekolah', peran: 'Admin', tanggal: hariIni() });
+  db.jadwal.push({ id: idBaru(), kelasId: kA, hari: 'Senin', jam: 1, mapelNama: 'IPA' });
+  db.jadwal.push({ id: idBaru(), kelasId: kA, hari: 'Senin', jam: 2, mapelNama: 'Matematika' });
+  db.jadwal.push({ id: idBaru(), kelasId: kA, hari: 'Selasa', jam: 1, mapelNama: 'Bahasa Indonesia' });
+  return db;
+}
+
+var db;
+function simpan(){ try { localStorage.setItem(KUNCI_DB, JSON.stringify(db)); } catch(e){} }
+function muat(){
+  try {
+    var mentah = localStorage.getItem(KUNCI_DB);
+    if (mentah){ db = JSON.parse(mentah); if (db && db.sekolah && db.pengguna) return; }
+  } catch(e){}
+  db = dataAwal(); simpan();
+}
+muat();
+
+var sesi = null; // pengguna yang sedang masuk
+var halamanAktif = 'beranda';
+var pilihan = { presensiKelas: '', presensiTanggal: '', jadwalKelas: '', dataTab: 'pengguna' };
+
+function cariKelas(id){ return db.kelas.find(function(k){ return k.id === id; }); }
+function cariPengguna(username){ return db.pengguna.find(function(p){ return p.username === username; }); }
+function siswaKelas(kelasId){ return db.siswa.filter(function(s){ return s.kelasId === kelasId; }); }
+function kelasAkses(){
+  // kelas yang boleh dilihat/diisi presensinya oleh sesi saat ini
+  if (!sesi) return [];
+  if (sesi.peran === 'Admin' || sesi.peran === 'Guru') return db.kelas.slice();
+  return db.kelas.filter(function(k){ return k.id === sesi.kelasId; });
+}
+function bolehIsiPresensi(kelasId){
+  if (!sesi) return false;
+  if (sesi.peran === 'Admin') return true;
+  if ((sesi.peran === 'Wali Kelas' || sesi.peran === 'Ketua Kelas') && sesi.kelasId === kelasId) return true;
+  return false;
+}
+function bolehBuatPengumuman(){ return sesi && sesi.peran !== 'Ketua Kelas'; }
+
+/* ================= SESI & NAVIGASI ================= */
+var MENU = [
+  { id: 'beranda', ikon: '🏠', label: 'Beranda', peran: PERAN },
+  { id: 'pengumuman', ikon: '📣', label: 'Pengumuman', peran: PERAN },
+  { id: 'tugas', ikon: '📚', label: 'Tugas Kelas', peran: PERAN },
+  { id: 'presensi', ikon: '✅', label: 'Presensi', peran: PERAN },
+  { id: 'jadwal', ikon: '🗓️', label: 'Jadwal Pelajaran', peran: PERAN },
+  { id: 'data', ikon: '🗂️', label: 'Data Sekolah', peran: ['Admin'] },
+  { id: 'pengaturan', ikon: '⚙️', label: 'Pengaturan', peran: ['Admin'] },
+  { id: 'akun', ikon: '🔐', label: 'Akun Saya', peran: PERAN }
+];
+document.getElementById('formLogin').addEventListener('submit', function(ev){
+  ev.preventDefault();
+  var u = document.getElementById('loginUser').value.trim().toLowerCase();
+  var s = document.getElementById('loginSandi').value;
+  var p = db.pengguna.find(function(x){ return x.username.toLowerCase() === u && x.sandi === s; });
+  if (p){
+    sesi = p;
+    halamanAktif = 'beranda';
+    document.getElementById('layarLogin').classList.add('tersembunyi');
+    document.getElementById('aplikasi').classList.remove('tersembunyi');
+    tampil();
+  } else {
+    document.getElementById('loginGalat').textContent = 'Nama pengguna atau kata sandi salah. Minta bantuan admin sekolah bila lupa.';
+  }
+});
+document.getElementById('btnKeluar').addEventListener('click', function(){
+  sesi = null;
+  document.getElementById('aplikasi').classList.add('tersembunyi');
+  document.getElementById('layarLogin').classList.remove('tersembunyi');
+  document.getElementById('loginSandi').value = '';
+});
+function bangunNav(){
+  var nav = document.getElementById('daftarNav');
+  nav.innerHTML = '';
+  document.getElementById('merekSekolah').textContent = db.sekolah.nama;
+  document.getElementById('siapaNama').textContent = sesi.nama;
+  document.getElementById('siapaPeran').innerHTML =
+    '<span class="chip ' + kelasChip(sesi.peran) + '">' + esc(sesi.peran) + '</span>' +
+    (sesi.kelasId && cariKelas(sesi.kelasId) ? ' · Kelas ' + esc(cariKelas(sesi.kelasId).nama) : '');
+  MENU.filter(function(m){ return m.peran.indexOf(sesi.peran) >= 0; }).forEach(function(m){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.innerHTML = m.ikon + ' ' + esc(m.label);
+    if (m.id === halamanAktif) b.classList.add('aktif');
+    b.addEventListener('click', function(){ halamanAktif = m.id; tampil(); });
+    nav.appendChild(b);
+  });
+}
+function tampil(){
+  if (!sesi) return;
+  bangunNav();
+  var k = document.getElementById('konten');
+  var fn = { beranda: halBeranda, pengumuman: halPengumuman, tugas: halTugas,
+    presensi: halPresensi, jadwal: halJadwal, data: halData,
+    pengaturan: halPengaturan, akun: halAkun }[halamanAktif];
+  if (fn) fn(k);
+  window.scrollTo(0, 0);
+}
+function kepala(judul, sub){
+  return '<div class="kepalaHalaman"><h2>' + judul + '</h2><p>' + sub + '</p></div>';
+}
+function statKartu(ikon, angka, label){
+  return '<div class="stat"><div class="ikon">' + ikon + '</div><div class="angka">' + angka +
+    '</div><div class="label">' + label + '</div></div>';
+}
+function unduhTeks(teks, nama, tipe){
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([teks], { type: tipe || 'text/plain' }));
+  a.download = nama; a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+}
+
+/* ================= MODAL ================= */
+var modal = document.getElementById('modalUmum');
+function bukaModal(html){
+  document.getElementById('isiModal').innerHTML = html;
+  if (!modal.open) modal.showModal();
+  var batal = document.getElementById('btnBatalModal');
+  if (batal) batal.addEventListener('click', tutupModal);
+}
+function tutupModal(){ if (modal.open) modal.close(); }
+function kolomModal(label, kontrol){
+  return '<div class="kolom"><label class="lbl">' + label + '</label>' + kontrol + '</div>';
+}
+function tombolModal(simpanLabel){
+  return '<div class="baris" style="margin-top:6px"><button class="btn btn-biru" type="submit">' +
+    (simpanLabel || 'Simpan') + '</button>' +
+    '<button class="btn btn-biasa" type="button" id="btnBatalModal">Batal</button></div>';
+}
+modal.addEventListener('click', function(ev){ if (ev.target === modal) tutupModal(); });
+
+/* ================= BERANDA ================= */
+function halBeranda(k){
+  var tugasAktif = db.tugas.filter(function(t){ return !t.selesai; });
+  var presensiHariIni = db.presensi.filter(function(p){ return p.tanggal === hariIni(); });
+  var salam = 'Selamat datang, ' + esc(sesi.nama.split(' ')[0]) + '!';
+  var html = kepala('🏠 Beranda', salam + ' Anda masuk sebagai ' + sesi.peran + ' di ' + esc(db.sekolah.nama) + ' · ' + esc(db.sekolah.tahunAjaran) + '.');
+  html += '<div class="gridStat">' +
+    statKartu('👩‍🏫', db.pengguna.filter(function(p){ return p.peran !== 'Admin'; }).length + ' akun', 'Akun Guru & Kelas (non-admin)') +
+    statKartu('🏫', db.kelas.length + ' rombel', 'Kelas Terdaftar') +
+    statKartu('🧑‍🎓', db.siswa.length + ' siswa', 'Total Siswa (contoh)') +
+    statKartu('📚', tugasAktif.length + ' tugas', 'Tugas Belum Selesai') +
+    statKartu('✅', presensiHariIni.length + ' kelas', 'Presensi Terisi Hari Ini') +
+    statKartu('📣', db.pengumuman.length + ' pengumuman', 'Pengumuman Terbit') + '</div>';
+  var terbaru = db.pengumuman.slice().sort(function(a, b){ return b.tanggal.localeCompare(a.tanggal); }).slice(0, 3);
+  html += '<div class="kartu"><h3>📣 Pengumuman Terbaru</h3>' +
+    (terbaru.length ? terbaru.map(function(p){
+      return '<div style="border-top:1px solid var(--garis);padding:9px 0"><b>' + esc(p.judul) + '</b> ' +
+        '<span class="chip ' + kelasChip(p.peran) + '">' + esc(p.peran) + '</span>' +
+        '<div class="kecil">' + tglIndo(p.tanggal) + ' · oleh ' + esc(p.olehNama) + '</div>' +
+        '<div style="font-size:13.5px;margin-top:3px">' + esc(p.isi) + '</div></div>';
+    }).join('') : '<p class="kecil">Belum ada pengumuman.</p>') + '</div>';
+  var tugasKu = db.tugas.filter(function(t){
+    if (sesi.peran === 'Guru') return t.guruUsername === sesi.username;
+    if (sesi.kelasId) return t.kelasId === sesi.kelasId;
+    return true;
+  }).slice(0, 5);
+  html += '<div class="kartu"><h3>📚 Tugas Terkait Anda</h3>' +
+    (tugasKu.length ? '<div class="gulir"><table><tr><th>Tugas</th><th>Mapel</th><th>Kelas</th><th>Tenggat</th><th>Status</th></tr>' +
+      tugasKu.map(function(t){
+        return '<tr><td><b>' + esc(t.judul) + '</b></td><td>' + esc(t.mapelNama) + '</td>' +
+          '<td>' + esc(cariKelas(t.kelasId) ? cariKelas(t.kelasId).nama : '-') + '</td>' +
+          '<td>' + tglIndo(t.tenggat) + '</td><td>' + (t.selesai ? '✅ Selesai' : '⏳ Berjalan') + '</td></tr>';
+      }).join('') + '</table></div>' : '<p class="kecil">Belum ada tugas terkait. Guru membuat tugas di menu Tugas Kelas.</p>') +
+    '<p class="kecil" style="margin-top:10px">ℹ️ Data bawaan adalah contoh fiktif. Admin mengganti akun, kelas, dan siswa asli lewat menu Data Sekolah.</p></div>';
+  k.innerHTML = html;
+}
+
+/* ================= PENGUMUMAN ================= */
+function halPengumuman(k){
+  var daftar = db.pengumuman.slice().sort(function(a, b){ return b.tanggal.localeCompare(a.tanggal); });
+  var html = kepala('📣 Pengumuman', 'Informasi resmi sekolah untuk semua peran. ' +
+    (bolehBuatPengumuman() ? 'Anda dapat membuat pengumuman.' : 'Ketua kelas hanya membaca pengumuman.'));
+  if (bolehBuatPengumuman())
+    html += '<div class="kartu"><div class="baris"><span class="kecil">Sampaikan info ke seluruh sekolah:</span><span class="tumbuh"></span>' +
+      '<button class="btn btn-biru" id="btnTambahUmum">＋ Buat Pengumuman</button></div></div>';
+  html += daftar.length ? daftar.map(function(p){
+    var milikSaya = p.olehUsername === sesi.username || sesi.peran === 'Admin';
+    return '<div class="kartu"><div class="baris"><b style="font-size:16px">' + esc(p.judul) + '</b>' +
+      '<span class="chip ' + kelasChip(p.peran) + '">' + esc(p.peran) + '</span><span class="tumbuh"></span>' +
+      (milikSaya ? '<button class="btn btn-merah kecil" data-hapus-umum="' + p.id + '">Hapus</button>' : '') + '</div>' +
+      '<div class="kecil" style="margin:4px 0 8px">' + tglIndo(p.tanggal) + ' · oleh ' + esc(p.olehNama) + '</div>' +
+      '<div style="font-size:14px;line-height:1.65">' + esc(p.isi) + '</div></div>';
+  }).join('') : '<div class="kartu"><p class="kecil">Belum ada pengumuman.</p></div>';
+  k.innerHTML = html;
+  var tambah = k.querySelector('#btnTambahUmum');
+  if (tambah) tambah.addEventListener('click', function(){
+    bukaModal('<h3>Buat Pengumuman</h3>' +
+      kolomModal('Judul', '<input type="text" id="uJudul" style="width:100%">') +
+      kolomModal('Isi pengumuman', '<textarea id="uIsi" rows="4"></textarea>') +
+      tombolModal('Terbitkan'));
+    document.getElementById('isiModal').onsubmit = function(ev){
+      ev.preventDefault();
+      var judul = document.getElementById('uJudul').value.trim();
+      var isi = document.getElementById('uIsi').value.trim();
+      if (!judul || !isi) return;
+      db.pengumuman.push({ id: idBaru(), judul: judul, isi: isi, olehNama: sesi.nama,
+        olehUsername: sesi.username, peran: sesi.peran, tanggal: hariIni() });
+      simpan(); tutupModal(); tampil();
+    };
+  });
+  k.querySelectorAll('[data-hapus-umum]').forEach(function(b){
+    b.addEventListener('click', function(){
+      if (confirm('Hapus pengumuman ini?')){
+        db.pengumuman = db.pengumuman.filter(function(p){ return p.id !== b.dataset.hapusUmum; });
+        simpan(); tampil();
+      }
+    }); });
+}
+
+/* ================= TUGAS ================= */
+function tugasTerlihat(){
+  return db.tugas.filter(function(t){
+    if (sesi.peran === 'Admin') return true;
+    if (sesi.peran === 'Guru') return t.guruUsername === sesi.username;
+    return t.kelasId === sesi.kelasId; // wali & ketua kelas
+  }).slice().sort(function(a, b){ return (a.tenggat || '').localeCompare(b.tenggat || ''); });
+}
+function halTugas(k){
+  var daftar = tugasTerlihat();
+  var html = kepala('📚 Tugas Kelas', sesi.peran === 'Guru'
+    ? 'Buat dan kelola tugas untuk kelas yang Anda ajar.'
+    : 'Daftar tugas untuk kelas Anda dari para guru.');
+  if (sesi.peran === 'Guru')
+    html += '<div class="kartu"><div class="baris"><span class="kecil">Berikan tugas baru ke kelas:</span><span class="tumbuh"></span>' +
+      '<button class="btn btn-biru" id="btnTambahTugas">＋ Buat Tugas</button></div></div>';
+  html += '<div class="kartu">' + (daftar.length ? '<div class="gulir"><table><tr><th>Tugas</th><th>Mapel</th><th>Kelas</th><th>Guru</th><th>Tenggat</th><th>Status</th><th style="width:170px">Aksi</th></tr>' +
+    daftar.map(function(t){
+      var bolehTandai = sesi.peran === 'Ketua Kelas' && sesi.kelasId === t.kelasId;
+      var bolehHapus = sesi.peran === 'Admin' || t.guruUsername === sesi.username;
+      return '<tr><td><b>' + esc(t.judul) + '</b><div class="kecil">' + esc(t.deskripsi || '') + '</div></td>' +
+        '<td>' + esc(t.mapelNama) + '</td><td>' + esc(cariKelas(t.kelasId) ? cariKelas(t.kelasId).nama : '-') + '</td>' +
+        '<td>' + esc(t.guruNama) + '</td><td>' + tglIndo(t.tenggat) + '</td>' +
+        '<td>' + (t.selesai ? '✅ Selesai' : '⏳ Berjalan') + '</td>' +
+        '<td>' + (bolehTandai ? '<button class="btn btn-hijau kecil" data-tandai-tugas="' + t.id + '">' +
+          (t.selesai ? '↩ Batal Selesai' : '✓ Tandai Selesai') + '</button> ' : '') +
+        (bolehHapus ? '<button class="btn btn-merah kecil" data-hapus-tugas="' + t.id + '">Hapus</button>' : '') + '</td></tr>';
+    }).join('') + '</table></div>' : '<p class="kecil">Belum ada tugas pada tampilan Anda.</p>') + '</div>';
+  k.innerHTML = html;
+  var tambah = k.querySelector('#btnTambahTugas');
+  if (tambah) tambah.addEventListener('click', function(){
+    var mapelKu = db.mapel.filter(function(m){ return m.guruUsername === sesi.username; });
+    var daftarMapel = mapelKu.length ? mapelKu : db.mapel;
+    bukaModal('<h3>Buat Tugas</h3>' +
+      kolomModal('Judul tugas', '<input type="text" id="tJudul" style="width:100%">') +
+      kolomModal('Deskripsi / petunjuk', '<textarea id="tDeskripsi" rows="3"></textarea>') +
+      '<div class="baris" style="align-items:flex-start">' +
+      '<div style="flex:1">' + kolomModal('Mata pelajaran', '<select id="tMapel" style="width:100%">' +
+        daftarMapel.map(function(m){ return '<option>' + esc(m.nama) + '</option>'; }).join('') + '</select>') + '</div>' +
+      '<div style="flex:1">' + kolomModal('Untuk kelas', '<select id="tKelas" style="width:100%">' +
+        db.kelas.map(function(kl){ return '<option value="' + kl.id + '">' + esc(kl.nama) + '</option>'; }).join('') + '</select>') + '</div>' +
+      '<div style="flex:1">' + kolomModal('Tenggat', '<input type="date" id="tTenggat" value="' + hariIni() + '" style="width:100%">') + '</div></div>' +
+      tombolModal('Simpan Tugas'));
+    document.getElementById('isiModal').onsubmit = function(ev){
+      ev.preventDefault();
+      var judul = document.getElementById('tJudul').value.trim();
+      if (!judul) return;
+      db.tugas.push({ id: idBaru(), judul: judul,
+        deskripsi: document.getElementById('tDeskripsi').value.trim(),
+        mapelNama: document.getElementById('tMapel').value,
+        kelasId: document.getElementById('tKelas').value,
+        guruUsername: sesi.username, guruNama: sesi.nama,
+        tenggat: document.getElementById('tTenggat').value || hariIni(),
+        selesai: false, tanggalBuat: hariIni() });
+      simpan(); tutupModal(); tampil();
+    };
+  });
+  k.querySelectorAll('[data-tandai-tugas]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var t = db.tugas.find(function(x){ return x.id === b.dataset.tandaiTugas; });
+      if (t){ t.selesai = !t.selesai; simpan(); tampil(); }
+    }); });
+  k.querySelectorAll('[data-hapus-tugas]').forEach(function(b){
+    b.addEventListener('click', function(){
+      if (confirm('Hapus tugas ini?')){
+        db.tugas = db.tugas.filter(function(t){ return t.id !== b.dataset.hapusTugas; });
+        simpan(); tampil();
+      }
+    }); });
+}
+
+/* ================= PRESENSI ================= */
+var presensiDraft = { kunci: '', data: {} };
+function catatanPresensi(kelasId, tanggal){
+  return db.presensi.find(function(p){ return p.kelasId === kelasId && p.tanggal === tanggal; });
+}
+function halPresensi(k){
+  var akses = kelasAkses();
+  if (!pilihan.presensiKelas || !akses.some(function(x){ return x.id === pilihan.presensiKelas; }))
+    pilihan.presensiKelas = akses.length ? akses[0].id : '';
+  if (!pilihan.presensiTanggal) pilihan.presensiTanggal = hariIni();
+  var kelasId = pilihan.presensiKelas, tanggal = pilihan.presensiTanggal;
+  var bolehIsi = kelasId && bolehIsiPresensi(kelasId);
+  var siswa = kelasId ? siswaKelas(kelasId) : [];
+  var kunci = kelasId + '|' + tanggal;
+  if (presensiDraft.kunci !== kunci){
+    presensiDraft = { kunci: kunci, data: {} };
+    var lama = catatanPresensi(kelasId, tanggal);
+    siswa.forEach(function(s){
+      presensiDraft.data[s.id] = lama && lama.catatan[s.id] ? lama.catatan[s.id] : 'H';
+    });
+  }
+  var html = kepala('✅ Presensi', 'Kehadiran siswa per kelas dan tanggal. ' +
+    (bolehIsi ? 'Anda dapat mengisi presensi kelas ini.' : 'Anda melihat rekap presensi.'));
+  html += '<div class="kartu"><div class="baris">' +
+    '<div><label class="lbl">Kelas</label><select id="presKelas">' +
+    akses.map(function(kl){
+      return '<option value="' + kl.id + '"' + (kl.id === kelasId ? ' selected' : '') + '>' + esc(kl.nama) + '</option>'; }).join('') + '</select></div>' +
+    '<div><label class="lbl">Tanggal</label><input type="date" id="presTanggal" value="' + esc(tanggal) + '"></div>' +
+    (catatanPresensi(kelasId, tanggal) ? '<span class="chip statusH">Sudah terisi oleh ' + esc(catatanPresensi(kelasId, tanggal).olehNama) + '</span>' : '<span class="chip statusLain">Belum terisi</span>') +
+    '</div></div>';
+  if (kelasId && siswa.length){
+    if (bolehIsi){
+      html += '<div class="kartu"><h3>Daftar Siswa — ' + esc(cariKelas(kelasId).nama) + '</h3>' +
+        '<div class="posPresensi">' + siswa.map(function(s){
+          var st = presensiDraft.data[s.id] || 'H';
+          return '<div class="kotakSiswa"><b>' + esc(s.nama) + '</b><div class="pilihan">' +
+            STATUS_PRESENSI.map(function(x){
+              return '<button type="button" data-siswa="' + s.id + '" data-status="' + x + '"' +
+                (st === x ? ' class="pilih' + x + '"' : '') + '>' + x + '</button>';
+            }).join('') + '</div></div>';
+        }).join('') + '</div>' +
+        '<div class="baris" style="margin-top:13px"><span class="kecil">H = Hadir · I = Izin · S = Sakit · A = Alpa (bawaan: semua Hadir)</span><span class="tumbuh"></span>' +
+        '<button class="btn btn-biru" id="btnSimpanPresensi">💾 Simpan Presensi</button></div></div>';
+    }
+    // rekap bulan dari tanggal terpilih
+    var bulan = tanggal.slice(0, 7);
+    var rekap = { H: 0, I: 0, S: 0, A: 0, hari: 0 };
+    db.presensi.filter(function(p){ return p.kelasId === kelasId && p.tanggal.indexOf(bulan) === 0; })
+      .forEach(function(p){
+        rekap.hari++;
+        Object.keys(p.catatan).forEach(function(sid){ rekap[p.catatan[sid]]++; });
+      });
+    html += '<div class="kartu"><h3>Rekap Bulan ' + esc(bulan) + ' — Kelas ' + esc(cariKelas(kelasId).nama) + '</h3>' +
+      '<div class="baris"><span class="chip statusH">Hadir ' + rekap.H + '</span>' +
+      '<span class="chip">Izin ' + rekap.I + '</span><span class="chip">Sakit ' + rekap.S + '</span>' +
+      '<span class="chip statusLain">Alpa ' + rekap.A + '</span>' +
+      '<span class="kecil">dari ' + rekap.hari + ' hari presensi terisi</span></div></div>';
+  } else {
+    html += '<div class="kartu"><p class="kecil">Belum ada siswa di kelas ini. Admin menambahkan siswa lewat Data Sekolah.</p></div>';
+  }
+  k.innerHTML = html;
+  k.querySelector('#presKelas').addEventListener('change', function(){ pilihan.presensiKelas = this.value; tampil(); });
+  k.querySelector('#presTanggal').addEventListener('change', function(){ pilihan.presensiTanggal = this.value; tampil(); });
+  k.querySelectorAll('[data-siswa]').forEach(function(b){
+    b.addEventListener('click', function(){
+      presensiDraft.data[b.dataset.siswa] = b.dataset.status;
+      tampil();
+    }); });
+  var simpanBtn = k.querySelector('#btnSimpanPresensi');
+  if (simpanBtn) simpanBtn.addEventListener('click', function(){
+    var lama = catatanPresensi(kelasId, tanggal);
+    if (lama){ lama.catatan = Object.assign({}, presensiDraft.data); lama.olehNama = sesi.nama; }
+    else db.presensi.push({ id: idBaru(), kelasId: kelasId, tanggal: tanggal,
+      olehNama: sesi.nama, catatan: Object.assign({}, presensiDraft.data) });
+    simpan(); tampil();
+    alert('Presensi ' + cariKelas(kelasId).nama + ' tanggal ' + tglIndo(tanggal) + ' tersimpan.');
+  });
+}
+
+/* ================= JADWAL ================= */
+function halJadwal(k){
+  var akses = sesi.peran === 'Admin' || sesi.peran === 'Guru' ? db.kelas.slice()
+    : db.kelas.filter(function(x){ return x.id === sesi.kelasId; });
+  if (!pilihan.jadwalKelas || !akses.some(function(x){ return x.id === pilihan.jadwalKelas; }))
+    pilihan.jadwalKelas = akses.length ? akses[0].id : '';
+  var kelasId = pilihan.jadwalKelas;
+  var bolehUbah = sesi.peran === 'Admin' || (sesi.peran === 'Wali Kelas' && sesi.kelasId === kelasId);
+  var peta = {};
+  db.jadwal.filter(function(j){ return j.kelasId === kelasId; }).forEach(function(j){
+    peta[j.hari + '|' + j.jam] = j;
+  });
+  var html = kepala('🗓️ Jadwal Pelajaran', 'Jadwal mingguan per kelas. ' +
+    (bolehUbah ? 'Ketuk sel untuk mengisi/mengubah mapel.' : 'Jadwal diatur oleh admin dan wali kelas.'));
+  html += '<div class="kartu"><div class="baris"><div><label class="lbl">Kelas</label><select id="jadKelas">' +
+    akses.map(function(kl){
+      return '<option value="' + kl.id + '"' + (kl.id === kelasId ? ' selected' : '') + '>' + esc(kl.nama) + '</option>'; }).join('') + '</select></div></div>' +
+    '<div class="gulir" style="margin-top:12px"><table><tr><th class="tengah">Jam</th>' +
+    HARI.map(function(h){ return '<th class="tengah">' + h + '</th>'; }).join('') + '</tr>' +
+    [1, 2, 3, 4, 5, 6, 7, 8].map(function(jam){
+      return '<tr><td class="tengah"><b>' + jam + '</b></td>' + HARI.map(function(h){
+        var e = peta[h + '|' + jam];
+        var isi = e ? esc(e.mapelNama) : '<span class="kecil">—</span>';
+        return '<td class="tengah"' + (bolehUbah ? ' data-sel-jadwal="' + h + '|' + jam + '" style="cursor:pointer" title="Ketuk untuk ubah"' : '') + '>' + isi + '</td>';
+      }).join('') + '</tr>';
+    }).join('') + '</table></div></div>';
+  k.innerHTML = html;
+  k.querySelector('#jadKelas').addEventListener('change', function(){ pilihan.jadwalKelas = this.value; tampil(); });
+  if (bolehUbah) k.querySelectorAll('[data-sel-jadwal]').forEach(function(td){
+    td.addEventListener('click', function(){
+      var pecah = td.dataset.selJadwal.split('|');
+      var hari = pecah[0], jam = Number(pecah[1]);
+      var ada = peta[hari + '|' + jam];
+      bukaModal('<h3>' + hari + ' · Jam ke-' + jam + ' — ' + esc(cariKelas(kelasId).nama) + '</h3>' +
+        kolomModal('Mata pelajaran', '<select id="jMapel" style="width:100%"><option value="">— Kosong —</option>' +
+          db.mapel.map(function(m){
+            return '<option' + (ada && ada.mapelNama === m.nama ? ' selected' : '') + '>' + esc(m.nama) + '</option>'; }).join('') + '</select>') +
+        tombolModal('Simpan'));
+      document.getElementById('isiModal').onsubmit = function(ev){
+        ev.preventDefault();
+        var nama = document.getElementById('jMapel').value;
+        db.jadwal = db.jadwal.filter(function(j){
+          return !(j.kelasId === kelasId && j.hari === hari && j.jam === jam); });
+        if (nama) db.jadwal.push({ id: idBaru(), kelasId: kelasId, hari: hari, jam: jam, mapelNama: nama });
+        simpan(); tutupModal(); tampil();
+      };
+    }); });
+}
+
+/* ================= DATA SEKOLAH (ADMIN) ================= */
+function halData(k){
+  var tab = pilihan.dataTab;
+  var html = kepala('🗂️ Data Sekolah', 'Kelola akun pengguna, rombel, mata pelajaran, dan siswa. Hanya admin yang membuka menu ini.');
+  html += '<div class="tabTugas">' +
+    [['pengguna', '👥 Pengguna'], ['kelas', '🏫 Kelas'], ['mapel', '📖 Mapel'], ['siswa', '🧑‍🎓 Siswa']]
+      .map(function(t){
+        return '<button class="btn ' + (tab === t[0] ? 'btn-biru' : 'btn-biasa') + '" data-tab="' + t[0] + '">' + t[1] + '</button>';
+      }).join('') + '</div>';
+  if (tab === 'pengguna') html += dataPengguna();
+  else if (tab === 'kelas') html += dataKelas();
+  else if (tab === 'mapel') html += dataMapel();
+  else html += dataSiswa();
+  k.innerHTML = html;
+  k.querySelectorAll('[data-tab]').forEach(function(b){
+    b.addEventListener('click', function(){ pilihan.dataTab = b.dataset.tab; tampil(); }); });
+  ikatData(k, tab);
+}
+function dataPengguna(){
+  return '<div class="kartu"><div class="baris"><span class="kecil">' + db.pengguna.length +
+    ' pengguna — akun dibuat admin, tanpa email.</span><span class="tumbuh"></span>' +
+    '<button class="btn btn-biru" id="btnTambahPengguna">＋ Tambah Pengguna</button></div>' +
+    '<div class="gulir" style="margin-top:11px"><table><tr><th>Nama</th><th>Username</th><th>Peran</th><th>Kelas</th><th style="width:150px">Aksi</th></tr>' +
+    db.pengguna.map(function(p){
+      return '<tr><td><b>' + esc(p.nama) + '</b></td><td>' + esc(p.username) + '</td>' +
+        '<td><span class="chip ' + kelasChip(p.peran) + '">' + esc(p.peran) + '</span></td>' +
+        '<td>' + esc(p.kelasId && cariKelas(p.kelasId) ? cariKelas(p.kelasId).nama : '—') + '</td>' +
+        '<td><button class="btn btn-biasa kecil" data-ubah-pengguna="' + p.id + '">Ubah</button> ' +
+        '<button class="btn btn-merah kecil" data-hapus-pengguna="' + p.id + '">Hapus</button></td></tr>';
+    }).join('') + '</table></div></div>';
+}
+function modalPengguna(p){
+  var baru = !p;
+  p = p || { nama: '', username: '', sandi: '', peran: 'Guru', kelasId: '' };
+  bukaModal('<h3>' + (baru ? 'Tambah Pengguna' : 'Ubah Pengguna') + '</h3>' +
+    kolomModal('Nama lengkap', '<input type="text" id="pNama" value="' + esc(p.nama) + '" style="width:100%">') +
+    '<div class="baris" style="align-items:flex-start">' +
+    '<div style="flex:1">' + kolomModal('Username (untuk masuk)', '<input type="text" id="pUser" value="' + esc(p.username) + '" style="width:100%"' + (baru ? '' : ' readonly') + '>') + '</div>' +
+    '<div style="flex:1">' + kolomModal(baru ? 'Kata sandi' : 'Kata sandi baru (kosongkan bila tidak diganti)',
+      '<input type="text" id="pSandi" value="" style="width:100%">') + '</div></div>' +
+    '<div class="baris" style="align-items:flex-start">' +
+    '<div style="flex:1">' + kolomModal('Peran', '<select id="pPeran" style="width:100%">' +
+      PERAN.map(function(r){ return '<option' + (p.peran === r ? ' selected' : '') + '>' + r + '</option>'; }).join('') + '</select>') + '</div>' +
+    '<div style="flex:1">' + kolomModal('Kelas terkait (wali / ketua kelas)', '<select id="pKelas" style="width:100%"><option value="">—</option>' +
+      db.kelas.map(function(kl){
+        return '<option value="' + kl.id + '"' + (p.kelasId === kl.id ? ' selected' : '') + '>' + esc(kl.nama) + '</option>'; }).join('') + '</select>') + '</div></div>' +
+    tombolModal('Simpan'));
+  document.getElementById('isiModal').onsubmit = function(ev){
+    ev.preventDefault();
+    var nama = document.getElementById('pNama').value.trim();
+    var user = document.getElementById('pUser').value.trim().toLowerCase();
+    if (!nama || !user) return;
+    if (baru && db.pengguna.some(function(x){ return x.username.toLowerCase() === user; }))
+      return alert('Username sudah dipakai. Pilih username lain.');
+    var sandiBaru = document.getElementById('pSandi').value;
+    if (baru && sandiBaru.length < 5) return alert('Kata sandi minimal 5 karakter.');
+    var data = { nama: nama, peran: document.getElementById('pPeran').value,
+      kelasId: document.getElementById('pKelas').value };
+    if (baru){ data.id = idBaru(); data.username = user; data.sandi = sandiBaru; db.pengguna.push(data); }
+    else {
+      var lama = db.pengguna.find(function(x){ return x.id === p.id; });
+      Object.keys(data).forEach(function(kunci){ lama[kunci] = data[kunci]; });
+      if (sandiBaru) lama.sandi = sandiBaru;
+      if (lama.id === sesi.id) sesi = lama;
+    }
+    simpan(); tutupModal(); tampil();
+  };
+}
+function dataKelas(){
+  return '<div class="kartu"><div class="baris"><span class="kecil">' + db.kelas.length + ' rombel</span><span class="tumbuh"></span>' +
+    '<button class="btn btn-biru" id="btnTambahKelas">＋ Tambah Kelas</button></div>' +
+    '<div class="gulir" style="margin-top:11px"><table><tr><th>Kelas</th><th>Wali Kelas</th><th>Jumlah Siswa</th><th style="width:150px">Aksi</th></tr>' +
+    db.kelas.map(function(kl){
+      var wali = cariPengguna(kl.waliUsername);
+      return '<tr><td><b>' + esc(kl.nama) + '</b></td><td>' + esc(wali ? wali.nama : '—') + '</td>' +
+        '<td>' + siswaKelas(kl.id).length + '</td>' +
+        '<td><button class="btn btn-biasa kecil" data-ubah-kelas="' + kl.id + '">Ubah</button> ' +
+        '<button class="btn btn-merah kecil" data-hapus-kelas="' + kl.id + '">Hapus</button></td></tr>';
+    }).join('') + '</table></div></div>';
+}
+function modalKelas(kl){
+  var baru = !kl;
+  kl = kl || { nama: '', waliUsername: '' };
+  var paraWali = db.pengguna.filter(function(p){ return p.peran === 'Wali Kelas'; });
+  bukaModal('<h3>' + (baru ? 'Tambah Kelas' : 'Ubah Kelas') + '</h3>' +
+    kolomModal('Nama kelas / rombel', '<input type="text" id="kNama" value="' + esc(kl.nama) + '" style="width:100%" placeholder="cth. VIII-B">') +
+    kolomModal('Wali kelas (akun)', '<select id="kWali" style="width:100%"><option value="">— belum ditentukan —</option>' +
+      paraWali.map(function(p){
+        return '<option value="' + esc(p.username) + '"' + (kl.waliUsername === p.username ? ' selected' : '') + '>' + esc(p.nama) + ' (' + esc(p.username) + ')</option>'; }).join('') + '</select>') +
+    tombolModal('Simpan'));
+  document.getElementById('isiModal').onsubmit = function(ev){
+    ev.preventDefault();
+    var nama = document.getElementById('kNama').value.trim();
+    if (!nama) return;
+    var waliUser = document.getElementById('kWali').value;
+    var idKelas;
+    if (baru){ var nk = { id: idBaru(), nama: nama, waliUsername: waliUser }; db.kelas.push(nk); idKelas = nk.id; }
+    else { var lama = cariKelas(kl.id); lama.nama = nama; lama.waliUsername = waliUser; idKelas = kl.id; }
+    // selaraskan kelasId akun wali: wali terpilih menunjuk kelas ini;
+    // wali lain yang sebelumnya menunjuk kelas ini dilepas
+    db.pengguna.forEach(function(p){
+      if (p.peran !== 'Wali Kelas') return;
+      if (p.username === waliUser) p.kelasId = idKelas;
+      else if (p.kelasId === idKelas) p.kelasId = '';
+    });
+    simpan(); tutupModal(); tampil();
+  };
+}
+function dataMapel(){
+  return '<div class="kartu"><div class="baris"><span class="kecil">' + db.mapel.length + ' mata pelajaran</span><span class="tumbuh"></span>' +
+    '<button class="btn btn-biru" id="btnTambahMapel">＋ Tambah Mapel</button></div>' +
+    '<div class="gulir" style="margin-top:11px"><table><tr><th>Mata Pelajaran</th><th>Guru Pengampu</th><th style="width:150px">Aksi</th></tr>' +
+    db.mapel.map(function(m){
+      var g = cariPengguna(m.guruUsername);
+      return '<tr><td><b>' + esc(m.nama) + '</b></td><td>' + esc(g ? g.nama : '—') + '</td>' +
+        '<td><button class="btn btn-biasa kecil" data-ubah-mapel="' + m.id + '">Ubah</button> ' +
+        '<button class="btn btn-merah kecil" data-hapus-mapel="' + m.id + '">Hapus</button></td></tr>';
+    }).join('') + '</table></div></div>';
+}
+function modalMapel(m){
+  var baru = !m;
+  m = m || { nama: '', guruUsername: '' };
+  var paraGuru = db.pengguna.filter(function(p){ return p.peran === 'Guru'; });
+  bukaModal('<h3>' + (baru ? 'Tambah Mapel' : 'Ubah Mapel') + '</h3>' +
+    kolomModal('Nama mata pelajaran', '<input type="text" id="mNama" value="' + esc(m.nama) + '" style="width:100%">') +
+    kolomModal('Guru pengampu (akun)', '<select id="mGuru" style="width:100%"><option value="">— belum ditentukan —</option>' +
+      paraGuru.map(function(p){
+        return '<option value="' + esc(p.username) + '"' + (m.guruUsername === p.username ? ' selected' : '') + '>' + esc(p.nama) + ' (' + esc(p.username) + ')</option>'; }).join('') + '</select>') +
+    tombolModal('Simpan'));
+  document.getElementById('isiModal').onsubmit = function(ev){
+    ev.preventDefault();
+    var nama = document.getElementById('mNama').value.trim();
+    if (!nama) return;
+    var guruUser = document.getElementById('mGuru').value;
+    if (baru) db.mapel.push({ id: idBaru(), nama: nama, guruUsername: guruUser });
+    else { var lama = db.mapel.find(function(x){ return x.id === m.id; }); lama.nama = nama; lama.guruUsername = guruUser; }
+    simpan(); tutupModal(); tampil();
+  };
+}
+function dataSiswa(){
+  return '<div class="kartu"><div class="baris"><span class="kecil">' + db.siswa.length + ' siswa</span><span class="tumbuh"></span>' +
+    '<button class="btn btn-biru" id="btnTambahSiswa">＋ Tambah Siswa</button></div>' +
+    '<div class="gulir" style="margin-top:11px"><table><tr><th>Nama Siswa</th><th>Kelas</th><th style="width:100px">Aksi</th></tr>' +
+    db.siswa.slice().sort(function(a, b){
+      var ka = cariKelas(a.kelasId), kb = cariKelas(b.kelasId);
+      return ((ka ? ka.nama : '') + a.nama).localeCompare((kb ? kb.nama : '') + b.nama);
+    }).map(function(s){
+      return '<tr><td><b>' + esc(s.nama) + '</b></td><td>' + esc(cariKelas(s.kelasId) ? cariKelas(s.kelasId).nama : '-') + '</td>' +
+        '<td><button class="btn btn-merah kecil" data-hapus-siswa="' + s.id + '">Hapus</button></td></tr>';
+    }).join('') + '</table></div>' +
+    '<h3 style="margin-top:17px">Tambah Banyak Siswa Sekaligus</h3>' +
+    '<div class="baris" style="align-items:flex-start"><select id="sKelasMassal">' +
+    db.kelas.map(function(kl){ return '<option value="' + kl.id + '">' + esc(kl.nama) + '</option>'; }).join('') + '</select></div>' +
+    '<textarea id="sDaftar" rows="5" placeholder="Satu nama per baris, contoh:&#10;Ani Lestari&#10;Budi Santoso&#10;Cici Paramida" style="margin-top:9px"></textarea>' +
+    '<div class="baris" style="margin-top:9px"><button class="btn btn-biru" id="btnMassalSiswa">Tambahkan Semua ke Kelas Terpilih</button></div></div>';
+}
+function ikatData(k, tab){
+  if (tab === 'pengguna'){
+    k.querySelector('#btnTambahPengguna').addEventListener('click', function(){ modalPengguna(null); });
+    k.querySelectorAll('[data-ubah-pengguna]').forEach(function(b){
+      b.addEventListener('click', function(){
+        modalPengguna(db.pengguna.find(function(p){ return p.id === b.dataset.ubahPengguna; })); }); });
+    k.querySelectorAll('[data-hapus-pengguna]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var p = db.pengguna.find(function(x){ return x.id === b.dataset.hapusPengguna; });
+        if (p.id === sesi.id) return alert('Anda tidak bisa menghapus akun yang sedang dipakai masuk.');
+        if (confirm('Hapus pengguna ' + p.nama + '?')){
+          db.pengguna = db.pengguna.filter(function(x){ return x.id !== p.id; });
+          simpan(); tampil();
+        }
+      }); });
+  } else if (tab === 'kelas'){
+    k.querySelector('#btnTambahKelas').addEventListener('click', function(){ modalKelas(null); });
+    k.querySelectorAll('[data-ubah-kelas]').forEach(function(b){
+      b.addEventListener('click', function(){ modalKelas(cariKelas(b.dataset.ubahKelas)); }); });
+    k.querySelectorAll('[data-hapus-kelas]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var kl = cariKelas(b.dataset.hapusKelas);
+        if (siswaKelas(kl.id).length) return alert('Kelas ini masih berisi siswa. Pindahkan/hapus siswanya dulu.');
+        if (confirm('Hapus kelas ' + kl.nama + '? Jadwal kelas ini ikut terhapus.')){
+          db.kelas = db.kelas.filter(function(x){ return x.id !== kl.id; });
+          db.jadwal = db.jadwal.filter(function(j){ return j.kelasId !== kl.id; });
+          simpan(); tampil();
+        }
+      }); });
+  } else if (tab === 'mapel'){
+    k.querySelector('#btnTambahMapel').addEventListener('click', function(){ modalMapel(null); });
+    k.querySelectorAll('[data-ubah-mapel]').forEach(function(b){
+      b.addEventListener('click', function(){
+        modalMapel(db.mapel.find(function(m){ return m.id === b.dataset.ubahMapel; })); }); });
+    k.querySelectorAll('[data-hapus-mapel]').forEach(function(b){
+      b.addEventListener('click', function(){
+        if (confirm('Hapus mata pelajaran ini?')){
+          db.mapel = db.mapel.filter(function(m){ return m.id !== b.dataset.hapusMapel; });
+          simpan(); tampil();
+        }
+      }); });
+  } else {
+    k.querySelector('#btnTambahSiswa').addEventListener('click', function(){
+      bukaModal('<h3>Tambah Siswa</h3>' +
+        kolomModal('Nama siswa', '<input type="text" id="sNama" style="width:100%">') +
+        kolomModal('Kelas', '<select id="sKelas" style="width:100%">' +
+          db.kelas.map(function(kl){ return '<option value="' + kl.id + '">' + esc(kl.nama) + '</option>'; }).join('') + '</select>') +
+        tombolModal('Simpan'));
+      document.getElementById('isiModal').onsubmit = function(ev){
+        ev.preventDefault();
+        var nama = document.getElementById('sNama').value.trim();
+        if (!nama) return;
+        db.siswa.push({ id: idBaru(), nama: nama, kelasId: document.getElementById('sKelas').value });
+        simpan(); tutupModal(); tampil();
+      };
+    });
+    k.querySelectorAll('[data-hapus-siswa]').forEach(function(b){
+      b.addEventListener('click', function(){
+        if (confirm('Hapus siswa ini dari daftar?')){
+          db.siswa = db.siswa.filter(function(s){ return s.id !== b.dataset.hapusSiswa; });
+          simpan(); tampil();
+        }
+      }); });
+    k.querySelector('#btnMassalSiswa').addEventListener('click', function(){
+      var kelasId = document.getElementById('sKelasMassal').value;
+      var namaBaru = document.getElementById('sDaftar').value.split('\n')
+        .map(function(x){ return x.trim(); }).filter(Boolean);
+      if (!namaBaru.length) return alert('Tulis dulu nama-namanya, satu per baris.');
+      namaBaru.forEach(function(n){ db.siswa.push({ id: idBaru(), nama: n, kelasId: kelasId }); });
+      simpan(); tampil();
+      alert(namaBaru.length + ' siswa ditambahkan ke kelas ' + cariKelas(kelasId).nama + '.');
+    });
+  }
+}
+
+/* ================= PENGATURAN & AKUN ================= */
+function halPengaturan(k){
+  var s = db.sekolah;
+  var html = kepala('⚙️ Pengaturan', 'Identitas sekolah dan cadangan data.');
+  html += '<div class="kartu"><h3>Identitas Sekolah</h3>' +
+    '<div style="margin-bottom:11px"><label class="lbl">Nama sekolah</label><input type="text" id="setNama" value="' + esc(s.nama) + '" style="width:100%"></div>' +
+    '<div style="margin-bottom:11px"><label class="lbl">Alamat</label><input type="text" id="setAlamat" value="' + esc(s.alamat) + '" style="width:100%"></div>' +
+    '<div style="margin-bottom:11px"><label class="lbl">Tahun ajaran</label><input type="text" id="setTahun" value="' + esc(s.tahunAjaran) + '" style="width:100%"></div>' +
+    '<button class="btn btn-biru" id="btnSimpanSet">💾 Simpan</button></div>';
+  html += '<div class="kartu"><h3>Cadangan Data</h3>' +
+    '<p class="kecil">Seluruh akun, kelas, tugas, presensi, dan jadwal tersimpan lokal di perangkat ini. Unduh cadangan JSON berkala.</p>' +
+    '<div class="baris"><button class="btn btn-biasa" id="btnBackup">⬇ Unduh Cadangan (JSON)</button>' +
+    '<label class="btn btn-biasa" style="cursor:pointer">⬆ Pulihkan Cadangan<input type="file" id="pulihkanBerkas" accept=".json" class="tersembunyi"></label>' +
+    '<button class="btn btn-merah" id="btnResetData">♻ Atur Ulang ke Data Contoh</button></div></div>';
+  k.innerHTML = html;
+  k.querySelector('#btnSimpanSet').addEventListener('click', function(){
+    db.sekolah = { nama: document.getElementById('setNama').value.trim() || db.sekolah.nama,
+      alamat: document.getElementById('setAlamat').value.trim(),
+      tahunAjaran: document.getElementById('setTahun').value.trim() };
+    simpan(); tampil();
+    alert('Identitas sekolah tersimpan.');
+  });
+  k.querySelector('#btnBackup').addEventListener('click', function(){
+    unduhTeks(JSON.stringify(db, null, 1), 'cadangan-sekolahku.json', 'application/json');
+  });
+  k.querySelector('#pulihkanBerkas').addEventListener('change', function(ev){
+    var berkas = ev.target.files[0];
+    if (!berkas) return;
+    berkas.text().then(function(teks){
+      try {
+        var data = JSON.parse(teks);
+        if (!data || !data.sekolah || !Array.isArray(data.pengguna)) throw new Error('format');
+        db = data; sesi = db.pengguna.find(function(p){ return p.id === sesi.id; }) || db.pengguna[0];
+        simpan(); halamanAktif = 'beranda'; tampil();
+        alert('Cadangan berhasil dipulihkan.');
+      } catch(e){ alert('Berkas cadangan tidak valid.'); }
+    });
+  });
+  k.querySelector('#btnResetData').addEventListener('click', function(){
+    if (confirm('Atur ulang seluruh data ke data contoh awal? Semua akun & presensi saat ini akan hilang.')){
+      db = dataAwal(); simpan();
+      sesi = db.pengguna[0]; halamanAktif = 'beranda'; tampil();
+    }
+  });
+}
+function halAkun(k){
+  var html = kepala('🔐 Akun Saya', 'Data akun Anda dan penggantian kata sandi.');
+  html += '<div class="kartu"><div class="gulir"><table>' +
+    '<tr><th style="width:170px">Nama</th><td>' + esc(sesi.nama) + '</td></tr>' +
+    '<tr><th>Username</th><td>' + esc(sesi.username) + '</td></tr>' +
+    '<tr><th>Peran</th><td><span class="chip ' + kelasChip(sesi.peran) + '">' + esc(sesi.peran) + '</span></td></tr>' +
+    '<tr><th>Kelas Terkait</th><td>' + esc(sesi.kelasId && cariKelas(sesi.kelasId) ? cariKelas(sesi.kelasId).nama : '—') + '</td></tr>' +
+    '</table></div></div>';
+  html += '<div class="kartu"><h3>Ganti Kata Sandi</h3>' +
+    '<div class="baris" style="align-items:flex-start">' +
+    '<div style="flex:1 1 160px"><label class="lbl">Sandi lama</label><input type="password" id="akunLama" style="width:100%"></div>' +
+    '<div style="flex:1 1 160px"><label class="lbl">Sandi baru</label><input type="password" id="akunBaru" style="width:100%"></div></div>' +
+    '<button class="btn btn-biru" id="btnGantiSandi">🔐 Ganti Sandi</button></div>';
+  k.innerHTML = html;
+  k.querySelector('#btnGantiSandi').addEventListener('click', function(){
+    var lama = document.getElementById('akunLama').value;
+    var baru = document.getElementById('akunBaru').value;
+    if (lama !== sesi.sandi) return alert('Sandi lama salah.');
+    if (baru.length < 5) return alert('Sandi baru minimal 5 karakter.');
+    sesi.sandi = baru; simpan();
+    alert('Kata sandi berhasil diganti.');
+    tampil();
+  });
+}
+
+/* Pegangan untuk pengujian otomatis */
+window.__uji = { getDb: function(){ return db; }, setDb: function(d){ db = d; simpan(); },
+  getSesi: function(){ return sesi; }, setSesi: function(p){ sesi = p; },
+  tampil: tampil, setHalaman: function(id){ halamanAktif = id; tampil(); },
+  kelasAkses: kelasAkses, bolehIsiPresensi: bolehIsiPresensi, tugasTerlihat: tugasTerlihat,
+  catatanPresensi: catatanPresensi, dataAwal: dataAwal };
+</script>
+</body>
+</html>
