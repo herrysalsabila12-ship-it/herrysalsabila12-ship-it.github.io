@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ControlU — Web Source Inspector & HTML Cloner</title>
+<meta name="description" content="Ambil kode sumber HTML dari URL mana pun (Ctrl+U versi web), pratinjau langsung, ekstrak aset & meta, dan buat ulang tampilan dengan AI.">
+<meta name="theme-color" content="#4f46e5">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f46e5'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='26' font-weight='bold' fill='white' text-anchor='middle'%3E%5EU%3C/text%3E%3C/svg%3E">
+<style id="twInline">*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.13 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]{display:none}.container{width:100%}@media (min-width:640px){.container{max-width:640px}}@media (min-width:768px){.container{max-width:768px}}@media (min-width:1024px){.container{max-width:1024px}}@media (min-width:1280px){.container{max-width:1280px}}@media (min-width:1536px){.container{max-width:1536px}}.pointer-events-none{pointer-events:none}.pointer-events-auto{pointer-events:auto}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0}.inset-y-0{top:0;bottom:0}.bottom-5{bottom:1.25rem}.left-0{left:0}.left-2{left:.5rem}.left-3\.5{left:.875rem}.right-2{right:.5rem}.right-5{right:1.25rem}.top-0{top:0}.top-1{top:.25rem}.top-\[3px\]{top:3px}.z-20{z-index:20}.z-30{z-index:30}.z-40{z-index:40}.z-50{z-index:50}.mx-4{margin-left:1rem;margin-right:1rem}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:.25rem}.mb-2{margin-bottom:.5rem}.mb-2\.5{margin-bottom:.625rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}.mr-2{margin-right:.5rem}.mt-0\.5{margin-top:.125rem}.mt-1{margin-top:.25rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.block{display:block}.inline{display:inline}.flex{display:flex}.grid{display:grid}.contents{display:contents}.hidden{display:none}.h-10{height:2.5rem}.h-2{height:.5rem}.h-3{height:.75rem}.h-3\.5{height:.875rem}.h-5{height:1.25rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-full{height:100%}.max-h-32{max-height:8rem}.max-h-96{max-height:24rem}.min-h-\[450px\]{min-height:450px}.min-h-\[460px\]{min-height:460px}.min-h-\[480px\]{min-height:480px}.min-h-screen{min-height:100vh}.w-10{width:2.5rem}.w-2{width:.5rem}.w-3{width:.75rem}.w-3\.5{width:.875rem}.w-36{width:9rem}.w-72{width:18rem}.w-8{width:2rem}.w-9{width:2.25rem}.w-full{width:100%}.min-w-0{min-width:0}.min-w-\[2\.5rem\]{min-width:2.5rem}.min-w-max{min-width:-moz-max-content;min-width:max-content}.max-w-7xl{max-width:80rem}.max-w-sm{max-width:24rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.-translate-x-full{--tw-translate-x:-100%}.-translate-x-full,.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;-moz-user-select:none;user-select:none}.resize-none{resize:none}.grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.items-stretch{align-items:stretch}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-2\.5{gap:.625rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.space-y-1>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.25rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.25rem*var(--tw-space-y-reverse))}.space-y-1\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.375rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.375rem*var(--tw-space-y-reverse))}.space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.75rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem*var(--tw-space-y-reverse))}.space-y-4>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem*var(--tw-space-y-reverse))}.space-y-6>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem*var(--tw-space-y-reverse))}.overflow-auto{overflow:auto}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.overflow-x-hidden{overflow-x:hidden}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.whitespace-pre{white-space:pre}.whitespace-pre-wrap{white-space:pre-wrap}.rounded{border-radius:.25rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-md{border-radius:.375rem}.rounded-ui{border-radius:var(--ui-radius)}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-amber-500\/40{border-color:rgba(245,158,11,.4)}.border-emerald-500\/40{border-color:rgba(16,185,129,.4)}.border-indigo-500\/40{border-color:rgba(99,102,241,.4)}.border-rose-500\/40{border-color:rgba(244,63,94,.4)}.border-slate-100{--tw-border-opacity:1;border-color:rgb(241 245 249/var(--tw-border-opacity))}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240/var(--tw-border-opacity))}.border-slate-200\/70{border-color:rgba(226,232,240,.7)}.border-slate-200\/80{border-color:rgba(226,232,240,.8)}.border-slate-300{--tw-border-opacity:1;border-color:rgb(203 213 225/var(--tw-border-opacity))}.border-slate-700\/60{border-color:rgba(51,65,85,.6)}.border-slate-800{--tw-border-opacity:1;border-color:rgb(30 41 59/var(--tw-border-opacity))}.bg-amber-500{--tw-bg-opacity:1;background-color:rgb(245 158 11/var(--tw-bg-opacity))}.bg-amber-500\/10{background-color:rgba(245,158,11,.1)}.bg-amber-500\/80{background-color:rgba(245,158,11,.8)}.bg-emerald-500{--tw-bg-opacity:1;background-color:rgb(16 185 129/var(--tw-bg-opacity))}.bg-emerald-500\/10{background-color:rgba(16,185,129,.1)}.bg-emerald-500\/80{background-color:rgba(16,185,129,.8)}.bg-indigo-500\/10{background-color:rgba(99,102,241,.1)}.bg-indigo-600{--tw-bg-opacity:1;background-color:rgb(79 70 229/var(--tw-bg-opacity))}.bg-rose-500{--tw-bg-opacity:1;background-color:rgb(244 63 94/var(--tw-bg-opacity))}.bg-rose-500\/80{background-color:rgba(244,63,94,.8)}.bg-sky-500\/10{background-color:rgba(14,165,233,.1)}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249/var(--tw-bg-opacity))}.bg-slate-200{--tw-bg-opacity:1;background-color:rgb(226 232 240/var(--tw-bg-opacity))}.bg-slate-200\/70{background-color:rgba(226,232,240,.7)}.bg-slate-400{--tw-bg-opacity:1;background-color:rgb(148 163 184/var(--tw-bg-opacity))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252/var(--tw-bg-opacity))}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42/var(--tw-bg-opacity))}.bg-slate-950{--tw-bg-opacity:1;background-color:rgb(2 6 23/var(--tw-bg-opacity))}.bg-slate-950\/60{background-color:rgba(2,6,23,.6)}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity))}.bg-white\/80{background-color:hsla(0,0%,100%,.8)}.object-cover{-o-object-fit:cover;object-fit:cover}.p-2{padding:.5rem}.p-2\.5{padding:.625rem}.p-3{padding:.75rem}.p-3\.5{padding:.875rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.px-1\.5{padding-left:.375rem;padding-right:.375rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-2\.5{padding-left:.625rem;padding-right:.625rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-3\.5{padding-left:.875rem;padding-right:.875rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-0\.5{padding-top:.125rem;padding-bottom:.125rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.pl-10{padding-left:2.5rem}.pl-2{padding-left:.5rem}.pl-3{padding-left:.75rem}.pl-7{padding-left:1.75rem}.pr-24{padding-right:6rem}.pr-3{padding-right:.75rem}.pr-4{padding-right:1rem}.text-left{text-align:left}.text-right{text-align:right}.font-mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace}.font-sans{font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-none{line-height:1}.tracking-tight{letter-spacing:-.025em}.tracking-wider{letter-spacing:.05em}.text-amber-300{--tw-text-opacity:1;color:rgb(252 211 77/var(--tw-text-opacity))}.text-amber-500{--tw-text-opacity:1;color:rgb(245 158 11/var(--tw-text-opacity))}.text-emerald-300{--tw-text-opacity:1;color:rgb(110 231 183/var(--tw-text-opacity))}.text-emerald-500{--tw-text-opacity:1;color:rgb(16 185 129/var(--tw-text-opacity))}.text-indigo-500{--tw-text-opacity:1;color:rgb(99 102 241/var(--tw-text-opacity))}.text-indigo-600{--tw-text-opacity:1;color:rgb(79 70 229/var(--tw-text-opacity))}.text-rose-300{--tw-text-opacity:1;color:rgb(253 164 175/var(--tw-text-opacity))}.text-rose-500{--tw-text-opacity:1;color:rgb(244 63 94/var(--tw-text-opacity))}.text-sky-500{--tw-text-opacity:1;color:rgb(14 165 233/var(--tw-text-opacity))}.text-slate-200{--tw-text-opacity:1;color:rgb(226 232 240/var(--tw-text-opacity))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184/var(--tw-text-opacity))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139/var(--tw-text-opacity))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105/var(--tw-text-opacity))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85/var(--tw-text-opacity))}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59/var(--tw-text-opacity))}.text-slate-900{--tw-text-opacity:1;color:rgb(15 23 42/var(--tw-text-opacity))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity))}.opacity-75{opacity:.75}.shadow-lg{--tw-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color),0 4px 6px -4px var(--tw-shadow-color)}.shadow-lg,.shadow-md{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color),0 2px 4px -2px var(--tw-shadow-color)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgba(0,0,0,.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color)}.shadow-sm,.shadow-xl{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color),0 8px 10px -6px var(--tw-shadow-color)}.shadow-indigo-500\/25{--tw-shadow-color:rgba(99,102,241,.25);--tw-shadow:var(--tw-shadow-colored)}.shadow-indigo-500\/30{--tw-shadow-color:rgba(99,102,241,.3);--tw-shadow:var(--tw-shadow-colored)}.outline-none{outline:2px solid transparent;outline-offset:2px}.blur{--tw-blur:blur(8px)}.blur,.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px)}.backdrop-blur-sm,.backdrop-filter{-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.duration-200{transition-duration:.2s}.duration-300{transition-duration:.3s}.ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}.selection\:bg-indigo-500 ::-moz-selection{--tw-bg-opacity:1;background-color:rgb(99 102 241/var(--tw-bg-opacity))}.selection\:bg-indigo-500 ::selection{--tw-bg-opacity:1;background-color:rgb(99 102 241/var(--tw-bg-opacity))}.selection\:text-white ::-moz-selection{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity))}.selection\:text-white ::selection{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity))}.selection\:bg-indigo-500::-moz-selection{--tw-bg-opacity:1;background-color:rgb(99 102 241/var(--tw-bg-opacity))}.selection\:bg-indigo-500::selection{--tw-bg-opacity:1;background-color:rgb(99 102 241/var(--tw-bg-opacity))}.selection\:text-white::-moz-selection{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity))}.selection\:text-white::selection{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity))}.hover\:border-indigo-500:hover{--tw-border-opacity:1;border-color:rgb(99 102 241/var(--tw-border-opacity))}.hover\:bg-indigo-500\/10:hover{background-color:rgba(99,102,241,.1)}.hover\:bg-indigo-700:hover{--tw-bg-opacity:1;background-color:rgb(67 56 202/var(--tw-bg-opacity))}.hover\:bg-slate-100:hover{--tw-bg-opacity:1;background-color:rgb(241 245 249/var(--tw-bg-opacity))}.hover\:bg-slate-200:hover{--tw-bg-opacity:1;background-color:rgb(226 232 240/var(--tw-bg-opacity))}.hover\:bg-slate-300:hover{--tw-bg-opacity:1;background-color:rgb(203 213 225/var(--tw-bg-opacity))}.hover\:bg-slate-700:hover{--tw-bg-opacity:1;background-color:rgb(51 65 85/var(--tw-bg-opacity))}.hover\:bg-slate-800:hover{--tw-bg-opacity:1;background-color:rgb(30 41 59/var(--tw-bg-opacity))}.hover\:text-indigo-500:hover{--tw-text-opacity:1;color:rgb(99 102 241/var(--tw-text-opacity))}.hover\:underline:hover{text-decoration-line:underline}.focus\:border-indigo-500:focus{--tw-border-opacity:1;border-color:rgb(99 102 241/var(--tw-border-opacity))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.focus\:ring-indigo-500\/20:focus{--tw-ring-color:rgba(99,102,241,.2)}.dark\:inline:is(.dark *){display:inline}.dark\:hidden:is(.dark *){display:none}.dark\:border-slate-600:is(.dark *){--tw-border-opacity:1;border-color:rgb(71 85 105/var(--tw-border-opacity))}.dark\:border-slate-700:is(.dark *){--tw-border-opacity:1;border-color:rgb(51 65 85/var(--tw-border-opacity))}.dark\:border-slate-700\/50:is(.dark *){border-color:rgba(51,65,85,.5)}.dark\:border-slate-700\/60:is(.dark *){border-color:rgba(51,65,85,.6)}.dark\:border-slate-800:is(.dark *){--tw-border-opacity:1;border-color:rgb(30 41 59/var(--tw-border-opacity))}.dark\:border-slate-800\/60:is(.dark *){border-color:rgba(30,41,59,.6)}.dark\:border-slate-800\/80:is(.dark *){border-color:rgba(30,41,59,.8)}.dark\:bg-slate-700:is(.dark *){--tw-bg-opacity:1;background-color:rgb(51 65 85/var(--tw-bg-opacity))}.dark\:bg-slate-800:is(.dark *){--tw-bg-opacity:1;background-color:rgb(30 41 59/var(--tw-bg-opacity))}.dark\:bg-slate-800\/50:is(.dark *){background-color:rgba(30,41,59,.5)}.dark\:bg-slate-800\/60:is(.dark *){background-color:rgba(30,41,59,.6)}.dark\:bg-slate-800\/70:is(.dark *){background-color:rgba(30,41,59,.7)}.dark\:bg-slate-800\/90:is(.dark *){background-color:rgba(30,41,59,.9)}.dark\:bg-slate-900:is(.dark *){--tw-bg-opacity:1;background-color:rgb(15 23 42/var(--tw-bg-opacity))}.dark\:bg-slate-900\/60:is(.dark *){background-color:rgba(15,23,42,.6)}.dark\:bg-slate-900\/80:is(.dark *){background-color:rgba(15,23,42,.8)}.dark\:bg-slate-900\/90:is(.dark *){background-color:rgba(15,23,42,.9)}.dark\:bg-slate-950:is(.dark *){--tw-bg-opacity:1;background-color:rgb(2 6 23/var(--tw-bg-opacity))}.dark\:text-indigo-400:is(.dark *){--tw-text-opacity:1;color:rgb(129 140 248/var(--tw-text-opacity))}.dark\:text-slate-100:is(.dark *){--tw-text-opacity:1;color:rgb(241 245 249/var(--tw-text-opacity))}.dark\:text-slate-200:is(.dark *){--tw-text-opacity:1;color:rgb(226 232 240/var(--tw-text-opacity))}.dark\:text-slate-300:is(.dark *){--tw-text-opacity:1;color:rgb(203 213 225/var(--tw-text-opacity))}.dark\:text-slate-400:is(.dark *){--tw-text-opacity:1;color:rgb(148 163 184/var(--tw-text-opacity))}.dark\:text-slate-500:is(.dark *){--tw-text-opacity:1;color:rgb(100 116 139/var(--tw-text-opacity))}.dark\:hover\:bg-slate-600:hover:is(.dark *){--tw-bg-opacity:1;background-color:rgb(71 85 105/var(--tw-bg-opacity))}.dark\:hover\:bg-slate-700:hover:is(.dark *){--tw-bg-opacity:1;background-color:rgb(51 65 85/var(--tw-bg-opacity))}.dark\:hover\:bg-slate-800:hover:is(.dark *){--tw-bg-opacity:1;background-color:rgb(30 41 59/var(--tw-bg-opacity))}.dark\:hover\:bg-slate-800\/60:hover:is(.dark *){background-color:rgba(30,41,59,.6)}@media (min-width:640px){.sm\:inline{display:inline}.sm\:w-44{width:11rem}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.sm\:flex-row{flex-direction:row}}@media (min-width:768px){.md\:col-span-3{grid-column:span 3/span 3}.md\:inline{display:inline}.md\:flex-none{flex:none}.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\:flex-row{flex-direction:row}.md\:items-center{align-items:center}}@media (min-width:1024px){.lg\:static{position:static}.lg\:flex{display:flex}.lg\:hidden{display:none}.lg\:translate-x-0{--tw-translate-x:0px;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.lg\:flex-row{flex-direction:row}.lg\:p-6{padding:1.5rem}.lg\:px-8{padding-left:2rem;padding-right:2rem}.lg\:py-5{padding-top:1.25rem;padding-bottom:1.25rem}}</style>
+<style>
+  :root{
+    --brand-50:#eef2ff; --brand-100:#e0e7ff; --brand-400:#818cf8;
+    --brand-500:#6366f1; --brand-600:#4f46e5; --brand-700:#4338ca;
+    --ui-radius:0.875rem;
+  }
+  html{ scrollbar-color: rgba(148,163,184,.45) transparent; }
+  body{ transition: background-color .3s ease, color .3s ease; }
+  .glass-panel{ backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  ::-webkit-scrollbar{ width:6px; height:6px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+  ::-webkit-scrollbar-thumb{ background:rgba(148,163,184,.35); border-radius:999px; }
+  ::-webkit-scrollbar-thumb:hover{ background:rgba(148,163,184,.55); }
+
+  /* Editor kode + gutter nomor baris: metrik font HARUS sama persis */
+  .code-font{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size:13px; line-height:1.5rem; }
+  #line-gutter{ scrollbar-width:none; }
+  #line-gutter::-webkit-scrollbar{ display:none; }
+
+  /* Pewarnaan sintaks (tampilan Sorotan) */
+  .hl-tag{ color:#fb7185; }
+  .hl-attr{ color:#38bdf8; }
+  .hl-val{ color:#34d399; }
+  .hl-comment{ color:#64748b; font-style:italic; }
+  .hl-doctype{ color:#a78bfa; }
+  #highlight-view{ counter-reset: line; }
+  #highlight-view .code-line{ display:block; padding-left:3.6rem; position:relative; white-space:pre; }
+  #highlight-view .code-line::before{
+    counter-increment: line; content: counter(line);
+    position:absolute; left:0; width:2.7rem; text-align:right;
+    color:#475569; user-select:none;
+  }
+  #highlight-view .code-line:hover{ background:rgba(99,102,241,.08); }
+
+  @keyframes slideInRight{ from{ transform:translateX(100%); opacity:0; } to{ transform:translateX(0); opacity:1; } }
+  .toast-enter{ animation: slideInRight .3s cubic-bezier(.16,1,.3,1) forwards; }
+  @keyframes pulseDot{ 0%,100%{ opacity:1; } 50%{ opacity:.35; } }
+  .dot-loading{ animation: pulseDot .8s ease-in-out infinite; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col lg:flex-row overflow-x-hidden selection:bg-indigo-500 selection:text-white font-sans">
+
+  <!-- Header Mobile -->
+  <header class="lg:hidden flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/80 glass-panel sticky top-0 z-30">
+    <div class="flex items-center gap-2.5">
+      <div class="w-9 h-9 rounded-ui bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 font-mono font-bold text-xs">^U</div>
+      <div>
+        <h1 class="font-bold text-lg tracking-tight leading-none">Control<span class="text-indigo-500">U</span></h1>
+        <span class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Source &amp; URL Cloner</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="toggleTheme()" class="p-2.5 rounded-ui bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300" aria-label="Ganti Tema">
+        <span class="hidden dark:inline">☀️</span><span class="dark:hidden">🌙</span>
+      </button>
+      <button onclick="toggleMobileSidebar()" class="p-2.5 rounded-ui bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300" aria-label="Menu">☰</button>
+    </div>
+  </header>
+
+  <!-- Sidebar Navigasi -->
+  <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-72 transform -translate-x-full lg:translate-x-0 lg:static lg:flex flex-col justify-between bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800/80 transition-transform duration-300 ease-in-out overflow-y-auto">
+    <div>
+      <!-- Logo -->
+      <div class="p-6 hidden lg:flex items-center justify-between border-b border-slate-100 dark:border-slate-800/60">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-ui bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 font-mono font-bold text-sm">Ctrl+U</div>
+          <div>
+            <h1 class="font-bold text-xl tracking-tight leading-none">Control<span class="text-indigo-500">U</span></h1>
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-mono mt-1">Web Source Cloner</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Menu -->
+      <nav class="p-4 space-y-1.5">
+        <p class="px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">Inspeksi &amp; Ekstraksi</p>
+
+        <button onclick="switchTab('source')" id="nav-source" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-ui text-sm font-medium bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 transition">
+          <span aria-hidden="true">&lt;/&gt;</span><span>Kode Sumber HTML</span>
+        </button>
+
+        <button onclick="switchTab('preview')" id="nav-preview" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-ui text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
+          <span aria-hidden="true">👁️</span><span>Live Preview Render</span>
+        </button>
+
+        <button onclick="switchTab('assets')" id="nav-assets" class="nav-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-ui text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
+          <span class="flex items-center gap-3"><span aria-hidden="true">🧩</span><span>Ekstraktor Aset &amp; Meta</span></span>
+          <span id="asset-count-badge" class="px-1.5 py-0.5 text-[10px] font-mono bg-slate-200 dark:bg-slate-800 rounded-md">0</span>
+        </button>
+
+        <button onclick="switchTab('ai-clone')" id="nav-ai-clone" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-ui text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition">
+          <span aria-hidden="true">✨</span><span>AI UI Cloner &amp; Generator</span>
+        </button>
+      </nav>
+
+      <!-- Target Uji Cepat -->
+      <div class="p-4 mx-4 mt-2 rounded-ui bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/50">
+        <div class="flex items-center justify-between mb-2.5">
+          <span class="text-xs font-semibold text-slate-700 dark:text-slate-300">Target Uji Cepat</span>
+          <span aria-hidden="true">🌐</span>
+        </div>
+        <div class="space-y-1.5">
+          <button onclick="loadPresetUrl('https://example.com')" class="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-mono bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition truncate">example.com</button>
+          <button onclick="loadPresetUrl('https://info.cern.ch')" class="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-mono bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition truncate">info.cern.ch (Web Pertama)</button>
+          <button onclick="loadPresetUrl('https://httpbin.org/html')" class="w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-mono bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition truncate">httpbin.org/html</button>
+        </div>
+      </div>
+
+      <!-- Riwayat URL -->
+      <div class="p-4 mx-4 mt-3">
+        <div class="flex items-center justify-between mb-2">
+          <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Riwayat Inspeksi</p>
+          <button onclick="clearHistory()" class="text-[11px] text-rose-500 hover:underline">Hapus</button>
+        </div>
+        <div id="history-list" class="space-y-1 max-h-32 overflow-y-auto text-xs font-mono text-slate-500 dark:text-slate-400">
+          <p class="italic text-[11px]">Belum ada riwayat...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Sidebar -->
+    <div class="p-4 border-t border-slate-200 dark:border-slate-800/80 space-y-3">
+      <div class="flex items-center justify-between px-2">
+        <div class="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
+          <span aria-hidden="true">🔊</span><span>Suara Klik Sistem</span>
+        </div>
+        <button id="sound-toggle" onclick="toggleSound()" class="w-10 h-5 rounded-full bg-indigo-600 relative transition-colors duration-200 focus:outline-none" aria-label="Suara aktif/nonaktif">
+          <span id="sound-dot" class="w-3.5 h-3.5 rounded-full bg-white absolute top-[3px] transition-all duration-200 shadow-sm" style="left:1.25rem"></span>
+        </button>
+      </div>
+
+      <label class="w-full py-2.5 px-4 rounded-ui bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-medium flex items-center justify-center gap-2 transition cursor-pointer">
+        <span aria-hidden="true">📂</span><span>Buka File .html Lokal</span>
+        <input type="file" id="file-open" accept=".html,.htm,.txt" class="hidden" onchange="openLocalFile(event)">
+      </label>
+
+      <button onclick="downloadHtmlFile()" class="w-full py-2.5 px-4 rounded-ui bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium flex items-center justify-center gap-2 transition shadow-lg shadow-indigo-500/25">
+        <span aria-hidden="true">⬇️</span><span>Unduh File (.html)</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Backdrop Mobile -->
+  <div id="sidebar-backdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-30 hidden lg:hidden"></div>
+
+  <!-- Konten Utama -->
+  <main class="flex-1 flex flex-col min-w-0">
+    <!-- URL Bar & Action Header -->
+    <div class="p-4 lg:px-8 lg:py-5 border-b border-slate-200/80 dark:border-slate-800/80 bg-white/80 dark:bg-slate-900/60 glass-panel sticky top-0 z-20">
+      <div class="max-w-7xl mx-auto flex flex-col md:flex-row gap-3 items-stretch md:items-center">
+        <div class="relative flex-1 flex items-center">
+          <span class="absolute left-3.5 pointer-events-none" aria-hidden="true">🔗</span>
+          <input
+            type="url"
+            id="url-input"
+            value="https://example.com"
+            placeholder="Masukkan URL website (contoh: https://wikipedia.org)..."
+            onkeydown="if(event.key === 'Enter') fetchWebsiteSource()"
+            class="w-full pl-10 pr-24 py-3 rounded-ui bg-slate-100 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none text-sm font-mono transition"
+          >
+          <button onclick="pasteUrlFromClipboard()" title="Tempel URL" class="absolute right-2 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-500 border border-slate-200 dark:border-slate-600 transition">Paste</button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="fetch-btn" onclick="fetchWebsiteSource()" class="flex-1 md:flex-none px-5 py-3 rounded-ui bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold flex items-center justify-center gap-2 transition shadow-lg shadow-indigo-500/25">
+            <span id="fetch-icon" aria-hidden="true">📡</span>
+            <span id="fetch-text">Ambil HTML (Ctrl+U)</span>
+          </button>
+
+          <button onclick="copyAllHtml()" class="px-4 py-3 rounded-ui bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white text-sm font-medium flex items-center justify-center gap-2 transition border border-slate-700/60" title="Salin Semua Kode HTML">
+            <span aria-hidden="true">📋</span>
+            <span class="hidden sm:inline">Copy HTML</span>
+          </button>
+
+          <button onclick="toggleTheme()" class="hidden lg:flex p-3 rounded-ui bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Ganti Tema">
+            <span class="hidden dark:inline">☀️</span><span class="dark:hidden">🌙</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Status & Metrics Strip -->
+      <div class="max-w-7xl mx-auto mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400 font-mono">
+        <div class="flex items-center gap-4 flex-wrap">
+          <span class="flex items-center gap-1.5">
+            <span id="status-dot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span id="status-text">Siap menginspeksi</span>
+          </span>
+          <span>Ukuran: <strong id="stat-size" class="text-slate-700 dark:text-slate-200">0 KB</strong></span>
+          <span>Baris: <strong id="stat-lines" class="text-slate-700 dark:text-slate-200">0</strong></span>
+          <span class="hidden sm:inline">Tag HTML: <strong id="stat-tags" class="text-slate-700 dark:text-slate-200">0</strong></span>
+          <span class="hidden md:inline">Rute: <strong id="stat-route" class="text-slate-700 dark:text-slate-200">-</strong></span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded bg-slate-200/70 dark:bg-slate-800 text-[11px]">Shortcut: Alt + U</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Area Konten Tab -->
+    <div class="flex-1 p-4 lg:p-6 max-w-7xl w-full mx-auto flex flex-col">
+
+      <!-- TAB 1: KODE SUMBER HTML -->
+      <section id="tab-source" class="tab-content flex-1 flex flex-col bg-white dark:bg-slate-900 rounded-ui border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div class="px-4 py-2.5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/90 flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <div class="flex gap-1.5 mr-2">
+              <span class="w-3 h-3 rounded-full bg-rose-500/80"></span>
+              <span class="w-3 h-3 rounded-full bg-amber-500/80"></span>
+              <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
+            </div>
+            <span class="text-xs font-mono font-medium text-slate-600 dark:text-slate-300" id="active-filename">source-code.html</span>
+          </div>
+
+          <div class="flex items-center gap-2 flex-wrap">
+            <!-- Mode tampilan: Editor / Sorotan -->
+            <div class="flex rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+              <button id="view-editor-btn" onclick="setCodeView('editor')" class="px-2.5 py-1 text-xs font-medium bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">Editor</button>
+              <button id="view-highlight-btn" onclick="setCodeView('highlight')" class="px-2.5 py-1 text-xs font-medium bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300">Sorotan</button>
+            </div>
+
+            <div class="relative">
+              <input type="text" id="code-search" oninput="onSearchInput()" onkeydown="if(event.key==='Enter'){event.preventDefault();findNext();}" placeholder="Cari tag / teks..." class="pl-7 pr-3 py-1 rounded-lg text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:border-indigo-500 w-36 sm:w-44">
+              <span class="absolute left-2 top-1 text-xs" aria-hidden="true">🔍</span>
+            </div>
+            <button onclick="findNext()" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition" title="Temukan berikutnya">Berikutnya</button>
+            <span id="find-info" class="text-[11px] font-mono text-slate-400 min-w-[2.5rem]"></span>
+
+            <button onclick="formatHtmlCode()" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition flex items-center gap-1" title="Rapikan Indentasi HTML">
+              <span aria-hidden="true">🎨</span><span>Beautify</span>
+            </button>
+
+            <button onclick="toggleWordWrap()" id="wrap-btn" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 transition">Wrap: OFF</button>
+          </div>
+        </div>
+
+        <!-- Editor dengan nomor baris -->
+        <div id="editor-wrap" class="relative flex-1 min-h-[450px] flex bg-slate-950">
+          <div id="line-gutter" class="code-font py-4 pr-3 pl-2 text-right text-slate-600 select-none overflow-hidden shrink-0 border-r border-slate-800" aria-hidden="true">1</div>
+          <textarea
+            id="raw-html-editor"
+            spellcheck="false"
+            oninput="onManualCodeEdit()"
+            onscroll="syncGutterScroll()"
+            class="code-font flex-1 h-full p-4 pl-3 bg-slate-950 text-slate-200 outline-none resize-none whitespace-pre overflow-auto"
+            placeholder="Kode sumber HTML akan muncul di sini... Anda juga bisa menempelkan atau mengedit kode HTML secara manual."
+          ></textarea>
+        </div>
+
+        <!-- Tampilan Sorotan (hanya-baca, berwarna) -->
+        <div id="highlight-wrap" class="relative flex-1 min-h-[450px] hidden bg-slate-950 overflow-auto">
+          <pre id="highlight-view" class="code-font py-4 pr-4 text-slate-200 min-w-max"></pre>
+        </div>
+      </section>
+
+      <!-- TAB 2: LIVE PREVIEW RENDER -->
+      <section id="tab-preview" class="tab-content hidden flex-1 flex flex-col bg-white dark:bg-slate-900 rounded-ui border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div class="px-4 py-2.5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/90 flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300">
+            <span aria-hidden="true">🖥️</span>
+            <span>Pratinjau Hasil Render HTML (Sandboxed)</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="setPreviewWidth('100%')" class="px-2.5 py-1 rounded text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-500">Desktop</button>
+            <button onclick="setPreviewWidth('768px')" class="px-2.5 py-1 rounded text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-500">Tablet</button>
+            <button onclick="setPreviewWidth('375px')" class="px-2.5 py-1 rounded text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-500">Mobile</button>
+            <button onclick="openPreviewInNewTab()" class="px-2.5 py-1 rounded text-xs bg-indigo-600 text-white hover:bg-indigo-700">↗ Tab Baru</button>
+          </div>
+        </div>
+        <div class="flex-1 bg-slate-200/70 dark:bg-slate-950 p-4 flex justify-center overflow-auto min-h-[480px]">
+          <iframe id="preview-frame" title="Pratinjau HTML" sandbox="allow-scripts allow-same-origin" class="w-full h-full min-h-[460px] bg-white rounded-lg shadow-lg transition-all duration-300 border border-slate-300 dark:border-slate-700"></iframe>
+        </div>
+      </section>
+
+      <!-- TAB 3: EKSTRAKTOR ASET & META -->
+      <section id="tab-assets" class="tab-content hidden space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="md:col-span-3 p-5 rounded-ui bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+            <h3 class="text-sm font-bold flex items-center gap-2 mb-3">
+              <span aria-hidden="true">📄</span> Informasi Halaman &amp; Meta SEO
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/60">
+                <span class="text-slate-400 block mb-1">Judul Halaman (&lt;title&gt;)</span>
+                <strong id="meta-title" class="text-sm text-slate-800 dark:text-slate-100">-</strong>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/60">
+                <span class="text-slate-400 block mb-1">Deskripsi Meta</span>
+                <p id="meta-desc" class="text-slate-700 dark:text-slate-300">-</p>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/60">
+                <span class="text-slate-400 block mb-1">Open Graph (Judul / Deskripsi)</span>
+                <p id="meta-og" class="text-slate-700 dark:text-slate-300">-</p>
+              </div>
+              <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/60">
+                <span class="text-slate-400 block mb-1">Bahasa &amp; Charset &amp; Viewport</span>
+                <p id="meta-tech" class="text-slate-700 dark:text-slate-300 font-mono">-</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-5 rounded-ui bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col max-h-96">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-bold flex items-center gap-2"><span aria-hidden="true">🔗</span> Tautan (&lt;a href&gt;)</h3>
+              <span id="count-links" class="text-xs font-mono px-2 py-0.5 rounded bg-sky-500/10 text-sky-500">0</span>
+            </div>
+            <div id="list-links" class="flex-1 overflow-y-auto space-y-1.5 text-xs font-mono"></div>
+          </div>
+
+          <div class="p-5 rounded-ui bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col max-h-96">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-bold flex items-center gap-2"><span aria-hidden="true">🖼️</span> Gambar (&lt;img&gt;)</h3>
+              <span id="count-images" class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500">0</span>
+            </div>
+            <div id="list-images" class="flex-1 overflow-y-auto space-y-1.5 text-xs font-mono"></div>
+          </div>
+
+          <div class="p-5 rounded-ui bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col max-h-96">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-bold flex items-center gap-2"><span aria-hidden="true">📜</span> CSS &amp; JS Eksternal</h3>
+              <span id="count-scripts" class="text-xs font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-500">0</span>
+            </div>
+            <div id="list-scripts" class="flex-1 overflow-y-auto space-y-1.5 text-xs font-mono"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: AI UI CLONER & GENERATOR -->
+      <section id="tab-ai-clone" class="tab-content hidden space-y-4">
+        <div class="p-6 rounded-ui bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
+          <div class="flex items-start gap-3 mb-4">
+            <div class="p-2.5 rounded-ui bg-amber-500/10 text-amber-500 text-xl" aria-hidden="true">✨</div>
+            <div>
+              <h2 class="text-base font-bold">AI Web Cloner &amp; HTML Generator</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Jika website target memblokir akses langsung (CORS/proteksi bot), atau Anda ingin membuat ulang tampilan mirip sebuah URL/deskripsi dengan kode bersih, gunakan generator AI di bawah ini. Hasilnya adalah karya baru yang terinspirasi struktur &amp; gaya — bukan salinan kode asli situs tersebut.
+              </p>
+            </div>
+          </div>
+
+          <!-- Pengaturan Kunci Gemini -->
+          <div class="mb-4 p-4 rounded-ui bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60">
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Kunci API Gemini Anda (disimpan hanya di perangkat ini)</label>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <input type="password" id="gemini-key" placeholder="Tempel kunci Gemini dari aistudio.google.com/apikey" class="flex-1 px-3 py-2 rounded-lg text-xs font-mono bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:border-indigo-500">
+              <select id="gemini-model" class="px-3 py-2 rounded-lg text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none">
+                <option value="gemini-2.5-flash">gemini-2.5-flash (disarankan)</option>
+                <option value="gemini-2.0-flash">gemini-2.0-flash</option>
+                <option value="gemini-2.5-flash-lite">gemini-2.5-flash-lite (hemat)</option>
+              </select>
+              <button onclick="saveGeminiKey()" class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-900 dark:bg-slate-700 text-white hover:bg-slate-700 dark:hover:bg-slate-600 transition">Simpan</button>
+              <button onclick="testGeminiKey()" id="gemini-test-btn" class="px-4 py-2 rounded-lg text-xs font-semibold bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 hover:border-indigo-500 transition">Tes Koneksi</button>
+            </div>
+            <p id="gemini-key-status" class="text-[11px] text-slate-400 mt-2">Belum ada kunci tersimpan. Tanpa kunci, gunakan tombol "Salin Prompt" untuk memakai AI lain (mis. lewat chat Muse).</p>
+          </div>
+
+          <div class="space-y-3">
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Instruksi Kloning atau Pembuatan HTML</label>
+            <textarea id="ai-prompt-input" rows="3" class="w-full p-3.5 rounded-ui bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm outline-none focus:border-indigo-500" placeholder="Contoh: Buatkan halaman landing page modern dengan tema gelap, navbar, hero section, dan kartu harga untuk toko buku online..."></textarea>
+
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <button onclick="useCurrentUrlForAi()" class="text-xs text-indigo-500 hover:underline flex items-center gap-1">
+                <span aria-hidden="true">🪄</span> Gunakan URL dari kolom atas sebagai referensi
+              </button>
+              <div class="flex items-center gap-2">
+                <button onclick="copyAiPrompt()" class="px-4 py-2.5 rounded-ui bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-xs font-semibold hover:border-indigo-500 transition">Salin Prompt</button>
+                <button id="ai-gen-btn" onclick="generateHtmlWithAi()" class="px-5 py-2.5 rounded-ui bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center gap-2 transition shadow-md">
+                  <span aria-hidden="true">🤖</span><span>Generate Kode HTML</span>
+                </button>
+              </div>
+            </div>
+            <p id="ai-status" class="text-[11px] text-slate-400"></p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+<script>
+// ==========================================
+// STATE & KONFIGURASI
+// ==========================================
+var soundEnabled = localStorage.getItem('controlu_sound') !== 'off';
+var wordWrap = false;
+var currentHtml = '';
+var codeView = 'editor';
+var inspectionHistory = [];
+try { inspectionHistory = JSON.parse(localStorage.getItem('controlu_history') || '[]'); } catch (e) { inspectionHistory = []; }
+var assetStore = { links: [], images: [], scripts: [] };
+var currentBaseUrl = '';
+var findState = { lastIdx: -1, total: 0 };
+var gutterLineCount = 0;
+var audioCtx = null;
+
+window.addEventListener('DOMContentLoaded', function () {
+  // Tema tersimpan
+  if (localStorage.getItem('controlu_theme') === 'light') document.documentElement.classList.remove('dark');
+  // Status tombol suara
+  applySoundToggleUi();
+  // Kunci Gemini tersimpan
+  var savedKey = localStorage.getItem('controlu_gemini_key') || '';
+  if (savedKey) {
+    document.getElementById('gemini-key').value = savedKey;
+    document.getElementById('gemini-key-status').textContent = 'Kunci tersimpan di perangkat ini. Klik Tes Koneksi untuk memeriksa.';
+  }
+  renderHistory();
+  updateGutter(true);
+  // Muat contoh awal
+  fetchWebsiteSource(true);
+  // Shortcut Alt+U
+  document.addEventListener('keydown', function (e) {
+    if (e.altKey && e.key.toLowerCase() === 'u') {
+      e.preventDefault();
+      var input = document.getElementById('url-input');
+      input.focus(); input.select();
+      showToast('Kolom URL aktif — tekan Enter untuk mengambil HTML', 'info');
+    }
+  });
+  // Delegasi tombol Copy pada daftar aset & riwayat
+  document.addEventListener('click', function (e) {
+    var copyBtn = e.target.closest('[data-copy]');
+    if (copyBtn) {
+      var parts = copyBtn.getAttribute('data-copy').split(':');
+      var arr = assetStore[parts[0]] || [];
+      var val = arr[parseInt(parts[1], 10)];
+      if (val) copyText(val);
+      return;
+    }
+    var histBtn = e.target.closest('[data-hist]');
+    if (histBtn) {
+      var url = inspectionHistory[parseInt(histBtn.getAttribute('data-hist'), 10)];
+      if (url) loadPresetUrl(url);
+    }
+  });
+});
+
+// ==========================================
+// SUARA (WebAudio, tanpa library eksternal)
+// ==========================================
+function beep(freq, dur, delay) {
+  if (!soundEnabled) return;
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    var t = audioCtx.currentTime + (delay || 0);
+    var osc = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    osc.type = 'sine'; osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.12, t + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(t); osc.stop(t + dur + 0.05);
+  } catch (e) { /* audio diblokir browser: abaikan */ }
+}
+function playFeedbackSound(type) {
+  if (type === 'success') { beep(660, 0.09, 0); beep(990, 0.12, 0.08); }
+  else if (type === 'error') { beep(196, 0.18, 0); }
+  else { beep(880, 0.05, 0); }
+}
+function applySoundToggleUi() {
+  var btn = document.getElementById('sound-toggle');
+  var dot = document.getElementById('sound-dot');
+  if (!btn || !dot) return;
+  btn.classList.toggle('bg-indigo-600', soundEnabled);
+  btn.classList.toggle('bg-slate-400', !soundEnabled);
+  dot.style.left = soundEnabled ? '1.25rem' : '0.125rem';
+}
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  localStorage.setItem('controlu_sound', soundEnabled ? 'on' : 'off');
+  applySoundToggleUi();
+  if (soundEnabled) playFeedbackSound('success');
+  showToast(soundEnabled ? 'Suara sistem diaktifkan' : 'Suara sistem dimatikan', 'info');
+}
+
+// ==========================================
+// NAVIGASI & TEMA
+// ==========================================
+function toggleTheme() {
+  var isDark = document.documentElement.classList.toggle('dark');
+  localStorage.setItem('controlu_theme', isDark ? 'dark' : 'light');
+  playFeedbackSound('click');
+}
+function toggleMobileSidebar() {
+  document.getElementById('sidebar').classList.toggle('-translate-x-full');
+  document.getElementById('sidebar-backdrop').classList.toggle('hidden');
+}
+function switchTab(tabName) {
+  playFeedbackSound('click');
+  document.querySelectorAll('.tab-content').forEach(function (el) { el.classList.add('hidden'); });
+  document.getElementById('tab-' + tabName).classList.remove('hidden');
+  document.querySelectorAll('.nav-btn').forEach(function (btn) {
+    btn.classList.remove('bg-indigo-500/10', 'text-indigo-600', 'dark:text-indigo-400');
+    btn.classList.add('text-slate-600', 'dark:text-slate-400');
+  });
+  var activeBtn = document.getElementById('nav-' + tabName);
+  activeBtn.classList.add('bg-indigo-500/10', 'text-indigo-600', 'dark:text-indigo-400');
+  activeBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
+  if (tabName === 'preview') updateLivePreview();
+  if (window.innerWidth < 1024) {
+    document.getElementById('sidebar').classList.add('-translate-x-full');
+    document.getElementById('sidebar-backdrop').classList.add('hidden');
+  }
+}
+
+// ==========================================
+// PENGAMBILAN KODE SUMBER (MESIN CTRL+U)
+// ==========================================
+function loadPresetUrl(url) {
+  document.getElementById('url-input').value = url;
+  fetchWebsiteSource();
+}
+async function pasteUrlFromClipboard() {
+  try {
+    var text = await navigator.clipboard.readText();
+    if (text) {
+      document.getElementById('url-input').value = text.trim();
+      playFeedbackSound('click');
+      showToast('URL ditempel dari clipboard', 'info');
+    }
+  } catch (err) {
+    showToast('Gunakan Ctrl+V pada kolom URL (izin clipboard dibatasi browser)', 'warning');
+  }
+}
+function fetchWithTimeout(url, ms) {
+  var controller = new AbortController();
+  var timer = setTimeout(function () { controller.abort(); }, ms);
+  return fetch(url, { signal: controller.signal }).finally(function () { clearTimeout(timer); });
+}
+async function fetchWebsiteSource(isInitial) {
+  var rawUrl = document.getElementById('url-input').value.trim();
+  if (!rawUrl) { showToast('Masukkan alamat URL terlebih dahulu!', 'error'); return; }
+  if (!/^https?:\/\//i.test(rawUrl)) {
+    rawUrl = 'https://' + rawUrl;
+    document.getElementById('url-input').value = rawUrl;
+  }
+  setLoadingState(true, 'Mengambil source dari ' + rawUrl + '...');
+
+  var routes = [
+    { name: 'Langsung', url: function (u) { return u; }, json: false },
+    { name: 'AllOrigins RAW', url: function (u) { return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); }, json: false },
+    { name: 'AllOrigins', url: function (u) { return 'https://api.allorigins.win/get?url=' + encodeURIComponent(u); }, json: true },
+    { name: 'CodeTabs', url: function (u) { return 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u); }, json: false },
+    { name: 'CorsProxy', url: function (u) { return 'https://corsproxy.io/?url=' + encodeURIComponent(u); }, json: false }
+  ];
+
+  var fetchedHtml = null, usedRoute = '-';
+  for (var i = 0; i < routes.length; i++) {
+    try {
+      var res = await fetchWithTimeout(routes[i].url(rawUrl), 10000);
+      if (!res.ok) continue;
+      var body = routes[i].json ? ((await res.json()) || {}).contents : await res.text();
+      if (typeof body === 'string' && body.length > 30 && body.indexOf('<') !== -1) {
+        fetchedHtml = body; usedRoute = routes[i].name; break;
+      }
+    } catch (err) { /* lanjut ke rute berikutnya */ }
+  }
+
+  setLoadingState(false);
+  document.getElementById('stat-route').textContent = usedRoute;
+
+  if (fetchedHtml) {
+    applyHtmlContent(fetchedHtml, rawUrl);
+    addToHistory(rawUrl);
+    if (!isInitial) {
+      playFeedbackSound('success');
+      showToast('Berhasil mengambil kode sumber HTML lewat rute ' + usedRoute + '!', 'success');
+    }
+  } else {
+    setStatus('error', 'Gagal mengambil langsung (CORS/proteksi bot)');
+    if (!isInitial) {
+      playFeedbackSound('error');
+      showToast('Situs memblokir semua rute pengambilan. Coba tab AI Cloner, atau tempel kode manual (Ctrl+U di browser lalu salin ke editor).', 'warning');
+    }
+  }
+}
+function applyHtmlContent(html, sourceLabel) {
+  currentHtml = html;
+  currentBaseUrl = /^https?:\/\//i.test(sourceLabel || '') ? sourceLabel : '';
+  var editor = document.getElementById('raw-html-editor');
+  editor.value = html;
+  try {
+    var hostname = new URL(sourceLabel).hostname;
+    document.getElementById('active-filename').textContent = (hostname || 'source') + '.html';
+  } catch (e) {
+    document.getElementById('active-filename').textContent = sourceLabel || 'source-code.html';
+  }
+  findState = { lastIdx: -1, total: 0 };
+  document.getElementById('find-info').textContent = '';
+  updateMetricsAndAssets(html, currentBaseUrl || sourceLabel);
+  updateGutter(true);
+  if (codeView === 'highlight') renderHighlight();
+  updateLivePreview();
+  setStatus('ready', 'Terhubung: ' + sourceLabel);
+}
+function onManualCodeEdit() {
+  var html = document.getElementById('raw-html-editor').value;
+  currentHtml = html;
+  updateMetricsAndAssets(html, currentBaseUrl);
+  updateGutter(false);
+}
+function openLocalFile(event) {
+  var file = event.target.files && event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function () {
+    applyHtmlContent(String(reader.result || ''), file.name);
+    document.getElementById('active-filename').textContent = file.name;
+    playFeedbackSound('success');
+    showToast('File ' + file.name + ' dimuat ke editor', 'success');
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ==========================================
+// GUTTER NOMOR BARIS
+// ==========================================
+function updateGutter(force) {
+  var editor = document.getElementById('raw-html-editor');
+  var count = editor.value ? editor.value.split('\n').length : 1;
+  if (!force && count === gutterLineCount) { syncGutterScroll(); return; }
+  gutterLineCount = count;
+  var nums = [];
+  for (var i = 1; i <= count; i++) nums.push(i);
+  document.getElementById('line-gutter').innerHTML = nums.join('<br>');
+  syncGutterScroll();
+}
+function syncGutterScroll() {
+  var editor = document.getElementById('raw-html-editor');
+  document.getElementById('line-gutter').scrollTop = editor.scrollTop;
+}
+
+// ==========================================
+// MODE TAMPILAN: EDITOR / SOROTAN
+// ==========================================
+function setCodeView(view) {
+  codeView = view;
+  document.getElementById('editor-wrap').classList.toggle('hidden', view !== 'editor');
+  document.getElementById('highlight-wrap').classList.toggle('hidden', view !== 'highlight');
+  var eb = document.getElementById('view-editor-btn');
+  var hb = document.getElementById('view-highlight-btn');
+  var on = ['bg-indigo-500/10', 'text-indigo-600', 'dark:text-indigo-400'];
+  var off = ['bg-white', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-300'];
+  eb.classList.remove.apply(eb.classList, view === 'editor' ? off : on);
+  eb.classList.add.apply(eb.classList, view === 'editor' ? on : off);
+  hb.classList.remove.apply(hb.classList, view === 'highlight' ? off : on);
+  hb.classList.add.apply(hb.classList, view === 'highlight' ? on : off);
+  if (view === 'highlight') renderHighlight();
+  playFeedbackSound('click');
+}
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function highlightTag(tagEsc) {
+  // tagEsc: tag yang sudah di-escape, mis. &lt;div class="x"&gt;
+  // Atribut diwarnai DULU, nama tag terakhir (regex nama tag terjangkar di awal string,
+  // jadi tidak ikut mewarnai ulang markup span yang baru disisipkan).
+  var out = tagEsc.replace(/([\w-]+)=(&quot;|")([^"&]*)(&quot;|")/g, '<span class="hl-attr">$1</span>=<span class="hl-val">"$3"</span>');
+  out = out.replace(/^(&lt;\/?)([a-zA-Z][\w:-]*)/, '$1<span class="hl-tag">$2</span>');
+  return out;
+}
+function highlightLine(line, state) {
+  var esc = escapeHtml(line);
+  var out = '', pos = 0;
+  while (pos < esc.length) {
+    if (state.inComment) {
+      var endC = esc.indexOf('--&gt;', pos);
+      if (endC === -1) { out += '<span class="hl-comment">' + esc.slice(pos) + '</span>'; pos = esc.length; }
+      else { out += '<span class="hl-comment">' + esc.slice(pos, endC + 6) + '</span>'; pos = endC + 6; state.inComment = false; }
+      continue;
+    }
+    var startC = esc.indexOf('&lt;!--', pos);
+    var startT = esc.indexOf('&lt;', pos);
+    if (startC !== -1 && startC === startT) {
+      out += esc.slice(pos, startC);
+      var endC2 = esc.indexOf('--&gt;', startC);
+      if (endC2 === -1) { out += '<span class="hl-comment">' + esc.slice(startC) + '</span>'; state.inComment = true; pos = esc.length; }
+      else { out += '<span class="hl-comment">' + esc.slice(startC, endC2 + 6) + '</span>'; pos = endC2 + 6; }
+      continue;
+    }
+    if (startT === -1) { out += esc.slice(pos); break; }
+    out += esc.slice(pos, startT);
+    var endT = esc.indexOf('&gt;', startT);
+    if (endT === -1) { out += esc.slice(startT); break; }
+    var tag = esc.slice(startT, endT + 4);
+    if (/^&lt;!/.test(tag)) out += '<span class="hl-doctype">' + tag + '</span>';
+    else out += highlightTag(tag);
+    pos = endT + 4;
+  }
+  return out;
+}
+function renderHighlight() {
+  var state = { inComment: false };
+  var lines = (currentHtml || '').split('\n');
+  var html = lines.map(function (line) {
+    var h = highlightLine(line, state);
+    return '<span class="code-line">' + (h || ' ') + '</span>';
+  }).join('');
+  document.getElementById('highlight-view').innerHTML = html || '<span class="code-line"> </span>';
+}
+
+// ==========================================
+// METRIK, EKSTRAKSI ASET & PREVIEW
+// ==========================================
+function updateMetricsAndAssets(html, baseUrl) {
+  var bytes = new Blob([html]).size;
+  document.getElementById('stat-size').textContent = (bytes / 1024).toFixed(2) + ' KB';
+  document.getElementById('stat-lines').textContent = (html ? html.split('\n').length : 0).toLocaleString('id-ID');
+  document.getElementById('stat-tags').textContent = ((html.match(/<[a-zA-Z][^>]*>/g) || []).length).toLocaleString('id-ID');
+  try {
+    var doc = new DOMParser().parseFromString(html, 'text/html');
+    document.getElementById('meta-title').textContent = (doc.querySelector('title') || {}).textContent ? doc.querySelector('title').textContent.trim() : 'Tidak ada judul';
+    var descEl = doc.querySelector('meta[name="description"]');
+    document.getElementById('meta-desc').textContent = descEl ? (descEl.getAttribute('content') || '-') : 'Tidak ada deskripsi meta';
+    var ogT = doc.querySelector('meta[property="og:title"]');
+    var ogD = doc.querySelector('meta[property="og:description"]');
+    document.getElementById('meta-og').textContent = (ogT ? (ogT.getAttribute('content') || '') : '') + (ogD ? ' — ' + (ogD.getAttribute('content') || '') : '') || 'Tidak ada Open Graph';
+    var charset = doc.querySelector('meta[charset]');
+    var viewport = doc.querySelector('meta[name="viewport"]');
+    document.getElementById('meta-tech').textContent =
+      'lang=' + (doc.documentElement.getAttribute('lang') || '-') +
+      ' · charset=' + (charset ? charset.getAttribute('charset') : '-') +
+      ' · viewport=' + (viewport ? 'ada' : 'tidak ada');
+
+    var links = Array.from(doc.querySelectorAll('a[href]')).map(function (a) { return a.getAttribute('href'); }).filter(Boolean);
+    var imgs = Array.from(doc.querySelectorAll('img[src]')).map(function (im) { return im.getAttribute('src'); }).filter(Boolean);
+    var styles = Array.from(doc.querySelectorAll('link[rel="stylesheet"][href]')).map(function (l) { return l.getAttribute('href'); });
+    var scripts = Array.from(doc.querySelectorAll('script[src]')).map(function (s) { return s.getAttribute('src'); });
+    assetStore.links = Array.from(new Set(links));
+    assetStore.images = Array.from(new Set(imgs));
+    assetStore.scripts = Array.from(new Set(styles.concat(scripts))).filter(Boolean);
+
+    renderAssetList('list-links', 'count-links', assetStore.links, baseUrl, 'links', false);
+    renderAssetList('list-images', 'count-images', assetStore.images, baseUrl, 'images', true);
+    renderAssetList('list-scripts', 'count-scripts', assetStore.scripts, baseUrl, 'scripts', false);
+    document.getElementById('asset-count-badge').textContent = assetStore.links.length + assetStore.images.length + assetStore.scripts.length;
+  } catch (e) { /* HTML belum valid: metrik dasar tetap tampil */ }
+}
+function renderAssetList(containerId, countId, items, baseUrl, storeKey, isImage) {
+  var container = document.getElementById(containerId);
+  document.getElementById(countId).textContent = items.length;
+  if (!items.length) {
+    container.innerHTML = '<p class="text-slate-400 italic py-2">Tidak ditemukan item.</p>';
+    return;
+  }
+  var LIMIT = 100;
+  var shown = items.slice(0, LIMIT);
+  var html = shown.map(function (item, idx) {
+    var fullUrl = item;
+    try { fullUrl = new URL(item, baseUrl).href; } catch (e) { /* biarkan apa adanya */ }
+    var thumb = '';
+    if (isImage) {
+      thumb = '<img src="' + escapeHtml(fullUrl) + '" alt="" loading="lazy" onerror="this.remove()" class="w-8 h-8 object-cover rounded shrink-0 bg-slate-200 dark:bg-slate-700">';
+      // Simpan URL absolut untuk tombol Copy pada daftar gambar
+      assetStore.images[idx] = fullUrl;
+    }
+    return '<div class="group flex items-center justify-between gap-2 p-2 rounded-lg bg-slate-50 dark:bg-slate-800/70 hover:bg-indigo-500/10 transition">' +
+      thumb +
+      '<span class="truncate flex-1 text-slate-700 dark:text-slate-300" title="' + escapeHtml(fullUrl) + '">' + escapeHtml(item) + '</span>' +
+      '<a href="' + escapeHtml(fullUrl) + '" target="_blank" rel="noopener" class="px-1.5 py-0.5 rounded bg-white dark:bg-slate-700 text-[10px] text-slate-500 border border-slate-200 dark:border-slate-600 shrink-0">Buka</a>' +
+      '<button data-copy="' + storeKey + ':' + idx + '" class="px-1.5 py-0.5 rounded bg-white dark:bg-slate-700 text-[10px] text-indigo-500 border border-slate-200 dark:border-slate-600 shrink-0">Copy</button>' +
+      '</div>';
+  }).join('');
+  if (items.length > LIMIT) html += '<p class="text-slate-400 italic py-1">…dan ' + (items.length - LIMIT) + ' item lain tidak ditampilkan.</p>';
+  container.innerHTML = html;
+}
+function updateLivePreview() {
+  var frame = document.getElementById('preview-frame');
+  var baseUrl = currentBaseUrl;
+  var previewHtml = currentHtml || '<div style="font-family:sans-serif;padding:2rem;color:#64748b;">Belum ada kode HTML untuk ditampilkan.</div>';
+  if (baseUrl && /^https?:\/\//i.test(baseUrl) && !/<base\s/i.test(previewHtml)) {
+    if (/<head[^>]*>/i.test(previewHtml)) {
+      previewHtml = previewHtml.replace(/<head[^>]*>/i, function (m) { return m + '\n<base href="' + baseUrl + '">'; });
+    } else {
+      previewHtml = '<base href="' + baseUrl + '">' + previewHtml;
+    }
+  }
+  frame.srcdoc = previewHtml;
+}
+function setPreviewWidth(width) {
+  playFeedbackSound('click');
+  document.getElementById('preview-frame').style.maxWidth = width;
+}
+function openPreviewInNewTab() {
+  if (!currentHtml) { showToast('Belum ada kode HTML untuk dibuka.', 'error'); return; }
+  var blob = new Blob([currentHtml], { type: 'text/html;charset=utf-8' });
+  window.open(URL.createObjectURL(blob), '_blank');
+}
+
+// ==========================================
+// COPY, DOWNLOAD, BEAUTIFY & PENCARIAN
+// ==========================================
+function copyAllHtml() {
+  var editor = document.getElementById('raw-html-editor');
+  if (!editor.value.trim()) { showToast('Tidak ada kode HTML untuk disalin!', 'error'); return; }
+  copyText(editor.value, 'Seluruh kode sumber HTML berhasil disalin!');
+}
+async function copyText(text, successMsg) {
+  successMsg = successMsg || 'Teks berhasil disalin!';
+  try {
+    await navigator.clipboard.writeText(text);
+    playFeedbackSound('success');
+    showToast(successMsg, 'success');
+    return;
+  } catch (e) { /* fallback di bawah */ }
+  var ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); playFeedbackSound('success'); showToast(successMsg, 'success'); }
+  catch (err) { showToast('Gagal menyalin ke clipboard', 'error'); }
+  document.body.removeChild(ta);
+}
+function downloadHtmlFile() {
+  var content = document.getElementById('raw-html-editor').value;
+  if (!content.trim()) { showToast('Kode HTML kosong, tidak ada yang diunduh.', 'error'); return; }
+  var filename = document.getElementById('active-filename').textContent || 'control-u-export.html';
+  var blob = new Blob([content], { type: 'text/html;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  setTimeout(function () { URL.revokeObjectURL(url); }, 500);
+  playFeedbackSound('success');
+  showToast('File ' + filename + ' berhasil diunduh!', 'success');
+}
+function toggleWordWrap() {
+  wordWrap = !wordWrap;
+  var editor = document.getElementById('raw-html-editor');
+  var btn = document.getElementById('wrap-btn');
+  editor.classList.toggle('whitespace-pre-wrap', wordWrap);
+  editor.classList.toggle('whitespace-pre', !wordWrap);
+  btn.textContent = wordWrap ? 'Wrap: ON' : 'Wrap: OFF';
+  btn.classList.toggle('bg-indigo-500/10', wordWrap);
+  btn.classList.toggle('text-indigo-600', wordWrap);
+  playFeedbackSound('click');
+}
+function formatHtmlCode() {
+  var editor = document.getElementById('raw-html-editor');
+  var html = editor.value.trim();
+  if (!html) return;
+  // Lindungi isi script/style/pre/textarea agar tidak ikut dirapikan
+  var blocks = [];
+  html = html.replace(/<(script|style|pre|textarea)\b[^>]*>[\s\S]*?<\/\1>/gi, function (m) {
+    blocks.push(m);
+    return '<!--%%BLK' + (blocks.length - 1) + '%%-->';
+  });
+  var VOID = { area: 1, base: 1, br: 1, col: 1, embed: 1, hr: 1, img: 1, input: 1, link: 1, meta: 1, param: 1, source: 1, track: 1, wbr: 1 };
+  html = html.replace(/>\s*</g, '>\n<');
+  var lines = html.split('\n'), pad = 0, out = [];
+  lines.forEach(function (raw) {
+    var node = raw.trim();
+    if (!node) return;
+    var closeM = node.match(/^<\/([a-zA-Z][\w-]*)/);
+    var openM = node.match(/^<([a-zA-Z][\w-]*)/);
+    if (closeM && pad > 0) pad--;
+    out.push('  '.repeat(pad) + node);
+    var hasCloseSameLine = openM ? new RegExp('</' + openM[1] + '(\\s|>)', 'i').test(node.slice(openM[0].length)) : false;
+    var selfContained = /\/>$/.test(node) || hasCloseSameLine;
+    if (openM && !closeM && !VOID[openM[1].toLowerCase()] && !selfContained && node.charAt(1) !== '!') pad++;
+  });
+  var formatted = out.join('\n');
+  formatted = formatted.replace(/<!--%%BLK(\d+)%%-->/g, function (m, i) { return blocks[parseInt(i, 10)]; });
+  editor.value = formatted;
+  currentHtml = formatted;
+  updateMetricsAndAssets(formatted, currentBaseUrl);
+  updateGutter(true);
+  if (codeView === 'highlight') renderHighlight();
+  playFeedbackSound('success');
+  showToast('Kode HTML dirapikan (Beautified)', 'success');
+}
+function countMatches() {
+  var q = document.getElementById('code-search').value;
+  var text = document.getElementById('raw-html-editor').value;
+  if (!q) return 0;
+  var n = 0, i = 0, lower = text.toLowerCase(), lq = q.toLowerCase();
+  while ((i = lower.indexOf(lq, i)) !== -1 && n < 10000) { n++; i += lq.length; }
+  return n;
+}
+function onSearchInput() {
+  findState.lastIdx = -1;
+  findState.total = countMatches();
+  document.getElementById('find-info').textContent = findState.total ? '0/' + findState.total : '';
+}
+function findNext() {
+  var q = document.getElementById('code-search').value;
+  var editor = document.getElementById('raw-html-editor');
+  if (!q) return;
+  if (codeView !== 'editor') setCodeView('editor');
+  var lower = editor.value.toLowerCase(), lq = q.toLowerCase();
+  var idx = lower.indexOf(lq, findState.lastIdx + 1);
+  if (idx === -1) idx = lower.indexOf(lq, 0); // putar kembali ke awal
+  if (idx === -1) { showToast('Tidak ditemukan: ' + q, 'warning'); return; }
+  findState.lastIdx = idx;
+  if (!findState.total) findState.total = countMatches();
+  var before = editor.value.slice(0, idx).toLowerCase().split(lq).length - 1;
+  document.getElementById('find-info').textContent = (before + 1) + '/' + findState.total;
+  editor.focus();
+  editor.setSelectionRange(idx, idx + q.length);
+  // Gulir agar hasil terlihat di tengah editor
+  var linesBefore = editor.value.slice(0, idx).split('\n').length - 1;
+  editor.scrollTop = Math.max(0, (linesBefore - 6) * 24);
+  syncGutterScroll();
+}
+
+// ==========================================
+// AI UI CLONER & GENERATOR (GEMINI, KUNCI SENDIRI)
+// ==========================================
+function saveGeminiKey() {
+  var key = document.getElementById('gemini-key').value.trim();
+  if (!key) { showToast('Tempel dulu kunci Gemini-nya.', 'error'); return; }
+  localStorage.setItem('controlu_gemini_key', key);
+  document.getElementById('gemini-key-status').textContent = 'Kunci tersimpan di perangkat ini. Klik Tes Koneksi untuk memeriksa.';
+  playFeedbackSound('success');
+  showToast('Kunci Gemini disimpan (hanya di perangkat ini)', 'success');
+}
+function geminiEndpoint(model, key) {
+  return 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + encodeURIComponent(key);
+}
+function geminiErrorMessage(status) {
+  if (status === 400) return 'Permintaan ditolak (400) — periksa model/prompt, atau kunci tidak valid.';
+  if (status === 401 || status === 403) return 'Kunci Gemini tidak valid atau tidak punya akses (' + status + '). Ambil kunci baru di aistudio.google.com/apikey.';
+  if (status === 429) return 'Kuota Gemini habis untuk saat ini (429). Coba lagi nanti atau ganti model.';
+  return 'Gemini menjawab dengan status ' + status + '.';
+}
+async function callGemini(promptText) {
+  var key = (document.getElementById('gemini-key').value.trim()) || (localStorage.getItem('controlu_gemini_key') || '');
+  if (!key) throw new Error('Kunci Gemini belum diisi. Tempel kunci Anda di kotak Pengaturan Kunci, atau gunakan tombol Salin Prompt.');
+  var model = document.getElementById('gemini-model').value;
+  var res = await fetchWithTimeout(geminiEndpoint(model, key), 60000);
+  if (!res.ok) throw new Error(geminiErrorMessage(res.status));
+  var data = await res.json();
+  var text = data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
+  if (!text) throw new Error('Respons Gemini kosong. Coba lagi.');
+  return text;
+}
+async function testGeminiKey() {
+  var btn = document.getElementById('gemini-test-btn');
+  var status = document.getElementById('gemini-key-status');
+  btn.disabled = true; btn.textContent = 'Menguji...';
+  try {
+    var reply = await callGemini('Balas hanya dengan kata: OK');
+    status.textContent = '✅ Koneksi berhasil — Gemini menjawab: "' + reply.trim().slice(0, 40) + '"';
+    playFeedbackSound('success');
+  } catch (err) {
+    status.textContent = '❌ ' + err.message;
+    playFeedbackSound('error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Tes Koneksi';
+  }
+}
+function buildAiInstruction(userPrompt) {
+  return 'Buat SATU file HTML5 lengkap dan mandiri (standalone) berdasarkan permintaan ini: "' + userPrompt + '". ' +
+    'Syarat: mulai dengan <!DOCTYPE html>; gunakan Tailwind CSS lewat CDN <script src="https://cdn.tailwindcss.com"><\/script>; ' +
+    'tampilan modern, responsif untuk HP dan desktop, bahasa Indonesia; semua CSS/JS tambahan tulis di dalam file yang sama; ' +
+    'jangan menyalin teks/logo/merek asli situs mana pun — buat konten contoh yang orisinal. ' +
+    'Jawab HANYA dengan kode HTML mentah, tanpa penjelasan dan tanpa pagar markdown.';
+}
+function useCurrentUrlForAi() {
+  var url = document.getElementById('url-input').value.trim();
+  document.getElementById('ai-prompt-input').value = 'Buatkan halaman web modern yang bersih dan responsif, terinspirasi struktur dan gaya umum website ' + url + ' (navbar, hero, bagian konten, footer) — dengan teks dan merek contoh yang orisinal.';
+  playFeedbackSound('click');
+}
+function copyAiPrompt() {
+  var prompt = document.getElementById('ai-prompt-input').value.trim();
+  if (!prompt) { showToast('Tuliskan dulu instruksi desainnya.', 'error'); return; }
+  copyText(buildAiInstruction(prompt), 'Prompt siap pakai berhasil disalin — tempel ke chat AI mana pun.');
+}
+async function generateHtmlWithAi() {
+  var prompt = document.getElementById('ai-prompt-input').value.trim();
+  if (!prompt) { showToast('Tuliskan instruksi desain atau URL referensi terlebih dahulu.', 'error'); return; }
+  var btn = document.getElementById('ai-gen-btn');
+  var status = document.getElementById('ai-status');
+  var original = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span aria-hidden="true">⏳</span><span>Membangun HTML...</span>';
+  status.textContent = 'Menghubungi Gemini... proses ini bisa memakan waktu 10–40 detik.';
+  try {
+    var generated = await callGemini(buildAiInstruction(prompt));
+    generated = generated.replace(/^```html\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
+    if (generated.indexOf('<') === -1) throw new Error('Hasil AI tidak berisi kode HTML. Coba perjelas instruksinya.');
+    applyHtmlContent(generated, 'ai-generated.html');
+    switchTab('source');
+    status.textContent = '✅ Kode HTML dari AI sudah dimuat di tab Kode Sumber.';
+    playFeedbackSound('success');
+    showToast('Kode HTML berhasil dibuat oleh AI!', 'success');
+  } catch (err) {
+    status.textContent = '❌ ' + err.message;
+    playFeedbackSound('error');
+    showToast(err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = original;
+  }
+}
+
+// ==========================================
+// RIWAYAT & HELPER UI
+// ==========================================
+function addToHistory(url) {
+  inspectionHistory = inspectionHistory.filter(function (u) { return u !== url; });
+  inspectionHistory.unshift(url);
+  if (inspectionHistory.length > 8) inspectionHistory = inspectionHistory.slice(0, 8);
+  localStorage.setItem('controlu_history', JSON.stringify(inspectionHistory));
+  renderHistory();
+}
+function renderHistory() {
+  var list = document.getElementById('history-list');
+  if (!inspectionHistory.length) {
+    list.innerHTML = '<p class="italic text-[11px]">Belum ada riwayat...</p>';
+    return;
+  }
+  list.innerHTML = inspectionHistory.map(function (u, i) {
+    return '<button data-hist="' + i + '" class="w-full text-left truncate py-1 px-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition block" title="' + escapeHtml(u) + '">• ' + escapeHtml(u.replace(/^https?:\/\//, '')) + '</button>';
+  }).join('');
+}
+function clearHistory() {
+  inspectionHistory = [];
+  localStorage.removeItem('controlu_history');
+  renderHistory();
+  showToast('Riwayat inspeksi dihapus', 'info');
+}
+function setLoadingState(isLoading, msg) {
+  var btn = document.getElementById('fetch-btn');
+  var text = document.getElementById('fetch-text');
+  btn.disabled = isLoading;
+  btn.classList.toggle('opacity-75', isLoading);
+  text.textContent = isLoading ? 'Mengambil...' : 'Ambil HTML (Ctrl+U)';
+  if (isLoading) setStatus('loading', msg || 'Mengambil...');
+}
+function setStatus(type, text) {
+  var dot = document.getElementById('status-dot');
+  document.getElementById('status-text').textContent = text;
+  dot.className = 'w-2 h-2 rounded-full ' + (type === 'loading' ? 'bg-amber-500 dot-loading' : type === 'error' ? 'bg-rose-500' : 'bg-emerald-500');
+}
+function showToast(message, type) {
+  type = type || 'info';
+  var container = document.getElementById('toast-container');
+  var toast = document.createElement('div');
+  var colors = {
+    success: 'border-emerald-500/40 bg-slate-900 text-emerald-300',
+    error: 'border-rose-500/40 bg-slate-900 text-rose-300',
+    warning: 'border-amber-500/40 bg-slate-900 text-amber-300',
+    info: 'border-indigo-500/40 bg-slate-900 text-slate-200'
+  };
+  toast.className = 'toast-enter pointer-events-auto px-4 py-3 rounded-ui border shadow-xl text-xs font-medium flex items-center gap-2.5 max-w-sm ' + (colors[type] || colors.info);
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(function () {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(20px)';
+    toast.style.transition = 'all .25s ease';
+    setTimeout(function () { toast.remove(); }, 250);
+  }, 3400);
+}
+</script>
+</body>
+</html>
