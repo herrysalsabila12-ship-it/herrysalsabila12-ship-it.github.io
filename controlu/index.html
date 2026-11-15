@@ -216,6 +216,7 @@
           <li>Lihat kode sumbernya: di komputer tekan <strong>Ctrl+U</strong>; di HP Chrome, tambahkan <strong>view-source:</strong> di depan alamat situs lalu Enter.</li>
           <li>Salin semua kode (Ctrl+A lalu Ctrl+C), kembali ke sini, lalu klik <strong>Tempel dari Clipboard</strong> — atau tempel langsung di editor.</li>
         </ol>
+        <p class="text-xs text-slate-600 dark:text-slate-300 mt-2">🌉 <strong>Solusi permanen:</strong> pasang <strong>Jembatan GAS</strong> (Web App Google Apps Script milik sendiri — server Google yang mengambilkan halaman, bebas CORS), lalu tempel URL-nya di tab <strong>AI Cloner → Jembatan GAS Saya</strong>. Setelah itu rute ini selalu dicoba pertama.</p>
         <div class="flex flex-wrap gap-2 mt-3">
           <button onclick="openTargetSite()" class="px-3.5 py-2 rounded-lg text-xs font-semibold bg-amber-500 hover:bg-amber-600 text-white transition">🌐 Buka Situs di Tab Baru</button>
           <button onclick="pasteHtmlFromClipboard()" class="px-3.5 py-2 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white transition">📋 Tempel dari Clipboard</button>
@@ -385,6 +386,16 @@
             <p id="gemini-key-status" class="text-[11px] text-slate-400 mt-2">Belum ada kunci tersimpan. Tanpa kunci, gunakan tombol "Salin Prompt" untuk memakai AI lain (mis. lewat chat Muse).</p>
           </div>
 
+          <!-- Pengaturan Jembatan GAS -->
+          <div class="mb-4 p-4 rounded-ui bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60">
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">🌉 Jembatan GAS Saya — rute pengambilan pribadi (opsional, paling awet)</label>
+            <div class="flex flex-col sm:flex-row gap-2">
+              <input type="text" id="gas-bridge" placeholder="Tempel URL Web App Jembatan GAS (https://script.google.com/macros/s/…/exec)" class="flex-1 px-3 py-2 rounded-lg text-xs font-mono bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:border-indigo-500">
+              <button onclick="saveGasBridge()" class="px-4 py-2 rounded-lg text-xs font-semibold bg-slate-900 dark:bg-slate-700 text-white hover:bg-slate-700 dark:hover:bg-slate-600 transition">Simpan</button>
+            </div>
+            <p id="gas-bridge-status" class="text-[11px] text-slate-400 mt-2">Proxy publik sering mati, kena batas, atau jadi berbayar. Jembatan GAS adalah Web App Google Apps Script milik Anda sendiri: server Google yang mengambilkan halaman, jadi tidak kena CORS. Bila terisi, rute ini dicoba pertama. Belum punya? Minta paket + panduan pasangnya ke Herry AI.</p>
+          </div>
+
           <div class="space-y-3">
             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Instruksi Kloning atau Pembuatan HTML</label>
             <textarea id="ai-prompt-input" rows="3" class="w-full p-3.5 rounded-ui bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm outline-none focus:border-indigo-500" placeholder="Contoh: Buatkan halaman landing page modern dengan tema gelap, navbar, hero section, dan kartu harga untuk toko buku online..."></textarea>
@@ -437,6 +448,12 @@ window.addEventListener('DOMContentLoaded', function () {
   if (savedKey) {
     document.getElementById('gemini-key').value = savedKey;
     document.getElementById('gemini-key-status').textContent = 'Kunci tersimpan di perangkat ini. Klik Tes Koneksi untuk memeriksa.';
+  }
+  var savedBridge = '';
+  try { savedBridge = localStorage.getItem('controlu_gas_bridge') || ''; } catch (e) { /* abaikan */ }
+  if (savedBridge) {
+    document.getElementById('gas-bridge').value = savedBridge;
+    document.getElementById('gas-bridge-status').textContent = 'Jembatan tersimpan di perangkat ini. Rute ini dicoba PERTAMA setiap mengambil kode sumber.';
   }
   renderHistory();
   updateGutter(true);
@@ -576,6 +593,46 @@ function urlCandidates(url) {
   } catch (e) { /* URL tidak valid: kembalikan apa adanya */ }
   return list;
 }
+function kodeSampah(body) {
+  // Halaman galat proxy / tantangan bot TIDAK boleh dianggap HTML hasil
+  if (typeof body !== 'string') return true;
+  var awal = body.slice(0, 600), kepala = body.slice(0, 4000);
+  if (/error code: 5\d{2}/i.test(awal)) return true;
+  if (/^Too Many Requests/i.test(awal)) return true;
+  if (/<title>\s*Just a moment/i.test(kepala)) return true;
+  if (/Attention Required! \| Cloudflare/i.test(kepala)) return true;
+  if (/enable JavaScript and cookies to continue/i.test(kepala)) return true;
+  if (/^\s*\{\s*"corsfix_error"/.test(body)) return true;
+  return false;
+}
+function daftarRute() {
+  var routes = [];
+  var jembatan = '';
+  try { jembatan = localStorage.getItem('controlu_gas_bridge') || ''; } catch (e) { /* abaikan */ }
+  if (jembatan) {
+    routes.push({ name: 'Jembatan GAS Saya', timeout: 30000, json: false, url: function (u) { return jembatan + (jembatan.indexOf('?') === -1 ? '?' : '&') + 'url=' + encodeURIComponent(u); } });
+  }
+  routes.push({ name: 'Langsung', timeout: 8000, json: false, url: function (u) { return u; } });
+  routes.push({ name: 'CorsFix', timeout: 20000, json: false, url: function (u) { return 'https://proxy.corsfix.com/?' + u; } });
+  routes.push({ name: 'CodeTabs', timeout: 20000, json: false, url: function (u) { return 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u); } });
+  routes.push({ name: 'AllOrigins RAW', timeout: 25000, json: false, url: function (u) { return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); } });
+  routes.push({ name: 'AllOrigins', timeout: 25000, json: true, url: function (u) { return 'https://api.allorigins.win/get?url=' + encodeURIComponent(u); } });
+  routes.push({ name: 'CorsLol', timeout: 15000, json: false, url: function (u) { return 'https://api.cors.lol/?url=' + encodeURIComponent(u); } });
+  return routes;
+}
+function saveGasBridge() {
+  var el = document.getElementById('gas-bridge');
+  var v = el.value.trim();
+  if (v && !/^https:\/\/script\.google\.com\/macros\/s\//.test(v)) {
+    showToast('URL itu sepertinya bukan URL Web App Google Apps Script — tetap disimpan, periksa lagi bila gagal.', 'warning');
+  }
+  try { localStorage.setItem('controlu_gas_bridge', v); } catch (e) { /* abaikan */ }
+  document.getElementById('gas-bridge-status').textContent = v
+    ? 'Jembatan tersimpan di perangkat ini. Rute ini dicoba PERTAMA setiap mengambil kode sumber.'
+    : 'Jembatan dikosongkan. Pengambilan memakai rute publik.';
+  playFeedbackSound('success');
+  showToast(v ? 'Jembatan GAS disimpan' : 'Jembatan GAS dikosongkan', 'success');
+}
 async function fetchWebsiteSource(isInitial) {
   var rawUrl = document.getElementById('url-input').value.trim();
   if (!rawUrl) { showToast('Masukkan alamat URL terlebih dahulu!', 'error'); return; }
@@ -586,13 +643,7 @@ async function fetchWebsiteSource(isInitial) {
   hideFallbackBanner();
   setLoadingState(true, 'Mengambil source dari ' + rawUrl + '...');
 
-  var routes = [
-    { name: 'Langsung', url: function (u) { return u; }, json: false },
-    { name: 'AllOrigins RAW', url: function (u) { return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u); }, json: false },
-    { name: 'AllOrigins', url: function (u) { return 'https://api.allorigins.win/get?url=' + encodeURIComponent(u); }, json: true },
-    { name: 'CodeTabs', url: function (u) { return 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u); }, json: false },
-    { name: 'CorsProxy', url: function (u) { return 'https://corsproxy.io/?url=' + encodeURIComponent(u); }, json: false }
-  ];
+  var routes = daftarRute();
 
   var candidates = urlCandidates(rawUrl);
   var fetchedHtml = null, usedRoute = '-', usedUrl = rawUrl;
@@ -600,10 +651,10 @@ async function fetchWebsiteSource(isInitial) {
   for (var ci = 0; ci < candidates.length; ci++) {
     for (var ri = 0; ri < routes.length; ri++) {
       try {
-        var res = await fetchWithTimeout(routes[ri].url(candidates[ci]), 10000);
+        var res = await fetchWithTimeout(routes[ri].url(candidates[ci]), routes[ri].timeout || 15000);
         if (!res.ok) continue;
         var body = routes[ri].json ? ((await res.json()) || {}).contents : await res.text();
-        if (typeof body === 'string' && body.length > 30 && body.indexOf('<') !== -1) {
+        if (typeof body === 'string' && body.length > 30 && body.indexOf('<') !== -1 && !kodeSampah(body)) {
           fetchedHtml = body;
           usedRoute = routes[ri].name + (ci > 0 ? ' (varian alamat)' : '');
           usedUrl = candidates[ci];
