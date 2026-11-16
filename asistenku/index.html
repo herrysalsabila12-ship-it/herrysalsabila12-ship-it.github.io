@@ -287,7 +287,7 @@
             <li>Tempel di kotak di bawah, klik <strong>Cek</strong> untuk memastikan valid, lalu <strong>+ Tambah</strong>.</li>
             <li>Ulangi dengan akun Google lain bila ingin cadangan — kuota gratis dihitung per akun.</li>
           </ol>
-          <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-3 font-medium">Catatan: kunci yang baru dibuat kadang butuh 1–5 menit sebelum aktif di server Google. Jika cek ditolak, tunggu sebentar lalu coba lagi.</p>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-3 font-medium">Catatan: kunci baru (awalan AQ.) kadang butuh 1–5 menit sebelum aktif. Bila muncul error ACCESS_TOKEN_TYPE_UNSUPPORTED terus-menerus, itu gangguan sisi Google pada sebagian kunci AQ. — solusinya buat kunci di dalam <strong>proyek baru</strong> di AI Studio, atau buat API key lewat console.cloud.google.com dan batasi ke Generative Language API.</p>
         </div>
 
         <div class="mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500 rounded-r-2xl">
@@ -402,7 +402,7 @@ function lsGet(k, def) { try { var v = localStorage.getItem(k); return v === nul
 function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* penyimpanan penuh/ditolak */ } }
 function lsDel(k) { try { localStorage.removeItem(k); } catch (e) {} }
 
-var MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'];
+var MODELS = ['gemini-3.8-flash', 'gemini-2.5-flash-lite', 'gemini-2.5-flash', 'gemini-2.0-flash'];
 var apiKeys = lsGet(LS_KEYS, []);
 var historyItems = lsGet(LS_HIST, []);
 var currentTool = null;
@@ -694,28 +694,35 @@ function saveToHistory(toolId, title, content) {
 // ==================== MESIN AI (AUTO-PILOT) ====================
 async function callGemini(prompt, onStep) {
   var lastErr = 'tidak ada kunci';
+  var transports = ['header', 'query'];
   for (var ki = 0; ki < apiKeys.length; ki++) {
-    for (var mi = 0; mi < MODELS.length; mi++) {
-      if (onStep) onStep('Mencoba kunci ke-' + (ki + 1) + ' •••' + apiKeys[ki].slice(-4) + ' dengan model ' + MODELS[mi] + '…');
-      try {
-        var ctrl = new AbortController();
-        var timer = setTimeout(function () { ctrl.abort(); }, 60000);
-        var res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + MODELS[mi] + ':generateContent?key=' + apiKeys[ki], {
-          method: 'POST', signal: ctrl.signal,
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.7, maxOutputTokens: 8192 } })
-        });
-        clearTimeout(timer);
-        var data = await res.json().catch(function () { return {}; });
-        if (res.ok && data.candidates && data.candidates[0] && data.candidates[0].content) {
-          var text = (data.candidates[0].content.parts || []).map(function (p) { return p.text || ''; }).join('');
-          if (text.trim()) return { text: text, keyIndex: ki, model: MODELS[mi] };
-          lastErr = 'jawaban AI kosong';
-        } else {
-          lastErr = (data.error && data.error.message) || ('HTTP ' + res.status);
-          if (res.status === 400 && /API key/i.test(lastErr)) break; // kunci tidak valid: lompat ke kunci berikutnya
-        }
-      } catch (e) { lastErr = e.name === 'AbortError' ? 'waktu habis (60 detik)' : 'koneksi gagal'; }
+    var keyDead = false;
+    for (var ti = 0; ti < transports.length && !keyDead; ti++) {
+      for (var mi = 0; mi < MODELS.length; mi++) {
+        if (onStep) onStep('Mencoba kunci ke-' + (ki + 1) + ' •••' + apiKeys[ki].slice(-4) + ' • model ' + MODELS[mi] + '…');
+        try {
+          var ctrl = new AbortController();
+          var timer = setTimeout(function () { ctrl.abort(); }, 30000);
+          var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + MODELS[mi] + ':generateContent' + (transports[ti] === 'query' ? '?key=' + apiKeys[ki] : '');
+          var headers = { 'Content-Type': 'application/json' };
+          if (transports[ti] === 'header') headers['x-goog-api-key'] = apiKeys[ki];
+          var res = await fetch(url, {
+            method: 'POST', signal: ctrl.signal, headers: headers,
+            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.7, maxOutputTokens: 8192 } })
+          });
+          clearTimeout(timer);
+          var data = await res.json().catch(function () { return {}; });
+          if (res.ok && data.candidates && data.candidates[0] && data.candidates[0].content) {
+            var text = (data.candidates[0].content.parts || []).map(function (p) { return p.text || ''; }).join('');
+            if (text.trim()) return { text: text, keyIndex: ki, model: MODELS[mi] };
+            lastErr = 'jawaban AI kosong';
+          } else {
+            lastErr = (data.error && data.error.message) || ('HTTP ' + res.status);
+            if ((res.status === 400 || res.status === 401) && /API key|ACCESS_TOKEN/i.test(lastErr)) keyDead = true;
+          }
+        } catch (e) { lastErr = e.name === 'AbortError' ? 'waktu habis (30 detik)' : 'koneksi gagal'; }
+        if (keyDead) break;
+      }
     }
   }
   throw new Error(lastErr);
@@ -736,7 +743,11 @@ async function generateWithAi() {
     status.textContent = 'Berhasil lewat kunci ke-' + (r.keyIndex + 1) + ' • model ' + r.model + '. Hasil tersimpan di Riwayat.';
     showToast('Generate selesai!', 'success');
   } catch (e) {
-    status.textContent = 'Semua kunci/model gagal. Penyebab terakhir: ' + e.message + '. Coba lagi nanti, periksa kunci, atau pakai Template Offline.';
+    if (/ACCESS_TOKEN_TYPE_UNSUPPORTED/i.test(e.message)) {
+      status.textContent = 'Kunci AQ. kakak ditolak langsung oleh Google (ACCESS_TOKEN_TYPE_UNSUPPORTED) — ini gangguan yang sedang menimpa sebagian kunci AQ. baru, bukan salah aplikasi. Cara mengatasinya: buat kunci baru di dalam PROYEK BARU di Google AI Studio, atau buat API key lewat console.cloud.google.com (APIs & Services → Credentials) lalu batasi ke Generative Language API. Sementara itu Template Offline tetap bisa dipakai.';
+    } else {
+      status.textContent = 'Semua kunci/model gagal. Penyebab terakhir: ' + e.message + '. Coba lagi nanti, periksa kunci, atau pakai Template Offline.';
+    }
     showToast('Generate AI gagal: ' + e.message, 'error');
   }
   btn.disabled = false;
@@ -809,15 +820,21 @@ function removeKey(i) {
   persistKeys('Kunci dihapus.');
 }
 async function pingKey(k) {
-  var res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + k, {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ contents: [{ parts: [{ text: 'ping' }] }], generationConfig: { maxOutputTokens: 8 } })
-  });
-  var data = await res.json().catch(function () { return {}; });
-  if (res.ok && !data.error) return { ok: true };
-  var m = (data.error && data.error.message) || ('HTTP ' + res.status);
-  if (/API key not valid/i.test(m)) m = 'Kunci tidak dikenali Google.';
-  return { ok: false, msg: m };
+  var models = ['gemini-3.8-flash', 'gemini-2.5-flash-lite'];
+  var lastMsg = 'tidak diketahui';
+  for (var i = 0; i < models.length; i++) {
+    var res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + models[i] + ':generateContent', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': k },
+      body: JSON.stringify({ contents: [{ parts: [{ text: 'ping' }] }], generationConfig: { maxOutputTokens: 8 } })
+    });
+    var data = await res.json().catch(function () { return {}; });
+    if (res.ok && !data.error) return { ok: true };
+    lastMsg = (data.error && data.error.message) || ('HTTP ' + res.status);
+    if (/API key not valid/i.test(lastMsg)) lastMsg = 'Kunci tidak dikenali Google.';
+    if (/ACCESS_TOKEN_TYPE_UNSUPPORTED/i.test(lastMsg)) lastMsg = 'Kunci AQ. ditolak Google (ACCESS_TOKEN_TYPE_UNSUPPORTED) — gangguan sisi Google pada sebagian kunci baru; buat kunci di proyek baru.';
+    if (res.status !== 404) break; // 404 = model tak tersedia untuk proyek ini: coba model berikutnya
+  }
+  return { ok: false, msg: lastMsg };
 }
 async function checkNewKey() {
   var k = cleanKey(document.getElementById('new-key-input').value);
