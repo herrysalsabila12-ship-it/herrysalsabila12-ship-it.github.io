@@ -116,6 +116,7 @@ table.k-t td.v{font-weight:600}
   <section id="panel-data">
     <div class="panel">
       <div class="stat" id="stat-box"></div>
+      <p class="petunjuk" id="status-db-ringkas" style="margin-top:8px">💾 Mode lokal — data hanya tersimpan di perangkat ini.</p>
     </div>
     <div class="panel">
       <h2>Data Siswa</h2>
@@ -201,6 +202,26 @@ table.k-t td.v{font-weight:600}
         <option value="marun">Marun + Emas</option>
         <option value="hitam">Hitam + Emas</option>
       </select>
+    </div>
+    <div class="panel">
+      <h2>🗄️ Database Online (Google Sheets)</h2>
+      <p class="petunjuk" style="margin-bottom:8px">Hubungkan aplikasi ke database Google Sheets milik Anda agar data <b>tidak hilang</b> walau ganti HP/laptop. Setelah terhubung, setiap perubahan otomatis tersimpan ke database, dan membuka aplikasi di perangkat lain akan memuat data yang sama.</p>
+      <p class="petunjuk" id="status-db" style="font-weight:700;margin-bottom:6px">💾 Mode lokal — data hanya tersimpan di perangkat ini.</p>
+      <label class="k">URL Web App Database</label>
+      <input type="text" id="set-db-url" placeholder="https://script.google.com/macros/s/…/exec">
+      <label class="k">Token Database (rahasia — jangan dibagikan)</label>
+      <input type="text" id="set-db-token" placeholder="Token dari penyedia database">
+      <div class="baris" style="margin-top:10px">
+        <button class="btn btn-utama" onclick="hubungkanDB()">🔗 Hubungkan & Muat</button>
+        <button class="btn btn-ok" onclick="dorongKeDB(true)">⬆️ Simpan ke Database</button>
+        <button class="btn btn-netral" onclick="muatDariDB(true)">⬇️ Muat dari Database</button>
+        <button class="btn btn-bahaya" onclick="putuskanDB()">Putuskan</button>
+      </div>
+      <ul class="petunjuk">
+        <li>Logo sekolah tidak ikut tersinkron (terlalu besar untuk sel Sheet) — atur logo sekali di perangkat utama.</li>
+        <li>Data mentah bisa dilihat/diunduh sebagai Excel dari Google Drive Anda, file <b>DB Kartu PelajarKu</b>.</li>
+        <li>Bila sinkron gagal (mis. tidak ada internet), data tetap aman di perangkat dan tersimpan otomatis saat sambungan pulih dan ada perubahan berikutnya.</li>
+      </ul>
     </div>
     <div class="panel">
       <h2>Cadangan Data</h2>
@@ -372,7 +393,7 @@ function kecilkanFoto(file, maksW, maksH, format, cb){
 }
 function unggahFoto(input){
   var f=input.files&&input.files[0];if(!f)return;
-  kecilkanFoto(f,240,320,'image/jpeg',function(d){fotoBaru=d;setPrevFoto(d,'')});
+  kecilkanFoto(f,200,267,'image/jpeg',function(d){fotoBaru=d;setPrevFoto(d,'')});
   input.value='';
 }
 function simpanSiswa(){
@@ -627,6 +648,98 @@ function resetContoh(){
 isiPengaturan();
 renderTabel();
 window.__uji={get DB(){return DB},set DB(v){DB=v},simpan:simpan,bawaan:bawaan,renderTabel:renderTabel,kartuDepan:kartuDepan,kartuBelakang:kartuBelakang,barcodeHTML:barcodeHTML,bangunLembar:bangunLembar,petakanBaris:petakanBaris,tglDariSel:tglDariSel,fmtTgl:fmtTgl,siswaDipilih:siswaDipilih};
+</script>
+<script>
+/* ===== Sinkronisasi Database Online (Google Sheets via Apps Script) ===== */
+var DBK='kartupelajarku_db';
+var KONF_DB={url:'',token:''};
+try{var _kd=localStorage.getItem(DBK);if(_kd)KONF_DB=JSON.parse(_kd)||KONF_DB}catch(e){}
+var statusDBState='lokal',terakhirSinkron=null,tundaSinkron=null,memuatFlag=false;
+function simpanKonfDB(){try{localStorage.setItem(DBK,JSON.stringify(KONF_DB))}catch(e){}}
+function teksStatusDB(){
+  if(!KONF_DB.url)return '💾 Mode lokal — data hanya tersimpan di perangkat ini.';
+  if(statusDBState==='menghubungkan')return '⏳ Menghubungkan ke database…';
+  if(statusDBState==='gagal')return '⚠️ Sinkron ke database gagal — data tetap aman di perangkat ini dan akan dicoba lagi.';
+  if(statusDBState==='terhubung')return '☁️ Database terhubung'+(terakhirSinkron?(' • terakhir tersimpan '+terakhirSinkron.toLocaleTimeString('id-ID')):'')+'.';
+  return '☁️ Database dikonfigurasi — tekan Hubungkan & Muat.';
+}
+function setStatusDB(s){statusDBState=s;var t=teksStatusDB();var a=document.getElementById('status-db');if(a)a.textContent=t;var b=document.getElementById('status-db-ringkas');if(b)b.textContent=t}
+function isiFormDB(){
+  document.getElementById('set-db-url').value=KONF_DB.url||'';
+  document.getElementById('set-db-token').value=KONF_DB.token||'';
+  setStatusDB(KONF_DB.url?'siap':'lokal');
+}
+var simpanAsliDb=simpan;
+simpan=function(){simpanAsliDb();jadwalSinkron()};
+function jadwalSinkron(){
+  if(!KONF_DB.url||memuatFlag)return;
+  if(tundaSinkron)clearTimeout(tundaSinkron);
+  tundaSinkron=setTimeout(function(){dorongKeDB(false)},1600);
+}
+function hubungkanDB(){
+  KONF_DB.url=document.getElementById('set-db-url').value.trim();
+  KONF_DB.token=document.getElementById('set-db-token').value.trim();
+  if(!KONF_DB.url){alert('Isi dulu URL Web App databasenya.');return Promise.resolve(false)}
+  simpanKonfDB();
+  return muatDariDB(true);
+}
+function putuskanDB(){
+  if(!confirm('Putuskan hubungan database? Data di perangkat ini tidak ikut terhapus.'))return;
+  KONF_DB={url:'',token:''};simpanKonfDB();isiFormDB();
+}
+function muatDariDB(manual){
+  if(!KONF_DB.url){if(manual)alert('Database belum dihubungkan. Isi URL + token lalu tekan Hubungkan & Muat.');return Promise.resolve(false)}
+  setStatusDB('menghubungkan');
+  return fetch(KONF_DB.url+'?aksi=muat&token='+encodeURIComponent(KONF_DB.token)).then(function(r){return r.json()}).then(function(res){
+    if(!res||!res.ok)throw new Error((res&&res.pesan)||'Respon database tidak dikenal');
+    var serverKosong=(!res.siswa||!res.siswa.length)&&!(res.sekolah&&Object.keys(res.sekolah).length);
+    if(serverKosong){
+      setStatusDB('terhubung');
+      if(manual)alert('Database masih kosong — data dari perangkat ini akan diunggah sebagai isi pertama.');
+      return dorongKeDB(false);
+    }
+    memuatFlag=true;
+    var logoLokal=DB.sekolah.logo||'';
+    DB.siswa=res.siswa||[];
+    DB.sekolah=Object.assign(bawaan().sekolah,res.sekolah||{});
+    DB.sekolah.logo=logoLokal;
+    var idAda={};DB.siswa.forEach(function(s){idAda[s.id]=1});
+    DB.pilihan=DB.pilihan.filter(function(id){return idAda[id]});
+    if(!DB.pilihan.length)DB.pilihan=DB.siswa.map(function(s){return s.id});
+    simpanAsliDb();
+    memuatFlag=false;
+    isiPengaturan();renderTabel();
+    terakhirSinkron=new Date();
+    setStatusDB('terhubung');
+    if(manual)alert('Data dari database berhasil dimuat: '+DB.siswa.length+' siswa.');
+    return true;
+  }).catch(function(e){
+    memuatFlag=false;setStatusDB('gagal');
+    if(manual)alert('Gagal memuat dari database: '+e.message);
+    return false;
+  });
+}
+function dorongKeDB(manual){
+  if(!KONF_DB.url){if(manual)alert('Database belum dihubungkan.');return Promise.resolve(false)}
+  var sek={};Object.keys(DB.sekolah).forEach(function(k){if(k!=='logo')sek[k]=DB.sekolah[k]});
+  return fetch(KONF_DB.url,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({token:KONF_DB.token,aksi:'simpan',sekolah:sek,siswa:DB.siswa})}).then(function(r){return r.json()}).then(function(res){
+    if(!res||!res.ok)throw new Error((res&&res.pesan)||'Gagal menyimpan');
+    terakhirSinkron=new Date();setStatusDB('terhubung');
+    if(manual)alert('Tersimpan ke database: '+res.jumlah+' siswa.');
+    return true;
+  }).catch(function(e){
+    setStatusDB('gagal');
+    if(manual)alert('Gagal menyimpan ke database: '+e.message);
+    return false;
+  });
+}
+isiFormDB();
+if(KONF_DB.url)muatDariDB(false);
+window.__uji.muatDariDB=muatDariDB;
+window.__uji.dorongKeDB=dorongKeDB;
+window.__uji.hubungkanDB=hubungkanDB;
+window.__uji.getKonfDB=function(){return KONF_DB};
+window.__uji.teksStatusDB=teksStatusDB;
 </script>
 </body>
 </html>
