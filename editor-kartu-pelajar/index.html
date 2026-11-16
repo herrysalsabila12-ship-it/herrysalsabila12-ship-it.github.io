@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editor Kartu Pelajar — SMP Tarung Riwut</title>
+<style>
+:root{--navy:#0b2450;--navy2:#12407c;--gold:#f5c542;--bg:#eef2f8;--ink:#16283f;--mut:#5a6b87;--line:#d5deeb;--ok:#0d7a43;--bad:#b3261e}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
+header{background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;padding:14px 16px;position:sticky;top:0;z-index:30;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+header h1{font-size:19px}
+header p{font-size:12.5px;opacity:.85;margin-top:2px}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:700;margin-top:8px;background:#5a6b87}
+.pill.on{background:var(--ok)}
+nav{display:flex;gap:8px;padding:10px 12px 0;flex-wrap:wrap}
+nav button{flex:1;min-width:100px;padding:11px 6px;border:1px solid var(--line);background:#fff;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;color:var(--mut)}
+nav button.aktif{background:var(--navy);color:#fff;border-color:var(--navy)}
+main{padding:12px;max-width:1100px;margin:0 auto}
+.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+.panel h2{font-size:16px;margin-bottom:10px;color:var(--navy)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button.btn{padding:10px 14px;border-radius:10px;border:1px solid var(--navy);background:var(--navy);color:#fff;font-weight:700;cursor:pointer;font-size:14px}
+button.btn.alt{background:#fff;color:var(--navy)}
+button.btn.gold{background:var(--gold);border-color:var(--gold);color:var(--navy)}
+button.btn.kecil{padding:6px 10px;font-size:13px;border-radius:8px}
+button.btn.bahaya{background:#fff;color:var(--bad);border-color:var(--bad)}
+input,select,textarea{padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px;font-family:inherit;width:100%}
+label{font-size:12.5px;font-weight:700;color:var(--mut);display:block;margin:8px 0 4px}
+.cari{flex:1;min-width:160px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+th{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+.kosong{text-align:center;color:var(--mut);padding:26px 10px;line-height:1.6}
+dialog{border:none;border-radius:16px;padding:0;max-width:520px;width:94vw;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(6,18,38,.55)}
+.modal{padding:18px;max-height:88vh;overflow:auto}
+.modal h3{color:var(--navy);margin-bottom:6px}
+.fotoPrev{width:90px;height:120px;object-fit:cover;border:2px solid var(--navy2);border-radius:8px;background:#dbe6f7}
+.kecil-teks{font-size:12.5px;color:var(--mut);line-height:1.55}
+.hidden{display:none!important}
+/* ===== KARTU (format 1 sisi) ===== */
+.sheet{display:grid;grid-template-columns:repeat(2,85.6mm);gap:0;justify-content:center}
+.kcard{width:85.6mm;height:54mm;background:#fff;border:.3mm dashed #aab4c3;overflow:hidden;position:relative;font-family:Arial,Helvetica,sans-serif;color:#16283f;page-break-inside:avoid}
+.kc-head{height:11.8mm;background:linear-gradient(100deg,#0a1f44,#123a7d);color:#fff;display:flex;align-items:center;gap:2.2mm;padding:0 2.4mm;border-bottom:.8mm solid var(--gold)}
+.kc-logo{width:8.2mm;height:8.2mm;background:#fff;border-radius:1.2mm;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none}
+.kc-logo img{width:100%;height:100%;object-fit:contain}
+.kc-logo span{font-size:4.6pt;font-weight:700;color:#0a1f44;text-align:center;line-height:1.15}
+.kc-sek{flex:1;min-width:0}
+.kc-sek b{font-size:11pt;letter-spacing:.2px;display:block;white-space:nowrap;overflow:hidden}
+.kc-sek small{font-size:5.4pt;color:#cfe0ff;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kc-chip{background:var(--gold);color:#0a1f44;font-weight:800;font-size:6.8pt;text-align:center;border-radius:1.2mm;padding:1.2mm 1.8mm;line-height:1.25;flex:none}
+.kc-body{display:flex;gap:2.6mm;padding:2.2mm 2.4mm 0}
+.kc-foto{width:16.6mm;height:21.5mm;flex:none;border:.45mm solid #12407c;border-radius:1mm;background:#dbe6f7;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.kc-foto img{width:100%;height:100%;object-fit:cover}
+.kc-foto b{font-size:17pt;color:#12407c}
+.kc-data{flex:1;min-width:0}
+.kc-nama{font-size:11.5pt;font-weight:800;color:#0a1f44;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kc-kelas{font-size:7.6pt;font-weight:700;color:#12407c;margin:.4mm 0 1.2mm}
+.kc-row{display:flex;font-size:7.2pt;margin-top:.85mm}
+.kc-row b{width:11.5mm;flex:none;color:#5a6b87}
+.kc-row span{flex:1;min-width:0}
+.kc-alamat{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.kc-bc{margin:1.6mm 2.4mm 0 21.6mm}
+.bc{display:flex;align-items:stretch;height:4.6mm}
+.bc i{display:block;background:#141414}
+.bc s{display:block}
+.kc-bc-num{font-family:'Courier New',monospace;font-size:6.8pt;letter-spacing:2.2px;margin-top:.5mm}
+.kc-band{position:absolute;left:0;right:0;bottom:0;height:11.6mm;background:#eef3fa;border-top:.5mm solid var(--gold);display:flex;justify-content:space-between;gap:3mm;padding:1.2mm 2.4mm}
+.kc-ket{font-size:5.6pt;line-height:1.5;color:#16283f}
+.kc-ket b{color:#5a6b87;font-size:5.4pt;letter-spacing:.5px}
+.kc-ttd{text-align:right;font-size:6.4pt;line-height:1.35;flex:none}
+.kc-ttd .bc{height:2.6mm;margin:.6mm 0 .4mm auto}
+.kc-ttd b.nama{font-size:7.8pt;color:#0a1f44;text-decoration:underline}
+.kc-ttd small{font-size:5.6pt}
+.prevWrap{overflow:auto;background:#dfe6f0;border:1px solid var(--line);border-radius:12px;padding:10px}
+@media print{
+  body{background:#fff}
+  header,nav,.noPrint{display:none!important}
+  main{padding:0;max-width:none}
+  .panel{border:none;padding:0}
+  .prevWrap{overflow:visible;background:#fff;border:none;padding:0}
+  @page{size:A4;margin:13mm 19mm}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>🪪 Editor Kartu Pelajar</h1>
+  <p>SMP Tarung Riwut • format 1 sisi — tanda tangan kepsek berupa barcode NIP, tanpa halaman belakang</p>
+  <span class="pill" id="pillDb">⚪ Database belum terhubung (data tersimpan di perangkat ini)</span>
+</header>
+<nav>
+  <button id="tabData" class="aktif" onclick="keTab('data')">📋 Data Siswa</button>
+  <button id="tabCetak" onclick="keTab('cetak')">🖨️ Cetak Kartu</button>
+  <button id="tabAtur" onclick="keTab('atur')">⚙️ Pengaturan &amp; Database</button>
+</nav>
+<main>
+  <!-- ============ TAB DATA ============ -->
+  <section id="halData">
+    <div class="panel">
+      <div class="row">
+        <input class="cari" id="cari" placeholder="🔍 Cari nama / NISN…" oninput="renderTabel()">
+        <select id="fltKelas" style="width:auto" onchange="renderTabel()">
+          <option value="">Semua kelas</option><option>VII</option><option>VIII</option><option>IX</option>
+        </select>
+        <button class="btn gold" onclick="bukaEdit(-1)">＋ Tambah Siswa</button>
+      </div>
+      <p class="kecil-teks" id="ringkas" style="margin-top:8px"></p>
+      <div style="overflow:auto;margin-top:6px">
+      <table>
+        <thead><tr><th style="width:30px"><input type="checkbox" id="cekSemua" style="width:auto" onchange="cekSemua(this.checked)"></th><th>Nama</th><th>Kelas</th><th>NISN</th><th>JK</th><th>Foto</th><th style="width:130px">Aksi</th></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      </div>
+      <div class="kosong hidden" id="kosongBox">
+        Belum ada data siswa.<br>
+        Hubungkan <b>Database Online</b> di tab ⚙️ Pengaturan (isi token sekali),<br>
+        atau impor file CSV daftar siswa lewat tombol di bawah.
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn alt kecil" onclick="document.getElementById('fileCsv').click()">⬆️ Impor CSV/Excel</button>
+        <input type="file" id="fileCsv" accept=".csv,.xlsx,.xls" class="hidden" onchange="imporCsv(this)">
+        <button class="btn alt kecil" onclick="eksporCsv()">⬇️ Ekspor CSV</button>
+        <button class="btn alt kecil" onclick="unduhCadangan()">💾 Cadangan JSON</button>
+        <button class="btn alt kecil" onclick="document.getElementById('fileJson').click()">♻️ Pulihkan JSON</button>
+        <input type="file" id="fileJson" accept=".json" class="hidden" onchange="pulihkanJson(this)">
+        <button class="btn bahaya kecil" onclick="hapusTerpilih()">🗑️ Hapus Terpilih</button>
+      </div>
+      <p class="kecil-teks" style="margin-top:8px">Centang siswa yang akan dicetak. Impor Excel memakai SheetJS dari internet; bila offline, ekspor dulu ke CSV dari Excel/WPS lalu impor CSV-nya.</p>
+    </div>
+  </section>
+
+  <!-- ============ TAB CETAK ============ -->
+  <section id="halCetak" class="hidden">
+    <div class="panel noPrint">
+      <h2>🖨️ Cetak Kartu — Format 1 Sisi</h2>
+      <p class="kecil-teks">Kartu yang tampil = siswa yang <b>dicentang</b> di tab Data Siswa. Semua isi ada di sisi depan: data siswa, barcode NISN, ketentuan ringkas, dan blok tanda tangan kepala sekolah (barcode NIP). Tidak ada halaman belakang.</p>
+      <div class="row" style="margin-top:10px">
+        <button class="btn gold" onclick="window.print()">🖨️ Cetak / Simpan PDF</button>
+        <span class="kecil-teks" id="infoCetak"></span>
+      </div>
+      <p class="kecil-teks" style="margin-top:8px">Tips cetak: kertas A4, skala <b>100% / Actual Size</b> (jangan Fit to Page), margin sesuai bawaan halaman ini. Gunting mengikuti garis putus-putus.</p>
+    </div>
+    <div class="prevWrap"><div class="sheet" id="areaCetak"></div></div>
+  </section>
+
+  <!-- ============ TAB PENGATURAN ============ -->
+  <section id="halAtur" class="hidden">
+    <div class="panel">
+      <h2>🏫 Identitas Sekolah &amp; Tanda Tangan</h2>
+      <label>Nama Sekolah</label><input id="sNama" oninput="atur('nama',this.value)">
+      <label>NPSN</label><input id="sNpsn" oninput="atur('npsn',this.value)">
+      <label>Alamat Sekolah</label><input id="sAlamat" oninput="atur('alamat',this.value)">
+      <label>Nama Kepala Sekolah</label><input id="sKepsek" oninput="atur('kepsek',this.value)">
+      <label>NIP Kepala Sekolah (isi barcode tanda tangan)</label><input id="sNip" oninput="atur('nip',this.value)">
+      <label>Kota Tempat Tanda Tangan</label><input id="sKota" oninput="atur('kotaTtd',this.value)">
+      <label>Tanggal Tanda Tangan (teks)</label><input id="sTgl" oninput="atur('tglTtd',this.value)">
+      <label>Masa Berlaku Kartu</label><input id="sBerlaku" oninput="atur('berlaku',this.value)">
+      <label>Ketentuan Ringkas di Kartu (satu baris per nomor)</label>
+      <textarea id="sKetentuan" rows="3" oninput="atur('ketentuan',this.value)"></textarea>
+      <label>Logo Sekolah (opsional)</label>
+      <div class="row">
+        <input type="file" accept="image/*" style="width:auto;flex:1" onchange="muatLogo(this)">
+        <button class="btn alt kecil" onclick="hapusLogo()">Hapus Logo</button>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>🗄️ Database Online (Google Sheets)</h2>
+      <p class="kecil-teks">Data 67 siswa SMP Tarung Riwut tersimpan di database ini. Isi token <b>sekali saja</b>, lalu tekan Hubungkan &amp; Muat — setelah itu setiap perubahan otomatis tersimpan ke database.</p>
+      <label>URL Database</label><input id="dbUrl">
+      <label>Token Database</label><input id="dbToken" type="password" placeholder="Tempel token di sini">
+      <div class="row" style="margin-top:10px">
+        <button class="btn" onclick="hubungkan()">🔗 Hubungkan &amp; Muat</button>
+        <button class="btn alt" onclick="simpanDb(true)">⬆️ Simpan ke Database</button>
+        <button class="btn alt" onclick="muatDb(true)">⬇️ Muat dari Database</button>
+        <button class="btn bahaya" onclick="putuskan()">Putuskan</button>
+      </div>
+      <p class="kecil-teks" id="dbStatus" style="margin-top:8px"></p>
+    </div>
+  </section>
+</main>
+
+<!-- ============ MODAL EDIT ============ -->
+<dialog id="dlg">
+  <div class="modal">
+    <h3 id="dlgJudul">Edit Siswa</h3>
+    <input type="hidden" id="fId">
+    <label>Nama Siswa</label><input id="fNama">
+    <div class="row">
+      <div style="flex:1;min-width:120px"><label>NIS</label><input id="fNis"></div>
+      <div style="flex:1;min-width:140px"><label>NISN</label><input id="fNisn"></div>
+    </div>
+    <div class="row">
+      <div style="flex:1;min-width:110px"><label>Kelas</label>
+        <select id="fKelas"><option>VII</option><option>VIII</option><option>IX</option></select></div>
+      <div style="flex:1;min-width:110px"><label>Jenis Kelamin</label>
+        <select id="fJk"><option value="L">Laki-laki</option><option value="P">Perempuan</option></select></div>
+    </div>
+    <div class="row">
+      <div style="flex:1;min-width:140px"><label>Tempat Lahir</label><input id="fTmp"></div>
+      <div style="flex:1;min-width:140px"><label>Tanggal Lahir</label><input id="fTgl" type="date"></div>
+    </div>
+    <label>Alamat</label><textarea id="fAlamat" rows="2"></textarea>
+    <label>Foto Siswa</label>
+    <div class="row">
+      <img class="fotoPrev" id="fFotoPrev" alt="">
+      <div style="flex:1;min-width:150px">
+        <input type="file" accept="image/*" onchange="muatFoto(this)">
+        <button class="btn alt kecil" style="margin-top:6px" onclick="hapusFoto()">Hapus Foto</button>
+        <p class="kecil-teks" style="margin-top:6px">Tanpa foto, kartu menampilkan inisial nama.</p>
+      </div>
+    </div>
+    <div class="row" style="margin-top:14px;justify-content:flex-end">
+      <button class="btn alt" onclick="document.getElementById('dlg').close()">Batal</button>
+      <button class="btn gold" onclick="simpanSiswa()">💾 Simpan</button>
+    </div>
+  </div>
+</dialog>
+
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script>
+'use strict';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxJgQQQavgODBk6YpLzupLtDOT1TmZsk8xdUkVzWT9B1JsD7uuhRl68ZskkRSMQj62L/exec';
+const LSKEY = 'editorkp_v1';
+const BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const C39 = {'0':'nnnwwnwnn','1':'wnnwnnnnw','2':'nnwwnnnnw','3':'wnwwnnnnn','4':'nnnwwnnnw','5':'wnnwwnnnn','6':'nnwwwnnnn','7':'nnnwnnwnw','8':'wnnwnnwnn','9':'nnwwnnwnn','A':'wnnnnwnnw','B':'nnwnnwnnw','C':'wnwnnwnnn','D':'nnnnwwnnw','E':'wnnnwwnnn','F':'nnwnwwnnn','G':'nnnnnwwnw','H':'wnnnnwwnn','I':'nnwnnwwnn','J':'nnnnwwwnn','K':'wnnnnnnww','L':'nnwnnnnww','M':'wnwnnnnwn','N':'nnnnwnnww','O':'wnnnwnnwn','P':'nnwnwnnwn','Q':'nnnnnnwww','R':'wnnnnnwwn','S':'nnwnnnwwn','T':'nnnnwnwwn','U':'wwnnnnnnw','V':'nwwnnnnnw','W':'wwwnnnnnn','X':'nwnnwnnnw','Y':'wwnnwnnnn','Z':'nwwnwnnnn','-':'nwnnnnwnw','.':'wwnnnnwnn',' ':'nwwnnnwnn','*':'nwnnwnwnn','$':'nwnwnwnnn','/':'nwnwnnnwn','+':'nwnnnwnwn','%':'nnnwnwnwn'};
+
+function tglTeksHariIni(){ const d = new Date(); return d.getDate() + ' ' + BULAN[d.getMonth()] + ' ' + d.getFullYear(); }
+function defSekolah(){ return { nama:'SMP Tarung Riwut', npsn:'30202696',
+  alamat:'Jl. PLN Desa Luwuk Kanan, Kec. Tasik Payawan, Kab. Katingan, Kalimantan Tengah',
+  kepsek:'Masburdin, S.Pd', nip:'196711191991031006', kotaTtd:'Kasongan',
+  tglTtd: tglTeksHariIni(), berlaku:'31 Juli 2027',
+  ketentuan:'Identitas resmi siswa SMP Tarung Riwut\nWajib dibawa di lingkungan sekolah\nHilang / rusak: lapor Tata Usaha',
+  logo:'' }; }
+
+let S = { sekolah: defSekolah(), siswa: [], dbUrl: GAS_URL, dbToken: '', connected: false };
+let terpilih = new Set();
+let fotoTemp = '';
+try { const raw = localStorage.getItem(LSKEY); if (raw) { const p = JSON.parse(raw);
+  if (p && p.sekolah) S = Object.assign(S, p); } } catch(e) {}
+if (!S.dbUrl) S.dbUrl = GAS_URL;
+
+function simpanLokal(){ try { localStorage.setItem(LSKEY, JSON.stringify(S)); } catch(e) {} }
+function esc(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function inisial(nama){ const w = String(nama || '?').trim().split(/\s+/); return ((w[0] || '?')[0] + (w.length > 1 ? w[1][0] : '')).toUpperCase(); }
+function tglIndo(iso){ if (!iso) return ''; const p = String(iso).split('-'); if (p.length !== 3) return iso;
+  return parseInt(p[2], 10) + ' ' + BULAN[parseInt(p[1], 10) - 1] + ' ' + p[0]; }
+function uid(){ return 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+
+/* ===== barcode Code39 sebagai deretan div ===== */
+function barcodeHTML(teks, maxWmm, tinggiMm){
+  const full = '*' + String(teks || '0').toUpperCase() + '*';
+  let units = 0; const pola = [];
+  for (const ch of full) { const p = C39[ch] || C39['0']; pola.push(p);
+    for (const e of p) units += (e === 'w' ? 2.6 : 1); units += 1; }
+  const unit = Math.min(0.30, maxWmm / units);
+  let h = '<div class="bc" style="height:' + tinggiMm + 'mm">';
+  for (const p of pola) { for (let i = 0; i < p.length; i++) {
+      const w = (unit * (p[i] === 'w' ? 2.6 : 1)).toFixed(3);
+      h += (i % 2 === 0 ? '<i style="width:' + w + 'mm"></i>' : '<s style="width:' + w + 'mm"></s>'); }
+    h += '<s style="width:' + unit.toFixed(3) + 'mm"></s>'; }
+  return h + '</div>';
+}
+
+/* ===== kartu format 1 sisi ===== */
+function kartuHTML(s){
+  const k = S.sekolah;
+  const foto = s.foto ? '<img src="' + s.foto + '" alt="">' : '<b>' + esc(inisial(s.nama)) + '</b>';
+  const logo = k.logo ? '<img src="' + k.logo + '" alt="">' : '<span>LOGO<br>SEKOLAH</span>';
+  let baris = '';
+  if (s.nis) baris += '<div class="kc-row"><b>NIS</b><span>' + esc(s.nis) + '</span></div>';
+  baris += '<div class="kc-row"><b>NISN</b><span>' + esc(s.nisn || '-') + '</span></div>';
+  baris += '<div class="kc-row"><b>TTL</b><span>' + esc(s.tmpLahir || '') + (s.tglLahir ? ', ' + esc(tglIndo(s.tglLahir)) : '') + '</span></div>';
+  baris += '<div class="kc-row"><b>Alamat</b><span class="kc-alamat">' + esc(s.alamat || '-') + '</span></div>';
+  const ket = String(k.ketentuan || '').split('\n').filter(x => x.trim()).slice(0, 3)
+    .map((t, i) => (i + 1) + '. ' + esc(t.trim())).join('<br>');
+  return '<div class="kcard">'
+    + '<div class="kc-head"><div class="kc-logo">' + logo + '</div>'
+    + '<div class="kc-sek"><b>' + esc((k.nama || '').toUpperCase()) + '</b>'
+    + '<small>NPSN ' + esc(k.npsn || '') + ' • ' + esc(k.alamat || '') + '</small></div>'
+    + '<div class="kc-chip">KARTU<br>PELAJAR</div></div>'
+    + '<div class="kc-body"><div class="kc-foto">' + foto + '</div>'
+    + '<div class="kc-data"><div class="kc-nama">' + esc(s.nama || '') + '</div>'
+    + '<div class="kc-kelas">Kelas ' + esc(s.kelas || '') + ' • ' + (s.jk === 'P' ? 'Perempuan' : 'Laki-laki') + '</div>'
+    + baris + '</div></div>'
+    + '<div class="kc-bc">' + barcodeHTML(s.nisn || '0', 52, 4.6)
+    + '<div class="kc-bc-num">' + esc(String(s.nisn || '-').split('').join(' ')) + '</div></div>'
+    + '<div class="kc-band"><div class="kc-ket"><b>KETENTUAN</b><br>' + ket + '</div>'
+    + '<div class="kc-ttd">' + esc(k.kotaTtd || '') + ', ' + esc(k.tglTtd || '') + '<br>Kepala Sekolah,'
+    + barcodeHTML(k.nip || '0', 34, 2.6)
+    + '<b class="nama">' + esc(k.kepsek || '') + '</b><br><small>NIP. ' + esc(k.nip || '') + ' • Berlaku s.d. ' + esc(k.berlaku || '') + '</small></div></div>'
+    + '</div>';
+}
+
+/* ===== tab ===== */
+function keTab(t){
+  document.getElementById('halData').classList.toggle('hidden', t !== 'data');
+  document.getElementById('halCetak').classList.toggle('hidden', t !== 'cetak');
+  document.getElementById('halAtur').classList.toggle('hidden', t !== 'atur');
+  document.getElementById('tabData').classList.toggle('aktif', t === 'data');
+  document.getElementById('tabCetak').classList.toggle('aktif', t === 'cetak');
+  document.getElementById('tabAtur').classList.toggle('aktif', t === 'atur');
+  if (t === 'cetak') renderCetak();
+}
+
+/* ===== tabel siswa ===== */
+function renderTabel(){
+  const q = (document.getElementById('cari').value || '').toLowerCase();
+  const fk = document.getElementById('fltKelas').value;
+  const tb = document.getElementById('tbody');
+  let tampil = 0;
+  tb.innerHTML = S.siswa.filter(s => (!fk || s.kelas === fk) &&
+    (!q || (s.nama || '').toLowerCase().includes(q) || (s.nisn || '').includes(q)))
+    .map(s => { tampil++;
+      return '<tr><td><input type="checkbox" style="width:auto" ' + (terpilih.has(s.id) ? 'checked' : '')
+        + ' onchange="togglePilih(\'' + s.id + '\',this.checked)"></td>'
+        + '<td><b>' + esc(s.nama) + '</b></td><td>' + esc(s.kelas) + '</td><td>' + esc(s.nisn || '-') + '</td>'
+        + '<td>' + esc(s.jk || 'L') + '</td><td>' + (s.foto ? '🖼️' : '—') + '</td>'
+        + '<td><button class="btn alt kecil" onclick="bukaEdit(\'' + s.id + '\')">✏️ Edit</button> '
+        + '<button class="btn bahaya kecil" onclick="hapusSatu(\'' + s.id + '\')">🗑️</button></td></tr>'; }).join('');
+  document.getElementById('kosongBox').classList.toggle('hidden', S.siswa.length > 0);
+  const per = {}; S.siswa.forEach(s => { per[s.kelas] = (per[s.kelas] || 0) + 1; });
+  document.getElementById('ringkas').textContent = 'Total ' + S.siswa.length + ' siswa'
+    + (S.siswa.length ? ' (' + Object.keys(per).sort().map(k => 'Kelas ' + k + ': ' + per[k]).join(' • ') + ')' : '')
+    + ' • terpilih untuk dicetak: ' + terpilih.size + (tampil < S.siswa.length ? ' • tampil ' + tampil : '');
+}
+function togglePilih(id, on){ if (on) terpilih.add(id); else terpilih.delete(id); renderTabel(); }
+function cekSemua(on){ S.siswa.forEach(s => { if (on) terpilih.add(s.id); else terpilih.delete(s.id); }); renderTabel(); }
+function hapusSatu(id){ const s = S.siswa.find(x => x.id === id);
+  if (s && confirm('Hapus siswa ' + s.nama + '?')) { S.siswa = S.siswa.filter(x => x.id !== id); terpilih.delete(id); sesudahUbah(); } }
+function hapusTerpilih(){ if (!terpilih.size) { alert('Belum ada siswa yang dicentang.'); return; }
+  if (confirm('Hapus ' + terpilih.size + ' siswa terpilih?')) { S.siswa = S.siswa.filter(x => !terpilih.has(x.id)); terpilih.clear(); sesudahUbah(); } }
+
+/* ===== modal edit ===== */
+function bukaEdit(id){
+  const s = id === -1 ? null : S.siswa.find(x => x.id === id);
+  document.getElementById('dlgJudul').textContent = s ? 'Edit Siswa' : 'Tambah Siswa';
+  document.getElementById('fId').value = s ? s.id : '';
+  document.getElementById('fNama').value = s ? s.nama : '';
+  document.getElementById('fNis').value = s ? (s.nis || '') : '';
+  document.getElementById('fNisn').value = s ? (s.nisn || '') : '';
+  document.getElementById('fKelas').value = s ? s.kelas : 'VII';
+  document.getElementById('fJk').value = s ? s.jk : 'L';
+  document.getElementById('fTmp').value = s ? (s.tmpLahir || '') : '';
+  document.getElementById('fTgl').value = s ? (s.tglLahir || '') : '';
+  document.getElementById('fAlamat').value = s ? (s.alamat || '') : '';
+  fotoTemp = s ? (s.foto || '') : '';
+  segarFoto();
+  document.getElementById('dlg').showModal();
+}
+function segarFoto(){ const im = document.getElementById('fFotoPrev');
+  if (fotoTemp) { im.src = fotoTemp; im.style.opacity = 1; } else { im.removeAttribute('src'); im.style.opacity = .25; } }
+function muatFoto(inp){ const f = inp.files && inp.files[0]; if (!f) return;
+  const img = new Image();
+  img.onload = function(){ const cv = document.createElement('canvas');
+    const skala = Math.min(1, 240 / img.width, 320 / img.height);
+    cv.width = Math.round(img.width * skala); cv.height = Math.round(img.height * skala);
+    cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+    fotoTemp = cv.toDataURL('image/jpeg', .82); segarFoto(); URL.revokeObjectURL(img.src); };
+  img.src = URL.createObjectURL(f); }
+function hapusFoto(){ fotoTemp = ''; segarFoto(); }
+function simpanSiswa(){
+  const nama = document.getElementById('fNama').value.trim();
+  if (!nama) { alert('Nama siswa wajib diisi.'); return; }
+  const id = document.getElementById('fId').value;
+  const data = { nama: nama,
+    nis: document.getElementById('fNis').value.trim(),
+    nisn: document.getElementById('fNisn').value.trim(),
+    kelas: document.getElementById('fKelas').value,
+    jk: document.getElementById('fJk').value,
+    tmpLahir: document.getElementById('fTmp').value.trim(),
+    tglLahir: document.getElementById('fTgl').value,
+    alamat: document.getElementById('fAlamat').value.trim(),
+    foto: fotoTemp };
+  if (id) { const s = S.siswa.find(x => x.id === id); if (s) Object.assign(s, data); }
+  else { data.id = uid(); S.siswa.push(data); terpilih.add(data.id); }
+  document.getElementById('dlg').close();
+  sesudahUbah();
+}
+
+/* ===== pengaturan ===== */
+function atur(kunci, nilai){ S.sekolah[kunci] = nilai; sesudahUbah(false); }
+function isiFormAtur(){
+  const k = S.sekolah;
+  const set = (id, v) => { document.getElementById(id).value = v || ''; };
+  set('sNama', k.nama); set('sNpsn', k.npsn); set('sAlamat', k.alamat); set('sKepsek', k.kepsek);
+  set('sNip', k.nip); set('sKota', k.kotaTtd); set('sTgl', k.tglTtd); set('sBerlaku', k.berlaku);
+  set('sKetentuan', k.ketentuan);
+  document.getElementById('dbUrl').value = S.dbUrl || GAS_URL;
+  document.getElementById('dbToken').value = S.dbToken || '';
+}
+function muatLogo(inp){ const f = inp.files && inp.files[0]; if (!f) return;
+  const img = new Image();
+  img.onload = function(){ const cv = document.createElement('canvas');
+    const skala = Math.min(1, 200 / img.width, 200 / img.height);
+    cv.width = Math.round(img.width * skala); cv.height = Math.round(img.height * skala);
+    cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+    S.sekolah.logo = cv.toDataURL('image/png'); sesudahUbah(); URL.revokeObjectURL(img.src); };
+  img.src = URL.createObjectURL(f); }
+function hapusLogo(){ S.sekolah.logo = ''; sesudahUbah(); }
+
+/* ===== cetak ===== */
+function renderCetak(){
+  const daftar = S.siswa.filter(s => terpilih.has(s.id));
+  document.getElementById('areaCetak').innerHTML = daftar.map(kartuHTML).join('');
+  document.getElementById('infoCetak').textContent = daftar.length
+    ? daftar.length + ' kartu • ' + Math.ceil(daftar.length / 10) + ' halaman A4'
+    : 'Belum ada siswa tercentang — centang dulu di tab Data Siswa.';
+}
+
+/* ===== CSV / JSON ===== */
+function parseCsvTeks(teks){
+  const baris = []; let cur = [''], inQ = false, f = 0;
+  const pushRow = () => { baris.push(cur); cur = ['']; f = 0; };
+  for (let i = 0; i < teks.length; i++) { const c = teks[i];
+    if (inQ) { if (c === '"') { if (teks[i + 1] === '"') { cur[f] += '"'; i++; } else inQ = false; } else cur[f] += c; }
+    else if (c === '"') inQ = true;
+    else if (c === ',') { cur.push(''); f++; }
+    else if (c === '\n') pushRow();
+    else if (c !== '\r') cur[f] += c; }
+  if (cur.length > 1 || cur[0]) pushRow();
+  return baris;
+}
+function imporCsv(inp){
+  const f = inp.files && inp.files[0]; if (!f) return;
+  const selesai = teks => {
+    try {
+      const rows = parseCsvTeks(teks);
+      const head = rows[0].map(h => String(h).trim().toLowerCase());
+      const ix = n => head.indexOf(n);
+      const iN = ix('nama'), iS = ix('nis'), iSN = ix('nisn'), iK = ix('kelas'),
+            iT = ix('tempat lahir'), iTG = ix('tanggal lahir'), iA = ix('alamat'), iJ = ix('jk');
+      if (iN < 0) { alert('Kolom "Nama" tidak ditemukan di file.'); return; }
+      let n = 0;
+      rows.slice(1).forEach(r => { const nama = (r[iN] || '').trim(); if (!nama) return;
+        let kelas = iK >= 0 ? (r[iK] || '').trim() : '';
+        const petaK = { '7': 'VII', '8': 'VIII', '9': 'IX', 'kelas 7': 'VII', 'kelas 8': 'VIII', 'kelas 9': 'IX' };
+        if (petaK[kelas.toLowerCase()]) kelas = petaK[kelas.toLowerCase()];
+        let nisn = iSN >= 0 ? String(r[iSN] || '').replace(/\s/g, '') : '';
+        if (/^\d+$/.test(nisn) && nisn.length < 10) nisn = nisn.padStart(10, '0');
+        const ada = S.siswa.find(x => x.nisn && x.nisn === nisn);
+        const data = { nama: nama, nis: iS >= 0 ? (r[iS] || '').trim() : '',
+          nisn: nisn, kelas: kelas || 'VII', tmpLahir: iT >= 0 ? (r[iT] || '').trim() : '',
+          tglLahir: iTG >= 0 ? (r[iTG] || '').trim() : '', alamat: iA >= 0 ? (r[iA] || '').trim() : '',
+          jk: (iJ >= 0 && String(r[iJ]).trim().toUpperCase().startsWith('P')) ? 'P' : 'L',
+          foto: ada ? ada.foto : '' };
+        if (ada) Object.assign(ada, data); else { data.id = uid(); S.siswa.push(data); terpilih.add(data.id); }
+        n++; });
+      alert(n + ' siswa berhasil diimpor/diperbarui.');
+      sesudahUbah();
+    } catch (e) { alert('Gagal membaca file: ' + e.message); }
+    inp.value = '';
+  };
+  if (/\.xlsx?$/i.test(f.name)) {
+    if (typeof XLSX === 'undefined') { alert('Pembaca Excel belum termuat (butuh internet sekali). Ekspor file ke CSV dari Excel/WPS, lalu impor CSV-nya.'); inp.value = ''; return; }
+    const rd = new FileReader();
+    rd.onload = e => { try { const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      selesai(XLSX.utils.sheet_to_csv(ws)); } catch (err) { alert('Gagal membaca Excel: ' + err.message); inp.value = ''; } };
+    rd.readAsArrayBuffer(f);
+  } else {
+    const rd = new FileReader();
+    rd.onload = e => selesai(e.target.result);
+    rd.readAsText(f);
+  }
+}
+function eksporCsv(){
+  const head = 'Nama,NIS,NISN,Kelas,Tempat Lahir,Tanggal Lahir,Alamat,JK';
+  const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+  const isi = [head].concat(S.siswa.map(s => [s.nama, s.nis, s.nisn, s.kelas, s.tmpLahir, s.tglLahir, s.alamat, s.jk].map(q).join(','))).join('\r\n');
+  unduh(new Blob(['\ufeff' + isi], { type: 'text/csv' }), 'data-siswa-kartu-pelajar.csv');
+}
+function unduhCadangan(){ unduh(new Blob([JSON.stringify({ sekolah: S.sekolah, siswa: S.siswa }, null, 1)], { type: 'application/json' }), 'cadangan-editor-kartu-pelajar.json'); }
+function pulihkanJson(inp){ const f = inp.files && inp.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = e => { try { const p = JSON.parse(e.target.result);
+      if (p.sekolah) S.sekolah = Object.assign(defSekolah(), p.sekolah);
+      if (Array.isArray(p.siswa)) { S.siswa = p.siswa; terpilih = new Set(S.siswa.map(x => x.id)); }
+      isiFormAtur(); sesudahUbah(); alert('Cadangan dipulihkan: ' + S.siswa.length + ' siswa.');
+    } catch (err) { alert('File cadangan tidak valid.'); } inp.value = ''; };
+  rd.readAsText(f); }
+function unduh(blob, nama){ const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = nama; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
+
+/* ===== database online ===== */
+function setPill(){ const p = document.getElementById('pillDb');
+  if (S.connected) { p.textContent = '🟢 Database terhubung — perubahan tersimpan otomatis'; p.classList.add('on'); }
+  else { p.textContent = '⚪ Database belum terhubung (data tersimpan di perangkat ini)'; p.classList.remove('on'); } }
+let tmrSync = null;
+function sesudahUbah(renderJuga = true){
+  simpanLokal();
+  if (renderJuga) renderTabel();
+  if (S.connected) { clearTimeout(tmrSync); tmrSync = setTimeout(() => simpanDb(false), 1600); }
+}
+async function gasMuat(){
+  const r = await fetch(S.dbUrl + '?aksi=muat&token=' + encodeURIComponent(S.dbToken));
+  const d = await r.json();
+  if (!d.ok) throw new Error(d.error || 'muat gagal');
+  return d;
+}
+async function gasSimpan(){
+  const r = await fetch(S.dbUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ token: S.dbToken, aksi: 'simpan', sekolah: S.sekolah, siswa: S.siswa }) });
+  const d = await r.json();
+  if (!d.ok) throw new Error(d.error || 'simpan gagal');
+  return d;
+}
+function terapkanDataDb(d){
+  if (d.sekolah) { const logoLokal = S.sekolah.logo; S.sekolah = Object.assign(defSekolah(), d.sekolah);
+    if (!S.sekolah.logo && logoLokal) S.sekolah.logo = logoLokal; }
+  if (Array.isArray(d.siswa)) { S.siswa = d.siswa; terpilih = new Set(S.siswa.map(x => x.id)); }
+}
+async function hubungkan(){
+  S.dbUrl = document.getElementById('dbUrl').value.trim() || GAS_URL;
+  S.dbToken = document.getElementById('dbToken').value.trim();
+  const st = document.getElementById('dbStatus');
+  if (!S.dbToken) { st.textContent = '⚠️ Token masih kosong — tempel token database dulu.'; return; }
+  st.textContent = '⏳ Menghubungkan…';
+  try {
+    const d = await gasMuat();
+    if (Array.isArray(d.siswa) && d.siswa.length) { terapkanDataDb(d); S.connected = true;
+      st.textContent = '✅ Terhubung. ' + S.siswa.length + ' siswa termuat dari database.'; }
+    else { S.connected = true; await gasSimpan();
+      st.textContent = '✅ Terhubung. Database masih kosong, data lokal diunggah sebagai isi pertama.'; }
+    setPill(); isiFormAtur(); sesudahUbah();
+  } catch (e) { S.connected = false; setPill();
+    st.textContent = '❌ Gagal terhubung: ' + e.message + ' — periksa token & koneksi internet.'; }
+}
+async function muatDb(manual){
+  const st = document.getElementById('dbStatus');
+  try { const d = await gasMuat(); terapkanDataDb(d);
+    if (manual) st.textContent = '✅ Dimuat dari database: ' + S.siswa.length + ' siswa.';
+    isiFormAtur(); sesudahUbah(false); renderTabel();
+  } catch (e) { if (manual) st.textContent = '❌ Gagal memuat: ' + e.message; }
+}
+async function simpanDb(manual){
+  const st = document.getElementById('dbStatus');
+  try { const d = await gasSimpan();
+    if (manual) st.textContent = '✅ Tersimpan ke database (' + d.jumlah + ' siswa).';
+  } catch (e) { if (manual) st.textContent = '❌ Gagal menyimpan: ' + e.message; }
+}
+function putuskan(){ S.connected = false; setPill(); simpanLokal();
+  document.getElementById('dbStatus').textContent = 'Database diputuskan. Data tetap tersimpan di perangkat ini.'; }
+
+/* ===== mulai ===== */
+isiFormAtur();
+setPill();
+renderTabel();
+</script>
+</body>
+</html>
