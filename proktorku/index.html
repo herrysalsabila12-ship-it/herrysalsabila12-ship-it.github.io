@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProktorKu — CBT dengan Kamera Pengawas</title>
+<style>
+:root{--tua:#07332f;--teal:#0b5563;--teal2:#0e7490;--emas:#f5b942;--bg:#edf3f3;--ink:#14201f;--mut:#5c6f6d;--line:#cfddda;--ok:#0d7a43;--bad:#b3261e;--warn:#b45309}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
+header{background:linear-gradient(120deg,var(--tua),var(--teal));color:#fff;padding:14px 16px;position:sticky;top:0;z-index:40;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+header h1{font-size:19px}
+header p{font-size:12.5px;opacity:.85;margin-top:2px}
+main{padding:12px;max-width:1080px;margin:0 auto}
+.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+.panel h2{font-size:16px;margin-bottom:10px;color:var(--teal)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button.btn{padding:10px 14px;border-radius:10px;border:1px solid var(--teal);background:var(--teal);color:#fff;font-weight:700;cursor:pointer;font-size:14px}
+button.btn.alt{background:#fff;color:var(--teal)}
+button.btn.gold{background:var(--emas);border-color:var(--emas);color:var(--tua)}
+button.btn.kecil{padding:6px 10px;font-size:13px;border-radius:8px}
+button.btn.bahaya{background:#fff;color:var(--bad);border-color:var(--bad)}
+button.btn:disabled{opacity:.45;cursor:not-allowed}
+input,select,textarea{padding:10px;border:1px solid var(--line);border-radius:10px;font-size:14px;font-family:inherit;width:100%}
+label{font-size:12.5px;font-weight:700;color:var(--mut);display:block;margin:8px 0 4px}
+.kecil{font-size:12.5px;color:var(--mut);line-height:1.55}
+.hidden{display:none!important}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;vertical-align:top}
+th{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+nav.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+nav.tabs button{flex:1;min-width:105px;padding:11px 6px;border:1px solid var(--line);background:#fff;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;color:var(--mut)}
+nav.tabs button.aktif{background:var(--teal);color:#fff;border-color:var(--teal)}
+dialog{border:none;border-radius:16px;padding:0;max-width:560px;width:94vw;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(4,24,22,.55)}
+.modal{padding:18px;max-height:88vh;overflow:auto}
+.modal h3{color:var(--teal);margin-bottom:6px}
+.stat{display:flex;gap:10px;flex-wrap:wrap}
+.stat div{flex:1;min-width:120px;background:#f2f7f6;border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+.stat b{font-size:22px;color:var(--teal);display:block}
+.badge{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:700;background:#e2efec;color:var(--teal)}
+.badge.merah{background:#fde8e6;color:var(--bad)}
+.badge.kuning{background:#fdf0dc;color:var(--warn)}
+.badge.hijau{background:#e2f4e8;color:var(--ok)}
+/* ===== layar ujian ===== */
+.ujian-head{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch;margin-bottom:12px}
+.kotak{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.timer{font-size:24px;font-weight:800;color:var(--teal);font-variant-numeric:tabular-nums}
+.timer.kritis{color:var(--bad)}
+.kambox{position:relative;width:180px;flex:none}
+.kambox video{width:100%;border-radius:10px;background:#0a0f0e;display:block;aspect-ratio:4/3;object-fit:cover}
+.kamstat{position:absolute;left:6px;bottom:6px;background:rgba(0,0,0,.65);color:#fff;font-size:11.5px;padding:3px 8px;border-radius:99px}
+.rec{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ff5147;margin-right:5px;animation:kedip 1.2s infinite}
+@keyframes kedip{50%{opacity:.25}}
+.soal-teks{font-size:16.5px;line-height:1.6;margin-bottom:12px;white-space:pre-wrap}
+.soal-img{max-width:100%;border-radius:10px;border:1px solid var(--line);margin-bottom:10px}
+.opsi{display:block;width:100%;text-align:left;padding:12px;border:1.5px solid var(--line);background:#fff;border-radius:12px;margin-bottom:8px;cursor:pointer;font-size:15px}
+.opsi:hover{border-color:var(--teal2)}
+.opsi.dipilih{border-color:var(--teal);background:#e6f4f1;font-weight:700}
+.opsi b{color:var(--teal);margin-right:8px}
+.gridnomor{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:6px}
+.gridnomor button{padding:9px 0;border-radius:9px;border:1.5px solid var(--line);background:#fff;font-weight:700;cursor:pointer}
+.gridnomor button.isi{background:#0d7a43;color:#fff;border-color:#0d7a43}
+.gridnomor button.ragu{background:#f5b942;color:#07332f;border-color:#f5b942}
+.gridnomor button.aktif{outline:3px solid var(--teal2)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#7c1d18;color:#fff;padding:12px 18px;border-radius:12px;font-weight:700;z-index:99;box-shadow:0 10px 30px rgba(0,0,0,.35);max-width:92vw;text-align:center}
+.galeri{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.galeri figure{background:#f7faf9;border:1px solid var(--line);border-radius:10px;padding:5px;text-align:center}
+.galeri img{width:100%;border-radius:7px;display:block}
+.galeri figcaption{font-size:11px;color:var(--mut);margin-top:3px}
+video.besar{width:100%;max-width:420px;border-radius:12px;background:#0a0f0e;display:block;margin:0 auto;aspect-ratio:4/3;object-fit:cover}
+.fotoReg{width:100%;max-width:420px;border-radius:12px;display:block;margin:0 auto}
+</style>
+</head>
+<body>
+<header>
+  <h1>📹 ProktorKu — CBT Kamera Pengawas</h1>
+  <p id="subSekolah">Portal ujian berbasis komputer dengan pengawasan kamera • SMP Tarung Riwut</p>
+</header>
+<main>
+  <!-- ======= BERANDA ======= -->
+  <section id="layarBeranda">
+    <div class="panel" style="text-align:center;padding:26px 16px">
+      <div style="font-size:44px">📝📹</div>
+      <h2 style="font-size:20px;margin:8px 0">Selamat Datang di Portal Ujian</h2>
+      <p class="kecil" style="max-width:520px;margin:0 auto">Siswa mengerjakan ujian dengan pengawasan kamera: foto registrasi sebelum mulai, foto berkala selama ujian, dan catatan pelanggaran otomatis (pindah tab, keluar layar penuh, wajah tidak terlihat).</p>
+      <div class="row" style="justify-content:center;margin-top:16px">
+        <button class="btn gold" style="font-size:16px;padding:13px 22px" onclick="keLoginSiswa()">🎓 Masuk sebagai Siswa</button>
+        <button class="btn" style="font-size:16px;padding:13px 22px" onclick="keLoginGuru()">👩‍🏫 Masuk sebagai Guru / Proktor</button>
+      </div>
+      <p class="kecil" style="margin-top:14px">Kamera hanya aktif di perangkat siswa selama ujian dan foto tersimpan di perangkat ini (ruang guru) — tidak dikirim ke internet.</p>
+    </div>
+  </section>
+
+  <!-- ======= LOGIN GURU ======= -->
+  <section id="layarLoginGuru" class="hidden">
+    <div class="panel" style="max-width:420px;margin:20px auto">
+      <h2>👩‍🏫 Login Guru / Proktor</h2>
+      <label>PIN Guru</label>
+      <input id="pinGuru" type="password" inputmode="numeric" placeholder="PIN (bawaan: 123456)">
+      <div class="row" style="margin-top:12px">
+        <button class="btn" onclick="loginGuru()">Masuk</button>
+        <button class="btn alt" onclick="keBeranda()">Kembali</button>
+      </div>
+      <p class="kecil" id="pinSalah" style="color:var(--bad);margin-top:8px"></p>
+      <p class="kecil" style="margin-top:6px">PIN bawaan <b>123456</b> — ganti di tab Pengaturan setelah masuk.</p>
+    </div>
+  </section>
+
+  <!-- ======= RUANG GURU ======= -->
+  <section id="layarGuru" class="hidden">
+    <nav class="tabs">
+      <button id="tgDash" class="aktif" onclick="tabGuru('dash')">📊 Ringkasan</button>
+      <button id="tgUjian" onclick="tabGuru('ujian')">📝 Ujian &amp; Soal</button>
+      <button id="tgPeserta" onclick="tabGuru('peserta')">🎓 Peserta</button>
+      <button id="tgHasil" onclick="tabGuru('hasil')">📹 Hasil &amp; Pengawasan</button>
+      <button id="tgAtur" onclick="tabGuru('atur')">⚙️ Pengaturan</button>
+      <button onclick="keluarGuru()">🚪 Keluar</button>
+    </nav>
+    <div id="gDash">
+      <div class="panel"><div class="stat" id="statGuru"></div></div>
+      <div class="panel"><h2>Cara Pakai Singkat</h2>
+        <p class="kecil">1. Buat ujian di tab <b>Ujian &amp; Soal</b>, isi soal dan atur pengawasan kameranya.<br>
+        2. Daftarkan siswa di tab <b>Peserta</b> (atau aktifkan "akses terbuka" pada ujian untuk latihan).<br>
+        3. Bagikan <b>token ujian</b> ke siswa. Siswa login dengan NISN, memilih ujian, memasukkan token.<br>
+        4. Pantau nilai, foto berkala, dan log pelanggaran di tab <b>Hasil &amp; Pengawasan</b>.</p>
+      </div>
+    </div>
+    <div id="gUjian" class="hidden">
+      <div class="panel">
+        <div class="row"><h2 style="flex:1;margin:0">📝 Daftar Ujian</h2>
+        <button class="btn gold kecil" onclick="bukaUjian(-1)">＋ Buat Ujian</button></div>
+        <div style="overflow:auto;margin-top:8px"><table>
+          <thead><tr><th>Ujian</th><th>Token</th><th>Durasi</th><th>Soal</th><th>Kamera</th><th>Akses</th><th style="width:190px">Aksi</th></tr></thead>
+          <tbody id="tbUjian"></tbody></table></div>
+      </div>
+      <div class="panel" id="panelSoal">
+        <h2 id="judulSoal">📚 Soal</h2>
+        <p class="kecil" id="infoSoal">Pilih ujian di atas (tombol Soal) untuk mengelola soalnya.</p>
+        <div id="isiSoal"></div>
+      </div>
+    </div>
+    <div id="gPeserta" class="hidden">
+      <div class="panel">
+        <div class="row"><h2 style="flex:1;margin:0">🎓 Daftar Peserta</h2>
+        <button class="btn gold kecil" onclick="bukaPeserta(-1)">＋ Tambah Peserta</button></div>
+        <div style="overflow:auto;margin-top:8px"><table>
+          <thead><tr><th>Nama</th><th>NISN</th><th>Kelas</th><th style="width:130px">Aksi</th></tr></thead>
+          <tbody id="tbPeserta"></tbody></table></div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn alt kecil" onclick="document.getElementById('filePeserta').click()">⬆️ Impor Peserta CSV</button>
+          <input type="file" id="filePeserta" accept=".csv" class="hidden" onchange="imporPeserta(this)">
+          <span class="kecil">Format CSV: Nama,NISN,Kelas</span>
+        </div>
+      </div>
+    </div>
+    <div id="gHasil" class="hidden">
+      <div class="panel">
+        <div class="row"><h2 style="flex:1;margin:0">📹 Hasil &amp; Pengawasan</h2>
+        <select id="fltHasil" style="width:auto" onchange="renderHasil()"></select>
+        <button class="btn alt kecil" onclick="eksporHasil()">⬇️ Ekspor CSV</button></div>
+        <div style="overflow:auto;margin-top:8px"><table>
+          <thead><tr><th>Siswa</th><th>Ujian</th><th>Nilai</th><th>Benar</th><th>Foto</th><th>Pelanggaran</th><th>Status</th><th style="width:100px">Aksi</th></tr></thead>
+          <tbody id="tbHasil"></tbody></table></div>
+        <p class="kecil" id="hasilKosong" style="margin-top:8px"></p>
+      </div>
+      <div class="panel hidden" id="panelDetailHasil">
+        <h2 id="judulDetail">Detail Pengawasan</h2>
+        <div id="isiDetail"></div>
+      </div>
+    </div>
+    <div id="gAtur" class="hidden">
+      <div class="panel">
+        <h2>⚙️ Pengaturan</h2>
+        <label>Nama Sekolah</label><input id="aSekolah" oninput="aturSet('sekolah',this.value)">
+        <label>PIN Guru Baru</label><input id="aPin" type="password" inputmode="numeric" placeholder="Kosongkan bila tidak diubah">
+        <div class="row" style="margin-top:10px"><button class="btn kecil" onclick="simpanPin()">Simpan PIN</button></div>
+        <hr style="margin:16px 0;border:none;border-top:1px solid var(--line)">
+        <div class="row">
+          <button class="btn alt kecil" onclick="unduhCadangan()">💾 Cadangan JSON</button>
+          <button class="btn alt kecil" onclick="document.getElementById('fileJson').click()">♻️ Pulihkan JSON</button>
+          <input type="file" id="fileJson" accept=".json" class="hidden" onchange="pulihkanJson(this)">
+          <button class="btn bahaya kecil" onclick="hapusSemuaHasil()">🗑️ Hapus Semua Hasil</button>
+        </div>
+        <p class="kecil" style="margin-top:8px">Semua data tersimpan lokal di perangkat ini. Lakukan cadangan berkala.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= LOGIN SISWA ======= -->
+  <section id="layarLoginSiswa" class="hidden">
+    <div class="panel" style="max-width:460px;margin:16px auto">
+      <h2>🎓 Login Siswa</h2>
+      <label>Nama Lengkap</label><input id="sNama" placeholder="Sesuai daftar peserta">
+      <label>NISN</label><input id="sNisn" inputmode="numeric" placeholder="10 digit NISN">
+      <label>Pilih Ujian</label><select id="sUjian"></select>
+      <label>Token Ujian</label><input id="sToken" placeholder="Dari guru / proktor" style="text-transform:uppercase">
+      <div class="row" style="margin-top:12px">
+        <button class="btn gold" onclick="loginSiswa()">Lanjut ke Persiapan</button>
+        <button class="btn alt" onclick="keBeranda()">Kembali</button>
+      </div>
+      <p class="kecil" id="loginSalah" style="color:var(--bad);margin-top:8px"></p>
+    </div>
+  </section>
+
+  <!-- ======= PERSIAPAN ======= -->
+  <section id="layarSiap" class="hidden">
+    <div class="panel" style="max-width:560px;margin:12px auto">
+      <h2 id="siapJudul">Persiapan Ujian</h2>
+      <div id="siapInfo" class="kecil" style="margin-bottom:10px"></div>
+      <div id="siapKamera">
+        <p class="kecil" style="margin-bottom:8px"><b>📹 Cek Kamera</b> — posisikan wajah di tengah. Foto registrasi diambil sebelum ujian dimulai, lalu foto berkala selama ujian berjalan.</p>
+        <div id="wadahVideoSiap"></div>
+        <img id="fotoRegImg" class="fotoReg hidden" alt="Foto registrasi">
+        <div class="row" style="justify-content:center;margin-top:10px">
+          <button class="btn alt kecil" id="btnNyalakan" onclick="nyalakanKamera(true)">📷 Nyalakan Kamera</button>
+          <button class="btn kecil hidden" id="btnAmbil" onclick="ambilFotoReg()">📸 Ambil Foto Registrasi</button>
+          <button class="btn alt kecil hidden" id="btnUlang" onclick="ulangFoto()">↩️ Ulangi Foto</button>
+        </div>
+        <p class="kecil" id="kamPesan" style="text-align:center;margin-top:8px"></p>
+      </div>
+      <div class="panel" style="background:#fdf6e3;border-color:#ecd9a0;margin-top:12px">
+        <b>📜 Peraturan</b>
+        <p class="kecil" style="margin-top:4px">• Kerjakan sendiri, tanpa membuka tab/aplikasi lain.<br>
+        • Keluar dari layar penuh dan berpindah tab tercatat sebagai pelanggaran.<br>
+        • Bila jumlah pelanggaran mencapai batas, ujian dikumpulkan otomatis.<br>
+        • Jawaban tersimpan otomatis di perangkat ini selama ujian.</p>
+      </div>
+      <div class="row" style="justify-content:center;margin-top:6px">
+        <button class="btn gold" id="btnMulai" style="font-size:16px;padding:13px 26px" onclick="mulaiUjian()">▶️ Mulai Ujian</button>
+        <button class="btn alt" onclick="batalSiap()">Batal</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= UJIAN ======= -->
+  <section id="layarUjian" class="hidden">
+    <div class="ujian-head">
+      <div class="kotak" style="flex:1;min-width:150px"><div class="kecil">Sisa Waktu</div><div class="timer" id="timer">00:00</div></div>
+      <div class="kotak" style="flex:1;min-width:150px"><div class="kecil">Pelanggaran</div><div style="font-size:20px;font-weight:800"><span id="jmlLanggar">0</span> <span class="kecil" id="batasLanggar"></span></div></div>
+      <div class="kotak kambox"><div id="wadahVideoUjian"></div><div class="kamstat" id="kamStat"><span class="rec"></span>Kamera aktif • 0 foto</div></div>
+    </div>
+    <div class="row" style="align-items:flex-start">
+      <div class="panel" style="flex:2;min-width:280px">
+        <div class="row" style="justify-content:space-between"><b id="soalNomor">Soal 1</b><span class="badge" id="soalPoin"></span></div>
+        <div id="soalIsi" style="margin-top:10px"></div>
+        <div class="row" style="justify-content:space-between;margin-top:8px">
+          <button class="btn alt" id="btnPrev" onclick="pindahSoal(-1)">⬅️ Sebelumnya</button>
+          <button class="btn alt" id="btnRagu" onclick="toggleRagu()">🚩 Ragu-ragu</button>
+          <button class="btn" id="btnNext" onclick="pindahSoal(1)">Berikutnya ➡️</button>
+        </div>
+      </div>
+      <div class="panel" style="flex:1;min-width:220px">
+        <h2 style="font-size:14px">Nomor Soal</h2>
+        <div class="gridnomor" id="gridNomor"></div>
+        <p class="kecil" style="margin:8px 0">Hijau = terjawab • Kuning = ragu-ragu • Putih = kosong</p>
+        <button class="btn gold" style="width:100%" onclick="konfirmasiSelesai()">✅ Kumpulkan Ujian</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= HASIL SISWA ======= -->
+  <section id="layarHasilSiswa" class="hidden">
+    <div class="panel" style="max-width:520px;margin:20px auto;text-align:center">
+      <div style="font-size:44px">🎉</div>
+      <h2>Ujian Selesai</h2>
+      <div id="hasilSiswaIsi" style="margin-top:10px"></div>
+      <button class="btn" style="margin-top:14px" onclick="keBeranda()">Kembali ke Beranda</button>
+    </div>
+  </section>
+</main>
+
+<!-- ======= MODAL UJIAN ======= -->
+<dialog id="dlgUjian"><div class="modal">
+  <h3 id="duJudul">Buat Ujian</h3><input type="hidden" id="uId">
+  <label>Judul Ujian</label><input id="uJudul" placeholder="cth. Ulangan Harian Matematika Bab 1">
+  <label>Mata Pelajaran</label><input id="uMapel">
+  <div class="row">
+    <div style="flex:1;min-width:120px"><label>Durasi (menit)</label><input id="uDurasi" type="number" min="1" value="60"></div>
+    <div style="flex:1;min-width:120px"><label>Token Ujian</label><input id="uToken" style="text-transform:uppercase"></div>
+  </div>
+  <label>Pengawasan Kamera</label>
+  <select id="uKamera"><option value="wajib">Wajib — kamera harus menyala + foto registrasi</option>
+  <option value="opsional">Opsional — kamera bila tersedia</option>
+  <option value="mati">Mati — tanpa kamera</option></select>
+  <div class="row">
+    <div style="flex:1;min-width:120px"><label>Foto berkala tiap (detik)</label>
+      <select id="uInterval"><option>30</option><option selected>60</option><option>90</option><option>120</option></select></div>
+    <div style="flex:1;min-width:120px"><label>Batas pelanggaran (×)</label><input id="uBatas" type="number" min="1" value="5"></div>
+  </div>
+  <label style="margin-top:12px"><input type="checkbox" id="uTerbuka" style="width:auto"> Akses terbuka (siapa pun boleh ikut, tanpa daftar peserta — cocok untuk latihan)</label>
+  <label><input type="checkbox" id="uAcak" style="width:auto"> Acak urutan soal</label>
+  <label><input type="checkbox" id="uTampilNilai" style="width:auto" checked> Tampilkan nilai ke siswa setelah selesai</label>
+  <div class="row" style="margin-top:14px;justify-content:flex-end">
+    <button class="btn alt" onclick="document.getElementById('dlgUjian').close()">Batal</button>
+    <button class="btn gold" onclick="simpanUjian()">💾 Simpan</button>
+  </div>
+</div></dialog>
+
+<!-- ======= MODAL SOAL ======= -->
+<dialog id="dlgSoal"><div class="modal">
+  <h3 id="dsJudul">Tambah Soal</h3><input type="hidden" id="qId">
+  <label>Pertanyaan</label><textarea id="qTeks" rows="3"></textarea>
+  <label>Gambar Soal (opsional)</label>
+  <div class="row"><input type="file" accept="image/*" style="flex:1;width:auto" onchange="muatGambarSoal(this)">
+  <button class="btn alt kecil" onclick="hapusGambarSoal()">Hapus Gambar</button></div>
+  <img id="qImgPrev" class="soal-img hidden" alt="">
+  <div id="qOpsi"></div>
+  <div class="row">
+    <div style="flex:1;min-width:120px"><label>Kunci Jawaban</label><select id="qKunci"></select></div>
+    <div style="flex:1;min-width:100px"><label>Poin</label><input id="qPoin" type="number" min="1" value="10"></div>
+  </div>
+  <div class="row" style="margin-top:14px;justify-content:flex-end">
+    <button class="btn alt" onclick="document.getElementById('dlgSoal').close()">Batal</button>
+    <button class="btn gold" onclick="simpanSoal()">💾 Simpan</button>
+  </div>
+</div></dialog>
+
+<!-- ======= MODAL PESERTA ======= -->
+<dialog id="dlgPeserta"><div class="modal">
+  <h3 id="dpJudul">Tambah Peserta</h3><input type="hidden" id="pId">
+  <label>Nama Lengkap</label><input id="pNama">
+  <label>NISN</label><input id="pNisn" inputmode="numeric">
+  <label>Kelas</label><input id="pKelas" placeholder="cth. VII / VIII A">
+  <div class="row" style="margin-top:14px;justify-content:flex-end">
+    <button class="btn alt" onclick="document.getElementById('dlgPeserta').close()">Batal</button>
+    <button class="btn gold" onclick="simpanPeserta()">💾 Simpan</button>
+  </div>
+</div></dialog>
+
+<video id="camVideo" autoplay playsinline muted class="hidden"></video>
+<canvas id="camCanvas" width="160" height="120" class="hidden"></canvas>
+<div id="toast" class="toast hidden"></div>
+
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script>
+'use strict';
+const LSKEY = 'proktorku_v1', LSDRAFT = 'proktorku_draft';
+const $ = id => document.getElementById(id);
+function esc(t){ return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function uid(){ return 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function mmss(d){ d = Math.max(0, Math.floor(d)); return String(Math.floor(d / 60)).padStart(2, '0') + ':' + String(d % 60).padStart(2, '0'); }
+
+function seed(){
+  const u1 = uid();
+  return { sekolah: 'SMP Tarung Riwut', pinGuru: '123456',
+    ujian: [{ id: u1, judul: 'Latihan Matematika — Bilangan Bulat (Contoh)', mapel: 'Matematika',
+      durasi: 15, token: 'LATIHAN', kamera: 'opsional', interval: 60, batas: 5,
+      terbuka: true, acak: false, tampilNilai: true,
+      soal: [
+        { id: uid(), teks: 'Hasil dari −7 + 12 adalah …', img: '', opsi: ['−19', '−5', '5', '19'], kunci: 2, poin: 10 },
+        { id: uid(), teks: 'Hasil dari 6 × (−4) adalah …', img: '', opsi: ['−24', '−10', '10', '24'], kunci: 0, poin: 10 },
+        { id: uid(), teks: 'Urutan bilangan dari yang terkecil: −3, 2, −8, 5 adalah …', img: '', opsi: ['−3, −8, 2, 5', '−8, −3, 2, 5', '2, 5, −3, −8', '−8, 2, −3, 5'], kunci: 1, poin: 10 },
+        { id: uid(), teks: 'Suhu ruangan 23°C turun 9°C. Suhu sekarang adalah …', img: '', opsi: ['32°C', '14°C', '−14°C', '−32°C'], kunci: 1, poin: 10 },
+        { id: uid(), teks: 'Hasil dari 100 ÷ (−5) + 7 adalah …', img: '', opsi: ['−27', '−13', '13', '27'], kunci: 1, poin: 10 }
+      ] }],
+    peserta: [
+      { id: uid(), nama: 'Siswa Contoh Satu', nisn: '0012345678', kelas: 'VII' },
+      { id: uid(), nama: 'Siswa Contoh Dua', nisn: '0012345679', kelas: 'VIII' }
+    ],
+    hasil: [] };
+}
+let S;
+try { S = JSON.parse(localStorage.getItem(LSKEY)) || seed(); } catch (e) { S = seed(); }
+function simpan(){ try { localStorage.setItem(LSKEY, JSON.stringify(S)); } catch (e) {} }
+simpan();
+$('subSekolah').textContent = 'Portal ujian berbasis komputer dengan pengawasan kamera • ' + S.sekolah;
+
+/* ================= NAVIGASI ================= */
+const LAYAR = ['layarBeranda', 'layarLoginGuru', 'layarGuru', 'layarLoginSiswa', 'layarSiap', 'layarUjian', 'layarHasilSiswa'];
+function tampil(id){ LAYAR.forEach(x => $(x).classList.toggle('hidden', x !== id)); window.scrollTo(0, 0); }
+function keBeranda(){ tampil('layarBeranda'); }
+function keLoginGuru(){ $('pinSalah').textContent = ''; tampil('layarLoginGuru'); }
+function keLoginSiswa(){ isiPilihanUjian(); $('loginSalah').textContent = ''; tampil('layarLoginSiswa'); }
+
+/* ================= GURU ================= */
+function loginGuru(){
+  if ($('pinGuru').value === S.pinGuru) { $('pinGuru').value = ''; tampil('layarGuru'); tabGuru('dash'); }
+  else $('pinSalah').textContent = 'PIN salah, coba lagi.';
+}
+function keluarGuru(){ keBeranda(); }
+function tabGuru(t){
+  ['dash', 'ujian', 'peserta', 'hasil', 'atur'].forEach(x => {
+    $('g' + x[0].toUpperCase() + x.slice(1)).classList.toggle('hidden', x !== t);
+    $('tg' + x[0].toUpperCase() + x.slice(1)).classList.toggle('aktif', x === t);
+  });
+  if (t === 'dash') renderDash();
+  if (t === 'ujian') renderUjian();
+  if (t === 'peserta') renderPeserta();
+  if (t === 'hasil') renderHasil();
+  if (t === 'atur') { $('aSekolah').value = S.sekolah; }
+}
+function renderDash(){
+  const totalSoal = S.ujian.reduce((a, u) => a + u.soal.length, 0);
+  const totalLanggar = S.hasil.reduce((a, h) => a + (h.pelanggaran ? h.pelanggaran.length : 0), 0);
+  $('statGuru').innerHTML =
+    '<div><b>' + S.ujian.length + '</b>Ujian</div><div><b>' + totalSoal + '</b>Soal</div>' +
+    '<div><b>' + S.peserta.length + '</b>Peserta</div><div><b>' + S.hasil.length + '</b>Hasil Masuk</div>' +
+    '<div><b>' + totalLanggar + '</b>Total Pelanggaran</div>';
+}
+let guruUjianId = null;
+function renderUjian(){
+  $('tbUjian').innerHTML = S.ujian.map(u =>
+    '<tr><td><b>' + esc(u.judul) + '</b><br><span class="kecil">' + esc(u.mapel || '') + '</span></td>' +
+    '<td><b>' + esc(u.token) + '</b></td><td>' + u.durasi + ' mnt</td><td>' + u.soal.length + '</td>' +
+    '<td>' + (u.kamera === 'wajib' ? '📹 Wajib' : u.kamera === 'opsional' ? '📷 Opsional' : '🚫 Mati') + '</td>' +
+    '<td>' + (u.terbuka ? 'Terbuka' : 'Peserta terdaftar') + '</td>' +
+    '<td><button class="btn kecil" onclick="pilihSoal(\'' + u.id + '\')">Soal</button> ' +
+    '<button class="btn alt kecil" onclick="bukaUjian(\'' + u.id + '\')">Edit</button> ' +
+    '<button class="btn bahaya kecil" onclick="hapusUjian(\'' + u.id + '\')">Hapus</button></td></tr>').join('')
+    || '<tr><td colspan="7" class="kecil">Belum ada ujian.</td></tr>';
+  renderSoalPanel();
+}
+function bukaUjian(id){
+  const u = id === -1 ? null : S.ujian.find(x => x.id === id);
+  $('duJudul').textContent = u ? 'Edit Ujian' : 'Buat Ujian';
+  $('uId').value = u ? u.id : '';
+  $('uJudul').value = u ? u.judul : '';
+  $('uMapel').value = u ? (u.mapel || '') : '';
+  $('uDurasi').value = u ? u.durasi : 60;
+  $('uToken').value = u ? u.token : '';
+  $('uKamera').value = u ? u.kamera : 'wajib';
+  $('uInterval').value = String(u ? u.interval : 60);
+  $('uBatas').value = u ? u.batas : 5;
+  $('uTerbuka').checked = u ? !!u.terbuka : false;
+  $('uAcak').checked = u ? !!u.acak : false;
+  $('uTampilNilai').checked = u ? !!u.tampilNilai : true;
+  $('dlgUjian').showModal();
+}
+function simpanUjian(){
+  const judul = $('uJudul').value.trim();
+  const token = $('uToken').value.trim().toUpperCase();
+  if (!judul || !token) { alert('Judul dan token ujian wajib diisi.'); return; }
+  const id = $('uId').value;
+  const data = { judul: judul, mapel: $('uMapel').value.trim(),
+    durasi: Math.max(1, parseInt($('uDurasi').value, 10) || 60), token: token,
+    kamera: $('uKamera').value, interval: parseInt($('uInterval').value, 10) || 60,
+    batas: Math.max(1, parseInt($('uBatas').value, 10) || 5),
+    terbuka: $('uTerbuka').checked, acak: $('uAcak').checked, tampilNilai: $('uTampilNilai').checked };
+  if (id) { const u = S.ujian.find(x => x.id === id); if (u) Object.assign(u, data); }
+  else { data.id = uid(); data.soal = []; S.ujian.push(data); }
+  simpan(); $('dlgUjian').close(); renderUjian();
+}
+function hapusUjian(id){
+  const u = S.ujian.find(x => x.id === id);
+  if (u && confirm('Hapus ujian "' + u.judul + '" beserta soalnya?')) {
+    S.ujian = S.ujian.filter(x => x.id !== id);
+    if (guruUjianId === id) guruUjianId = null;
+    simpan(); renderUjian();
+  }
+}
+function pilihSoal(id){ guruUjianId = id; renderSoalPanel(); }
+function renderSoalPanel(){
+  const u = S.ujian.find(x => x.id === guruUjianId);
+  if (!u) { $('judulSoal').textContent = '📚 Soal'; $('infoSoal').textContent = 'Pilih ujian di atas (tombol Soal) untuk mengelola soalnya.'; $('isiSoal').innerHTML = ''; return; }
+  $('judulSoal').textContent = '📚 Soal — ' + u.judul;
+  $('infoSoal').textContent = u.soal.length + ' soal • total poin ' + u.soal.reduce((a, q) => a + (q.poin || 0), 0);
+  const huruf = ['A', 'B', 'C', 'D'];
+  $('isiSoal').innerHTML =
+    '<div class="row" style="margin:8px 0"><button class="btn gold kecil" onclick="bukaSoal(-1)">＋ Tambah Soal</button>' +
+    '<button class="btn alt kecil" onclick="document.getElementById(\'fileSoal\').click()">⬆️ Impor Soal CSV</button>' +
+    '<input type="file" id="fileSoal" accept=".csv" class="hidden" onchange="imporSoal(this)">' +
+    '<button class="btn alt kecil" onclick="unduhTemplateSoal()">⬇️ Template CSV Soal</button></div>' +
+    u.soal.map((q, i) =>
+      '<div style="border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px">' +
+      '<b>' + (i + 1) + '.</b> ' + esc(q.teks) + ' <span class="badge">' + q.poin + ' poin • kunci ' + huruf[q.kunci] + '</span>' +
+      (q.img ? '<br><img src="' + q.img + '" class="soal-img" style="max-height:120px">' : '') +
+      '<br>' + q.opsi.map((o, j) => '<span class="kecil">' + huruf[j] + '. ' + esc(o) + (j === q.kunci ? ' ✓' : '') + '</span>').join(' &nbsp; ') +
+      '<div class="row" style="margin-top:6px"><button class="btn alt kecil" onclick="bukaSoal(\'' + q.id + '\')">Edit</button>' +
+      '<button class="btn bahaya kecil" onclick="hapusSoal(\'' + q.id + '\')">Hapus</button></div></div>').join('');
+}
+let imgSoalTemp = '';
+function bukaSoal(id){
+  const u = S.ujian.find(x => x.id === guruUjianId); if (!u) return;
+  const q = id === -1 ? null : u.soal.find(x => x.id === id);
+  $('dsJudul').textContent = q ? 'Edit Soal' : 'Tambah Soal';
+  $('qId').value = q ? q.id : '';
+  $('qTeks').value = q ? q.teks : '';
+  $('qPoin').value = q ? q.poin : 10;
+  imgSoalTemp = q ? (q.img || '') : '';
+  segarImgSoal();
+  $('qOpsi').innerHTML = ['A', 'B', 'C', 'D'].map((h, i) =>
+    '<label>Opsi ' + h + '</label><input id="qOp' + i + '" value="' + (q ? esc(q.opsi[i] || '') : '') + '">').join('');
+  $('qKunci').innerHTML = ['A', 'B', 'C', 'D'].map((h, i) => '<option value="' + i + '">Opsi ' + h + '</option>').join('');
+  $('qKunci').value = String(q ? q.kunci : 0);
+  $('dlgSoal').showModal();
+}
+function segarImgSoal(){ const im = $('qImgPrev');
+  if (imgSoalTemp) { im.src = imgSoalTemp; im.classList.remove('hidden'); } else im.classList.add('hidden'); }
+function muatGambarSoal(inp){ const f = inp.files && inp.files[0]; if (!f) return;
+  const img = new Image();
+  img.onload = function(){ const cv = document.createElement('canvas');
+    const sk = Math.min(1, 640 / img.width); cv.width = Math.round(img.width * sk); cv.height = Math.round(img.height * sk);
+    cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+    imgSoalTemp = cv.toDataURL('image/jpeg', .8); segarImgSoal(); URL.revokeObjectURL(img.src); };
+  img.src = URL.createObjectURL(f); }
+function hapusGambarSoal(){ imgSoalTemp = ''; segarImgSoal(); }
+function simpanSoal(){
+  const u = S.ujian.find(x => x.id === guruUjianId); if (!u) return;
+  const teks = $('qTeks').value.trim();
+  const opsi = [0, 1, 2, 3].map(i => $('qOp' + i).value.trim());
+  if (!teks || opsi.some(o => !o)) { alert('Pertanyaan dan keempat opsi wajib diisi.'); return; }
+  const id = $('qId').value;
+  const data = { teks: teks, img: imgSoalTemp, opsi: opsi,
+    kunci: parseInt($('qKunci').value, 10), poin: Math.max(1, parseInt($('qPoin').value, 10) || 10) };
+  if (id) { const q = u.soal.find(x => x.id === id); if (q) Object.assign(q, data); }
+  else { data.id = uid(); u.soal.push(data); }
+  simpan(); $('dlgSoal').close(); renderSoalPanel();
+}
+function hapusSoal(qid){
+  const u = S.ujian.find(x => x.id === guruUjianId); if (!u) return;
+  if (confirm('Hapus soal ini?')) { u.soal = u.soal.filter(x => x.id !== qid); simpan(); renderSoalPanel(); renderUjian(); }
+}
+function parseCsvTeks(teks){
+  const baris = []; let cur = [''], inQ = false, f = 0;
+  const pushRow = () => { baris.push(cur); cur = ['']; f = 0; };
+  for (let i = 0; i < teks.length; i++) { const c = teks[i];
+    if (inQ) { if (c === '"') { if (teks[i + 1] === '"') { cur[f] += '"'; i++; } else inQ = false; } else cur[f] += c; }
+    else if (c === '"') inQ = true;
+    else if (c === ',') { cur.push(''); f++; }
+    else if (c === '\n') pushRow();
+    else if (c !== '\r') cur[f] += c; }
+  if (cur.length > 1 || cur[0]) pushRow();
+  return baris;
+}
+function imporSoal(inp){
+  const u = S.ujian.find(x => x.id === guruUjianId); const f = inp.files && inp.files[0];
+  if (!u || !f) return;
+  const rd = new FileReader();
+  rd.onload = e => {
+    const rows = parseCsvTeks(e.target.result);
+    let n = 0;
+    rows.slice(1).forEach(r => {
+      if (!r[0] || !r[0].trim()) return;
+      const kunciH = String(r[5] || 'A').trim().toUpperCase();
+      u.soal.push({ id: uid(), teks: r[0].trim(), img: '',
+        opsi: [r[1] || '', r[2] || '', r[3] || '', r[4] || ''].map(x => String(x).trim()),
+        kunci: Math.max(0, ['A', 'B', 'C', 'D'].indexOf(kunciH)),
+        poin: parseInt(r[6], 10) || 10 });
+      n++;
+    });
+    simpan(); renderSoalPanel(); renderUjian();
+    alert(n + ' soal diimpor ke ujian ini.');
+    inp.value = '';
+  };
+  rd.readAsText(f);
+}
+function unduhTemplateSoal(){
+  const isi = 'Pertanyaan,OpsiA,OpsiB,OpsiC,OpsiD,Kunci,Poin\r\n"Contoh: 2 + 3 = …",4,5,6,7,B,10';
+  unduhBlob(new Blob(['\ufeff' + isi], { type: 'text/csv' }), 'template-soal-proktorku.csv');
+}
+function renderPeserta(){
+  $('tbPeserta').innerHTML = S.peserta.map(p =>
+    '<tr><td><b>' + esc(p.nama) + '</b></td><td>' + esc(p.nisn) + '</td><td>' + esc(p.kelas || '') + '</td>' +
+    '<td><button class="btn alt kecil" onclick="bukaPeserta(\'' + p.id + '\')">Edit</button> ' +
+    '<button class="btn bahaya kecil" onclick="hapusPeserta(\'' + p.id + '\')">Hapus</button></td></tr>').join('')
+    || '<tr><td colspan="4" class="kecil">Belum ada peserta.</td></tr>';
+}
+function bukaPeserta(id){
+  const p = id === -1 ? null : S.peserta.find(x => x.id === id);
+  $('dpJudul').textContent = p ? 'Edit Peserta' : 'Tambah Peserta';
+  $('pId').value = p ? p.id : '';
+  $('pNama').value = p ? p.nama : '';
+  $('pNisn').value = p ? p.nisn : '';
+  $('pKelas').value = p ? (p.kelas || '') : '';
+  $('dlgPeserta').showModal();
+}
+function simpanPeserta(){
+  const nama = $('pNama').value.trim(), nisn = $('pNisn').value.trim();
+  if (!nama || !nisn) { alert('Nama dan NISN wajib diisi.'); return; }
+  const id = $('pId').value;
+  if (S.peserta.some(x => x.nisn === nisn && x.id !== id)) { alert('NISN ini sudah terdaftar untuk peserta lain.'); return; }
+  const data = { nama: nama, nisn: nisn, kelas: $('pKelas').value.trim() };
+  if (id) { const p = S.peserta.find(x => x.id === id); if (p) Object.assign(p, data); }
+  else { data.id = uid(); S.peserta.push(data); }
+  simpan(); $('dlgPeserta').close(); renderPeserta();
+}
+function hapusPeserta(id){
+  const p = S.peserta.find(x => x.id === id);
+  if (p && confirm('Hapus peserta ' + p.nama + '?')) { S.peserta = S.peserta.filter(x => x.id !== id); simpan(); renderPeserta(); }
+}
+function imporPeserta(inp){
+  const f = inp.files && inp.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = e => {
+    const rows = parseCsvTeks(e.target.result);
+    let n = 0;
+    rows.slice(1).forEach(r => {
+      const nama = (r[0] || '').trim(), nisn = (r[1] || '').trim();
+      if (!nama || !nisn || S.peserta.some(x => x.nisn === nisn)) return;
+      S.peserta.push({ id: uid(), nama: nama, nisn: nisn, kelas: (r[2] || '').trim() });
+      n++;
+    });
+    simpan(); renderPeserta(); alert(n + ' peserta diimpor.');
+    inp.value = '';
+  };
+  rd.readAsText(f);
+}
+function renderHasil(){
+  const sel = $('fltHasil');
+  const nilaiLama = sel.value;
+  sel.innerHTML = '<option value="">Semua ujian</option>' + S.ujian.map(u => '<option value="' + u.id + '">' + esc(u.judul) + '</option>').join('');
+  sel.value = nilaiLama;
+  const daftar = S.hasil.filter(h => !sel.value || h.ujianId === sel.value);
+  $('tbHasil').innerHTML = daftar.map(h =>
+    '<tr><td><b>' + esc(h.nama) + '</b><br><span class="kecil">' + esc(h.nisn) + '</span></td>' +
+    '<td>' + esc(h.judulUjian) + '</td><td><b>' + h.nilai + '</b></td><td>' + h.benar + '/' + h.totalSoal + '</td>' +
+    '<td>' + (h.foto ? h.foto.length : 0) + (h.fotoReg ? ' +reg' : '') + '</td>' +
+    '<td>' + (h.pelanggaran && h.pelanggaran.length ? '<span class="badge merah">' + h.pelanggaran.length + '×</span>' : '0') + '</td>' +
+    '<td>' + (h.status === 'otomatis' ? '<span class="badge kuning">Otomatis</span>' : '<span class="badge hijau">Selesai</span>') + '</td>' +
+    '<td><button class="btn kecil" onclick="detailHasil(\'' + h.id + '\')">📹 Detail</button></td></tr>').join('');
+  $('hasilKosong').textContent = daftar.length ? '' : 'Belum ada hasil masuk.';
+}
+function detailHasil(id){
+  const h = S.hasil.find(x => x.id === id); if (!h) return;
+  const u = S.ujian.find(x => x.id === h.ujianId);
+  $('panelDetailHasil').classList.remove('hidden');
+  $('judulDetail').textContent = '📹 ' + h.nama + ' — ' + h.judulUjian + ' (Nilai ' + h.nilai + ')';
+  let html = '';
+  if (h.fotoReg) html += '<p class="kecil"><b>Foto Registrasi</b></p><img src="' + h.fotoReg + '" class="fotoReg" style="max-width:240px;margin:6px 0">';
+  if (h.foto && h.foto.length) {
+    html += '<p class="kecil" style="margin-top:10px"><b>Foto Berkala Selama Ujian (' + h.foto.length + ')</b></p><div class="galeri">' +
+      h.foto.map(f => '<figure><img src="' + f.img + '"><figcaption>menit ' + mmss(f.detik) + '</figcaption></figure>').join('') + '</div>';
+  }
+  if (h.pelanggaran && h.pelanggaran.length) {
+    html += '<p class="kecil" style="margin-top:10px"><b>Log Pelanggaran</b></p>' +
+      h.pelanggaran.map(p => '<p class="kecil">⏱️ ' + mmss(p.detik) + ' — ' + esc(p.jenis) + '</p>').join('');
+  } else html += '<p class="kecil" style="margin-top:10px">Tidak ada pelanggaran tercatat. ✅</p>';
+  if (u) {
+    const huruf = ['A', 'B', 'C', 'D'];
+    html += '<p class="kecil" style="margin-top:10px"><b>Jawaban</b></p>' + u.soal.map((q, i) => {
+      const j = h.jawaban ? h.jawaban[q.id] : undefined;
+      const benar = j === q.kunci;
+      return '<p class="kecil">' + (i + 1) + '. ' + esc(q.teks) + ' — Jawaban: <b>' +
+        (j === undefined ? '(kosong)' : huruf[j] + '. ' + esc(q.opsi[j])) + '</b> ' + (benar ? '✅' : '❌ kunci ' + huruf[q.kunci]) + '</p>';
+    }).join('');
+  }
+  html += '<div class="row" style="margin-top:12px"><button class="btn bahaya kecil" onclick="hapusHasil(\'' + h.id + '\')">Hapus Hasil Ini</button></div>';
+  $('isiDetail').innerHTML = html;
+  $('panelDetailHasil').scrollIntoView({ behavior: 'smooth' });
+}
+function hapusHasil(id){
+  if (confirm('Hapus hasil ini?')) { S.hasil = S.hasil.filter(x => x.id !== id); simpan(); $('panelDetailHasil').classList.add('hidden'); renderHasil(); }
+}
+function hapusSemuaHasil(){
+  if (S.hasil.length && confirm('Hapus SEMUA hasil ujian? Tindakan ini tidak bisa dibatalkan.')) { S.hasil = []; simpan(); renderHasil(); }
+}
+function eksporHasil(){
+  const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+  const baris = ['Nama,NISN,Kelas,Ujian,Nilai,Benar,Total Soal,Jumlah Pelanggaran,Status,Selesai'];
+  S.hasil.forEach(h => baris.push([h.nama, h.nisn, h.kelas || '', h.judulUjian, h.nilai, h.benar, h.totalSoal,
+    h.pelanggaran ? h.pelanggaran.length : 0, h.status, new Date(h.selesaiTs).toLocaleString('id-ID')].map(q).join(',')));
+  unduhBlob(new Blob(['\ufeff' + baris.join('\r\n')], { type: 'text/csv' }), 'hasil-ujian-proktorku.csv');
+}
+function aturSet(k, v){ S[k] = v; simpan(); $('subSekolah').textContent = 'Portal ujian berbasis komputer dengan pengawasan kamera • ' + S.sekolah; }
+function simpanPin(){
+  const p = $('aPin').value.trim();
+  if (p) { S.pinGuru = p; simpan(); $('aPin').value = ''; alert('PIN guru diperbarui.'); }
+}
+function unduhCadangan(){ unduhBlob(new Blob([JSON.stringify(S, null, 1)], { type: 'application/json' }), 'cadangan-proktorku.json'); }
+function pulihkanJson(inp){
+  const f = inp.files && inp.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = e => { try { const p = JSON.parse(e.target.result);
+      if (p && Array.isArray(p.ujian)) { S = p; simpan(); tabGuru('dash'); alert('Cadangan dipulihkan.'); }
+      else alert('File tidak valid.'); } catch (err) { alert('File tidak valid.'); } inp.value = ''; };
+  rd.readAsText(f);
+}
+function unduhBlob(blob, nama){ const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = nama; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000); }
+
+/* ================= KAMERA ================= */
+let camStream = null, camAktif = false;
+const videoEl = () => $('camVideo');
+async function nyalakanKamera(dariSiap){
+  const pesan = $('kamPesan');
+  try {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('Browser tidak mendukung kamera (getUserMedia).');
+    camStream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 }, audio: false });
+    videoEl().srcObject = camStream;
+    camAktif = true;
+    if (dariSiap) { pasangVideoSiap(); $('btnAmbil').classList.remove('hidden'); if (pesan) pesan.textContent = '✅ Kamera menyala. Ambil foto registrasi untuk melanjutkan.'; }
+    return true;
+  } catch (e) {
+    camAktif = false;
+    if (pesan) pesan.textContent = '❌ Kamera tidak dapat dibuka: ' + e.message + ' — periksa izin kamera di browser.';
+    return false;
+  }
+}
+function pasangVideoSiap(){
+  const v = videoEl();
+  v.classList.remove('hidden'); v.className = 'besar';
+  $('wadahVideoSiap').appendChild(v);
+}
+function pasangVideoUjian(){
+  const v = videoEl();
+  v.classList.remove('hidden'); v.className = '';
+  $('wadahVideoUjian').appendChild(v);
+}
+function matikanKamera(){
+  if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+  camAktif = false;
+  videoEl().srcObject = null; videoEl().classList.add('hidden');
+}
+function jepret(lebar, tinggi, kualitas){
+  if (!camAktif || !camStream) return '';
+  const cv = $('camCanvas'); cv.width = lebar; cv.height = tinggi;
+  try { cv.getContext('2d').drawImage(videoEl(), 0, 0, lebar, tinggi); return cv.toDataURL('image/jpeg', kualitas); }
+  catch (e) { return ''; }
+}
+
+/* ================= SISWA ================= */
+let siap = null;         // {peserta:{nama,nisn,kelas}, ujian}
+let fotoRegData = '';
+function isiPilihanUjian(){
+  $('sUjian').innerHTML = S.ujian.map(u => '<option value="' + u.id + '">' + esc(u.judul) + ' (' + u.soal.length + ' soal • ' + u.durasi + ' menit)</option>').join('')
+    || '<option value="">(belum ada ujian)</option>';
+}
+function loginSiswa(){
+  const nama = $('sNama').value.trim();
+  const nisn = $('sNisn').value.trim();
+  const u = S.ujian.find(x => x.id === $('sUjian').value);
+  const token = $('sToken').value.trim().toUpperCase();
+  const err = t => { $('loginSalah').textContent = t; };
+  if (!nama || !nisn) return err('Nama dan NISN wajib diisi.');
+  if (!u) return err('Belum ada ujian yang tersedia.');
+  if (!u.soal.length) return err('Ujian ini belum memiliki soal. Hubungi guru.');
+  if (token !== u.token) return err('Token ujian salah. Periksa kembali token dari guru.');
+  let kelas = '';
+  if (!u.terbuka) {
+    const p = S.peserta.find(x => x.nisn === nisn);
+    if (!p) return err('NISN tidak terdaftar sebagai peserta. Hubungi guru/proktor.');
+    kelas = p.kelas || '';
+  }
+  // tawarkan lanjutkan sesi yang belum selesai
+  try {
+    const draft = JSON.parse(localStorage.getItem(LSDRAFT));
+    if (draft && draft.ujianId === u.id && draft.nisn === nisn && confirm('Ada sesi ujian yang belum selesai untuk ujian ini. Lanjutkan sesi tersebut?')) {
+      siap = { peserta: { nama: nama, nisn: nisn, kelas: kelas }, ujian: u };
+      lanjutkanSesi(draft);
+      return;
+    }
+  } catch (e) {}
+  siap = { peserta: { nama: nama, nisn: nisn, kelas: kelas }, ujian: u };
+  fotoRegData = '';
+  tampil('layarSiap');
+  $('siapJudul').textContent = 'Persiapan — ' + u.judul;
+  $('siapInfo').innerHTML = 'Peserta: <b>' + esc(nama) + '</b> (' + esc(nisn) + ')<br>Soal: ' + u.soal.length +
+    ' • Durasi: ' + u.durasi + ' menit • Kamera: ' + u.kamera + ' • Batas pelanggaran: ' + u.batas + '×';
+  const perluKam = u.kamera !== 'mati';
+  $('siapKamera').classList.toggle('hidden', !perluKam);
+  $('fotoRegImg').classList.add('hidden');
+  $('btnAmbil').classList.add('hidden'); $('btnUlang').classList.add('hidden');
+  $('btnNyalakan').classList.remove('hidden');
+  $('kamPesan').textContent = perluKam ? '' : '';
+  segarTombolMulai();
+}
+function segarTombolMulai(){
+  if (!siap) return;
+  const u = siap.ujian;
+  let boleh = true;
+  if (u.kamera === 'wajib') boleh = camAktif && !!fotoRegData;
+  $('btnMulai').disabled = !boleh;
+  if (u.kamera === 'wajib' && !boleh)
+    $('kamPesan').textContent = camAktif ? 'Ambil foto registrasi dulu untuk mengaktifkan tombol Mulai.' : 'Nyalakan kamera dulu untuk mengaktifkan tombol Mulai.';
+}
+function ambilFotoReg(){
+  const img = jepret(240, 180, .72);
+  if (!img) { $('kamPesan').textContent = 'Gagal mengambil foto — coba lagi.'; return; }
+  fotoRegData = img;
+  $('fotoRegImg').src = img; $('fotoRegImg').classList.remove('hidden');
+  $('btnAmbil').classList.add('hidden'); $('btnUlang').classList.remove('hidden'); $('btnNyalakan').classList.add('hidden');
+  $('kamPesan').textContent = '✅ Foto registrasi tersimpan.';
+  segarTombolMulai();
+}
+function ulangFoto(){
+  fotoRegData = '';
+  $('fotoRegImg').classList.add('hidden');
+  $('btnAmbil').classList.remove('hidden'); $('btnUlang').classList.add('hidden');
+  segarTombolMulai();
+}
+function batalSiap(){ matikanKamera(); siap = null; keBeranda(); }
+
+/* ================= MESIN UJIAN ================= */
+let A = null;            // attempt berjalan
+let timerInt = null, fsPernah = false, wajahHilang = 0, wajahLogTerakhir = 0, kamPutusDicatat = false;
+function buatAttempt(){
+  const u = siap.ujian;
+  let urutan = u.soal.map(q => q.id);
+  if (u.acak) urutan = urutan.sort(() => Math.random() - .5);
+  return { ujianId: u.id, nisn: siap.peserta.nisn, nama: siap.peserta.nama, kelas: siap.peserta.kelas,
+    jawaban: {}, ragu: {}, urutan: urutan, idx: 0, mulaiTs: Date.now(),
+    foto: [], pelanggaran: [], fotoReg: fotoRegData, selesai: false };
+}
+function mulaiUjian(){
+  if (!siap) return;
+  const u = siap.ujian;
+  if (u.kamera !== 'mati' && camAktif && !fotoRegData) fotoRegData = jepret(240, 180, .72);
+  A = buatAttempt();
+  if (u.kamera !== 'mati' && camAktif) { pasangVideoUjian(); A.foto.push({ detik: 0, img: jepret(160, 120, .6) }); }
+  tampil('layarUjian');
+  $('batasLanggar').textContent = '/ ' + u.batas + ' (otomatis kumpul)';
+  fsPernah = false; wajahHilang = 0; kamPutusDicatat = false;
+  if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
+  mulaiTimer();
+  renderSoal(); renderGrid(); segarKepalaUjian();
+  simpanDraft();
+}
+function lanjutkanSesi(draft){
+  const u = S.ujian.find(x => x.id === draft.ujianId);
+  if (!u) { batalSiap(); return; }
+  A = draft;
+  fotoRegData = draft.fotoReg || '';
+  tampil('layarUjian');
+  $('batasLanggar').textContent = '/ ' + u.batas + ' (otomatis kumpul)';
+  if (u.kamera !== 'mati') nyalakanKamera(false).then(ok => { if (ok) pasangVideoUjian(); });
+  mulaiTimer();
+  renderSoal(); renderGrid(); segarKepalaUjian();
+}
+function ujianAktif(){ return A && !A.selesai; }
+function elapsed(){ return Math.floor((Date.now() - A.mulaiTs) / 1000); }
+function mulaiTimer(){
+  clearInterval(timerInt);
+  timerInt = setInterval(tik, 1000);
+  tik();
+}
+function tik(){
+  if (!ujianAktif()) { clearInterval(timerInt); return; }
+  const u = S.ujian.find(x => x.id === A.ujianId); if (!u) return;
+  const el = elapsed();
+  const sisa = u.durasi * 60 - el;
+  $('timer').textContent = mmss(sisa);
+  $('timer').classList.toggle('kritis', sisa <= 60);
+  if (sisa <= 0) { selesaiUjian('waktu'); return; }
+  // foto berkala + cek wajah
+  if (u.kamera !== 'mati' && camAktif && el > 0 && el % u.interval === 0) {
+    const img = jepret(160, 120, .6);
+    if (img && A.foto.length < 48) { A.foto.push({ detik: el, img: img }); segarKepalaUjian(); simpanDraft(); }
+    cekWajah(el);
+  }
+  // kamera terputus?
+  if (u.kamera === 'wajib' && camStream && camStream.getVideoTracks().length &&
+      camStream.getVideoTracks()[0].readyState === 'ended' && !kamPutusDicatat) {
+    kamPutusDicatat = true;
+    catatPelanggaran('Kamera terputus / dimatikan');
+  }
+}
+async function cekWajah(el){
+  if (!('FaceDetector' in window) || !camAktif) return;
+  try {
+    const faces = await new window.FaceDetector().detect(videoEl());
+    if (!faces.length) {
+      wajahHilang++;
+      if (wajahHilang >= 2 && el - wajahLogTerakhir >= 60) {
+        wajahLogTerakhir = el; wajahHilang = 0;
+        catatPelanggaran('Wajah tidak terdeteksi di kamera');
+      }
+    } else wajahHilang = 0;
+  } catch (e) {}
+}
+function catatPelanggaran(jenis){
+  if (!ujianAktif()) return;
+  const u = S.ujian.find(x => x.id === A.ujianId);
+  A.pelanggaran.push({ detik: elapsed(), jenis: jenis });
+  segarKepalaUjian(); simpanDraft();
+  toast('⚠️ Pelanggaran tercatat: ' + jenis + ' (' + A.pelanggaran.length + '/' + (u ? u.batas : '?') + ')');
+  if (u && A.pelanggaran.length >= u.batas) selesaiUjian('otomatis');
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && ujianAktif()) catatPelanggaran('Berpindah tab / aplikasi lain dibuka');
+});
+document.addEventListener('fullscreenchange', () => {
+  if (document.fullscreenElement) { fsPernah = true; return; }
+  if (fsPernah && ujianAktif()) catatPelanggaran('Keluar dari mode layar penuh');
+});
+let toastTmr = null;
+function toast(teks){
+  const t = $('toast'); t.textContent = teks; t.classList.remove('hidden');
+  clearTimeout(toastTmr); toastTmr = setTimeout(() => t.classList.add('hidden'), 4200);
+}
+function segarKepalaUjian(){
+  if (!A) return;
+  $('jmlLanggar').textContent = A.pelanggaran.length;
+  const u = S.ujian.find(x => x.id === A.ujianId);
+  $('kamStat').innerHTML = (u && u.kamera !== 'mati')
+    ? (camAktif ? '<span class="rec"></span>Kamera aktif • ' : '📷 Kamera mati • ') + A.foto.length + ' foto'
+    : 'Tanpa kamera';
+}
+function soalSekarang(){
+  const u = S.ujian.find(x => x.id === A.ujianId);
+  return u.soal.find(q => q.id === A.urutan[A.idx]);
+}
+function renderSoal(){
+  const u = S.ujian.find(x => x.id === A.ujianId);
+  const q = soalSekarang(); if (!q) return;
+  const huruf = ['A', 'B', 'C', 'D'];
+  $('soalNomor').textContent = 'Soal ' + (A.idx + 1) + ' dari ' + A.urutan.length;
+  $('soalPoin').textContent = q.poin + ' poin';
+  $('soalIsi').innerHTML =
+    (q.img ? '<img src="' + q.img + '" class="soal-img">' : '') +
+    '<div class="soal-teks">' + esc(q.teks) + '</div>' +
+    q.opsi.map((o, i) =>
+      '<button class="opsi' + (A.jawaban[q.id] === i ? ' dipilih' : '') + '" onclick="jawab(' + i + ')"><b>' + huruf[i] + '.</b>' + esc(o) + '</button>').join('');
+  $('btnRagu').textContent = A.ragu[q.id] ? '🚩 Batalkan Ragu' : '🚩 Ragu-ragu';
+  $('btnPrev').disabled = A.idx === 0;
+  $('btnNext').disabled = A.idx === A.urutan.length - 1;
+}
+function renderGrid(){
+  $('gridNomor').innerHTML = A.urutan.map((qid, i) => {
+    const cls = (A.jawaban[qid] !== undefined ? 'isi' : '') + (A.ragu[qid] ? ' ragu' : '') + (i === A.idx ? ' aktif' : '');
+    return '<button class="' + cls.trim() + '" onclick="keSoal(' + i + ')">' + (i + 1) + '</button>';
+  }).join('');
+}
+function jawab(i){
+  const q = soalSekarang(); if (!q) return;
+  A.jawaban[q.id] = i;
+  renderSoal(); renderGrid(); simpanDraft();
+}
+function toggleRagu(){
+  const q = soalSekarang(); if (!q) return;
+  A.ragu[q.id] = !A.ragu[q.id];
+  renderSoal(); renderGrid(); simpanDraft();
+}
+function pindahSoal(d){ keSoal(A.idx + d); }
+function keSoal(i){
+  if (i < 0 || i >= A.urutan.length) return;
+  A.idx = i; renderSoal(); renderGrid(); simpanDraft();
+}
+function simpanDraft(){
+  if (!ujianAktif()) return;
+  try { localStorage.setItem(LSDRAFT, JSON.stringify(A)); } catch (e) {}
+}
+function konfirmasiSelesai(){
+  const kosong = A.urutan.filter(qid => A.jawaban[qid] === undefined).length;
+  const pesan = kosong
+    ? 'Masih ada ' + kosong + ' soal belum dijawab. Kumpulkan sekarang?'
+    : 'Kumpulkan ujian sekarang? Jawaban tidak bisa diubah lagi.';
+  if (confirm(pesan)) selesaiUjian('selesai');
+}
+function selesaiUjian(status){
+  if (!ujianAktif()) return;
+  A.selesai = true;
+  clearInterval(timerInt);
+  const u = S.ujian.find(x => x.id === A.ujianId);
+  let benar = 0, poinDapat = 0, poinTotal = 0;
+  u.soal.forEach(q => { poinTotal += q.poin || 0; if (A.jawaban[q.id] === q.kunci) { benar++; poinDapat += q.poin || 0; } });
+  const nilai = poinTotal ? Math.round(poinDapat / poinTotal * 100) : 0;
+  const hasil = { id: uid(), ujianId: u.id, judulUjian: u.judul, nisn: A.nisn, nama: A.nama, kelas: A.kelas,
+    nilai: nilai, benar: benar, totalSoal: u.soal.length, jawaban: A.jawaban,
+    fotoReg: A.fotoReg || '', foto: A.foto, pelanggaran: A.pelanggaran,
+    status: status === 'otomatis' ? 'otomatis' : 'selesai', selesaiTs: Date.now() };
+  S.hasil.push(hasil); simpan();
+  localStorage.removeItem(LSDRAFT);
+  matikanKamera();
+  if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
+  tampil('layarHasilSiswa');
+  $('hasilSiswaIsi').innerHTML =
+    '<p class="kecil">Peserta: <b>' + esc(A.nama) + '</b> • ' + esc(u.judul) + '</p>' +
+    (u.tampilNilai
+      ? '<p style="font-size:34px;font-weight:800;color:var(--teal);margin:8px 0">' + nilai + '</p>' +
+        '<p class="kecil">Jawaban benar: ' + benar + ' dari ' + u.soal.length + ' soal</p>'
+      : '<p class="kecil" style="margin-top:8px">Nilai akan diumumkan oleh guru.</p>') +
+    (status === 'otomatis' ? '<p class="kecil" style="color:var(--bad);margin-top:6px">Ujian dikumpulkan otomatis karena batas pelanggaran tercapai / waktu habis.</p>' : '') +
+    '<p class="kecil" style="margin-top:6px">Foto pengawasan: ' + A.foto.length + ' foto • Pelanggaran: ' + A.pelanggaran.length + '× — tersimpan di ruang guru.</p>';
+  A = null; siap = null; fotoRegData = '';
+}
+tampil('layarBeranda');
+</script>
+</body>
+</html>
