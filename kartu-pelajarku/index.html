@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kartu PelajarKu — Pembuat Kartu Pelajar Massal</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--biru:#12407c;--biru2:#0b2450;--emas:#f2b705;--bg:#eef2f7;--teks:#1c2733;--mut:#64748b;--garis:#d7dee8;--ok:#15803d;--bh:#b91c1c}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--bg);color:var(--teks);font-size:15px}
+header.app{background:linear-gradient(135deg,var(--biru2),var(--biru));color:#fff;padding:14px 16px;position:sticky;top:0;z-index:30;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+header.app h1{font-size:19px;letter-spacing:.3px}
+header.app p{font-size:12px;opacity:.85;margin-top:2px}
+nav.tabs{display:flex;gap:6px;padding:10px 12px 0;flex-wrap:wrap}
+nav.tabs button{border:1px solid var(--garis);background:#fff;padding:9px 14px;border-radius:999px;font-weight:600;cursor:pointer;color:var(--biru2)}
+nav.tabs button.aktif{background:var(--biru);color:#fff;border-color:var(--biru)}
+main{padding:12px;max-width:1100px;margin:0 auto}
+.panel{background:#fff;border:1px solid var(--garis);border-radius:14px;padding:14px;margin-bottom:14px;box-shadow:0 1px 4px rgba(15,40,80,.05)}
+.panel h2{font-size:16px;margin-bottom:10px;color:var(--biru2)}
+.btn{display:inline-block;border:none;border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:14px}
+.btn-utama{background:var(--biru);color:#fff}
+.btn-emas{background:var(--emas);color:#231a00}
+.btn-ok{background:var(--ok);color:#fff}
+.btn-bahaya{background:var(--bh);color:#fff}
+.btn-netral{background:#e8eef6;color:var(--biru2)}
+.btn-kecil{padding:5px 10px;font-size:12.5px;border-radius:8px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.baris{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.baris>*{margin-bottom:6px}
+input[type=text],input[type=date],select,textarea{border:1px solid var(--garis);border-radius:9px;padding:9px 10px;font-size:14px;background:#fff;width:100%}
+label.k{font-size:12.5px;font-weight:700;color:var(--mut);display:block;margin:8px 0 4px}
+table.data{width:100%;border-collapse:collapse;font-size:13.5px}
+table.data th,table.data td{border-bottom:1px solid var(--garis);padding:7px 6px;text-align:left;vertical-align:middle}
+table.data th{background:#f3f6fb;color:var(--biru2);font-size:12.5px}
+.thumb{width:34px;height:44px;object-fit:cover;border-radius:5px;border:1px solid var(--garis);background:#dbe7f5;display:inline-flex;align-items:center;justify-content:center;font-weight:800;color:var(--biru);font-size:13px}
+.kosong{color:var(--mut);text-align:center;padding:18px 6px}
+dialog{border:none;border-radius:16px;padding:0;max-width:520px;width:94vw;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(8,20,40,.55)}
+.modal-isi{padding:18px}
+.modal-isi h3{color:var(--biru2);margin-bottom:6px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+@media(max-width:560px){.grid2{grid-template-columns:1fr}}
+.foto-prev{width:90px;height:118px;object-fit:cover;border-radius:8px;border:1px solid var(--garis);background:#dbe7f5;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--biru);font-size:22px;overflow:hidden}
+.petunjuk{font-size:12.5px;color:var(--mut);line-height:1.55}
+.petunjuk li{margin-left:18px;margin-bottom:3px}
+.stat{display:flex;gap:10px;flex-wrap:wrap}
+.stat .kotak{flex:1;min-width:110px;background:#f3f6fb;border:1px solid var(--garis);border-radius:12px;padding:10px;text-align:center}
+.stat .kotak b{font-size:20px;color:var(--biru2);display:block}
+.stat .kotak span{font-size:12px;color:var(--mut)}
+/* ===== KARTU PELAJAR (ukuran asli 85.6 x 54 mm) ===== */
+.kartu{--tema:#12407c;--tema2:#0b2450;--aksen:#f2b705;width:85.6mm;height:54mm;background:#fff;border:1px solid #9fb2c8;border-radius:3mm;overflow:hidden;display:flex;flex-direction:column;font-family:Arial,Helvetica,sans-serif;color:#14202e;position:relative}
+.kartu.tema-hijau{--tema:#0f6a3a;--tema2:#084d29;--aksen:#ffd23f}
+.kartu.tema-marun{--tema:#7a1220;--tema2:#520a15;--aksen:#f2b705}
+.kartu.tema-hitam{--tema:#26262b;--tema2:#000000;--aksen:#d4af37}
+.k-head{background:linear-gradient(90deg,var(--tema2),var(--tema));color:#fff;display:flex;align-items:center;gap:2mm;padding:1.6mm 2.6mm;border-bottom:.8mm solid var(--aksen);min-height:11.5mm}
+.k-logo{width:8.5mm;height:8.5mm;object-fit:contain;background:#fff;border-radius:1.2mm;padding:.4mm;flex:none}
+.k-logo-kosong{width:8.5mm;height:8.5mm;flex:none;background:rgba(255,255,255,.16);border:.3mm dashed rgba(255,255,255,.7);border-radius:1.2mm;display:flex;align-items:center;justify-content:center;font-size:4.6pt;font-weight:700;text-align:center;line-height:1.1}
+.k-sek{flex:1;min-width:0}
+.k-sek-nama{font-size:9.2pt;font-weight:800;letter-spacing:.2px;text-transform:uppercase;line-height:1.12;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.k-sek-sub{font-size:5.2pt;opacity:.92;line-height:1.25;margin-top:.4mm}
+.k-label{flex:none;text-align:center;background:var(--aksen);color:#1d1500;font-weight:800;font-size:6.4pt;line-height:1.15;padding:1mm 1.6mm;border-radius:1.2mm;letter-spacing:.3px}
+.k-body{flex:1;display:flex;gap:2.6mm;padding:2.2mm 2.6mm 1.2mm}
+.k-foto{width:17.5mm;height:23.5mm;flex:none;border:.35mm solid var(--tema);border-radius:1.2mm;overflow:hidden;background:#dbe7f5;display:flex;align-items:center;justify-content:center}
+.k-foto img{width:100%;height:100%;object-fit:cover}
+.k-foto .inisial{font-size:15pt;font-weight:800;color:var(--tema)}
+.k-data{flex:1;min-width:0}
+.k-nama{font-size:10.5pt;font-weight:800;text-transform:uppercase;line-height:1.15;color:var(--tema2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.k-kelas{font-size:7.6pt;font-weight:700;color:var(--tema);margin:.3mm 0 1.2mm}
+table.k-t{border-collapse:collapse;font-size:6.9pt;line-height:1.3}
+table.k-t td{padding:.15mm 0;vertical-align:top}
+table.k-t td.l{color:#5a6a7d;width:13.5mm;font-weight:700}
+table.k-t td.v{font-weight:600}
+.k-barcode{margin-top:1.4mm}
+.k-barcode .bars{display:flex;align-items:stretch;height:5.6mm}
+.k-barcode .bars i{display:block;background:#111}
+.k-barcode .bars i.sp{background:transparent}
+.k-barcode .angka{font-size:6pt;letter-spacing:2.2px;text-align:left;margin-top:.3mm;font-family:'Courier New',monospace}
+.k-foot{border-top:.25mm solid #c9d5e4;background:#f2f6fb;display:flex;justify-content:space-between;gap:2mm;padding:1.1mm 2.6mm;font-size:5.4pt;color:#40536a}
+.k-foot b{color:var(--tema2)}
+/* sisi belakang */
+.k-belakang .k-isi{flex:1;padding:2.4mm 3mm;font-size:6.6pt;line-height:1.45}
+.k-belakang .k-isi h4{font-size:7.6pt;color:var(--tema2);margin-bottom:1.2mm;letter-spacing:.3px}
+.k-belakang .k-isi ol{margin-left:4.2mm}
+.k-belakang .k-isi li{margin-bottom:.7mm}
+.k-ttd{position:absolute;right:3mm;bottom:8mm;text-align:left;font-size:6.6pt;line-height:1.4}
+.k-ttd .nm{font-weight:800;text-decoration:underline;margin-top:9mm;display:inline-block}
+.k-cap{position:absolute;left:3mm;bottom:8mm;width:17mm;height:17mm;border:.35mm dashed #b6c3d4;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#8fa2b8;font-size:5.4pt;text-align:center}
+/* lembar cetak */
+.lembar{background:#fff;border:1px solid var(--garis);border-radius:10px;padding:8mm 6mm;margin-bottom:14px;display:grid;grid-template-columns:repeat(2,85.6mm);gap:5mm 6mm;justify-content:center;overflow-x:auto}
+.lembar .kartu{outline:.25mm dashed #c3cedd;outline-offset:1mm}
+.judul-lembar{font-size:12.5px;font-weight:700;color:var(--mut);margin:4px 0 8px}
+#area-cetak{display:none}
+@media print{
+  body{background:#fff}
+  header.app,nav.tabs,main,#area-pratinjau-panel{display:none!important}
+  #area-cetak{display:block!important}
+  .lembar{border:none;border-radius:0;padding:0;margin:0;page-break-after:always;overflow:visible}
+  .lembar .kartu{outline:.2mm dashed #bbb}
+  @page{size:A4 portrait;margin:9mm 8mm}
+}
+</style>
+</head>
+<body>
+<header class="app">
+  <h1>🪪 Kartu PelajarKu</h1>
+  <p>Pembuat Kartu Pelajar massal — rapi ukuran standar kartu (85,6 × 54 mm), siap cetak A4</p>
+</header>
+<nav class="tabs">
+  <button id="tab-data" class="aktif" onclick="gantiTab('data')">👨‍🎓 Data Siswa</button>
+  <button id="tab-cetak" onclick="gantiTab('cetak')">🖨️ Pratinjau & Cetak</button>
+  <button id="tab-atur" onclick="gantiTab('atur')">⚙️ Pengaturan Sekolah</button>
+</nav>
+<main>
+  <!-- ============ TAB DATA ============ -->
+  <section id="panel-data">
+    <div class="panel">
+      <div class="stat" id="stat-box"></div>
+    </div>
+    <div class="panel">
+      <h2>Data Siswa</h2>
+      <div class="baris">
+        <button class="btn btn-utama" onclick="bukaForm()">➕ Tambah Siswa</button>
+        <button class="btn btn-emas" onclick="document.getElementById('file-impor').click()">📥 Impor Excel/CSV</button>
+        <input type="file" id="file-impor" accept=".xlsx,.xls,.csv" style="display:none" onchange="imporFile(this)">
+        <button class="btn btn-netral" onclick="unduhTemplate()">⬇️ Template Impor</button>
+        <button class="btn btn-netral" onclick="eksporData()">⬆️ Ekspor Data</button>
+        <button class="btn btn-bahaya" onclick="hapusTerpilih()">🗑️ Hapus Terpilih</button>
+      </div>
+      <div class="baris">
+        <div style="flex:2;min-width:170px"><input type="text" id="cari" placeholder="🔎 Cari nama / NIS / NISN…" oninput="renderTabel()"></div>
+        <div style="flex:1;min-width:130px"><select id="filter-kelas" onchange="renderTabel()"><option value="">Semua Kelas</option></select></div>
+        <button class="btn btn-netral btn-kecil" onclick="pilihSemua(true)">Pilih Semua</button>
+        <button class="btn btn-netral btn-kecil" onclick="pilihSemua(false)">Kosongkan Pilihan</button>
+      </div>
+      <div style="overflow-x:auto">
+      <table class="data">
+        <thead><tr><th style="width:30px"><input type="checkbox" id="cek-semua" onchange="pilihSemua(this.checked)"></th><th>Foto</th><th>Nama</th><th>NIS</th><th>NISN</th><th>Kelas</th><th>TTL</th><th>Aksi</th></tr></thead>
+        <tbody id="tbody-siswa"></tbody>
+      </table>
+      </div>
+      <p class="petunjuk" style="margin-top:8px">Siswa yang <b>dicentang</b> adalah yang akan dicetak. Foto diisi lewat tombol Edit — foto otomatis diperkecil agar hemat penyimpanan.</p>
+    </div>
+  </section>
+
+  <!-- ============ TAB CETAK ============ -->
+  <section id="panel-cetak" style="display:none">
+    <div class="panel" id="area-pratinjau-panel">
+      <h2>Pratinjau & Cetak</h2>
+      <div class="baris">
+        <label style="display:flex;gap:6px;align-items:center;font-size:14px"><input type="checkbox" id="opt-belakang" onchange="renderPratinjau()"> Cetak juga sisi belakang (ketentuan + tanda tangan)</label>
+      </div>
+      <div class="baris">
+        <button class="btn btn-ok" onclick="cetakKartu()">🖨️ Cetak / Simpan PDF</button>
+        <span class="petunjuk" id="info-cetak"></span>
+      </div>
+      <ul class="petunjuk">
+        <li>Satu halaman A4 memuat <b>10 kartu</b> (2 kolom × 5 baris), ukuran pas 85,6 × 54 mm seperti kartu ATM/KTP.</li>
+        <li>Saat mencetak pilih kertas <b>A4</b>, skala <b>100%</b> (jangan "fit to page"), margin bawaan aplikasi ini.</li>
+        <li>Gunting mengikuti garis putus-putus. Untuk hasil awet, laminating kartu setelah digunting.</li>
+        <li>Sisi belakang dicetak pada lembar terpisah dengan urutan yang sama — balik tumpukan kertas untuk mencetaknya.</li>
+      </ul>
+    </div>
+    <div id="pratinjau"></div>
+  </section>
+
+  <!-- ============ TAB PENGATURAN ============ -->
+  <section id="panel-atur" style="display:none">
+    <div class="panel">
+      <h2>Identitas Sekolah (tampil di kepala kartu)</h2>
+      <label class="k">Nama Sekolah</label>
+      <input type="text" id="set-nama" oninput="simpanPengaturan()">
+      <div class="grid2">
+        <div><label class="k">NPSN</label><input type="text" id="set-npsn" oninput="simpanPengaturan()"></div>
+        <div><label class="k">Kota/Kabupaten untuk tanda tangan (mis. Kasongan)</label><input type="text" id="set-kota" oninput="simpanPengaturan()"></div>
+      </div>
+      <label class="k">Alamat Sekolah (baris kecil di kepala kartu)</label>
+      <input type="text" id="set-alamat" oninput="simpanPengaturan()">
+      <label class="k">Logo Sekolah</label>
+      <div class="baris">
+        <img id="logo-prev" class="foto-prev" style="width:64px;height:64px" alt="">
+        <button class="btn btn-netral" onclick="document.getElementById('file-logo').click()">🖼️ Pilih Logo</button>
+        <input type="file" id="file-logo" accept="image/*" style="display:none" onchange="unggahLogo(this)">
+        <button class="btn btn-netral" onclick="hapusLogo()">Hapus Logo</button>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Pengesahan & Masa Berlaku</h2>
+      <div class="grid2">
+        <div><label class="k">Nama Kepala Sekolah</label><input type="text" id="set-kepsek" oninput="simpanPengaturan()"></div>
+        <div><label class="k">NIP Kepala Sekolah</label><input type="text" id="set-nip" oninput="simpanPengaturan()"></div>
+      </div>
+      <div class="grid2">
+        <div><label class="k">Berlaku s.d. (teks di kaki kartu)</label><input type="text" id="set-berlaku" oninput="simpanPengaturan()"></div>
+        <div><label class="k">Tanggal Pengesahan (sisi belakang)</label><input type="date" id="set-tgl-sah" onchange="simpanPengaturan()"></div>
+      </div>
+      <label class="k">Tema Warna Kartu</label>
+      <select id="set-tema" onchange="simpanPengaturan()">
+        <option value="navy">Biru Navy + Emas</option>
+        <option value="hijau">Hijau + Emas</option>
+        <option value="marun">Marun + Emas</option>
+        <option value="hitam">Hitam + Emas</option>
+      </select>
+    </div>
+    <div class="panel">
+      <h2>Cadangan Data</h2>
+      <div class="baris">
+        <button class="btn btn-netral" onclick="cadangkan()">💾 Unduh Cadangan (JSON)</button>
+        <button class="btn btn-netral" onclick="document.getElementById('file-pulih').click()">📂 Pulihkan dari Cadangan</button>
+        <input type="file" id="file-pulih" accept=".json" style="display:none" onchange="pulihkan(this)">
+        <button class="btn btn-bahaya" onclick="resetContoh()">↩️ Kembalikan Data Contoh</button>
+      </div>
+      <p class="petunjuk">Data tersimpan otomatis di perangkat ini (penyimpanan lokal peramban). Unduh cadangan secara berkala, terutama sebelum ganti HP/laptop.</p>
+    </div>
+  </section>
+</main>
+
+<!-- ============ MODAL FORM SISWA ============ -->
+<dialog id="dlg-siswa">
+  <form method="dialog" class="modal-isi" onsubmit="return false">
+    <h3 id="judul-form">Tambah Siswa</h3>
+    <input type="hidden" id="f-id">
+    <div class="baris" style="align-items:flex-start">
+      <div>
+        <div class="foto-prev" id="f-foto-prev">?</div>
+        <button type="button" class="btn btn-netral btn-kecil" style="margin-top:6px" onclick="document.getElementById('file-foto').click()">📷 Foto</button>
+        <input type="file" id="file-foto" accept="image/*" style="display:none" onchange="unggahFoto(this)">
+      </div>
+      <div style="flex:1;min-width:220px">
+        <label class="k">Nama Lengkap</label>
+        <input type="text" id="f-nama" placeholder="Nama siswa">
+        <div class="grid2">
+          <div><label class="k">NIS</label><input type="text" id="f-nis"></div>
+          <div><label class="k">NISN</label><input type="text" id="f-nisn"></div>
+        </div>
+        <div class="grid2">
+          <div><label class="k">Kelas</label><input type="text" id="f-kelas" list="daftar-kelas" placeholder="VII A"><datalist id="daftar-kelas"><option value="VII A"></option><option value="VII B"></option><option value="VIII A"></option><option value="VIII B"></option><option value="IX A"></option><option value="IX B"></option></datalist></div>
+          <div><label class="k">Jenis Kelamin</label><select id="f-jk"><option value="L">Laki-laki</option><option value="P">Perempuan</option></select></div>
+        </div>
+        <div class="grid2">
+          <div><label class="k">Tempat Lahir</label><input type="text" id="f-tmp"></div>
+          <div><label class="k">Tanggal Lahir</label><input type="date" id="f-tgl"></div>
+        </div>
+        <label class="k">Alamat</label>
+        <input type="text" id="f-alamat" placeholder="Desa/RT/RW, Kecamatan">
+      </div>
+    </div>
+    <div class="baris" style="justify-content:flex-end;margin-top:12px">
+      <button type="button" class="btn btn-netral" onclick="document.getElementById('dlg-siswa').close()">Batal</button>
+      <button type="button" class="btn btn-utama" onclick="simpanSiswa()">💾 Simpan</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="area-cetak"></div>
+
+<script>
+'use strict';
+var KUNCI='kartupelajarku_v1';
+var BULAN=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function fmtTgl(iso){if(!iso)return '-';var p=String(iso).split('-');if(p.length!==3)return iso;var d=new Date(+p[0],+p[1]-1,+p[2]);if(isNaN(d))return iso;return d.getDate()+' '+BULAN[d.getMonth()]+' '+d.getFullYear()}
+function inisial(nama){var k=String(nama||'?').replace(/\(contoh\)/gi,'').trim().split(/\s+/);var a=(k[0]||'?').charAt(0);var b=k.length>1?k[1].charAt(0):'';return (a+b).toUpperCase()}
+function uid(){return 's'+Date.now().toString(36)+Math.floor(Math.random()*9999)}
+function bawaan(){return {
+  sekolah:{nama:'SMP Tarung Riwut',npsn:'30202696',alamat:'Jl. PLN Desa Luwuk Kanan, Kec. Tasik Payawan, Kab. Katingan, Kalimantan Tengah',kota:'Kasongan',kepsek:'Masburdin, S.Pd',nip:'',berlaku:'31 Juli 2027',tglSah:'',tema:'navy',logo:''},
+  siswa:[
+    {id:'c1',nama:'Andi Pratama (contoh)',nis:'2401',nisn:'0098765401',kelas:'VII A',tmpLahir:'Kasongan',tglLahir:'2012-05-14',alamat:'Jl. Contoh No. 1, Luwuk Kanan',jk:'L',foto:''},
+    {id:'c2',nama:'Sari Wulandari (contoh)',nis:'2402',nisn:'0098765402',kelas:'VII A',tmpLahir:'Kasongan',tglLahir:'2012-08-21',alamat:'Jl. Contoh No. 2, Luwuk Kanan',jk:'P',foto:''},
+    {id:'c3',nama:'Budi Santoso (contoh)',nis:'2355',nisn:'0087654301',kelas:'VIII B',tmpLahir:'Palangka Raya',tglLahir:'2011-02-03',alamat:'Jl. Contoh No. 3, Luwuk Kanan',jk:'L',foto:''},
+    {id:'c4',nama:'Dewi Lestari (contoh)',nis:'2356',nisn:'0087654302',kelas:'VIII B',tmpLahir:'Kasongan',tglLahir:'2011-11-30',alamat:'Jl. Contoh No. 4, Luwuk Kanan',jk:'P',foto:''},
+    {id:'c5',nama:'Rian Saputra (contoh)',nis:'2207',nisn:'0076543201',kelas:'IX A',tmpLahir:'Kasongan',tglLahir:'2010-06-17',alamat:'Jl. Contoh No. 5, Luwuk Kanan',jk:'L',foto:''},
+    {id:'c6',nama:'Maya Putri (contoh)',nis:'2208',nisn:'0076543202',kelas:'IX A',tmpLahir:'Kasongan',tglLahir:'2010-09-09',alamat:'Jl. Contoh No. 6, Luwuk Kanan',jk:'P',foto:''}
+  ],
+  pilihan:['c1','c2','c3','c4','c5','c6']
+}}
+var DB;
+try{var mentah=localStorage.getItem(KUNCI);DB=mentah?JSON.parse(mentah):bawaan();if(!DB.sekolah||!DB.siswa)DB=bawaan()}catch(e){DB=bawaan()}
+function simpan(){try{localStorage.setItem(KUNCI,JSON.stringify(DB))}catch(e){alert('Penyimpanan penuh — kurangi jumlah/ukuran foto, atau unduh cadangan lalu hapus sebagian data.')}}
+/* ===== navigasi tab ===== */
+function gantiTab(t){
+  ['data','cetak','atur'].forEach(function(x){
+    document.getElementById('panel-'+x).style.display=(x===t)?'':'none';
+    document.getElementById('tab-'+x).classList.toggle('aktif',x===t);
+  });
+  if(t==='cetak')renderPratinjau();
+}
+/* ===== tabel siswa ===== */
+function daftarKelas(){var s={};DB.siswa.forEach(function(x){if(x.kelas)s[x.kelas]=1});return Object.keys(s).sort()}
+function renderFilterKelas(){
+  var sel=document.getElementById('filter-kelas');var kini=sel.value;
+  sel.innerHTML='<option value="">Semua Kelas</option>'+daftarKelas().map(function(k){return '<option'+(k===kini?' selected':'')+' value="'+esc(k)+'">'+esc(k)+'</option>'}).join('');
+}
+function siswaTampil(){
+  var q=(document.getElementById('cari').value||'').toLowerCase();
+  var fk=document.getElementById('filter-kelas').value;
+  return DB.siswa.filter(function(s){
+    if(fk&&s.kelas!==fk)return false;
+    if(q&&(s.nama+' '+s.nis+' '+s.nisn).toLowerCase().indexOf(q)<0)return false;
+    return true;
+  });
+}
+function renderStat(){
+  var perK={};DB.siswa.forEach(function(s){var k=(s.kelas||'-').split(' ')[0];perK[k]=(perK[k]||0)+1});
+  var ringkas=Object.keys(perK).sort().map(function(k){return k+': '+perK[k]}).join(' • ');
+  document.getElementById('stat-box').innerHTML=
+    '<div class="kotak"><b>'+DB.siswa.length+'</b><span>Total Siswa</span></div>'+
+    '<div class="kotak"><b>'+DB.pilihan.length+'</b><span>Dipilih untuk Dicetak</span></div>'+
+    '<div class="kotak"><b>'+Object.keys(perK).length+'</b><span>Rombel/Kelas</span></div>'+
+    '<div class="kotak"><b style="font-size:13px;padding-top:5px">'+esc(ringkas||'-')+'</b><span>Sebaran Kelas</span></div>';
+}
+function renderTabel(){
+  renderFilterKelas();
+  var tampil=siswaTampil();
+  var tb=document.getElementById('tbody-siswa');
+  if(!tampil.length){tb.innerHTML='<tr><td colspan="8" class="kosong">Belum ada data siswa pada filter ini.</td></tr>'}
+  else tb.innerHTML=tampil.map(function(s){
+    var cek=DB.pilihan.indexOf(s.id)>=0?' checked':'';
+    var foto=s.foto?'<img class="thumb" src="'+s.foto+'" alt="">':'<span class="thumb">'+esc(inisial(s.nama))+'</span>';
+    return '<tr><td><input type="checkbox"'+cek+' onchange="togglePilih(\''+s.id+'\',this.checked)"></td>'+
+    '<td>'+foto+'</td><td><b>'+esc(s.nama)+'</b></td><td>'+esc(s.nis)+'</td><td>'+esc(s.nisn)+'</td><td>'+esc(s.kelas)+'</td>'+
+    '<td>'+esc(s.tmpLahir)+', '+esc(fmtTgl(s.tglLahir))+'</td>'+
+    '<td><button class="btn btn-netral btn-kecil" onclick="bukaForm(\''+s.id+'\')">✏️ Edit</button> <button class="btn btn-bahaya btn-kecil" onclick="hapusSiswa(\''+s.id+'\')">Hapus</button></td></tr>';
+  }).join('');
+  renderStat();
+}
+function togglePilih(id,on){
+  var i=DB.pilihan.indexOf(id);
+  if(on&&i<0)DB.pilihan.push(id);
+  if(!on&&i>=0)DB.pilihan.splice(i,1);
+  simpan();renderStat();
+}
+function pilihSemua(on){
+  if(on){var ada={};DB.pilihan.forEach(function(x){ada[x]=1});DB.siswa.forEach(function(s){if(!ada[s.id])DB.pilihan.push(s.id)})}
+  else DB.pilihan=[];
+  simpan();renderTabel();
+}
+/* ===== form siswa ===== */
+var fotoBaru=null;
+function setPrevFoto(src,nama){
+  var el=document.getElementById('f-foto-prev');
+  if(src){el.innerHTML='<img src="'+src+'" style="width:100%;height:100%;object-fit:cover" alt="">'}
+  else el.textContent=inisial(nama||'?');
+}
+function bukaForm(id){
+  fotoBaru=null;
+  var s=id?DB.siswa.find(function(x){return x.id===id}):null;
+  document.getElementById('judul-form').textContent=s?'Edit Siswa':'Tambah Siswa';
+  document.getElementById('f-id').value=s?s.id:'';
+  document.getElementById('f-nama').value=s?s.nama:'';
+  document.getElementById('f-nis').value=s?s.nis:'';
+  document.getElementById('f-nisn').value=s?s.nisn:'';
+  document.getElementById('f-kelas').value=s?s.kelas:'';
+  document.getElementById('f-jk').value=s?s.jk:'L';
+  document.getElementById('f-tmp').value=s?s.tmpLahir:'';
+  document.getElementById('f-tgl').value=s?s.tglLahir:'';
+  document.getElementById('f-alamat').value=s?s.alamat:'';
+  setPrevFoto(s?s.foto:'',s?s.nama:'');
+  document.getElementById('dlg-siswa').showModal();
+}
+function kecilkanFoto(file, maksW, maksH, format, cb){
+  var url=URL.createObjectURL(file);var img=new Image();
+  img.onload=function(){
+    var skala=Math.min(maksW/img.width,maksH/img.height,1);
+    var c=document.createElement('canvas');c.width=Math.round(img.width*skala);c.height=Math.round(img.height*skala);
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    URL.revokeObjectURL(url);
+    cb(c.toDataURL(format||'image/jpeg',0.85));
+  };
+  img.onerror=function(){URL.revokeObjectURL(url);alert('Berkas gambar tidak dapat dibaca.')};
+  img.src=url;
+}
+function unggahFoto(input){
+  var f=input.files&&input.files[0];if(!f)return;
+  kecilkanFoto(f,240,320,'image/jpeg',function(d){fotoBaru=d;setPrevFoto(d,'')});
+  input.value='';
+}
+function simpanSiswa(){
+  var nama=document.getElementById('f-nama').value.trim();
+  if(!nama){alert('Nama siswa wajib diisi.');return}
+  var id=document.getElementById('f-id').value;
+  var lama=id?DB.siswa.find(function(x){return x.id===id}):null;
+  var s={
+    id:id||uid(),nama:nama,
+    nis:document.getElementById('f-nis').value.trim(),
+    nisn:document.getElementById('f-nisn').value.trim(),
+    kelas:document.getElementById('f-kelas').value.trim(),
+    jk:document.getElementById('f-jk').value,
+    tmpLahir:document.getElementById('f-tmp').value.trim(),
+    tglLahir:document.getElementById('f-tgl').value,
+    alamat:document.getElementById('f-alamat').value.trim(),
+    foto:fotoBaru!==null?fotoBaru:(lama?lama.foto:'')
+  };
+  if(lama){var i=DB.siswa.indexOf(lama);DB.siswa[i]=s}
+  else{DB.siswa.push(s);DB.pilihan.push(s.id)}
+  simpan();document.getElementById('dlg-siswa').close();renderTabel();
+}
+function hapusSiswa(id){
+  var s=DB.siswa.find(function(x){return x.id===id});if(!s)return;
+  if(!confirm('Hapus siswa "'+s.nama+'"?'))return;
+  DB.siswa=DB.siswa.filter(function(x){return x.id!==id});
+  DB.pilihan=DB.pilihan.filter(function(x){return x!==id});
+  simpan();renderTabel();
+}
+function hapusTerpilih(){
+  if(!DB.pilihan.length){alert('Belum ada siswa yang dicentang.');return}
+  if(!confirm('Hapus '+DB.pilihan.length+' siswa yang dicentang?'))return;
+  var pil={};DB.pilihan.forEach(function(x){pil[x]=1});
+  DB.siswa=DB.siswa.filter(function(x){return !pil[x.id]});
+  DB.pilihan=[];simpan();renderTabel();
+}
+</script>
+
+<script>
+/* ===== pengaturan sekolah ===== */
+function isiPengaturan(){
+  var k=DB.sekolah;
+  document.getElementById('set-nama').value=k.nama||'';
+  document.getElementById('set-npsn').value=k.npsn||'';
+  document.getElementById('set-alamat').value=k.alamat||'';
+  document.getElementById('set-kota').value=k.kota||'';
+  document.getElementById('set-kepsek').value=k.kepsek||'';
+  document.getElementById('set-nip').value=k.nip||'';
+  document.getElementById('set-berlaku').value=k.berlaku||'';
+  document.getElementById('set-tgl-sah').value=k.tglSah||'';
+  document.getElementById('set-tema').value=k.tema||'navy';
+  var lp=document.getElementById('logo-prev');
+  if(k.logo){lp.src=k.logo;lp.style.display=''}else lp.style.display='none';
+}
+function simpanPengaturan(){
+  var k=DB.sekolah;
+  k.nama=document.getElementById('set-nama').value;
+  k.npsn=document.getElementById('set-npsn').value;
+  k.alamat=document.getElementById('set-alamat').value;
+  k.kota=document.getElementById('set-kota').value;
+  k.kepsek=document.getElementById('set-kepsek').value;
+  k.nip=document.getElementById('set-nip').value;
+  k.berlaku=document.getElementById('set-berlaku').value;
+  k.tglSah=document.getElementById('set-tgl-sah').value;
+  k.tema=document.getElementById('set-tema').value;
+  simpan();
+}
+function unggahLogo(input){
+  var f=input.files&&input.files[0];if(!f)return;
+  kecilkanFoto(f,220,220,'image/png',function(d){DB.sekolah.logo=d;simpan();isiPengaturan();alert('Logo tersimpan.')});
+  input.value='';
+}
+function hapusLogo(){DB.sekolah.logo='';simpan();isiPengaturan()}
+/* ===== barcode Code39 (standar terbuka, digambar lokal) ===== */
+var C39={'0':'nnnwwnwnn','1':'wnnwnnnnw','2':'nnwwnnnnw','3':'wnwwnnnnn','4':'nnnwwnnnw','5':'wnnwwnnnn','6':'nnwwwnnnn','7':'nnnwnnwnw','8':'wnnwnnwnn','9':'nnwwnnwnn','A':'wnnnnwnnw','B':'nnwnnwnnw','C':'wnwnnwnnn','D':'nnnnwwnnw','E':'wnnnwwnnn','F':'nnwnwwnnn','G':'nnnnnwwnw','H':'wnnnnwwnn','I':'nnwnnwwnn','J':'nnnnwwwnn','K':'wnnnnnnww','L':'nnwnnnnww','M':'wnwnnnnwn','N':'nnnnwnnww','O':'wnnnwnnwn','P':'nnwnwnnwn','Q':'nnnnnnwww','R':'wnnnnnwwn','S':'nnwnnnwwn','T':'nnnnwnwwn','U':'wwnnnnnnw','V':'nwwnnnnnw','W':'wwwnnnnnn','X':'nwnnwnnnw','Y':'wwnnwnnnn','Z':'nwwnwnnnn','-':'nwnnnnwnw','.':'wwnnnnwnn',' ':'nwwnnnwnn','$':'nwnwnwnnn','/':'nwnwnnnwn','+':'nwnnnwnwn','%':'nnnwnwnwn','*':'nwnnwnwnn'};
+function barcodeHTML(teks){
+  var t=String(teks||'').toUpperCase().split('').filter(function(c){return C39[c]}).join('');
+  if(!t)return '';
+  var full='*'+t+'*',html='<div class="bars">';
+  for(var i=0;i<full.length;i++){
+    var pola=C39[full[i]];
+    for(var j=0;j<9;j++){
+      var lebar=pola[j]==='w'?'0.72mm':'0.28mm';
+      html+='<i class="'+(j%2===0?'':'sp')+'" style="width:'+lebar+'"></i>';
+    }
+    html+='<i class="sp" style="width:0.28mm"></i>';
+  }
+  return html+'</div><div class="angka">'+esc(t)+'</div>';
+}
+/* ===== pembangun kartu ===== */
+function kelasKartu(){var t=DB.sekolah.tema;return t&&t!=='navy'?' tema-'+t:''}
+function kepalaKartu(judulLabel){
+  var k=DB.sekolah;
+  var logo=k.logo?'<img class="k-logo" src="'+k.logo+'" alt="">':'<div class="k-logo-kosong">LOGO<br>SEKOLAH</div>';
+  var sub=(k.npsn?'NPSN '+esc(k.npsn)+' • ':'')+esc(k.alamat);
+  return '<div class="k-head">'+logo+'<div class="k-sek"><div class="k-sek-nama">'+esc(k.nama)+'</div><div class="k-sek-sub">'+sub+'</div></div><div class="k-label">'+judulLabel+'</div></div>';
+}
+function kartuDepan(s){
+  var k=DB.sekolah;
+  var foto=s.foto?'<img src="'+s.foto+'" alt="">':'<span class="inisial">'+esc(inisial(s.nama))+'</span>';
+  var ttl=(s.tmpLahir||'-')+', '+fmtTgl(s.tglLahir);
+  return '<div class="kartu'+kelasKartu()+'">'+kepalaKartu('KARTU<br>PELAJAR')+
+  '<div class="k-body"><div class="k-foto">'+foto+'</div><div class="k-data">'+
+  '<div class="k-nama">'+esc(s.nama)+'</div><div class="k-kelas">Kelas '+esc(s.kelas||'-')+' • '+(s.jk==='P'?'Perempuan':'Laki-laki')+'</div>'+
+  '<table class="k-t">'+
+  '<tr><td class="l">NIS</td><td class="v">: '+esc(s.nis||'-')+'</td></tr>'+
+  '<tr><td class="l">NISN</td><td class="v">: '+esc(s.nisn||'-')+'</td></tr>'+
+  '<tr><td class="l">TTL</td><td class="v">: '+esc(ttl)+'</td></tr>'+
+  '<tr><td class="l">Alamat</td><td class="v">: '+esc(s.alamat||'-')+'</td></tr></table>'+
+  '<div class="k-barcode">'+barcodeHTML(s.nisn)+'</div>'+
+  '</div></div>'+
+  '<div class="k-foot"><span>Pengesahan Digital Kepsek • <b>'+esc(k.kepsek||'-')+'</b></span><span>Berlaku s.d. <b>'+esc(k.berlaku||'-')+'</b></span></div></div>';
+}
+function kartuBelakang(s){
+  var k=DB.sekolah;
+  var ttd=k.kota+(k.tglSah?', '+fmtTgl(k.tglSah):'');
+  var nip=k.nip?'<br>NIP. '+esc(k.nip):'';
+  return '<div class="kartu k-belakang'+kelasKartu()+'">'+kepalaKartu('SISWA<br>'+esc((s.nisn||'').slice(-4)||''))+
+  '<div class="k-isi"><h4>KETENTUAN</h4><ol>'+
+  '<li>Kartu ini adalah kartu identitas resmi siswa '+esc(k.nama||'sekolah')+'.</li>'+
+  '<li>Kartu wajib dibawa selama mengikuti kegiatan di lingkungan sekolah.</li>'+
+  '<li>Kartu tidak dapat dipindahtangankan atau dipinjamkan kepada orang lain.</li>'+
+  '<li>Apabila kartu hilang, segera melapor kepada wali kelas / tata usaha.</li>'+
+  '<li>Bagi yang menemukan kartu ini, mohon mengembalikan ke alamat sekolah di sisi depan.</li></ol></div>'+
+  '<div class="k-cap">CAP<br>SEKOLAH</div>'+
+  '<div class="k-ttd">'+esc(ttd)+'<br>Kepala Sekolah,<span class="nm">'+esc(k.kepsek||'-')+'</span>'+nip+'</div>'+
+  '<div class="k-foot"><span>'+esc(s.nama)+'</span><span>NISN <b>'+esc(s.nisn||'-')+'</b></span></div></div>';
+}
+function siswaDipilih(){
+  var pil={};DB.pilihan.forEach(function(x){pil[x]=1});
+  return DB.siswa.filter(function(s){return pil[s.id]});
+}
+function bangunLembar(){
+  var daftar=siswaDipilih();
+  var denganBelakang=document.getElementById('opt-belakang').checked;
+  var halaman=[],i;
+  for(i=0;i<daftar.length;i+=10)halaman.push(daftar.slice(i,i+10));
+  var html='';
+  halaman.forEach(function(h,idx){
+    html+='<div class="judul-lembar">Sisi Depan — Halaman '+(idx+1)+'</div><div class="lembar">'+h.map(kartuDepan).join('')+'</div>';
+  });
+  if(denganBelakang)halaman.forEach(function(h,idx){
+    html+='<div class="judul-lembar">Sisi Belakang — Halaman '+(idx+1)+'</div><div class="lembar">'+h.map(kartuBelakang).join('')+'</div>';
+  });
+  return {html:html,jumlah:daftar.length,halaman:halaman.length};
+}
+function renderPratinjau(){
+  var h=bangunLembar();
+  document.getElementById('pratinjau').innerHTML=h.jumlah?h.html:'<div class="panel kosong">Belum ada siswa yang dicentang. Kembali ke tab Data Siswa untuk memilih.</div>';
+  document.getElementById('info-cetak').textContent=h.jumlah?h.jumlah+' siswa dipilih • '+h.halaman+' halaman sisi depan':'';
+}
+function cetakKartu(){
+  var h=bangunLembar();
+  if(!h.jumlah){alert('Belum ada siswa yang dicentang untuk dicetak.');return}
+  document.getElementById('area-cetak').innerHTML=h.html;
+  window.print();
+}
+/* ===== impor / ekspor ===== */
+function unduh(nama,isi,tipe){
+  var b=new Blob([isi],{type:tipe||'text/plain;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=nama;a.click();
+  setTimeout(function(){URL.revokeObjectURL(a.href)},800);
+}
+function csvEscape(v){v=String(v==null?'':v);return /[",;\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
+function unduhTemplate(){
+  var isi='Nama,NIS,NISN,Kelas,Tempat Lahir,Tanggal Lahir,Alamat,JK\n'+'Contoh Nama Siswa,2501,0012345601,VII A,Kasongan,2012-01-15,"Jl. Contoh No. 10, Luwuk Kanan",L\n';
+  unduh('template-impor-siswa.csv',isi,'text/csv;charset=utf-8');
+}
+function eksporData(){
+  var baris=['Nama,NIS,NISN,Kelas,Tempat Lahir,Tanggal Lahir,Alamat,JK'];
+  DB.siswa.forEach(function(s){baris.push([s.nama,s.nis,s.nisn,s.kelas,s.tmpLahir,s.tglLahir,s.alamat,s.jk].map(csvEscape).join(','))});
+  unduh('data-siswa-kartu-pelajar.csv',baris.join('\n'),'text/csv;charset=utf-8');
+}
+function tglDariSel(v){
+  if(v==null||v==='')return '';
+  if(Object.prototype.toString.call(v)==='[object Date]'&&!isNaN(v)){return v.getFullYear()+'-'+String(v.getMonth()+1).padStart(2,'0')+'-'+String(v.getDate()).padStart(2,'0')}
+  var t=String(v).trim();
+  var m=t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);if(m)return m[1]+'-'+m[2].padStart(2,'0')+'-'+m[3].padStart(2,'0');
+  m=t.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})/);if(m)return m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
+  return '';
+}
+function petakanBaris(r){
+  function ambil(){for(var i=0;i<arguments.length;i++){for(var k in r){if(k.toLowerCase().replace(/\s+/g,'')===arguments[i]){var v=r[k];if(v!==''&&v!=null)return v}}}return ''}
+  var nama=String(ambil('nama','namalengkap','namasiswa')||'').trim();
+  if(!nama)return null;
+  var jkRaw=String(ambil('jk','jeniskelamin')||'L').trim().toUpperCase();
+  return {id:uid(),nama:nama,
+    nis:String(ambil('nis')||''),nisn:String(ambil('nisn')||''),
+    kelas:String(ambil('kelas','rombel')||''),tmpLahir:String(ambil('tempatlahir','tmp')||''),
+    tglLahir:tglDariSel(ambil('tanggallahir','tgl')),
+    alamat:String(ambil('alamat')||''),jk:jkRaw.charAt(0)==='P'?'P':'L',foto:''};
+}
+function prosesImpor(rows){
+  var masuk=0;
+  rows.forEach(function(r){var s=petakanBaris(r);if(s){DB.siswa.push(s);DB.pilihan.push(s.id);masuk++}});
+  simpan();renderTabel();
+  alert(masuk?('Impor selesai: '+masuk+' siswa ditambahkan dan langsung dicentang untuk dicetak.'):'Tidak ada baris yang terbaca. Periksa judul kolomnya (Nama, NIS, NISN, Kelas, Tempat Lahir, Tanggal Lahir, Alamat, JK).');
+}
+function imporFile(input){
+  var f=input.files&&input.files[0];if(!f)return;
+  var nama=f.name.toLowerCase();
+  if(nama.endsWith('.csv')){
+    var baca=new FileReader();
+    baca.onload=function(){
+      var teks=String(baca.result||'').replace(/^\uFEFF/,'');
+      var garis=teks.split(/\r?\n/).filter(function(g){return g.trim()});
+      if(garis.length<2){alert('Berkas CSV kosong atau hanya berisi judul.');return}
+      var pisah=garis[0].indexOf(';')>garis[0].indexOf(',')?';':',';
+      var kepala=garis[0].split(pisah).map(function(h){return h.trim().replace(/^"|"$/g,'')});
+      var rows=garis.slice(1).map(function(g){
+        var sel=g.split(pisah).map(function(c){return c.trim().replace(/^"|"$/g,'')});
+        var o={};kepala.forEach(function(h,i){o[h]=sel[i]||''});return o;
+      });
+      prosesImpor(rows);
+    };
+    baca.readAsText(f);
+  }else{
+    if(typeof XLSX==='undefined'){alert('Pustaka Excel belum termuat (butuh internet sekali). Gunakan berkas CSV sebagai gantinya.');input.value='';return}
+    var baca2=new FileReader();
+    baca2.onload=function(){
+      try{
+        var wb=XLSX.read(new Uint8Array(baca2.result),{type:'array',cellDates:true});
+        var ws=wb.Sheets[wb.SheetNames[0]];
+        var rows=XLSX.utils.sheet_to_json(ws,{defval:''});
+        prosesImpor(rows);
+      }catch(e){alert('Berkas Excel tidak dapat dibaca.')}
+    };
+    baca2.readAsArrayBuffer(f);
+  }
+  input.value='';
+}
+/* ===== cadangan ===== */
+function cadangkan(){unduh('cadangan-kartu-pelajarku.json',JSON.stringify(DB,null,1),'application/json')}
+function pulihkan(input){
+  var f=input.files&&input.files[0];if(!f)return;
+  var baca=new FileReader();
+  baca.onload=function(){
+    try{
+      var d=JSON.parse(baca.result);
+      if(!d.sekolah||!Array.isArray(d.siswa))throw new Error('format');
+      DB=d;if(!Array.isArray(DB.pilihan))DB.pilihan=DB.siswa.map(function(s){return s.id});
+      simpan();isiPengaturan();renderTabel();alert('Cadangan berhasil dipulihkan.');
+    }catch(e){alert('Berkas cadangan tidak valid.')}
+  };
+  baca.readAsText(f);input.value='';
+}
+function resetContoh(){
+  if(!confirm('Kembalikan seluruh data ke contoh bawaan? Data sekarang akan hilang (unduh cadangan dulu bila perlu).'))return;
+  DB=bawaan();simpan();isiPengaturan();renderTabel();
+}
+/* ===== mulai ===== */
+isiPengaturan();
+renderTabel();
+window.__uji={get DB(){return DB},set DB(v){DB=v},simpan:simpan,bawaan:bawaan,renderTabel:renderTabel,kartuDepan:kartuDepan,kartuBelakang:kartuBelakang,barcodeHTML:barcodeHTML,bangunLembar:bangunLembar,petakanBaris:petakanBaris,tglDariSel:tglDariSel,fmtTgl:fmtTgl,siswaDipilih:siswaDipilih};
+</script>
+</body>
+</html>
