@@ -104,7 +104,20 @@ dialog::backdrop{background:rgba(6,18,38,.55)}
         <select id="fltKelas" style="width:auto" onchange="renderTabel()">
           <option value="">Semua kelas</option><option>VII</option><option>VIII</option><option>IX</option>
         </select>
+        <select id="urut" style="width:auto" onchange="renderTabel()">
+          <option value="data">Urut: sesuai data</option>
+          <option value="nama">Urut: Nama A–Z</option>
+          <option value="kelas">Urut: Kelas + Nama</option>
+        </select>
         <button class="btn gold" onclick="bukaEdit(-1)">＋ Tambah Siswa</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <span class="kecil-teks"><b>Pilih untuk dicetak:</b></span>
+        <button class="btn alt kecil" onclick="pilihKelas('')">Semua</button>
+        <button class="btn alt kecil" onclick="pilihKelas('VII')">Kelas VII</button>
+        <button class="btn alt kecil" onclick="pilihKelas('VIII')">Kelas VIII</button>
+        <button class="btn alt kecil" onclick="pilihKelas('IX')">Kelas IX</button>
+        <button class="btn alt kecil" onclick="pilihKelas('kosong')">Kosongkan</button>
       </div>
       <p class="kecil-teks" id="ringkas" style="margin-top:8px"></p>
       <div style="overflow:auto;margin-top:6px">
@@ -138,6 +151,11 @@ dialog::backdrop{background:rgba(6,18,38,.55)}
       <p class="kecil-teks">Kartu yang tampil = siswa yang <b>dicentang</b> di tab Data Siswa. Semua isi ada di sisi depan: data siswa, barcode NISN, ketentuan ringkas, dan blok tanda tangan kepala sekolah (barcode NIP). Tidak ada halaman belakang.</p>
       <div class="row" style="margin-top:10px">
         <button class="btn gold" onclick="window.print()">🖨️ Cetak / Simpan PDF</button>
+        <select id="zoomCetak" style="width:auto" onchange="aturZoom(this.value)">
+          <option value="0.55">Pratinjau 55%</option>
+          <option value="0.75" selected>Pratinjau 75%</option>
+          <option value="1">Pratinjau 100%</option>
+        </select>
         <span class="kecil-teks" id="infoCetak"></span>
       </div>
       <p class="kecil-teks" style="margin-top:8px">Tips cetak: kertas A4, skala <b>100% / Actual Size</b> (jangan Fit to Page), margin sesuai bawaan halaman ini. Gunting mengikuti garis putus-putus.</p>
@@ -147,6 +165,11 @@ dialog::backdrop{background:rgba(6,18,38,.55)}
 
   <!-- ============ TAB PENGATURAN ============ -->
   <section id="halAtur" class="hidden">
+    <div class="panel">
+      <h2>👀 Pratinjau Kartu (Langsung)</h2>
+      <p class="kecil-teks" style="margin-bottom:8px">Contoh tampilan kartu dengan pengaturan saat ini — berubah langsung saat kakak mengedit isian di bawah.</p>
+      <div class="prevWrap"><div style="display:flex;justify-content:center"><div id="prevAtur"></div></div></div>
+    </div>
     <div class="panel">
       <h2>🏫 Identitas Sekolah &amp; Tanda Tangan</h2>
       <label>Nama Sekolah</label><input id="sNama" oninput="atur('nama',this.value)">
@@ -303,6 +326,7 @@ function keTab(t){
   document.getElementById('tabCetak').classList.toggle('aktif', t === 'cetak');
   document.getElementById('tabAtur').classList.toggle('aktif', t === 'atur');
   if (t === 'cetak') renderCetak();
+  if (t === 'atur') segarPrevAtur();
 }
 
 /* ===== tabel siswa ===== */
@@ -311,8 +335,13 @@ function renderTabel(){
   const fk = document.getElementById('fltKelas').value;
   const tb = document.getElementById('tbody');
   let tampil = 0;
-  tb.innerHTML = S.siswa.filter(s => (!fk || s.kelas === fk) &&
-    (!q || (s.nama || '').toLowerCase().includes(q) || (s.nisn || '').includes(q)))
+  const daftar = S.siswa.filter(s => (!fk || s.kelas === fk) &&
+    (!q || (s.nama || '').toLowerCase().includes(q) || (s.nisn || '').includes(q)));
+  const mode = document.getElementById('urut').value;
+  const ordK = { 'VII': 0, 'VIII': 1, 'IX': 2 };
+  if (mode === 'nama') daftar.sort((a, b) => (a.nama || '').localeCompare(b.nama || ''));
+  if (mode === 'kelas') daftar.sort((a, b) => ((ordK[a.kelas] ?? 9) - (ordK[b.kelas] ?? 9)) || (a.nama || '').localeCompare(b.nama || ''));
+  tb.innerHTML = daftar
     .map(s => { tampil++;
       return '<tr><td><input type="checkbox" style="width:auto" ' + (terpilih.has(s.id) ? 'checked' : '')
         + ' onchange="togglePilih(\'' + s.id + '\',this.checked)"></td>'
@@ -327,6 +356,10 @@ function renderTabel(){
     + ' • terpilih untuk dicetak: ' + terpilih.size + (tampil < S.siswa.length ? ' • tampil ' + tampil : '');
 }
 function togglePilih(id, on){ if (on) terpilih.add(id); else terpilih.delete(id); renderTabel(); }
+function pilihKelas(k){
+  terpilih = new Set(S.siswa.filter(s => k === '' || (k !== 'kosong' && s.kelas === k)).map(s => s.id));
+  renderTabel();
+}
 function cekSemua(on){ S.siswa.forEach(s => { if (on) terpilih.add(s.id); else terpilih.delete(s.id); }); renderTabel(); }
 function hapusSatu(id){ const s = S.siswa.find(x => x.id === id);
   if (s && confirm('Hapus siswa ' + s.nama + '?')) { S.siswa = S.siswa.filter(x => x.id !== id); terpilih.delete(id); sesudahUbah(); } }
@@ -365,6 +398,11 @@ function simpanSiswa(){
   const nama = document.getElementById('fNama').value.trim();
   if (!nama) { alert('Nama siswa wajib diisi.'); return; }
   const id = document.getElementById('fId').value;
+  const nisnBaru = document.getElementById('fNisn').value.trim();
+  if (nisnBaru && S.siswa.some(x => x.nisn === nisnBaru && x.id !== id)) {
+    alert('NISN ' + nisnBaru + ' sudah dipakai siswa lain. Periksa kembali agar tidak ada kartu ganda.');
+    return;
+  }
   const data = { nama: nama,
     nis: document.getElementById('fNis').value.trim(),
     nisn: document.getElementById('fNisn').value.trim(),
@@ -381,7 +419,14 @@ function simpanSiswa(){
 }
 
 /* ===== pengaturan ===== */
-function atur(kunci, nilai){ S.sekolah[kunci] = nilai; sesudahUbah(false); }
+const CONTOH_KARTU = { id: 'contoh', nama: 'Contoh Nama Siswa', nis: '1234', nisn: '0012345678',
+  kelas: 'VII', tmpLahir: 'Kasongan', tglLahir: '2012-05-17',
+  alamat: 'Jl. Contoh No. 1, Luwuk Kanan, Tasik Payawan', jk: 'L', foto: '' };
+function segarPrevAtur(){
+  const el = document.getElementById('prevAtur');
+  if (el) el.innerHTML = kartuHTML(S.siswa[0] || CONTOH_KARTU);
+}
+function atur(kunci, nilai){ S.sekolah[kunci] = nilai; sesudahUbah(false); segarPrevAtur(); }
 function isiFormAtur(){
   const k = S.sekolah;
   const set = (id, v) => { document.getElementById(id).value = v || ''; };
@@ -402,13 +447,27 @@ function muatLogo(inp){ const f = inp.files && inp.files[0]; if (!f) return;
 function hapusLogo(){ S.sekolah.logo = ''; sesudahUbah(); }
 
 /* ===== cetak ===== */
+let zoomNilai = '0.75';
+function aturZoom(v){ zoomNilai = v; document.getElementById('areaCetak').style.zoom = v; }
 function renderCetak(){
   const daftar = S.siswa.filter(s => terpilih.has(s.id));
-  document.getElementById('areaCetak').innerHTML = daftar.map(kartuHTML).join('');
+  const area = document.getElementById('areaCetak');
+  area.innerHTML = daftar.map(kartuHTML).join('');
+  area.style.zoom = zoomNilai;
+  const per = {}; daftar.forEach(s => { per[s.kelas] = (per[s.kelas] || 0) + 1; });
   document.getElementById('infoCetak').textContent = daftar.length
-    ? daftar.length + ' kartu • ' + Math.ceil(daftar.length / 10) + ' halaman A4'
+    ? daftar.length + ' kartu • ' + Math.ceil(daftar.length / 10) + ' halaman A4 • '
+      + Object.keys(per).sort().map(k => 'Kelas ' + k + ': ' + per[k]).join(', ')
     : 'Belum ada siswa tercentang — centang dulu di tab Data Siswa.';
 }
+window.addEventListener('beforeprint', () => {
+  document.getElementById('areaCetak').style.zoom = 1;
+  document.title = 'Kartu Pelajar — SMP Tarung Riwut';
+});
+window.addEventListener('afterprint', () => {
+  document.getElementById('areaCetak').style.zoom = zoomNilai;
+  document.title = 'Editor Kartu Pelajar — SMP Tarung Riwut';
+});
 
 /* ===== CSV / JSON ===== */
 function parseCsvTeks(teks){
