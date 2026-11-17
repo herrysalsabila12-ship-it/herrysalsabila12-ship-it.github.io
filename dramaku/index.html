@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DramaKu — Studio Drama Pendek AI</title>
+<style>
+:root{--bg:#17102b;--bg2:#241743;--kartu:#2b1d52;--garis:#4b3683;--teks:#f3efff;--redup:#bdb1e8;
+--emas:#f5c542;--pink:#ff6b9d;--hijau:#3ddc84;--biru:#57b6ff;--merah:#ff6b6b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(160deg,var(--bg),var(--bg2));color:var(--teks);min-height:100vh;padding-bottom:40px}
+header{padding:18px 16px 8px;text-align:center}
+header .logo{font-size:34px}
+header h1{font-size:26px;letter-spacing:.5px}
+header h1 span{color:var(--emas)}
+header p{color:var(--redup);font-size:13px;margin-top:4px}
+nav{display:flex;gap:6px;padding:10px 10px 0;position:sticky;top:0;background:var(--bg);z-index:5;flex-wrap:wrap}
+nav button{flex:1;min-width:100px;padding:10px 4px;border:1px solid var(--garis);background:var(--kartu);color:var(--redup);border-radius:10px 10px 0 0;font-size:13px;cursor:pointer}
+nav button.aktif{background:var(--emas);color:#241743;font-weight:700;border-color:var(--emas)}
+main{padding:14px;max-width:860px;margin:0 auto}
+.tab{display:none}.tab.tampil{display:block}
+.kartu{background:var(--kartu);border:1px solid var(--garis);border-radius:14px;padding:14px;margin-bottom:14px}
+.kartu h3{font-size:16px;margin-bottom:8px}
+.kartu h4{font-size:14px;margin:10px 0 6px;color:var(--emas)}
+label{display:block;font-size:12.5px;color:var(--redup);margin:10px 0 4px}
+input,select,textarea{width:100%;padding:10px;border-radius:9px;border:1px solid var(--garis);background:#1d1338;color:var(--teks);font-size:14px;font-family:inherit}
+textarea{resize:vertical}
+button.btn{padding:11px 14px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-top:10px}
+.btn-emas{background:var(--emas);color:#241743}
+.btn-pink{background:var(--pink);color:#fff}
+.btn-biru{background:var(--biru);color:#10233a}
+.btn-garis{background:transparent;border:1px solid var(--garis)!important;color:var(--teks);font-weight:600}
+.btn-merah{background:var(--merah);color:#fff}
+.btn-kecil{width:auto;padding:7px 10px;font-size:12.5px;margin-top:6px}
+.radio-baris{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.radio-baris label{flex:1;min-width:130px;margin:0;padding:10px;border:1px solid var(--garis);border-radius:10px;cursor:pointer;font-size:13px;color:var(--teks);background:#1d1338}
+.radio-baris input{width:auto;margin-right:6px}
+.radio-baris label.pilih{border-color:var(--emas);background:#3a2a12}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.grid2{grid-template-columns:1fr}}
+.item-proyek{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px;border:1px solid var(--garis);border-radius:10px;margin-top:8px;background:#1d1338;cursor:pointer}
+.item-proyek.aktif{border-color:var(--emas)}
+.item-proyek b{font-size:14px}
+.item-proyek small{color:var(--redup);display:block}
+.karakter{display:flex;gap:10px;border:1px solid var(--garis);border-radius:12px;padding:10px;margin-top:10px;background:#1d1338}
+.karakter img{width:64px;height:64px;object-fit:cover;border-radius:10px;border:1px solid var(--garis)}
+.karakter .avatar{width:64px;height:64px;border-radius:10px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:28px;border:1px solid var(--garis);flex:none}
+.karakter .isi{flex:1;min-width:0}
+.karakter b{font-size:14.5px}
+.karakter p{font-size:12.5px;color:var(--redup);margin-top:2px}
+.adegan{border:1px solid var(--garis);border-radius:12px;padding:12px;margin-top:12px;background:#1d1338}
+.adegan .kepala{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.adegan .kepala b{color:var(--emas);font-size:14.5px}
+.adegan p{font-size:13.5px;margin-top:6px;line-height:1.55}
+.adegan .dialog{background:#120b28;border-radius:9px;padding:9px 11px;margin-top:8px;font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+.promptbox{background:#120b28;border:1px dashed var(--garis);border-radius:9px;padding:9px 11px;margin-top:8px;font-size:12.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;color:#d9f2ff}
+.kecil{font-size:12px;color:var(--redup);line-height:1.55}
+.nota{background:#3a2a12;border:1px solid var(--emas);color:#ffe9a8;border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.55;margin-bottom:14px}
+.status{font-size:13px;min-height:18px;margin-top:8px}
+#areaCetak{display:none}
+@media print{body{background:#fff;color:#000}header,nav,main{display:none!important}#areaCetak{display:block;font-size:12pt;line-height:1.6;padding:10px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">🎬</div>
+  <h1>Drama<span>Ku</span></h1>
+  <p>Studio pembuat drama pendek AI — dari sinopsis jadi naskah, storyboard, dan prompt video. Gratis, tanpa batas harian.</p>
+</header>
+<nav>
+  <button data-tab="buat" class="aktif">🎬 Buat Drama</button>
+  <button data-tab="karakter">👥 Karakter</button>
+  <button data-tab="storyboard">🖼️ Storyboard</button>
+  <button data-tab="ekspor">📤 Ekspor</button>
+  <button data-tab="pengaturan">⚙️ Pengaturan</button>
+</nav>
+<main>
+<!-- ============ TAB BUAT ============ -->
+<section id="tab-buat" class="tab tampil">
+  <div class="nota">🎬 <b>Cara kerja:</b> isi judul/sinopsis → buat naskah → lengkapi karakter → di tab Storyboard tiap adegan sudah punya <b>prompt gambar</b> dan <b>prompt video</b> siap salin ke Gemini (Veo) atau alat AI lain.</div>
+  <div class="kartu">
+    <h3>🎬 Buat Drama Baru</h3>
+    <label>Mode pembuatan</label>
+    <div class="radio-baris" id="modeBaris">
+      <label data-mode="sinopsis"><input type="radio" name="mode" value="sinopsis" checked>🎬 Director Mode — tulis sinopsis sendiri</label>
+      <label data-mode="judul"><input type="radio" name="mode" value="judul">✨ Dari Judul — sinopsis dikembangkan otomatis</label>
+    </div>
+    <label>Judul drama</label>
+    <input id="fJudul" placeholder="cth: Sepotong Roti untuk Ibu">
+    <div id="bungkusSinopsis">
+      <label>Sinopsis / alur cerita kamu</label>
+      <textarea id="fSinopsis" rows="5" placeholder="Ceritakan alur dramanya secara bebas: siapa tokohnya, apa masalahnya, bagaimana akhirnya..."></textarea>
+    </div>
+    <div class="grid2">
+      <div>
+        <label>Genre</label>
+        <select id="fGenre">
+          <option>Drama Keluarga</option><option>Persahabatan</option><option>Sekolah</option>
+          <option>Komedi</option><option>Inspirasi</option><option>Roman</option><option>Perjuangan Hidup</option>
+        </select>
+      </div>
+      <div>
+        <label>Jumlah adegan</label>
+        <select id="fJumlah"><option>3</option><option selected>5</option><option>6</option><option>8</option><option>10</option></select>
+      </div>
+    </div>
+    <div class="grid2">
+      <div>
+        <label>Rasio video</label>
+        <select id="fRasio"><option value="9:16">9:16 (vertikal — TikTok/Reels)</option><option value="16:9">16:9 (YouTube)</option><option value="1:1">1:1 (persegi)</option></select>
+      </div>
+      <div>
+        <label>Durasi per adegan</label>
+        <select id="fDurasi"><option>8 detik</option><option>10 detik</option><option>15 detik</option></select>
+      </div>
+    </div>
+    <h4 style="margin-top:14px">Cara membuat naskah</h4>
+    <button class="btn btn-emas" id="btnAI">🤖 Buat dengan AI (kunci Gemini saya)</button>
+    <button class="btn btn-biru" id="btnTemplate">📝 Buat dari Template (offline, tanpa kunci)</button>
+    <button class="btn btn-garis" id="btnPrompt">📋 Mode Prompt — salin ke Gemini/ChatGPT</button>
+    <div id="areaPrompt" style="display:none">
+      <label>1) Salin prompt ini ke Gemini/ChatGPT, 2) tempel hasilnya di bawah, 3) klik Impor</label>
+      <textarea id="teksPromptMaster" rows="7" readonly></textarea>
+      <button class="btn btn-garis btn-kecil" id="btnSalinMaster">📋 Salin Prompt</button>
+      <label>Hasil dari Gemini/ChatGPT (format JSON)</label>
+      <textarea id="teksHasilTempel" rows="6" placeholder="Tempel hasil JSON di sini..."></textarea>
+      <button class="btn btn-pink" id="btnImpor">⬇️ Impor Jadi Naskah</button>
+    </div>
+    <p class="status" id="statusBuat"></p>
+  </div>
+  <div class="kartu">
+    <h3>🗂️ Proyek Saya</h3>
+    <div id="daftarProyek"></div>
+  </div>
+  <div class="kartu" id="kartuHasil" style="display:none">
+    <h3>📜 Naskah Aktif</h3>
+    <p class="kecil" id="ringkasanAktif"></p>
+    <div id="hasilNaskah"></div>
+  </div>
+</section>
+
+<!-- ============ TAB KARAKTER ============ -->
+<section id="tab-karakter" class="tab">
+  <div class="kartu">
+    <h3>👥 Karakter Drama Aktif</h3>
+    <p class="kecil">Deskripsi penampilan dipakai di semua prompt gambar &amp; video supaya wajah dan pakaian tokoh <b>konsisten</b> di setiap adegan. Foto referensi boleh diunggah (tersimpan di perangkat ini).</p>
+    <div id="daftarKarakter"></div>
+    <h4>➕ Tambah / Edit Karakter</h4>
+    <input type="hidden" id="kId">
+    <label>Nama tokoh</label>
+    <input id="kNama" placeholder="cth: RINA">
+    <div class="grid2">
+      <div><label>Peran</label><input id="kPeran" placeholder="cth: Tokoh utama, anak sulung"></div>
+      <div><label>Sifat</label><input id="kSifat" placeholder="cth: Penyabar, mudah menangis"></div>
+    </div>
+    <label>Deskripsi penampilan (untuk konsistensi gambar/video)</label>
+    <textarea id="kPenampilan" rows="2" placeholder="cth: Perempuan Indonesia 25 tahun, rambut hitam panjang, wajah lembut, baju gamis hijau sederhana"></textarea>
+    <label>Foto referensi (opsional)</label>
+    <input type="file" id="kFoto" accept="image/*">
+    <button class="btn btn-emas" id="btnSimpanKarakter">💾 Simpan Karakter</button>
+    <button class="btn btn-garis" id="btnBersihKarakter">Bersihkan Formulir</button>
+  </div>
+</section>
+
+<!-- ============ TAB STORYBOARD ============ -->
+<section id="tab-storyboard" class="tab">
+  <div class="kartu">
+    <h3>🖼️ Storyboard &amp; Prompt Produksi</h3>
+    <p class="kecil">Tiap adegan: buat gambar dulu dengan <b>Prompt Gambar</b> (di Gemini/alat gambar AI), lalu hidupkan jadi video dengan <b>Prompt Video</b> (di Gemini Veo / alat video AI). Dialog bahasa Indonesia sudah tertanam di prompt video.</p>
+    <button class="btn btn-biru" id="btnSalinSemuaPrompt">📋 Salin Semua Prompt Proyek Ini</button>
+    <div id="daftarStoryboard"></div>
+  </div>
+</section>
+
+<!-- ============ TAB EKSPOR ============ -->
+<section id="tab-ekspor" class="tab">
+  <div class="kartu">
+    <h3>📤 Ekspor Naskah</h3>
+    <button class="btn btn-emas" id="btnWord">📄 Unduh Naskah (Word)</button>
+    <button class="btn btn-garis" id="btnCetak">🖨️ Cetak / Simpan PDF</button>
+    <h4>✅ Tahapan Produksi</h4>
+    <div id="ceklist"></div>
+    <h4>💾 Cadangan Data</h4>
+    <button class="btn btn-garis" id="btnBackup">⬇️ Unduh Cadangan (JSON)</button>
+    <label>⬆️ Pulihkan dari cadangan</label>
+    <input type="file" id="fileRestore" accept=".json,application/json">
+    <p class="kecil">Semua proyek tersimpan otomatis di perangkat ini (localStorage). Cadangkan berkala bila ganti HP.</p>
+  </div>
+  <div class="kartu">
+    <h3>🎥 Panduan Membuat Videonya</h3>
+    <p class="kecil" style="line-height:1.7">
+    1. Buka tab <b>Storyboard</b>, salin <b>Prompt Gambar</b> adegan 1 ke Gemini (atau alat gambar AI lain) → simpan gambarnya.<br>
+    2. Salin <b>Prompt Video</b> adegan yang sama ke Gemini mode video (Veo) → unduh videonya (8–15 detik).<br>
+    3. Ulangi untuk semua adegan, lalu gabung &amp; beri musik/teks di CapCut.<br>
+    4. Alternatif: kirim gambar adegan ke saya lewat chat — bisa saya rakit jadi klip MP4 dengan gerak kamera (zoom perlahan). Video AI gerak penuh tetap lewat Veo ya.
+    </p>
+  </div>
+</section>
+
+<!-- ============ TAB PENGATURAN ============ -->
+<section id="tab-pengaturan" class="tab">
+  <div class="kartu">
+    <h3>⚙️ Kunci Gemini Saya</h3>
+    <p class="kecil">Dipakai hanya untuk tombol "Buat dengan AI". Kunci tersimpan di perangkat ini saja. Buat kunci gratis di Google AI Studio (aistudio.google.com → Get API key). Boleh isi sampai 5 kunci — dipakai bergantian bila satu kunci sibuk/ditolak.</p>
+    <div id="daftarKunci"></div>
+    <button class="btn btn-emas" id="btnSimpanKunci">💾 Simpan Kunci</button>
+    <p class="status" id="statusKunci"></p>
+  </div>
+  <div class="kartu">
+    <h3>🗑️ Zona Data</h3>
+    <button class="btn btn-merah" id="btnHapusSemua">Hapus Semua Proyek &amp; Pengaturan</button>
+  </div>
+</section>
+</main>
+<div id="areaCetak"></div>
+
+<script>
+'use strict';
+const KUNCI_LS='dramaku_v1';
+const $=id=>document.getElementById(id);
+const uid=()=> 'x'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const esc=s=> String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function proyekContoh(){
+  return {id:uid(),judul:'Sepotong Roti untuk Ibu (contoh)',mode:'sinopsis',genre:'Drama Keluarga',rasio:'9:16',durasi:'8 detik',
+  sinopsis:'Rina, anak sulung yang bekerja serabutan, setiap hari menyisihkan sepotong roti untuk ibunya yang sakit. Tetangganya, Bu Lastri, awalnya mengira Rina pelit karena tak pernah ikut arisan. Suatu sore Bu Lastri melihat sendiri Rina menyuapi ibunya dengan sabar, dan hatinya tersentuh. Ia pun mulai membantu merawat ibu Rina, dan warga kampung ikut bergotong royong.',
+  logline:'Ketulusan seorang anak yang dirahasiakan, akhirnya membuka hati satu kampung.',
+  karakter:[
+    {id:uid(),nama:'RINA',peran:'Tokoh utama, anak sulung',sifat:'Penyabar, tulus, mudah menangis',penampilan:'Perempuan Indonesia 25 tahun, rambut hitam panjang dikuncir, wajah lembut, baju sederhana warna hijau',foto:null},
+    {id:uid(),nama:'BU LASTRI',peran:'Tetangga',sifat:'Ceplas-ceplos, sebenarnya baik hati',penampilan:'Perempuan Indonesia 50 tahun, rambut disanggul, daster batik cokelat, wajah tegas',foto:null}],
+  adegan:[
+    {id:uid(),lokasi:'Warung roti kecil di pinggir jalan kampung',waktu:'Pagi hari',visual:'Rina membeli satu roti, membaginya dua dengan hati-hati, separuh dibungkus kain bersih.',aksi:'Rina tersenyum tipis sambil memasukkan bungkusan roti ke tas kainnya.',kamera:'Close-up tangan Rina membungkus roti, lalu zoom out perlahan',dialog:[{tokoh:'RINA',teks:'Separuh untukku, separuh untuk Ibu. Ibu pasti senang.'}]},
+    {id:uid(),lokasi:'Teras rumah Bu Lastri',waktu:'Siang hari',visual:'Bu Lastri mengipasi diri sambil bergumam melihat Rina lewat terburu-buru tanpa menyapa.',aksi:'Bu Lastri menggeleng, Rina menunduk sopan sambil terus berjalan.',kamera:'Medium shot dari teras, kamera mengikuti langkah Rina',dialog:[{tokoh:'BU LASTRI',teks:'Anak itu, tiap hari buru-buru saja. Diajak arisan tidak pernah mau.'}]},
+    {id:uid(),lokasi:'Kamar sederhana, Ibu terbaring di dipan',waktu:'Sore hari',visual:'Rina menyuapi ibunya potongan roti kecil-kecil dengan sabar. Bu Lastri mengintip dari pintu dan terdiam.',aksi:'Bu Lastri menutup mulutnya, matanya berkaca-kaca, lalu berbalik pergi perlahan.',kamera:'Over-the-shoulder Bu Lastri, berakhir close-up wajahnya yang tersentuh',dialog:[{tokoh:'RINA',teks:'Makan yang banyak ya Bu, biar cepat sehat.'},{tokoh:'BU LASTRI',teks:'Ya Allah... selama ini aku salah menilainya.'}]}],
+  cek:{naskah:true,karakter:false,gambar:false,video:false,edit:false}};
+}
+let S={proyek:[],aktifId:null,kunci:['','','','','']};
+function simpan(){ try{localStorage.setItem(KUNCI_LS,JSON.stringify(S));}catch(e){} }
+function muat(){
+  try{const d=JSON.parse(localStorage.getItem(KUNCI_LS)); if(d&&Array.isArray(d.proyek)) S=d;}catch(e){}
+  if(!S.proyek.length){ const c=proyekContoh(); S.proyek=[c]; S.aktifId=c.id; simpan(); }
+  if(!S.aktifId||!S.proyek.find(p=>p.id===S.aktifId)) S.aktifId=S.proyek[0].id;
+  if(!Array.isArray(S.kunci)) S.kunci=['','','','',''];
+  while(S.kunci.length<5) S.kunci.push('');
+}
+const aktif=()=> S.proyek.find(p=>p.id===S.aktifId);
+
+/* ---------- navigasi tab ---------- */
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('aktif'));
+  b.classList.add('aktif');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('tampil'));
+  $('tab-'+b.dataset.tab).classList.add('tampil');
+  renderSemua();
+}));
+document.querySelectorAll('#modeBaris label').forEach(l=>l.addEventListener('click',()=>{
+  document.querySelectorAll('#modeBaris label').forEach(x=>x.classList.remove('pilih'));
+  l.classList.add('pilih');
+  $('bungkusSinopsis').style.display = l.dataset.mode==='judul' ? 'none':'block';
+}));
+document.querySelector('#modeBaris label').classList.add('pilih');
+
+/* ---------- render ---------- */
+function renderSemua(){ renderProyek(); renderHasil(); renderKarakter(); renderStoryboard(); renderCeklist(); renderKunci(); }
+function renderProyek(){
+  $('daftarProyek').innerHTML = S.proyek.map(p=>
+   `<div class="item-proyek ${p.id===S.aktifId?'aktif':''}" data-pilih="${p.id}">
+      <div><b>${esc(p.judul)}</b><small>${esc(p.genre)} • ${p.adegan?p.adegan.length:0} adegan • ${p.karakter?p.karakter.length:0} karakter</small></div>
+      <button class="btn btn-merah btn-kecil" data-hapus="${p.id}">Hapus</button>
+    </div>`).join('') || '<p class="kecil">Belum ada proyek.</p>';
+  document.querySelectorAll('[data-pilih]').forEach(el=>el.addEventListener('click',e=>{
+    if(e.target.dataset.hapus) return; S.aktifId=el.dataset.pilih; simpan(); renderSemua();
+  }));
+  document.querySelectorAll('[data-hapus]').forEach(b=>b.addEventListener('click',e=>{
+    e.stopPropagation();
+    if(!confirm('Hapus proyek ini?')) return;
+    S.proyek=S.proyek.filter(p=>p.id!==b.dataset.hapus);
+    if(S.aktifId===b.dataset.hapus) S.aktifId=S.proyek.length?S.proyek[0].id:null;
+    simpan(); renderSemua();
+  }));
+}
+function teksDialog(a){ return a.dialog.map(d=>`${d.tokoh}: "${d.teks}"`).join('\n'); }
+function renderHasil(){
+  const p=aktif();
+  if(!p||!p.adegan||!p.adegan.length){ $('kartuHasil').style.display='none'; return; }
+  $('kartuHasil').style.display='block';
+  $('ringkasanAktif').innerHTML=`<b style="color:var(--teks)">${esc(p.judul)}</b> • ${esc(p.genre)} • ${esc(p.rasio)} • ${p.adegan.length} adegan<br><i>${esc(p.logline||'')}</i>`;
+  $('hasilNaskah').innerHTML=p.adegan.map((a,i)=>
+   `<div class="adegan"><div class="kepala"><b>ADEGAN ${i+1}</b></div>
+    <p>📍 ${esc(a.lokasi)} • 🕐 ${esc(a.waktu)}</p>
+    <p>🎥 ${esc(a.visual)} ${esc(a.aksi||'')}</p>
+    <p class="kecil">Gerak kamera: ${esc(a.kamera||'-')}</p>
+    <div class="dialog">${esc(teksDialog(a))}</div></div>`).join('');
+}
+function renderKarakter(){
+  const p=aktif(); const wadah=$('daftarKarakter');
+  if(!p){ wadah.innerHTML='<p class="kecil">Belum ada proyek aktif.</p>'; return; }
+  wadah.innerHTML=(p.karakter||[]).map(k=>
+   `<div class="karakter">
+      ${k.foto?`<img src="${k.foto}" alt="">`:`<div class="avatar">🎭</div>`}
+      <div class="isi"><b>${esc(k.nama)}</b> — ${esc(k.peran||'')}
+      <p>🎭 ${esc(k.penampilan||'-')}</p><p>Sifat: ${esc(k.sifat||'-')}</p>
+      <button class="btn btn-garis btn-kecil" data-editk="${k.id}">Edit</button>
+      <button class="btn btn-garis btn-kecil" data-salink="${k.id}">📋 Prompt Foto Karakter</button>
+      <button class="btn btn-merah btn-kecil" data-hapusk="${k.id}">Hapus</button></div>
+    </div>`).join('') || '<p class="kecil">Belum ada karakter. Tambahkan lewat formulir di bawah — atau buat naskah dulu, karakter dari AI akan muncul di sini.</p>';
+  document.querySelectorAll('[data-editk]').forEach(b=>b.addEventListener('click',()=>{
+    const k=p.karakter.find(x=>x.id===b.dataset.editk); if(!k) return;
+    $('kId').value=k.id; $('kNama').value=k.nama; $('kPeran').value=k.peran||'';
+    $('kSifat').value=k.sifat||''; $('kPenampilan').value=k.penampilan||'';
+    window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+  }));
+  document.querySelectorAll('[data-hapusk]').forEach(b=>b.addEventListener('click',()=>{
+    if(!confirm('Hapus karakter ini?')) return;
+    p.karakter=p.karakter.filter(x=>x.id!==b.dataset.hapusk); simpan(); renderSemua();
+  }));
+  document.querySelectorAll('[data-salink]').forEach(b=>b.addEventListener('click',()=>{
+    const k=p.karakter.find(x=>x.id===b.dataset.salink); if(k) salin(promptFotoKarakter(p,k));
+  }));
+}
+function promptFotoKarakter(p,k){
+  return `Character reference photo, photorealistic, ${p.rasio==='9:16'?'vertical 9:16':'horizontal 16:9'}, full body and face clearly visible, neutral background, Indonesian drama character: ${k.nama}, ${k.peran||''}. Appearance: ${k.penampilan||''}. Personality: ${k.sifat||''}. Natural lighting, consistent character design for a short drama series, no text, no watermark.`;
+}
+function deskripsiKarakter(p){
+  return (p.karakter||[]).map(k=>`${k.nama} (${k.penampilan||k.peran||''})`).join('; ');
+}
+function promptGambar(p,a){
+  return `Photorealistic film still, ${p.rasio==='9:16'?'vertical 9:16':(p.rasio==='1:1'?'square 1:1':'horizontal 16:9')}, Indonesian short drama scene. Setting: ${a.lokasi}, ${a.waktu}. Scene: ${a.visual} ${a.aksi||''} Characters: ${deskripsiKarakter(p)||'-'}. Cinematic natural lighting, emotional expression, realistic Indonesian faces and clothing, no text, no watermark.`;
+}
+function promptVideo(p,a){
+  const dlg=(a.dialog||[]).map(d=>`${d.tokoh} says in Indonesian: "${d.teks}"`).join(' ');
+  return `Cinematic video, ${p.rasio==='9:16'?'vertical 9:16':(p.rasio==='1:1'?'square 1:1':'horizontal 16:9')}, duration ${p.durasi||'8 detik'}, photorealistic Indonesian short drama. Setting: ${a.lokasi}, ${a.waktu}. Action: ${a.visual} ${a.aksi||''} Characters: ${deskripsiKarakter(p)||'-'}. Camera: ${a.kamera||'slow push-in'}. Dialogue: ${dlg||'(no dialogue, ambient sound only)'} Natural lighting, realistic motion, emotional acting, no subtitles, no text overlay.`;
+}
+function renderStoryboard(){
+  const p=aktif(); const wadah=$('daftarStoryboard');
+  if(!p||!p.adegan||!p.adegan.length){ wadah.innerHTML='<p class="kecil">Belum ada naskah. Buat dulu di tab Buat Drama.</p>'; return; }
+  wadah.innerHTML=p.adegan.map((a,i)=>
+   `<div class="adegan"><div class="kepala"><b>ADEGAN ${i+1} — ${esc(a.lokasi)}</b></div>
+    <p>🎥 ${esc(a.visual)} ${esc(a.aksi||'')}</p>
+    <div class="dialog">${esc(teksDialog(a))}</div>
+    <h4>🖼️ Prompt Gambar</h4><div class="promptbox">${esc(promptGambar(p,a))}</div>
+    <button class="btn btn-garis btn-kecil" data-salingb="${i}">📋 Salin Prompt Gambar</button>
+    <h4>🎬 Prompt Video</h4><div class="promptbox">${esc(promptVideo(p,a))}</div>
+    <button class="btn btn-garis btn-kecil" data-salinv="${i}">📋 Salin Prompt Video</button>
+   </div>`).join('');
+  document.querySelectorAll('[data-salingb]').forEach(b=>b.addEventListener('click',()=>salin(promptGambar(p,p.adegan[+b.dataset.salingb]))));
+  document.querySelectorAll('[data-salinv]').forEach(b=>b.addEventListener('click',()=>salin(promptVideo(p,p.adegan[+b.dataset.salinv]))));
+}
+const LANGKAH=[['naskah','Naskah selesai'],['karakter','Foto karakter dibuat'],['gambar','Gambar semua adegan dibuat'],['video','Video semua adegan dibuat (Veo)'],['edit','Digabung & diedit (CapCut)']];
+function renderCeklist(){
+  const p=aktif(); const wadah=$('ceklist');
+  if(!p){ wadah.innerHTML=''; return; }
+  p.cek=p.cek||{naskah:false,karakter:false,gambar:false,video:false,edit:false};
+  wadah.innerHTML=LANGKAH.map(([k,l])=>`<label style="display:flex;gap:8px;align-items:center;margin:6px 0;color:var(--teks);font-size:14px"><input type="checkbox" data-cek="${k}" ${p.cek[k]?'checked':''} style="width:auto"> ${l}</label>`).join('');
+  document.querySelectorAll('[data-cek]').forEach(c=>c.addEventListener('change',()=>{ p.cek[c.dataset.cek]=c.checked; simpan(); }));
+}
+function renderKunci(){
+  $('daftarKunci').innerHTML=S.kunci.map((k,i)=>`<label>Kunci ${i+1}</label><input type="password" id="kunci${i}" value="${esc(k)}" placeholder="AQ.… atau AIza…" autocomplete="off">`).join('');
+}
+async function salin(teks){
+  try{ await navigator.clipboard.writeText(teks); alert('Tersalin ✅'); }
+  catch(e){ const t=document.createElement('textarea'); t.value=teks; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); alert('Tersalin ✅'); }
+}
+
+/* ---------- pembuatan naskah ---------- */
+function ambilForm(){
+  const mode=document.querySelector('input[name="mode"]:checked').value;
+  return {judul:$('fJudul').value.trim(), mode, sinopsis:$('fSinopsis').value.trim(),
+    genre:$('fGenre').value, jumlah:+$('fJumlah').value, rasio:$('fRasio').value, durasi:$('fDurasi').value};
+}
+function promptMaster(f){
+  const dasar = f.mode==='judul'
+    ? `Buat sinopsis dan naskah drama pendek dari judul "${f.judul}". Kembangkan cerita yang menyentuh dan masuk akal.`
+    : `Buat naskah drama pendek dari sinopsis berikut.\nJudul: "${f.judul||'(beri judul yang cocok)'}"\nSinopsis: ${f.sinopsis}`;
+  return `${dasar}
+Genre: ${f.genre}. Jumlah adegan: tepat ${f.jumlah}. Format video vertikal ${f.rasio}, durasi tiap adegan sekitar ${f.durasi}. Dialog bahasa Indonesia sehari-hari yang natural, tiap adegan 1-3 baris dialog.
+Balas HANYA dengan JSON valid (tanpa teks lain, tanpa markdown) dengan struktur persis ini:
+{"judul":"...","logline":"satu kalimat inti cerita","karakter":[{"nama":"NAMA TOKOH","peran":"...","sifat":"...","penampilan":"deskripsi fisik & pakaian lengkap untuk konsistensi gambar"}],"adegan":[{"lokasi":"...","waktu":"Pagi/Siang/Sore/Malam","visual":"deskripsi visual adegan","aksi":"gerakan/kejadian utama","kamera":"gerakan kamera","dialog":[{"tokoh":"NAMA","teks":"..."}]}]}`;
+}
+function terapkanHasil(f,hasil){
+  const p={id:uid(),judul:hasil.judul||f.judul||'Drama Tanpa Judul',mode:f.mode,genre:f.genre,rasio:f.rasio,durasi:f.durasi,
+    sinopsis:f.sinopsis||'',logline:hasil.logline||'',
+    karakter:(hasil.karakter||[]).map(k=>({id:uid(),nama:(k.nama||'TOKOH').toUpperCase(),peran:k.peran||'',sifat:k.sifat||'',penampilan:k.penampilan||'',foto:null})),
+    adegan:(hasil.adegan||[]).map(a=>({id:uid(),lokasi:a.lokasi||'-',waktu:a.waktu||'-',visual:a.visual||'',aksi:a.aksi||'',kamera:a.kamera||'',
+      dialog:(a.dialog||[]).map(d=>({tokoh:(d.tokoh||'').toUpperCase(),teks:d.teks||''}))})),
+    cek:{naskah:true,karakter:false,gambar:false,video:false,edit:false}};
+  if(!p.adegan.length) throw new Error('Hasil tidak berisi adegan.');
+  S.proyek.unshift(p); S.aktifId=p.id; simpan(); renderSemua();
+  return p;
+}
+function parseJSONLonggar(teks){
+  let t=String(teks).trim().replace(/^```(?:json)?/i,'').replace(/```$/,'').trim();
+  const a=t.indexOf('{'), b=t.lastIndexOf('}');
+  if(a>=0&&b>a) t=t.slice(a,b+1);
+  return JSON.parse(t);
+}
+/* --- template offline --- */
+const LOKASI_GENRE={'Drama Keluarga':'Ruang tamu rumah sederhana','Persahabatan':'Warung kopi kampung','Sekolah':'Halaman sekolah','Komedi':'Warung kopi kampung','Inspirasi':'Jalan desa yang sepi','Roman':'Taman kota','Perjuangan Hidup':'Kontrakan kecil di pinggir kota'};
+function templateNaskah(f){
+  const nama1='RINA', nama2='BU LASTRI';
+  const lok=LOKASI_GENRE[f.genre]||'Ruang tamu rumah sederhana';
+  const kalimat=(f.sinopsis||'').split(/(?<=[.!?])\s+/).filter(Boolean);
+  const ambil=i=> kalimat.length? kalimat[Math.min(i,kalimat.length-1)].replace(/^[“"]|[.!?]+$/g,'') : '';
+  const beats=[
+    {nama:'Pembuka',waktu:'Pagi hari',visual:`Suasana pembuka di ${lok.toLowerCase()}. ${nama1} memulai harinya dengan beban yang tak diketahui siapa pun. ${ambil(0)}`,aksi:`${nama1} menarik napas panjang, lalu melangkah dengan tekad.`,kamera:'Wide shot, lalu perlahan mendekat',dialog:[{tokoh:nama1,teks:'Aku harus kuat. Semua ini pasti ada jalannya.'}]},
+    {nama:'Perkembangan',waktu:'Siang hari',visual:`Di ${lok.toLowerCase()}, ${nama2} memperhatikan ${nama1} dengan rasa penasaran. ${ambil(1)}`,aksi:`${nama2} bergumam sendiri, ${nama1} lewat sambil menunduk sopan.`,kamera:'Medium shot dua tokoh bergantian',dialog:[{tokoh:nama2,teks:'Sebenarnya apa yang sedang kamu sembunyikan?'},{tokoh:nama1,teks:'Tidak ada, Bu. Saya permisi dulu.'}]},
+    {nama:'Konflik',waktu:'Sore hari',visual:`Kesalahpahaman memuncak di ${lok.toLowerCase()}. Suara ${nama2} meninggi, ${nama1} hanya terdiam menahan air mata. ${ambil(2)}`,aksi:`${nama1} menggenggam tangannya sendiri, berusaha tetap tenang.`,kamera:'Close-up bergantian pada wajah kedua tokoh',dialog:[{tokoh:nama2,teks:'Jangan selalu menghindar! Bicara yang jujur!'},{tokoh:nama1,teks:'Saya hanya tidak ingin merepotkan siapa pun, Bu.'}]},
+    {nama:'Kebenaran Terungkap',waktu:'Sore hari',visual:`${nama2} tanpa sengaja menyaksikan sendiri kenyataan tentang ${nama1}. Ia terpaku. ${ambil(3)}`,aksi:`${nama2} menutup mulutnya, matanya berkaca-kaca.`,kamera:'Over-the-shoulder, berakhir close-up wajah tersentuh',dialog:[{tokoh:nama2,teks:'Ya Allah... selama ini aku salah menilaimu.'}]},
+    {nama:'Klimaks Emosi',waktu:'Senja',visual:`Di ${lok.toLowerCase()} yang mulai temaram, ${nama1} akhirnya bercerita dengan suara bergetar. ${ambil(4)}`,aksi:`${nama2} menggenggam tangan ${nama1} dengan hangat.`,kamera:'Close-up dua tangan yang berpegangan, lalu wajah keduanya',dialog:[{tokoh:nama1,teks:'Saya kira, saya bisa menanggungnya sendiri...'},{tokoh:nama2,teks:'Mulai sekarang, kamu tidak sendiri.'}]},
+    {nama:'Penyelesaian',waktu:'Pagi hari berikutnya',visual:`Suasana ${lok.toLowerCase()} berubah hangat. Orang-orang mulai datang membantu dengan tulus. ${ambil(5)}`,aksi:`Semua tersenyum, ${nama1} mengusap air mata bahagianya.`,kamera:'Wide shot hangat, cahaya pagi keemasan',dialog:[{tokoh:nama1,teks:'Terima kasih... saya tidak tahu harus berkata apa.'}]},
+  ];
+  const pilih=[];
+  const idx=[0,1,2,3,4,5];
+  if(f.jumlah<=3) pilih.push(beats[0],beats[3],beats[5]);
+  else if(f.jumlah===4) pilih.push(beats[0],beats[1],beats[3],beats[5]);
+  else if(f.jumlah===5) pilih.push(beats[0],beats[1],beats[2],beats[3],beats[5]);
+  else { let i=0; while(pilih.length<f.jumlah){ pilih.push(beats[idx[i%6]]); i++; } }
+  return {judul:f.judul||'Drama Tanpa Judul',logline:'(Dari template offline — silakan sunting) Kisah tentang ketulusan yang akhirnya terlihat.',
+    karakter:[
+      {nama:nama1,peran:'Tokoh utama',sifat:'Penyabar, tulus',penampilan:'Perempuan Indonesia 25 tahun, rambut hitam panjang, wajah lembut, pakaian sederhana'},
+      {nama:nama2,peran:'Tokoh pendamping',sifat:'Ceplas-ceplos, baik hati',penampilan:'Perempuan Indonesia 50 tahun, rambut disanggul, pakaian batik sederhana'}],
+    adegan:pilih.map(b=>({lokasi:lok.charAt(0).toUpperCase()+lok.slice(1),waktu:b.waktu,visual:b.visual,aksi:b.aksi,kamera:b.kamera,dialog:b.dialog}))};
+}
+/* --- Gemini --- */
+const MODEL_GEMINI=['gemini-3.8-flash','gemini-2.5-flash','gemini-2.0-flash'];
+async function panggilGemini(prompt){
+  const kunci=S.kunci.map(k=>k.trim()).filter(Boolean);
+  if(!kunci.length) throw new Error('Belum ada kunci Gemini. Isi dulu di tab Pengaturan — atau pakai Template/Prompt.');
+  let galatTerakhir=null;
+  for(const key of kunci){
+    for(const model of MODEL_GEMINI){
+      try{
+        const url=`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`+(key.startsWith('AQ.')?'':`?key=${encodeURIComponent(key)}`);
+        const headers={'Content-Type':'application/json'}; if(key.startsWith('AQ.')) headers['x-goog-api-key']=key;
+        const r=await fetch(url,{method:'POST',headers,body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.85}})});
+        if(!r.ok){ galatTerakhir=new Error('Gemini menolak (HTTP '+r.status+')'); continue; }
+        const j=await r.json();
+        const teks=j?.candidates?.[0]?.content?.parts?.map(x=>x.text||'').join('')||'';
+        if(teks) return teks;
+        galatTerakhir=new Error('Jawaban Gemini kosong.');
+      }catch(e){ galatTerakhir=e; }
+    }
+  }
+  throw galatTerakhir||new Error('Semua kunci/model gagal.');
+}
+/* --- tombol buat --- */
+function statusBuat(t){ $('statusBuat').textContent=t; }
+$('btnAI').addEventListener('click',async()=>{
+  const f=ambilForm();
+  if(f.mode==='judul'&&!f.judul) return statusBuat('⚠️ Isi judul dulu ya.');
+  if(f.mode==='sinopsis'&&!f.sinopsis) return statusBuat('⚠️ Isi sinopsis dulu ya.');
+  statusBuat('⏳ AI sedang menulis naskah... (10–40 detik)');
+  try{ const teks=await panggilGemini(promptMaster(f)); const hasil=parseJSONLonggar(teks); terapkanHasil(f,hasil);
+    statusBuat('✅ Naskah jadi! Lihat di bawah, lengkapi karakter, lalu ke tab Storyboard.'); }
+  catch(e){ statusBuat('❌ Gagal: '+e.message+' Coba Template offline atau Mode Prompt.'); }
+});
+$('btnTemplate').addEventListener('click',()=>{
+  const f=ambilForm();
+  if(f.mode==='judul'&&!f.judul) return statusBuat('⚠️ Isi judul dulu ya.');
+  try{ terapkanHasil(f,templateNaskah(f)); statusBuat('✅ Naskah template jadi! Sunting dialog & visualnya di tab Storyboard sesuai ceritamu.'); }
+  catch(e){ statusBuat('❌ Gagal: '+e.message); }
+});
+$('btnPrompt').addEventListener('click',()=>{
+  const f=ambilForm();
+  $('teksPromptMaster').value=promptMaster(f);
+  $('areaPrompt').style.display='block';
+  statusBuat('Prompt siap disalin. Tempel hasilnya kembali di kotak bawahnya.');
+});
+$('btnSalinMaster').addEventListener('click',()=>salin($('teksPromptMaster').value));
+$('btnImpor').addEventListener('click',()=>{
+  const f=ambilForm();
+  try{ const hasil=parseJSONLonggar($('teksHasilTempel').value); terapkanHasil(f,hasil);
+    statusBuat('✅ Hasil berhasil diimpor jadi naskah!'); }
+  catch(e){ statusBuat('❌ Hasil tidak terbaca sebagai JSON. Pastikan menyalin seluruh jawaban Gemini.'); }
+});
+/* ---------- karakter ---------- */
+let fotoBaru=null;
+$('kFoto').addEventListener('change',e=>{
+  const file=e.target.files[0]; if(!file) return;
+  const img=new Image();
+  img.onload=()=>{ const maks=480; const skala=Math.min(1,maks/Math.max(img.width,img.height));
+    const c=document.createElement('canvas'); c.width=Math.round(img.width*skala); c.height=Math.round(img.height*skala);
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    fotoBaru=c.toDataURL('image/jpeg',0.82); URL.revokeObjectURL(img.src); };
+  img.src=URL.createObjectURL(file);
+});
+$('btnSimpanKarakter').addEventListener('click',()=>{
+  const p=aktif(); if(!p) return alert('Buat proyek dulu.');
+  const nama=$('kNama').value.trim().toUpperCase(); if(!nama) return alert('Isi nama tokoh dulu.');
+  p.karakter=p.karakter||[];
+  const idLama=$('kId').value;
+  const data={nama,peran:$('kPeran').value.trim(),sifat:$('kSifat').value.trim(),penampilan:$('kPenampilan').value.trim(),foto:fotoBaru};
+  if(idLama){ const k=p.karakter.find(x=>x.id===idLama); if(k){ const fotoLama=k.foto; Object.assign(k,data); if(!fotoBaru) k.foto=fotoLama; } }
+  else p.karakter.push({id:uid(),...data});
+  fotoBaru=null; $('kFoto').value=''; $('kId').value=''; $('kNama').value=''; $('kPeran').value=''; $('kSifat').value=''; $('kPenampilan').value='';
+  simpan(); renderSemua(); alert('Karakter tersimpan ✅');
+});
+$('btnBersihKarakter').addEventListener('click',()=>{ $('kId').value=''; $('kNama').value=''; $('kPeran').value=''; $('kSifat').value=''; $('kPenampilan').value=''; $('kFoto').value=''; fotoBaru=null; });
+$('btnSalinSemuaPrompt').addEventListener('click',()=>{
+  const p=aktif(); if(!p||!p.adegan) return;
+  const teks=`DRAMA: ${p.judul}\nLogline: ${p.logline||''}\nKARAKTER: ${deskripsiKarakter(p)}\n\n`+
+    p.adegan.map((a,i)=>`=== ADEGAN ${i+1} (${a.lokasi}, ${a.waktu}) ===\nDIALOG:\n${teksDialog(a)}\n\nPROMPT GAMBAR:\n${promptGambar(p,a)}\n\nPROMPT VIDEO:\n${promptVideo(p,a)}`).join('\n\n');
+  salin(teks);
+});
+/* ---------- ekspor ---------- */
+function naskahTeks(p){
+  return `${p.judul}\nGenre: ${p.genre} • Rasio ${p.rasio} • ${p.adegan.length} adegan\nLogline: ${p.logline||''}\nSinopsis: ${p.sinopsis||''}\n\nKARAKTER:\n`+
+   (p.karakter||[]).map(k=>`- ${k.nama} (${k.peran||''}): ${k.penampilan||''} Sifat: ${k.sifat||''}`).join('\n')+
+   '\n\n'+p.adegan.map((a,i)=>`ADEGAN ${i+1}\nLokasi: ${a.lokasi} • Waktu: ${a.waktu}\nVisual: ${a.visual} ${a.aksi||''}\nKamera: ${a.kamera||'-'}\nDialog:\n${teksDialog(a)}`).join('\n\n');
+}
+$('btnWord').addEventListener('click',()=>{
+  const p=aktif(); if(!p) return alert('Belum ada proyek.');
+  const html=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>${esc(p.judul)}</title></head><body style="font-family:Calibri,Arial;font-size:12pt"><pre style="white-space:pre-wrap;font-family:inherit">${esc(naskahTeks(p))}</pre></body></html>`;
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(['\ufeff'+html],{type:'application/msword'}));
+  a.download='Naskah-'+p.judul.replace(/[^\w\- ]+/g,'').slice(0,40)+'.doc'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+});
+$('btnCetak').addEventListener('click',()=>{
+  const p=aktif(); if(!p) return alert('Belum ada proyek.');
+  $('areaCetak').innerHTML=`<pre style="white-space:pre-wrap;font-family:inherit">${esc(naskahTeks(p))}</pre>`;
+  document.title='Naskah-'+p.judul; window.print();
+});
+$('btnBackup').addEventListener('click',()=>{
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}));
+  a.download='cadangan-dramaku.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+});
+$('fileRestore').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{ try{ const d=JSON.parse(r.result); if(!Array.isArray(d.proyek)) throw 0; S=d; if(!S.aktifId&&S.proyek.length) S.aktifId=S.proyek[0].id; simpan(); renderSemua(); alert('Cadangan dipulihkan ✅'); }catch(_){ alert('File cadangan tidak valid.'); } };
+  r.readAsText(f);
+});
+/* ---------- pengaturan ---------- */
+$('btnSimpanKunci').addEventListener('click',()=>{
+  S.kunci=[0,1,2,3,4].map(i=>$('kunci'+i).value.trim()); simpan();
+  $('statusKunci').textContent='✅ Kunci tersimpan di perangkat ini.';
+});
+$('btnHapusSemua').addEventListener('click',()=>{
+  if(!confirm('Hapus SEMUA proyek dan pengaturan? Tindakan ini tidak bisa dibatalkan.')) return;
+  localStorage.removeItem(KUNCI_LS); S={proyek:[],aktifId:null,kunci:['','','','','']}; muat(); renderSemua();
+});
+/* ---------- mulai ---------- */
+muat(); renderSemua();
+</script>
+</body>
+</html>
