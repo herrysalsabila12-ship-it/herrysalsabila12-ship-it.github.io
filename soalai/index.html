@@ -316,7 +316,7 @@ try{if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigat
 
 if(!IS_PREVIEW){const{data}=await sb.auth.getSession();S.user=data.session?.user||null;if(S.user)await enter()}
 // Atur password saat membuka tautan undangan/reset dari email Supabase
-if(!IS_PREVIEW&&S.user&&/type=(invite|recovery)/.test(location.hash||'')){
+if(!IS_PREVIEW&&S.user&&/type=(invite|recovery|signup|magiclink)/.test(location.hash||'')){
  const ov=document.createElement('div');ov.id='pwset';ov.style.cssText='position:fixed;inset:0;background:rgba(20,20,30,.55);display:grid;place-items:center;z-index:999;padding:20px';
  ov.innerHTML=`<div class="card glass" style="width:340px;background:#fff"><h2 style="font-size:20px">Buat Password Login</h2><p style="color:var(--mu)">Selamat datang! Buat password untuk login SoalAI berikutnya.</p><input id="npw" type="password" placeholder="Password baru (min. 6 karakter)"><br><br><button class="btn p" style="width:100%" id="npwbtn">Simpan Password</button></div>`;
  document.body.appendChild(ov);
