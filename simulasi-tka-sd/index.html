@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulasi TKA SD — Tes Kemampuan Akademik</title>
+<style>
+:root{--biru:#1565C0;--biru2:#0D47A1;--muda:#E3F2FD;--abu:#F4F6F8;--teks:#212B36;--mu:#637381;--ok:#2E7D32;--salah:#C62828;--ragu:#F9A825}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--abu);color:var(--teks);min-height:100dvh}
+header{background:linear-gradient(135deg,var(--biru),var(--biru2));color:#fff;padding:18px 16px;text-align:center}
+header h1{font-size:24px}header p{opacity:.9;font-size:13px;margin-top:4px}
+.wrap{max-width:760px;margin:0 auto;padding:16px}
+.card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:14px}
+label{font-size:13px;font-weight:600;color:var(--mu);display:block;margin:10px 0 5px}
+input[type=text],select{width:100%;padding:11px;border:1.5px solid #DFE3E8;border-radius:9px;font-size:15px}
+.paket{display:grid;gap:9px;margin-top:6px}
+.pkt{border:2px solid #DFE3E8;border-radius:11px;padding:12px 14px;cursor:pointer;display:flex;gap:11px;align-items:center;background:#fff;width:100%;text-align:left;font-size:15px}
+.pkt.on{border-color:var(--biru);background:var(--muda)}
+.pkt b{display:block;font-size:15px}.pkt span{font-size:12.5px;color:var(--mu)}
+.btn{display:inline-block;border:none;border-radius:10px;padding:12px 20px;font-size:15px;font-weight:700;cursor:pointer;background:var(--biru);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.sek{background:#fff;color:var(--biru);border:2px solid var(--biru)}
+.btn.bahaya{background:var(--salah)}
+.btn.kecil{padding:8px 13px;font-size:13.5px}
+.btn.w100{width:100%;margin-top:14px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.timer{font-weight:800;font-size:18px;background:#FFF3E0;color:#E65100;padding:6px 13px;border-radius:9px}
+.timer.kritis{background:#FFEBEE;color:var(--salah)}
+.prog{height:9px;background:#E0E0E0;border-radius:6px;overflow:hidden;margin:12px 0}
+.prog i{display:block;height:100%;background:var(--biru);transition:width .3s}
+.teksbac{background:#FFFDE7;border:1.5px solid #F0E6A0;border-radius:10px;padding:13px 15px;line-height:1.65;font-size:15px;margin-bottom:12px;white-space:pre-line}
+.soal{font-size:16.5px;line-height:1.6;margin-bottom:13px;white-space:pre-line}
+.opsi{display:grid;gap:9px}
+.op{display:flex;gap:11px;align-items:flex-start;border:2px solid #DFE3E8;border-radius:11px;padding:11px 13px;cursor:pointer;font-size:15.5px;line-height:1.45;background:#fff;width:100%;text-align:left}
+.op .huruf{font-weight:800;background:var(--muda);color:var(--biru2);border-radius:7px;min-width:27px;height:27px;display:grid;place-items:center;font-size:14px}
+.op.on{border-color:var(--biru);background:var(--muda)}
+.op.benar{border-color:var(--ok);background:#E8F5E9}
+.op.salah{border-color:var(--salah);background:#FFEBEE}
+.nav{display:flex;gap:8px;margin-top:15px;flex-wrap:wrap}
+.nav .btn{flex:1}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:6px;margin-top:10px}
+.grid button{border:2px solid #C4CDD5;background:#fff;border-radius:8px;padding:8px 0;font-weight:700;cursor:pointer;font-size:13.5px}
+.grid button.isi{background:#C8E6C9;border-color:var(--ok)}
+.grid button.ragu{background:#FFF9C4;border-color:var(--ragu)}
+.grid button.aktif{outline:3px solid var(--biru)}
+.cek{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:14.5px;cursor:pointer}
+.skor{text-align:center}
+.skor .angka{font-size:52px;font-weight:900;color:var(--biru)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{border-bottom:1px solid #ECEFF1;padding:7px 6px;text-align:left}
+.pemb{border-left:4px solid var(--biru);background:#FAFCFF;border-radius:8px;padding:11px 13px;margin-bottom:11px;font-size:14.5px;line-height:1.55}
+.pemb .jwb{font-weight:700}
+.kecil2{font-size:12.5px;color:var(--mu)}
+.badge{display:inline-block;background:var(--muda);color:var(--biru2);border-radius:20px;padding:2px 10px;font-size:11.5px;font-weight:700;margin-right:5px}
+.hidden{display:none!important}
+@media print{header,.noprint{display:none}.card{box-shadow:none}}
+</style>
+</head>
+<body>
+<header>
+<h1>🎓 Simulasi TKA SD</h1>
+<p>Tes Kemampuan Akademik jenjang SD/MI — tanpa token, langsung kerjakan</p>
+</header>
+<div class="wrap">
+
+<!-- ===== LAYAR AWAL ===== -->
+<section id="scrHome">
+ <div class="card">
+  <h2 style="font-size:18px">Data Peserta</h2>
+  <label>Nama lengkap</label>
+  <input type="text" id="inNama" placeholder="Tulis nama kamu">
+  <label>Kelas</label>
+  <select id="inKelas"><option value="4">Kelas 4</option><option value="5">Kelas 5</option><option value="6" selected>Kelas 6</option></select>
+  <label>Pilih paket soal</label>
+  <div class="paket" id="pilihPaket">
+   <button class="pkt" data-p="MTK"><div>🔢</div><div><b>Matematika</b><span>30 soal • 60 menit • Bilangan, Aljabar, Geometri &amp; Pengukuran, Data</span></div></button>
+   <button class="pkt" data-p="BIN"><div>📖</div><div><b>Bahasa Indonesia</b><span>30 soal • 60 menit • Membaca teks fiksi &amp; nonfiksi, Kebahasaan</span></div></button>
+   <button class="pkt on" data-p="FULL"><div>🏆</div><div><b>Paket Lengkap</b><span>60 soal • 120 menit • Matematika + Bahasa Indonesia</span></div></button>
+  </div>
+  <button class="btn w100" id="btnMulai">▶ Mulai Simulasi</button>
+  <p class="kecil2" style="margin-top:11px">Soal latihan ini disusun asli mengikuti kerangka TKA Kemendikdasmen untuk jenjang SD. Kerjakan dengan jujur seperti ujian sungguhan: ada batas waktu, navigasi nomor soal, dan tanda ragu-ragu.</p>
+ </div>
+ <div class="card" id="kotakRiwayat">
+  <h2 style="font-size:16px">Riwayat Hasil di Perangkat Ini</h2>
+  <div id="isiRiwayat" style="margin-top:8px"></div>
+ </div>
+</section>
+
+<!-- ===== LAYAR UJIAN ===== -->
+<section id="scrExam" class="hidden">
+ <div class="card">
+  <div class="topbar">
+   <div><b id="exNama"></b><div class="kecil2" id="exPaket"></div></div>
+   <div class="timer" id="exTimer">00:00</div>
+  </div>
+  <div class="prog"><i id="exProg" style="width:0%"></i></div>
+  <div id="exTeks"></div>
+  <div class="soal" id="exSoal"></div>
+  <div class="opsi" id="exOpsi"></div>
+  <label class="cek"><input type="checkbox" id="exRagu" style="width:18px;height:18px"> Tandai ragu-ragu</label>
+  <div class="nav">
+   <button class="btn sek" id="btnPrev">← Sebelumnya</button>
+   <button class="btn sek" id="btnDaftar">☰ Daftar Soal</button>
+   <button class="btn" id="btnNext">Berikutnya →</button>
+  </div>
+  <div id="exGrid" class="hidden">
+   <div class="grid" id="gridNomor"></div>
+   <p class="kecil2" style="margin-top:8px">Hijau = sudah dijawab • Kuning = ragu-ragu • Putih = belum dijawab</p>
+  </div>
+  <button class="btn bahaya w100" id="btnSelesai">✔ Selesai &amp; Lihat Hasil</button>
+ </div>
+</section>
+
+<!-- ===== LAYAR HASIL ===== -->
+<section id="scrResult" class="hidden">
+ <div class="card skor">
+  <p class="kecil2" id="rsNama"></p>
+  <div class="angka" id="rsSkor">0</div>
+  <p id="rsDetail"></p>
+  <div id="rsDomain" style="margin-top:13px;text-align:left"></div>
+  <div class="nav noprint">
+   <button class="btn sek" onclick="window.print()">🖨 Cetak Hasil</button>
+   <button class="btn" id="btnUlang">↩ Kembali ke Awal</button>
+  </div>
+ </div>
+ <div class="card">
+  <h2 style="font-size:17px">Pembahasan</h2>
+  <div id="rsPemb" style="margin-top:11px"></div>
+ </div>
+</section>
+</div>
+
+<script>
+"use strict";
+// ===== BANK SOAL ASLI =====
+// Format MTK: [domain, level, soal, [opsi], kunci(0-3), pembahasan]
+const MTK=[
+["Bilangan","Pemahaman","Hasil dari 245 + 378 adalah …",["613","623","633","523"],1,"245 + 378 = 623."],
+["Bilangan","Pemahaman","Hasil dari 125 × 24 adalah …",["2.800","2.900","3.000","3.100"],2,"125 × 24 = 125 × 20 + 125 × 4 = 2.500 + 500 = 3.000."],
+["Bilangan","Aplikasi","Ibu membeli 3 kg gula pasir. Harga 1 kg gula Rp18.000,00. Jika Ibu membayar dengan uang Rp100.000,00, kembalian yang diterima Ibu adalah …",["Rp44.000,00","Rp46.000,00","Rp56.000,00","Rp64.000,00"],1,"Harga gula = 3 × 18.000 = 54.000. Kembalian = 100.000 − 54.000 = 46.000."],
+["Bilangan","Pemahaman","Pecahan yang paling besar adalah …",["3/4","2/3","5/6","7/12"],2,"Ubah ke desimal: 3/4 = 0,75; 2/3 ≈ 0,67; 5/6 ≈ 0,83; 7/12 ≈ 0,58. Terbesar adalah 5/6."],
+["Bilangan","Aplikasi","Di kelas 6 terdapat 40 siswa. Sebanyak 3/5 bagian dari siswa itu mengikuti ekstrakurikuler pramuka. Banyak siswa yang mengikuti pramuka adalah …",["15 siswa","20 siswa","24 siswa","28 siswa"],2,"3/5 × 40 = 24 siswa."],
+["Bilangan","Pemahaman","FPB dari 24 dan 36 adalah …",["6","8","12","18"],2,"Faktor 24: 1,2,3,4,6,8,12,24. Faktor 36: 1,2,3,4,6,9,12,18,36. Faktor persekutuan terbesar = 12."],
+["Bilangan","Aplikasi","KPK dari 6 dan 8 adalah …",["12","24","36","48"],1,"Kelipatan 6: 6,12,18,24. Kelipatan 8: 8,16,24. Kelipatan persekutuan terkecil = 24."],
+["Bilangan","Penalaran","Urutan bilangan dari yang terkecil adalah …",["0,45 ; 2/5 ; 1/2 ; 0,55","2/5 ; 0,45 ; 1/2 ; 0,55","1/2 ; 0,45 ; 2/5 ; 0,55","2/5 ; 1/2 ; 0,45 ; 0,55"],1,"2/5 = 0,40; 0,45; 1/2 = 0,50; 0,55. Urutan terkecil: 2/5 ; 0,45 ; 1/2 ; 0,55."],
+["Bilangan","Aplikasi","Bilangan prima antara 10 dan 20 adalah 11, 13, 17, dan 19. Jumlah semua bilangan prima tersebut adalah …",["55","60","62","65"],1,"11 + 13 + 17 + 19 = 60."],
+["Bilangan","Pemahaman","Hasil dari −8 + 15 adalah …",["−7","7","23","−23"],1,"−8 + 15 = 7."],
+["Bilangan","Aplikasi","Suhu udara di sebuah ruangan berpendingin adalah −3°C. Setelah pendingin dimatikan, suhu naik 7°C. Suhu ruangan sekarang adalah …",["−4°C","3°C","4°C","10°C"],2,"−3 + 7 = 4, jadi suhu ruangan sekarang 4°C."],
+["Aljabar","Pemahaman","Perhatikan pola bilangan berikut: 3, 6, 11, 18, …\nBilangan berikutnya pada pola tersebut adalah …",["25","26","27","29"],2,"Selisihnya bertambah: +3, +5, +7, sehingga berikutnya +9. 18 + 9 = 27."],
+["Aljabar","Aplikasi","Pola bilangan 2, 4, 8, 16, … merupakan pola perkalian 2. Suku keenam pola tersebut adalah …",["32","48","64","128"],2,"2, 4, 8, 16, 32, 64. Suku keenam adalah 64."],
+["Aljabar","Penalaran","Jika ★ + 15 = 32, nilai ★ adalah …",["15","17","27","47"],1,"★ = 32 − 15 = 17."],
+["Geometri & Pengukuran","Pemahaman","Keliling sebuah persegi yang panjang sisinya 14 cm adalah …",["28 cm","42 cm","56 cm","196 cm"],2,"Keliling persegi = 4 × 14 = 56 cm."],
+["Geometri & Pengukuran","Aplikasi","Sebuah persegi panjang berukuran panjang 12 cm dan lebar 8 cm. Luas persegi panjang tersebut adalah …",["40 cm²","80 cm²","96 cm²","120 cm²"],2,"Luas = 12 × 8 = 96 cm²."],
+["Geometri & Pengukuran","Aplikasi","Volume sebuah balok dengan panjang 10 cm, lebar 5 cm, dan tinggi 4 cm adalah …",["100 cm³","150 cm³","200 cm³","400 cm³"],2,"Volume balok = 10 × 5 × 4 = 200 cm³."],
+["Geometri & Pengukuran","Pemahaman","Banyak rusuk pada sebuah kubus adalah …",["6","8","12","16"],2,"Kubus mempunyai 12 rusuk, 6 sisi, dan 8 titik sudut."],
+["Geometri & Pengukuran","Aplikasi","Jarak rumah Dita ke sekolah 2,5 km. Jarak tersebut sama dengan … meter.",["250","2.500","25.000","25"],1,"2,5 km = 2,5 × 1.000 = 2.500 meter."],
+["Geometri & Pengukuran","Aplikasi","Sebuah bus berangkat pukul 07.30. Perjalanan bus berlangsung selama 45 menit. Bus tiba di tujuan pukul …",["08.05","08.15","08.25","08.45"],1,"07.30 + 45 menit = 08.15."],
+["Geometri & Pengukuran","Penalaran","Sebuah segitiga mempunyai panjang sisi 6 cm, 6 cm, dan 9 cm. Segitiga tersebut adalah segitiga …",["sama sisi","sama kaki","siku-siku","sembarang"],1,"Dua sisinya sama panjang (6 cm dan 6 cm), jadi segitiga sama kaki."],
+["Geometri & Pengukuran","Aplikasi","Sebuah segitiga mempunyai alas 10 cm dan tinggi 6 cm. Luas segitiga tersebut adalah …",["30 cm²","36 cm²","60 cm²","16 cm²"],0,"Luas segitiga = ½ × 10 × 6 = 30 cm²."],
+["Data","Pemahaman","Data nilai ulangan Rani adalah 6, 7, 8, 7, 9, 7, 8. Modus (nilai yang paling sering muncul) dari data tersebut adalah …",["6","7","8","9"],1,"Nilai 7 muncul 3 kali, paling sering dibanding nilai lain."],
+["Data","Aplikasi","Nilai ulangan Dodi adalah 8, 6, 10, dan 8. Rata-rata nilai ulangan Dodi adalah …",["7","8","9","32"],1,"Rata-rata = (8 + 6 + 10 + 8) ÷ 4 = 32 ÷ 4 = 8."],
+["Data","Aplikasi","Banyak siswa yang mengikuti ekstrakurikuler: Pramuka 24 siswa, PMR 18 siswa, Futsal 30 siswa, dan Tari 12 siswa. Selisih siswa yang mengikuti Futsal dan Tari adalah …",["6 siswa","12 siswa","18 siswa","42 siswa"],2,"30 − 12 = 18 siswa."],
+["Bilangan","Penalaran","Hasil dari 25% × 200 adalah …",["25","40","50","75"],2,"25% × 200 = 25/100 × 200 = 50."],
+["Bilangan","Aplikasi","Harga sebuah baju Rp80.000,00. Toko memberikan diskon 25%. Uang yang harus dibayar pembeli adalah …",["Rp55.000,00","Rp60.000,00","Rp65.000,00","Rp75.000,00"],1,"Diskon = 25% × 80.000 = 20.000. Bayar = 80.000 − 20.000 = 60.000."],
+["Aljabar","Penalaran","Harga 4 buku tulis adalah Rp36.000,00. Harga 7 buku tulis yang sama adalah …",["Rp56.000,00","Rp60.000,00","Rp63.000,00","Rp72.000,00"],2,"Harga 1 buku = 36.000 ÷ 4 = 9.000. Harga 7 buku = 7 × 9.000 = 63.000."],
+["Geometri & Pengukuran","Pemahaman","Besar sudut lurus adalah …",["90°","180°","270°","360°"],1,"Sudut lurus besarnya 180°, sudut siku-siku 90°, dan satu putaran penuh 360°."],
+["Data","Penalaran","Sebuah dadu bersisi enam dilempar satu kali. Peluang muncul mata dadu 6 adalah …",["1/2","1/3","1/6","6/6"],2,"Ada 1 sisi bermata 6 dari 6 sisi, jadi peluangnya 1/6."]
+];
+// Format BIN: [domain, level, teks bacaan (boleh null), soal, [opsi], kunci(0-3), pembahasan]
+const T1="Sungai Katingan merupakan salah satu sungai terpanjang di Kalimantan Tengah. Sungai ini mengalir melewati Kabupaten Katingan dan bermuara di Laut Jawa. Bagi masyarakat di sepanjang alirannya, sungai ini menjadi sumber air bersih, jalur transportasi, dan tempat mencari ikan. Namun, kebersihan sungai harus dijaga agar manfaatnya terus dirasakan oleh generasi mendatang.";
+const T2="Suatu hari, Kancil ingin menyeberangi sungai, tetapi ia takut pada buaya. Ia pun berkata kepada Buaya, “Aku diperintah Raja Hutan untuk menghitung jumlah buaya di sungai ini. Berbarislah dari tepi sini sampai tepi sana!” Buaya-buaya segera berbaris rapi. Kancil melompat dari satu punggung buaya ke punggung buaya berikutnya sambil berhitung, hingga akhirnya ia sampai di seberang dengan selamat.";
+const T3="Warga Desa Sukamaju mengadakan kerja bakti setiap hari Minggu pagi. Mereka membersihkan selokan, memotong rumput liar, dan memperbaiki jalan desa. Kegiatan ini membuat lingkungan menjadi bersih dan hubungan antarwarga semakin erat.";
+const T4="Sepanjang musim kemarau, Semut bekerja mengumpulkan makanan sedikit demi sedikit. Belalang menghabiskan hari-harinya dengan bernyanyi dan bermain. Ketika musim hujan tiba dan makanan sulit dicari, Belalang kelaparan, sedangkan Semut tetap tenang karena lumbung makanannya penuh.";
+const T5="Hutan mangrove tumbuh di daerah pantai yang berlumpur. Akar mangrove yang kuat menahan ombak dan mencegah abrasi. Hutan ini juga menjadi tempat tinggal bagi ikan-ikan kecil, kepiting, dan burung pantai.";
+const BIN=[
+["Membaca Nonfiksi","Pemahaman",T1,"Ide pokok paragraf tersebut adalah …",["Sungai Katingan adalah sungai terpanjang di Indonesia","Sungai Katingan memberikan banyak manfaat bagi masyarakat","Sungai Katingan bermuara di Laut Jawa","Masyarakat menangkap ikan di Sungai Katingan"],1,"Seluruh kalimat dalam paragraf menjelaskan manfaat Sungai Katingan bagi masyarakat, jadi itulah ide pokoknya."],
+["Membaca Nonfiksi","Pemahaman",T1,"Menurut teks, Sungai Katingan bermuara di …",["Laut Jawa","Samudra Hindia","Sungai Barito","Danau Sembuluh"],0,"Tertulis jelas pada kalimat kedua: sungai ini bermuara di Laut Jawa."],
+["Membaca Nonfiksi","Pemahaman",T1,"Makna kata “bermuara” pada teks tersebut adalah …",["berawal dari gunung","berakhir dan bertemu dengan laut","mengalir dengan deras","bercabang menjadi dua"],1,"Bermuara berarti tempat berakhirnya aliran sungai, yaitu bertemu dengan laut atau danau."],
+["Membaca Fiksi","Pemahaman",T2,"Watak tokoh Kancil dalam cerita tersebut adalah …",["penakut","cerdik","pemalas","sombong"],1,"Kancil memikirkan cara cerdas untuk menyeberangi sungai dengan memanfaatkan buaya, jadi wataknya cerdik."],
+["Membaca Fiksi","Penalaran",T2,"Pesan moral yang dapat dipetik dari cerita tersebut adalah …",["Kita harus berani melawan hewan buas","Kecerdikan dapat membantu kita mengatasi masalah","Berhitung itu penting saat menyeberang sungai","Kita tidak boleh berbicara dengan buaya"],1,"Kancil selamat bukan karena kekuatan, melainkan karena kecerdikannya. Itulah pesan moral cerita."],
+["Membaca Fiksi","Pemahaman",T2,"Latar tempat cerita tersebut adalah …",["di hutan","di kebun","di sungai","di istana raja"],2,"Peristiwa Kancil menyeberang dan buaya berbaris terjadi di sungai."],
+["Membaca Nonfiksi","Pemahaman",T3,"Kegiatan warga Desa Sukamaju setiap Minggu pagi adalah …",["mengadakan pasar pagi","kerja bakti membersihkan lingkungan","berolahraga bersama","memperbaiki sekolah"],1,"Kalimat pertama menyebutkan warga mengadakan kerja bakti, dan kalimat berikutnya merinci kegiatannya."],
+["Membaca Nonfiksi","Penalaran",T3,"Simpulan isi teks tersebut adalah …",["Kerja bakti membuat lingkungan bersih dan warga semakin rukun","Warga Desa Sukamaju tidak menyukai kebersihan","Jalan desa rusak karena kerja bakti","Kerja bakti hanya dilakukan pada musim hujan"],0,"Teks menyebutkan dua hasil kerja bakti: lingkungan bersih dan hubungan antarwarga erat (rukun)."],
+["Membaca Nonfiksi","Pemahaman",T3,"Makna kata “erat” pada kalimat “hubungan antarwarga semakin erat” adalah …",["longgar","akrab","jauh","dingin"],1,"Dalam konteks hubungan, erat berarti akrab atau kuat."],
+["Kebahasaan","Pemahaman",null,"Penulisan huruf kapital yang benar terdapat pada kalimat …",["Budi pergi ke kasongan pada hari minggu.","Budi pergi ke Kasongan pada hari Minggu.","budi pergi ke Kasongan pada hari Minggu.","Budi pergi ke kasongan pada hari Minggu."],1,"Nama tempat (Kasongan) dan nama hari (Minggu) diawali huruf kapital, dan awal kalimat juga memakai huruf kapital."],
+["Kebahasaan","Pemahaman",null,"Tanda baca yang tepat untuk melengkapi kalimat “Siapa nama guru kelasmu …” adalah …",["tanda titik (.)","tanda koma (,)","tanda tanya (?)","tanda seru (!)"],2,"Kalimat tersebut menanyakan sesuatu, jadi diakhiri tanda tanya."],
+["Kebahasaan","Pemahaman",null,"Penulisan kata baku yang benar adalah …",["ijin","izin","ijien","izinlah"],1,"Kata baku dari ijin adalah izin."],
+["Kebahasaan","Aplikasi",null,"Kata berimbuhan me- pada kalimat “Ibu memasak nasi goreng di dapur” adalah …",["Ibu","memasak","nasi","dapur"],1,"Memasak berasal dari kata dasar masak yang mendapat awalan me-."],
+["Kebahasaan","Aplikasi",null,"Kalimat yang paling efektif adalah …",["Adik sedang bermain bola di lapangan.","Adik sedang bermain-main bola di lapangan sana itu.","Para adik-adik sedang bermain bola di lapangan.","Adik sedang bermain bola di lapangan pada saat ini sekarang."],0,"Kalimat pertama ringkas dan jelas; pilihan lain mengandung kata berlebihan atau pengulangan."],
+["Kebahasaan","Pemahaman",null,"Sinonim (persamaan kata) dari kata “gembira” adalah …",["sedih","senang","marah","takut"],1,"Gembira bersinonim dengan senang."],
+["Kebahasaan","Pemahaman",null,"Antonim (lawan kata) dari kata “tinggi” adalah …",["besar","lebar","rendah","panjang"],2,"Lawan kata tinggi adalah rendah."],
+["Kebahasaan","Aplikasi",null,"Penulisan kata depan “di” yang benar terdapat pada kalimat …",["Rani belajar diperpustakaan.","Buku itu sedang di baca Sinta.","Rani belajar di perpustakaan.","Sinta membaca buku di-bawa pulang."],2,"Kata depan di ditulis terpisah dari kata tempat: di perpustakaan."],
+["Kebahasaan","Pemahaman",null,"Kata tanya yang tepat untuk menanyakan alasan adalah …",["apa","siapa","mengapa","kapan"],2,"Alasan ditanyakan dengan kata tanya mengapa."],
+["Membaca Fiksi","Pemahaman",T4,"Watak tokoh Semut dalam cerita tersebut adalah …",["rajin","malas","pelit","ceroboh"],0,"Semut bekerja mengumpulkan makanan sedikit demi sedikit, menunjukkan sifat rajin."],
+["Membaca Fiksi","Aplikasi",T4,"Akibat sifat Belalang yang suka bermain, ia …",["menjadi penyanyi terkenal","kelaparan saat musim hujan","berteman dengan Semut","pindah ke tempat lain"],1,"Karena tidak menyiapkan makanan, Belalang kelaparan ketika musim hujan tiba."],
+["Membaca Fiksi","Penalaran",T4,"Amanat cerita tersebut adalah …",["Bernyanyi membuat hidup bahagia","Kita harus bersiap dan bekerja keras sejak awal agar tidak kesulitan di kemudian hari","Musim hujan adalah musim yang berbahaya","Jangan berteman dengan belalang"],1,"Cerita mengajarkan pentingnya persiapan dan kerja keras sejak dini."],
+["Membaca Nonfiksi","Pemahaman",T5,"Fungsi akar mangrove menurut teks adalah …",["menjadi makanan ikan","menahan ombak dan mencegah abrasi","tempat burung membuat sarang","menghasilkan buah yang manis"],1,"Kalimat kedua teks menyebutkan akar mangrove menahan ombak dan mencegah abrasi."],
+["Membaca Nonfiksi","Pemahaman",T5,"Ide pokok paragraf tersebut adalah …",["Mangrove tumbuh di pantai berlumpur","Burung pantai tinggal di hutan mangrove","Manfaat hutan mangrove bagi lingkungan pantai","Kepiting hidup di hutan mangrove"],2,"Semua kalimat mendukung gagasan tentang manfaat hutan mangrove bagi lingkungan pantai."],
+["Membaca Nonfiksi","Pemahaman",T5,"Makna kata “abrasi” pada teks tersebut adalah …",["penanaman kembali hutan","pengikisan tanah oleh air laut","perpindahan hewan pantai","pencemaran air laut"],1,"Abrasi adalah pengikisan tanah atau batuan pantai oleh gelombang air laut."],
+["Kebahasaan","Aplikasi",null,"Kalimat dengan ejaan yang benar adalah …",["Ayah membeli obat di apotik.","Ayah membeli obat di apotek.","Ayah membeli obat di Apotik.","Ayah membeli obat di apoteek."],1,"Kata baku tempat menjual obat adalah apotek."],
+["Membaca Nonfiksi","Aplikasi","Olahraga teratur membuat tubuh sehat. Jantung menjadi lebih kuat. Otot dan tulang pun ikut terlatih. Selain itu, olahraga membantu kita tidur lebih nyenyak.","Kalimat utama paragraf tersebut adalah …",["Jantung menjadi lebih kuat.","Otot dan tulang pun ikut terlatih.","Olahraga membantu kita tidur lebih nyenyak.","Olahraga teratur membuat tubuh sehat."],3,"Kalimat utama adalah kalimat pertama; kalimat berikutnya merupakan penjelasan."],
+["Membaca Nonfiksi","Aplikasi",null,"Perhatikan kalimat-kalimat berikut!\n(1) Setelah bibit tumbuh, pindahkan ke pot yang lebih besar.\n(2) Pertama, siapkan biji cabai dan media tanam.\n(3) Siram tanaman setiap pagi dan sore hari.\n(4) Dalam beberapa bulan, cabai siap dipanen.\nUrutan kalimat yang tepat agar menjadi paragraf petunjuk yang padu adalah …",["(2), (1), (3), (4)","(1), (2), (3), (4)","(2), (3), (1), (4)","(4), (3), (2), (1)"],0,"Petunjuk dimulai dari persiapan (2), memindahkan bibit (1), merawat (3), lalu memanen (4)."],
+["Kebahasaan","Pemahaman",null,"Ungkapan “besar kepala” pada kalimat “Jangan besar kepala setelah menang lomba” bermakna …",["pintar","sombong","berani","pemimpin"],1,"Besar kepala adalah ungkapan yang berarti sombong."],
+["Membaca Nonfiksi","Aplikasi","Untuk membuat jus jeruk, pertama-tama cucilah jeruk hingga bersih. Setelah itu, belah jeruk menjadi dua bagian. Peraslah jeruk menggunakan alat pemeras. Terakhir, tuang ke dalam gelas dan tambahkan gula secukupnya.","Langkah pertama membuat jus jeruk adalah …",["memeras jeruk","membelah jeruk menjadi dua","mencuci jeruk hingga bersih","menuang jus ke dalam gelas"],2,"Teks menyebutkan langkah pertama adalah mencuci jeruk hingga bersih."],
+["Membaca Nonfiksi","Penalaran",null,"Kalimat berikut yang termasuk opini adalah …",["Sungai Katingan terletak di Kalimantan Tengah.","Menurutku, pemandangan di tepi sungai itu sangat indah.","Air sungai berwarna cokelat saat musim hujan.","Ikan hidup di dalam air sungai."],1,"Kalimat opini berisi pendapat pribadi, ditandai kata “menurutku” dan penilaian “sangat indah”."]
+];
+
+// ===== MESIN SIMULASI =====
+const $=s=>document.querySelector(s);
+const normM=MTK.map(r=>({mapel:"Matematika",d:r[0],lv:r[1],teks:null,q:r[2],o:r[3],k:r[4],e:r[5]}));
+const normB=BIN.map(r=>({mapel:"Bahasa Indonesia",d:r[0],lv:r[1],teks:r[2],q:r[3],o:r[4],k:r[5],e:r[6]}));
+const PAKET={MTK:{nama:"Matematika",soal:normM,menit:60},BIN:{nama:"Bahasa Indonesia",soal:normB,menit:60},FULL:{nama:"Paket Lengkap (Matematika + Bahasa Indonesia)",soal:normM.concat(normB),menit:120}};
+let pilihan="FULL", S=null, timerId=null;
+
+document.querySelectorAll("#pilihPaket .pkt").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll("#pilihPaket .pkt").forEach(x=>x.classList.remove("on"));
+ b.classList.add("on"); pilihan=b.dataset.p; });
+
+function tampil(id){["scrHome","scrExam","scrResult"].forEach(x=>$("#"+x).classList.toggle("hidden",x!==id)); window.scrollTo(0,0);}
+
+$("#btnMulai").onclick=()=>{
+ const nama=$("#inNama").value.trim();
+ if(!nama){alert("Isi nama dulu ya."); $("#inNama").focus(); return;}
+ const pk=PAKET[pilihan];
+ S={nama, kelas:$("#inKelas").value, paket:pk.nama, soal:pk.soal, jwb:new Array(pk.soal.length).fill(null), ragu:new Array(pk.soal.length).fill(false), idx:0, sisa:pk.menit*60, selesai:false};
+ $("#exNama").textContent=nama+" • Kelas "+S.kelas;
+ $("#exPaket").textContent=pk.nama+" • "+pk.soal.length+" soal • "+pk.menit+" menit";
+ tampil("scrExam"); gambarSoal(); mulaiTimer();
+};
+
+function mulaiTimer(){
+ clearInterval(timerId);
+ const el=$("#exTimer");
+ const tick=()=>{ if(!S||S.selesai)return;
+  const m=Math.floor(S.sisa/60), d=S.sisa%60;
+  el.textContent=String(m).padStart(2,"0")+":"+String(d).padStart(2,"0");
+  el.classList.toggle("kritis",S.sisa<=300);
+  if(S.sisa<=0){ selesai(true); return; } S.sisa--; };
+ tick(); timerId=setInterval(tick,1000);
+}
+
+function gambarSoal(){
+ const i=S.idx, s=S.soal[i];
+ $("#exTeks").innerHTML=s.teks?'<div class="teksbac">'+s.teks+"</div>":"";
+ $("#exSoal").innerHTML="<b>Soal "+(i+1)+" dari "+S.soal.length+"</b> <span class='badge'>"+s.mapel+"</span><span class='badge'>"+s.d+"</span><span class='badge'>"+s.lv+"</span><br>"+s.q;
+ $("#exOpsi").innerHTML=s.o.map((o,j)=>'<button class="op'+(S.jwb[i]===j?" on":"")+'" data-j="'+j+'"><span class="huruf">'+"ABCD"[j]+"</span><span>"+o+"</span></button>").join("");
+ document.querySelectorAll("#exOpsi .op").forEach(b=>b.onclick=()=>{ S.jwb[i]=+b.dataset.j; gambarSoal(); });
+ $("#exRagu").checked=!!S.ragu[i];
+ $("#exProg").style.width=((S.jwb.filter(x=>x!==null).length)/S.soal.length*100)+"%";
+ $("#btnPrev").disabled=i===0; $("#btnNext").disabled=i===S.soal.length-1;
+ gambarGrid();
+}
+function gambarGrid(){
+ $("#gridNomor").innerHTML=S.soal.map((s,i)=>'<button data-i="'+i+'" class="'+(S.jwb[i]!==null?"isi":"")+(S.ragu[i]?" ragu":"")+(i===S.idx?" aktif":"")+'">'+(i+1)+"</button>").join("");
+ document.querySelectorAll("#gridNomor button").forEach(b=>b.onclick=()=>{ S.idx=+b.dataset.i; gambarSoal(); });
+}
+$("#exRagu").onchange=e=>{ S.ragu[S.idx]=e.target.checked; gambarGrid(); };
+$("#btnPrev").onclick=()=>{ if(S.idx>0){S.idx--; gambarSoal();} };
+$("#btnNext").onclick=()=>{ if(S.idx<S.soal.length-1){S.idx++; gambarSoal();} };
+$("#btnDaftar").onclick=()=>{ $("#exGrid").classList.toggle("hidden"); };
+$("#btnSelesai").onclick=()=>selesai(false);
+
+function selesai(otomatis){
+ if(!S||S.selesai)return;
+ const kosong=S.jwb.filter(x=>x===null).length;
+ if(!otomatis&&kosong>0&&!confirm("Masih ada "+kosong+" soal yang belum dijawab. Tetap selesaikan?"))return;
+ if(otomatis)alert("Waktu habis! Jawabanmu otomatis dikumpulkan.");
+ S.selesai=true; clearInterval(timerId);
+ let benar=0; const perDom={};
+ S.soal.forEach((s,i)=>{ const bet=S.jwb[i]===s.k; if(bet)benar++;
+  const key=s.mapel+" — "+s.d; perDom[key]=perDom[key]||[0,0]; perDom[key][1]++; if(bet)perDom[key][0]++; });
+ const nilai=Math.round(benar/S.soal.length*100);
+ $("#rsNama").textContent=S.nama+" • Kelas "+S.kelas+" • "+S.paket;
+ $("#rsSkor").textContent=nilai;
+ $("#rsDetail").innerHTML="Benar <b>"+benar+"</b> dari "+S.soal.length+" soal • Salah/kosong <b>"+(S.soal.length-benar)+"</b>";
+ $("#rsDomain").innerHTML="<table><tr><th>Bidang</th><th>Benar</th><th>Skor</th></tr>"+Object.keys(perDom).sort().map(k=>{const[b,t]=perDom[k];return "<tr><td>"+k+"</td><td>"+b+"/"+t+"</td><td>"+Math.round(b/t*100)+"</td></tr>";}).join("")+"</table>";
+ $("#rsPemb").innerHTML=S.soal.map((s,i)=>{const j=S.jwb[i], bet=j===s.k;
+  return '<div class="pemb"><span class="badge">'+s.mapel+'</span><span class="badge">'+s.d+'</span><span class="badge">'+s.lv+'</span>'+(s.teks?'<div class="kecil2" style="margin:6px 0">'+s.teks+"</div>":"")+"<div style='margin-top:5px'><b>"+(i+1)+".</b> "+s.q+"</div>"
+  +'<div class="jwb" style="color:'+(bet?"var(--ok)":"var(--salah)")+'">Jawabanmu: '+(j===null?"(tidak dijawab)":"ABCD"[j]+". "+s.o[j])+(bet?" ✔":" ✘")+"</div>"
+  +'<div class="jwb" style="color:var(--ok)">Kunci: '+"ABCD"[s.k]+". "+s.o[s.k]+"</div>"
+  +"<div>"+s.e+"</div></div>";}).join("");
+ try{ const r=JSON.parse(localStorage.getItem("tka_sd_riwayat")||"[]");
+  r.unshift({nama:S.nama,kelas:S.kelas,paket:S.paket,nilai,benar,total:S.soal.length,tgl:new Date().toLocaleString("id-ID")});
+  localStorage.setItem("tka_sd_riwayat",JSON.stringify(r.slice(0,10))); }catch(e){}
+ tampil("scrResult"); gambarRiwayat();
+}
+$("#btnUlang").onclick=()=>tampil("scrHome");
+
+function gambarRiwayat(){
+ let r=[]; try{ r=JSON.parse(localStorage.getItem("tka_sd_riwayat")||"[]"); }catch(e){}
+ $("#isiRiwayat").innerHTML=r.length? "<table><tr><th>Tanggal</th><th>Nama</th><th>Paket</th><th>Nilai</th></tr>"+r.map(x=>"<tr><td>"+x.tgl+"</td><td>"+x.nama+"</td><td>"+x.paket+"</td><td><b>"+x.nilai+"</b> ("+x.benar+"/"+x.total+")</td></tr>").join("")+"</table>" : '<p class="kecil2">Belum ada hasil. Ayo mulai simulasi pertamamu!</p>';
+}
+gambarRiwayat();
+</script>
+</body>
+</html>
