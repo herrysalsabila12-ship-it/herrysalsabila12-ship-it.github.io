@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>BKKu — Aplikasi Guru Bimbingan Konseling</title>
+<meta name="description" content="BKKu: aplikasi guru BK untuk data siswa binaan, catatan konseling, agenda layanan, dan laporan bulanan. Data tersimpan lokal di perangkat.">
+<style>
+:root{
+  --ungu:#6d28d9; --ungu2:#8b5cf6; --pink:#ec4899; --biru:#2563eb;
+  --latar:#f3f1fb; --kartu:#ffffff; --teks:#1e1b2e; --redup:#6f6a85;
+  --garis:#e6e2f5; --ok:#059669; --awas:#d97706; --bahaya:#dc2626;
+  --grad:linear-gradient(120deg,#6d28d9 0%,#8b5cf6 45%,#ec4899 110%);
+  --radius:18px; --bayang:0 10px 30px rgba(80,50,180,.10);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,Roboto,Arial,sans-serif;background:var(--latar);color:var(--teks);min-height:100vh}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:15px}
+::-webkit-scrollbar{width:9px;height:9px}::-webkit-scrollbar-thumb{background:#c9c2e8;border-radius:9px}
+
+/* ====== KERANGKA ====== */
+.app{display:flex;min-height:100vh}
+aside{width:248px;flex:0 0 248px;background:linear-gradient(180deg,#241245 0%,#3b1573 60%,#4c1d95 100%);color:#fff;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;padding:20px 14px;z-index:30}
+.logo{display:flex;align-items:center;gap:11px;padding:2px 8px 16px}
+.logo .lencana{width:46px;height:46px;border-radius:14px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 8px 20px rgba(236,72,153,.35)}
+.logo b{font-size:21px;letter-spacing:.4px;display:block;line-height:1.05}
+.logo small{opacity:.75;font-size:11px}
+nav{display:flex;flex-direction:column;gap:5px;margin-top:4px}
+nav button{display:flex;align-items:center;gap:11px;background:transparent;border:0;color:#ddd6fe;text-align:left;padding:11px 13px;border-radius:12px;font-size:14.5px;font-weight:600;transition:.15s}
+nav button .ic{font-size:18px;width:22px;text-align:center}
+nav button:hover{background:rgba(255,255,255,.09);color:#fff}
+nav button.aktif{background:var(--grad);color:#fff;box-shadow:0 8px 18px rgba(109,40,217,.35)}
+aside .kaki{margin-top:auto;font-size:11.5px;opacity:.75;line-height:1.55;padding:10px 8px 0;border-top:1px solid rgba(255,255,255,.14)}
+main{flex:1;min-width:0;padding:22px 22px 90px;max-width:1180px;margin:0 auto;width:100%}
+
+/* ====== KEPALA HALAMAN ====== */
+.hero{background:var(--grad);border-radius:24px;color:#fff;padding:24px 26px;position:relative;overflow:hidden;box-shadow:var(--bayang);margin-bottom:18px}
+.hero::after{content:'💜';position:absolute;right:16px;top:6px;font-size:110px;opacity:.14;transform:rotate(10deg)}
+.hero h1{margin:0 0 5px;font-size:23px}
+.hero p{margin:0;opacity:.92;font-size:14px;max-width:640px;line-height:1.55}
+.judul-halaman{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:4px 0 14px}
+.judul-halaman h2{margin:0;font-size:21px}
+.judul-halaman .sub{color:var(--redup);font-size:13px;margin-top:2px}
+
+/* ====== KARTU & STATISTIK ====== */
+.grid-stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:13px;margin-bottom:18px}
+.stat{background:var(--kartu);border-radius:var(--radius);padding:16px 17px;box-shadow:var(--bayang);border:1px solid var(--garis);position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--grad)}
+.stat .angka{font-size:29px;font-weight:800;line-height:1.1}
+.stat .label{color:var(--redup);font-size:12.5px;font-weight:600;margin-top:2px}
+.stat .ic{position:absolute;right:13px;top:13px;font-size:21px;opacity:.85}
+.kartu{background:var(--kartu);border-radius:var(--radius);box-shadow:var(--bayang);border:1px solid var(--garis);padding:18px;margin-bottom:16px}
+.kartu h3{margin:0 0 12px;font-size:16.5px}
+.kartu h3 .kecil{font-size:12px;color:var(--redup);font-weight:500}
+.baris{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.tumbuh{flex:1}
+
+/* ====== TOMBOL & FORM ====== */
+.btn{border:0;border-radius:12px;padding:10px 16px;font-size:14px;font-weight:700;background:#ece9f9;color:#3b1573;transition:.15s;display:inline-flex;align-items:center;gap:7px}
+.btn:hover{filter:brightness(.97)}
+.btn.utama{background:var(--grad);color:#fff;box-shadow:0 8px 18px rgba(109,40,217,.28)}
+.btn.ok{background:#059669;color:#fff}
+.btn.bahaya{background:#fee2e2;color:#b91c1c}
+.btn.kecil{padding:7px 11px;font-size:12.5px;border-radius:10px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+label.lbl{display:block;font-size:12.5px;font-weight:700;color:#463d63;margin:0 0 5px}
+input.inp,select.inp,textarea.inp{width:100%;border:1.5px solid var(--garis);border-radius:12px;padding:10px 12px;background:#fbfbfe;color:var(--teks);outline:none;transition:.15s}
+input.inp:focus,select.inp:focus,textarea.inp:focus{border-color:var(--ungu2);background:#fff;box-shadow:0 0 0 3px rgba(139,92,246,.15)}
+textarea.inp{resize:vertical;min-height:74px;line-height:1.5}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.form-grid .penuh{grid-column:1/-1}
+.cari{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:13px}
+.cari .inp{width:auto}
+.cari input[type=search]{flex:1;min-width:170px}
+
+/* ====== TABEL & DAFTAR ====== */
+.tabel-bungkus{overflow-x:auto;border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{background:#f4f1fd;color:#463d63;text-align:left;padding:10px 12px;font-size:12.5px;letter-spacing:.3px;white-space:nowrap}
+td{padding:10px 12px;border-top:1px solid var(--garis);vertical-align:top}
+tr:hover td{background:#faf9ff}
+.chip{display:inline-block;padding:3px 10px;border-radius:99px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.chip.ungu{background:#ede9fe;color:#5b21b6}.chip.pink{background:#fce7f3;color:#9d174d}
+.chip.biru{background:#dbeafe;color:#1d4ed8}.chip.hijau{background:#d1fae5;color:#065f46}
+.chip.kuning{background:#fef3c7;color:#92400e}.chip.merah{background:#fee2e2;color:#991b1b}
+.chip.abu{background:#e5e7eb;color:#374151}
+.kosong{text-align:center;color:var(--redup);padding:30px 10px;font-size:14px}
+.kosong .besar{font-size:38px;display:block;margin-bottom:8px}
+.avatar{width:38px;height:38px;border-radius:12px;background:var(--grad);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:0 0 38px}
+.nama-sel{display:flex;gap:10px;align-items:center}
+.nama-sel .nm{font-weight:700}
+.nama-sel .sb{font-size:12px;color:var(--redup)}
+
+/* batang rekap */
+.batang-baris{display:grid;grid-template-columns:118px 1fr 44px;gap:10px;align-items:center;margin:7px 0;font-size:13.5px}
+.batang{height:14px;background:#efeafd;border-radius:99px;overflow:hidden}
+.batang i{display:block;height:100%;background:var(--grad);border-radius:99px;transition:width .4s}
+.batang-baris .n{font-weight:800;text-align:right}
+
+/* agenda */
+.agenda-item{display:flex;gap:13px;padding:12px 4px;border-top:1px solid var(--garis);align-items:flex-start}
+.agenda-item:first-of-type{border-top:0}
+.tgl-kotak{flex:0 0 56px;background:#f4f1fd;border-radius:14px;text-align:center;padding:7px 2px}
+.tgl-kotak b{display:block;font-size:19px;line-height:1.05;color:var(--ungu)}
+.tgl-kotak small{font-size:10.5px;color:var(--redup);font-weight:700;text-transform:uppercase}
+.agenda-item .isi{flex:1;min-width:0}
+.agenda-item .isi b{font-size:14.5px}
+.agenda-item .isi div{font-size:12.5px;color:var(--redup);margin-top:1px}
+.agenda-item.selesai .isi b{text-decoration:line-through;opacity:.6}
+
+/* ====== MODAL ====== */
+.modal-latar{position:fixed;inset:0;background:rgba(30,20,60,.55);backdrop-filter:blur(3px);display:none;align-items:flex-end;justify-content:center;z-index:60;padding:0}
+.modal-latar.buka{display:flex}
+.modal{background:#fff;width:100%;max-width:640px;max-height:92vh;overflow-y:auto;border-radius:22px 22px 0 0;padding:22px;animation:naik .22s ease}
+@keyframes naik{from{transform:translateY(26px);opacity:.4}to{transform:none;opacity:1}}
+@media(min-width:700px){.modal-latar{align-items:center;padding:18px}.modal{border-radius:22px}}
+.modal h3{margin:0 0 4px;font-size:18px}
+.modal .sub{color:var(--redup);font-size:13px;margin-bottom:14px}
+.modal .aksi{display:flex;gap:9px;justify-content:flex-end;margin-top:17px;flex-wrap:wrap}
+
+/* ====== KUNCI & TOAST ====== */
+#layarKunci{position:fixed;inset:0;background:linear-gradient(160deg,#241245,#4c1d95 70%,#7e22ce);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
+#layarKunci.buka{display:flex}
+.kotak-kunci{background:#fff;border-radius:24px;padding:28px 24px;max-width:360px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.kotak-kunci .lencana{width:64px;height:64px;border-radius:18px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:31px;margin:0 auto 12px}
+#toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);background:#241245;color:#fff;padding:12px 19px;border-radius:99px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:120;box-shadow:0 14px 34px rgba(0,0,0,.3);max-width:92vw;text-align:center}
+#toast.tampil{opacity:1;transform:translateX(-50%)}
+
+/* navigasi bawah (HP) */
+nav.bawah{display:none}
+@media(max-width:820px){
+  aside{display:none}
+  main{padding:16px 14px 96px}
+  nav.bawah{display:flex;position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--garis);z-index:50;padding:7px 4px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -8px 24px rgba(80,50,180,.08)}
+  nav.bawah button{flex:1;background:none;border:0;font-size:10.5px;font-weight:700;color:var(--redup);display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 2px;border-radius:10px}
+  nav.bawah button .ic{font-size:20px}
+  nav.bawah button.aktif{color:var(--ungu)}
+  .form-grid{grid-template-columns:1fr}
+  .hero h1{font-size:20px}
+  #toast{bottom:92px}
+}
+.halaman{display:none}
+.halaman.aktif{display:block;animation:masuk .2s ease}
+@keyframes masuk{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.rahasia{background:#fffbeb;border:1px dashed #f59e0b;border-radius:12px;padding:10px 13px;font-size:12.5px;color:#92400e;margin-bottom:14px;line-height:1.55}
+@media print{
+  aside,nav.bawah,.tanpa-cetak,#toast,#layarKunci{display:none!important}
+  body{background:#fff} main{padding:0;max-width:none}
+  .kartu,.stat{box-shadow:none;border:1px solid #ccc}
+  .halaman{display:none!important} .halaman.aktif{display:block!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= KUNCI APLIKASI ================= -->
+<div id="layarKunci">
+  <div class="kotak-kunci">
+    <div class="lencana">💜</div>
+    <h3 style="margin:0 0 4px">BKKu Terkunci</h3>
+    <p style="color:var(--redup);font-size:13px;margin:0 0 16px">Catatan konseling bersifat rahasia.<br>Masukkan PIN untuk membuka.</p>
+    <input class="inp" id="pinMasuk" type="password" inputmode="numeric" placeholder="PIN" style="text-align:center;font-size:19px;letter-spacing:6px" maxlength="8">
+    <button class="btn utama" style="width:100%;justify-content:center;margin-top:13px" onclick="cobaBuka()">🔓 Buka Aplikasi</button>
+    <div id="pinSalah" style="color:var(--bahaya);font-size:13px;margin-top:9px;min-height:17px"></div>
+  </div>
+</div>
+
+<div class="app">
+  <!-- ================= SIDEBAR ================= -->
+  <aside>
+    <div class="logo">
+      <div class="lencana">💜</div>
+      <div><b>BKKu</b><small>Aplikasi Guru BK</small></div>
+    </div>
+    <nav id="navSamping">
+      <button data-h="dashboard" class="aktif"><span class="ic">🏠</span> Dashboard</button>
+      <button data-h="siswa"><span class="ic">🎒</span> Data Siswa</button>
+      <button data-h="konseling"><span class="ic">🗣️</span> Konseling</button>
+      <button data-h="agenda"><span class="ic">📅</span> Agenda</button>
+      <button data-h="laporan"><span class="ic">📊</span> Laporan</button>
+      <button data-h="pengaturan"><span class="ic">⚙️</span> Pengaturan</button>
+    </nav>
+    <div class="kaki">🔒 Data tersimpan <b>lokal di perangkat ini</b> — tidak dikirim ke mana pun.<br><br><span id="kakiSekolah">SMP Tarung Riwut</span></div>
+  </aside>
+
+  <main>
+    <!-- ================= DASHBOARD ================= -->
+    <section class="halaman aktif" id="hal-dashboard">
+      <div class="hero">
+        <h1 id="salam">Selamat datang, Guru BK 💜</h1>
+        <p>Ruang aman untuk mendampingi siswa: kelola data binaan, catat setiap sesi konseling, susun agenda layanan, dan buat laporan bulanan — semua tersimpan aman di perangkat ini.</p>
+      </div>
+      <div class="grid-stat">
+        <div class="stat"><span class="ic">🎒</span><div class="angka" id="stSiswa">0</div><div class="label">Siswa binaan</div></div>
+        <div class="stat"><span class="ic">🗣️</span><div class="angka" id="stSesiBulan">0</div><div class="label">Sesi bulan ini</div></div>
+        <div class="stat"><span class="ic">📌</span><div class="angka" id="stAktif">0</div><div class="label">Kasus berjalan</div></div>
+        <div class="stat"><span class="ic">📅</span><div class="angka" id="stAgenda">0</div><div class="label">Agenda terdekat</div></div>
+      </div>
+      <div class="kartu">
+        <h3>📅 Agenda Terdekat</h3>
+        <div id="dashAgenda"></div>
+      </div>
+      <div class="kartu">
+        <h3>🗣️ Sesi Konseling Terakhir</h3>
+        <div id="dashSesi"></div>
+      </div>
+      <div class="kartu">
+        <h3>📊 Kategori Masalah Terbanyak <span class="kecil">(semua waktu)</span></h3>
+        <div id="dashKategori"></div>
+      </div>
+    </section>
+
+    <!-- ================= SISWA ================= -->
+    <section class="halaman" id="hal-siswa">
+      <div class="judul-halaman">
+        <div><h2>🎒 Data Siswa Binaan</h2><div class="sub">Daftar siswa yang didampingi guru BK</div></div>
+        <div class="baris tanpa-cetak">
+          <button class="btn" onclick="eksporSiswaCSV()">⬇️ Ekspor CSV</button>
+          <button class="btn" onclick="document.getElementById('imporSiswa').click()">⬆️ Impor CSV</button>
+          <input type="file" id="imporSiswa" accept=".csv" style="display:none" onchange="imporSiswaCSV(this)">
+          <button class="btn utama" onclick="bukaSiswa()">＋ Tambah Siswa</button>
+        </div>
+      </div>
+      <div class="kartu">
+        <div class="cari tanpa-cetak">
+          <input class="inp" type="search" id="cariSiswa" placeholder="🔍 Cari nama / NIS / kelas…" oninput="renderSiswa()">
+          <select class="inp" id="filterKelasSiswa" onchange="renderSiswa()"><option value="">Semua kelas</option></select>
+        </div>
+        <div class="tabel-bungkus"><table>
+          <thead><tr><th>Siswa</th><th>Kelas</th><th>JK</th><th>Sesi</th><th>Status</th><th class="tanpa-cetak">Aksi</th></tr></thead>
+          <tbody id="tbodySiswa"></tbody>
+        </table></div>
+        <div id="siswaKosong"></div>
+      </div>
+    </section>
+
+    <!-- ================= KONSELING ================= -->
+    <section class="halaman" id="hal-konseling">
+      <div class="judul-halaman">
+        <div><h2>🗣️ Catatan Konseling</h2><div class="sub">Riwayat sesi layanan bimbingan dan konseling</div></div>
+        <button class="btn utama tanpa-cetak" onclick="bukaSesi()">＋ Catat Sesi</button>
+      </div>
+      <div class="rahasia tanpa-cetak">🤫 <b>Bersifat rahasia.</b> Isi catatan hanya tersimpan di perangkat ini. Aktifkan <b>PIN kunci aplikasi</b> di Pengaturan agar tidak dibuka orang lain.</div>
+      <div class="kartu">
+        <div class="cari tanpa-cetak">
+          <input class="inp" type="search" id="cariSesi" placeholder="🔍 Cari siswa / topik…" oninput="renderSesi()">
+          <select class="inp" id="filterKatSesi" onchange="renderSesi()"><option value="">Semua kategori</option></select>
+          <select class="inp" id="filterStatusSesi" onchange="renderSesi()">
+            <option value="">Semua status</option><option value="Berlangsung">Berlangsung</option><option value="Selesai">Selesai</option>
+          </select>
+          <input class="inp" type="month" id="filterBulanSesi" onchange="renderSesi()">
+        </div>
+        <div id="daftarSesi"></div>
+      </div>
+    </section>
+
+    <!-- ================= AGENDA ================= -->
+    <section class="halaman" id="hal-agenda">
+      <div class="judul-halaman">
+        <div><h2>📅 Agenda Layanan BK</h2><div class="sub">Jadwal konseling, bimbingan klasikal, kunjungan rumah, dan lainnya</div></div>
+        <button class="btn utama tanpa-cetak" onclick="bukaAgenda()">＋ Tambah Agenda</button>
+      </div>
+      <div class="kartu">
+        <h3>🗓️ Agenda Akan Datang</h3>
+        <div id="agendaDatang"></div>
+      </div>
+      <div class="kartu">
+        <h3>🗂️ Semua Agenda</h3>
+        <div id="agendaSemua"></div>
+      </div>
+    </section>
+
+    <!-- ================= LAPORAN ================= -->
+    <section class="halaman" id="hal-laporan">
+      <div class="judul-halaman">
+        <div><h2>📊 Laporan Bulanan BK</h2><div class="sub">Rekap layanan bimbingan dan konseling per bulan</div></div>
+        <div class="baris tanpa-cetak">
+          <input class="inp" type="month" id="bulanLaporan" onchange="renderLaporan()" style="width:auto">
+          <button class="btn utama" onclick="window.print()">🖨️ Cetak Laporan</button>
+        </div>
+      </div>
+      <div class="kartu" id="isiLaporan"></div>
+    </section>
+
+    <!-- ================= PENGATURAN ================= -->
+    <section class="halaman" id="hal-pengaturan">
+      <div class="judul-halaman">
+        <div><h2>⚙️ Pengaturan</h2><div class="sub">Identitas, keamanan, dan cadangan data</div></div>
+      </div>
+      <div class="kartu">
+        <h3>🏫 Identitas</h3>
+        <div class="form-grid">
+          <div><label class="lbl">Nama sekolah</label><input class="inp" id="setSekolah"></div>
+          <div><label class="lbl">Nama Guru BK</label><input class="inp" id="setGuru"></div>
+          <div><label class="lbl">NIP Guru BK</label><input class="inp" id="setNip"></div>
+          <div><label class="lbl">Kota (untuk tanda tangan laporan)</label><input class="inp" id="setKota"></div>
+        </div>
+        <div class="baris" style="margin-top:14px"><button class="btn utama" onclick="simpanPengaturan()">💾 Simpan Identitas</button></div>
+      </div>
+      <div class="kartu">
+        <h3>🔐 Kunci Aplikasi (PIN)</h3>
+        <p style="color:var(--redup);font-size:13.5px;margin:0 0 12px;line-height:1.6">Lindungi catatan konseling dengan PIN. Jika PIN diisi, aplikasi meminta PIN setiap dibuka. Kosongkan lalu simpan untuk menonaktifkan.</p>
+        <div class="form-grid">
+          <div><label class="lbl">PIN baru (4–8 angka)</label><input class="inp" id="setPin" type="password" inputmode="numeric" maxlength="8" placeholder="Kosong = tanpa kunci"></div>
+        </div>
+        <div class="baris" style="margin-top:14px"><button class="btn utama" onclick="simpanPin()">💾 Simpan PIN</button></div>
+      </div>
+      <div class="kartu">
+        <h3>💾 Cadangan Data</h3>
+        <p style="color:var(--redup);font-size:13.5px;margin:0 0 12px;line-height:1.6">Data tersimpan hanya di perangkat ini. Unduh cadangan (JSON) secara berkala dan simpan di tempat aman — berkas ini berisi catatan rahasia siswa.</p>
+        <div class="baris">
+          <button class="btn ok" onclick="eksporJSON()">⬇️ Unduh Cadangan (JSON)</button>
+          <button class="btn" onclick="document.getElementById('imporJSON').click()">⬆️ Pulihkan dari JSON</button>
+          <input type="file" id="imporJSON" accept=".json" style="display:none" onchange="imporJSONFile(this)">
+          <button class="btn bahaya" onclick="hapusSemua()">🗑️ Hapus Semua Data</button>
+        </div>
+      </div>
+      <div class="kartu">
+        <h3>ℹ️ Tentang BKKu</h3>
+        <p style="color:var(--redup);font-size:13.5px;margin:0;line-height:1.65">BKKu adalah aplikasi pendamping guru Bimbingan Konseling: data siswa binaan, catatan konseling (individu, kelompok, klasikal, konsultasi orang tua, kunjungan rumah), agenda layanan, dan laporan bulanan siap cetak. Bekerja <b>sepenuhnya offline</b> dan data tidak pernah meninggalkan perangkat.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- navigasi bawah HP -->
+<nav class="bawah" id="navBawah">
+  <button data-h="dashboard" class="aktif"><span class="ic">🏠</span>Beranda</button>
+  <button data-h="siswa"><span class="ic">🎒</span>Siswa</button>
+  <button data-h="konseling"><span class="ic">🗣️</span>Konseling</button>
+  <button data-h="agenda"><span class="ic">📅</span>Agenda</button>
+  <button data-h="laporan"><span class="ic">📊</span>Laporan</button>
+  <button data-h="pengaturan"><span class="ic">⚙️</span>Atur</button>
+</nav>
+
+<div id="toast"></div>
+<div id="wadahModal"></div>
+
+<script>
+'use strict';
+/* ================== DATA ================== */
+var KUNCI='bkku_v1';
+var KATEGORI=['Akademik','Pribadi','Sosial','Karier','Keluarga','Disiplin','Lainnya'];
+var LAYANAN=['Konseling Individu','Konseling Kelompok','Bimbingan Klasikal','Konsultasi Orang Tua','Kunjungan Rumah','Layanan Informasi','Lainnya'];
+var BULAN_ID=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+var DB=null;
+
+function idBaru(){ return 'x'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function hariIni(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function contohData(){
+  return {
+    pengaturan:{sekolah:'SMP Tarung Riwut', guru:'', nip:'', kota:'Luwuk Kanan', pin:''},
+    siswa:[
+      {id:idBaru(), nama:'Andi Pratama (contoh)', nis:'1001', kelas:'VIII', jk:'L', catatan:'Sering terlambat masuk sekolah.'},
+      {id:idBaru(), nama:'Bunga Lestari (contoh)', nis:'1002', kelas:'VII', jk:'P', catatan:'Pemalu, perlu dorongan percaya diri.'},
+      {id:idBaru(), nama:'Citra Dewi (contoh)', nis:'1003', kelas:'IX', jk:'P', catatan:'Bingung memilih sekolah lanjutan.'}
+    ],
+    sesi:[
+      {id:idBaru(), siswaId:null, tanggal:hariIni(), layanan:'Konseling Individu', kategori:'Disiplin', topik:'Keterlambatan masuk sekolah', catatan:'Siswa bercerita jarak rumah jauh dan harus membantu orang tua dulu. Disepakati berangkat 15 menit lebih awal.', tindak:'Pantau kehadiran selama 2 minggu.', status:'Berlangsung'},
+      {id:idBaru(), siswaId:null, tanggal:hariIni(), layanan:'Konseling Individu', kategori:'Karier', topik:'Pemilihan sekolah lanjutan', catatan:'Siswa berminat ke SMK jurusan otomotif. Diberikan informasi jalur pendaftaran dan syaratnya.', tindak:'Sesi lanjutan minggu depan bersama orang tua.', status:'Berlangsung'}
+    ],
+    agenda:[
+      {id:idBaru(), judul:'Bimbingan klasikal kelas IX — persiapan ujian (contoh)', tanggal:hariIni(), jam:'08.00', tempat:'Kelas IX', ket:'Materi manajemen waktu belajar.', selesai:false}
+    ]
+  };
+}
+function muat(){
+  try{ var mentah=localStorage.getItem(KUNCI); if(mentah){ DB=JSON.parse(mentah); } }catch(e){ DB=null; }
+  if(!DB || !DB.pengaturan){ DB=contohData();
+    /* tautkan sesi contoh ke siswa contoh */
+    if(DB.siswa[0]) DB.sesi[0].siswaId=DB.siswa[0].id;
+    if(DB.siswa[2]) DB.sesi[1].siswaId=DB.siswa[2].id;
+    simpan(); }
+}
+function simpan(){ try{ localStorage.setItem(KUNCI, JSON.stringify(DB)); }catch(e){ toast('⚠️ Penyimpanan penuh — unduh cadangan JSON segera.'); } }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('tampil'); clearTimeout(t._j); t._j=setTimeout(function(){ t.classList.remove('tampil'); },2600); }
+function namaSiswa(id){ var s=DB.siswa.find(function(x){return x.id===id;}); return s? s.nama : '(siswa terhapus)'; }
+function siswaById(id){ return DB.siswa.find(function(x){return x.id===id;}) || null; }
+function tglIndo(iso){ if(!iso) return '-'; var b=iso.split('-'); if(b.length<3) return iso; return parseInt(b[2],10)+' '+BULAN_ID[parseInt(b[1],10)-1]+' '+b[0]; }
+function inisial(nama){ var k=String(nama||'?').trim().split(/\s+/); return ((k[0]||'')[0]||'?')+((k[1]||'')[0]||''); }
+function chipKategori(k){
+  var peta={'Akademik':'biru','Pribadi':'pink','Sosial':'ungu','Karier':'hijau','Keluarga':'kuning','Disiplin':'merah','Lainnya':'abu'};
+  return '<span class="chip '+(peta[k]||'abu')+'">'+esc(k)+'</span>';
+}
+function chipStatus(s){ return s==='Selesai' ? '<span class="chip hijau">✔ Selesai</span>' : '<span class="chip kuning">⏳ Berlangsung</span>'; }
+</script>
+
+<script>
+/* ================== NAVIGASI ================== */
+function keHalaman(h){
+  document.querySelectorAll('.halaman').forEach(function(s){ s.classList.toggle('aktif', s.id==='hal-'+h); });
+  document.querySelectorAll('#navSamping button, #navBawah button').forEach(function(b){ b.classList.toggle('aktif', b.dataset.h===h); });
+  if(h==='dashboard') renderDashboard();
+  if(h==='siswa') renderSiswa();
+  if(h==='konseling') renderSesi();
+  if(h==='agenda') renderAgenda();
+  if(h==='laporan') renderLaporan();
+  if(h==='pengaturan') renderPengaturan();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('#navSamping button, #navBawah button').forEach(function(b){
+  b.addEventListener('click', function(){ keHalaman(b.dataset.h); });
+});
+
+/* ================== MODAL ================== */
+function bukaModal(html){
+  document.getElementById('wadahModal').innerHTML='<div class="modal-latar buka" onclick="if(event.target===this)tutupModal()"><div class="modal">'+html+'</div></div>';
+}
+function tutupModal(){ document.getElementById('wadahModal').innerHTML=''; }
+function ambil(id){ return document.getElementById(id).value.trim(); }
+
+/* ================== DASHBOARD ================== */
+function renderDashboard(){
+  var bln=hariIni().slice(0,7);
+  document.getElementById('stSiswa').textContent=DB.siswa.length;
+  document.getElementById('stSesiBulan').textContent=DB.sesi.filter(function(s){ return (s.tanggal||'').slice(0,7)===bln; }).length;
+  document.getElementById('stAktif').textContent=DB.sesi.filter(function(s){ return s.status!=='Selesai'; }).length;
+  var akan=DB.agenda.filter(function(a){ return !a.selesai && a.tanggal>=hariIni(); });
+  document.getElementById('stAgenda').textContent=akan.length;
+  var jam=new Date().getHours();
+  var salam= jam<11?'Selamat pagi':(jam<15?'Selamat siang':(jam<19?'Selamat sore':'Selamat malam'));
+  document.getElementById('salam').textContent=salam+', '+(DB.pengaturan.guru? esc(DB.pengaturan.guru):'Guru BK')+' 💜';
+  document.getElementById('kakiSekolah').textContent=DB.pengaturan.sekolah||'';
+  /* agenda terdekat */
+  var el=document.getElementById('dashAgenda');
+  if(!akan.length){ el.innerHTML='<div class="kosong"><span class="besar">🌿</span>Belum ada agenda mendatang. Santai dulu hari ini.</div>'; }
+  else{
+    el.innerHTML=akan.slice().sort(function(a,b){ return (a.tanggal+a.jam).localeCompare(b.tanggal+b.jam); }).slice(0,3).map(barisAgenda).join('');
+  }
+  /* sesi terakhir */
+  var es=document.getElementById('dashSesi');
+  var terakhir=DB.sesi.slice().sort(function(a,b){ return b.tanggal.localeCompare(a.tanggal); }).slice(0,3);
+  if(!terakhir.length){ es.innerHTML='<div class="kosong"><span class="besar">🗣️</span>Belum ada catatan konseling.</div>'; }
+  else{ es.innerHTML=terakhir.map(barisSesiRingkas).join(''); }
+  /* kategori terbanyak */
+  var hitung={}; DB.sesi.forEach(function(s){ hitung[s.kategori]=(hitung[s.kategori]||0)+1; });
+  var maks=0; KATEGORI.forEach(function(k){ maks=Math.max(maks, hitung[k]||0); });
+  var ek=document.getElementById('dashKategori');
+  if(!DB.sesi.length){ ek.innerHTML='<div class="kosong"><span class="besar">📊</span>Belum ada data sesi.</div>'; }
+  else{
+    ek.innerHTML=KATEGORI.filter(function(k){ return hitung[k]; }).sort(function(a,b){ return (hitung[b]||0)-(hitung[a]||0); }).map(function(k){
+      var n=hitung[k]||0; return '<div class="batang-baris"><span>'+esc(k)+'</span><div class="batang"><i style="width:'+(maks? Math.round(n/maks*100):0)+'%"></i></div><span class="n">'+n+'</span></div>';
+    }).join('');
+  }
+}
+function barisSesiRingkas(s){
+  var sw=siswaById(s.siswaId);
+  return '<div class="agenda-item"><div class="avatar">'+esc(inisial(namaSiswa(s.siswaId)).toUpperCase())+'</div><div class="isi"><b>'+esc(s.topik||'(tanpa topik)')+'</b><div>'+esc(namaSiswa(s.siswaId))+(sw?' • Kelas '+esc(sw.kelas):'')+' • '+tglIndo(s.tanggal)+'</div><div style="margin-top:4px">'+chipKategori(s.kategori)+' '+chipStatus(s.status)+'</div></div></div>';
+}
+
+/* ================== SISWA ================== */
+function isiFilterKelas(){
+  var sel=document.getElementById('filterKelasSiswa'); var kini=sel.value;
+  var kelas=[]; DB.siswa.forEach(function(s){ if(s.kelas && kelas.indexOf(s.kelas)<0) kelas.push(s.kelas); });
+  kelas.sort();
+  sel.innerHTML='<option value="">Semua kelas</option>'+kelas.map(function(k){ return '<option'+(k===kini?' selected':'')+'>'+esc(k)+'</option>'; }).join('');
+}
+function renderSiswa(){
+  isiFilterKelas();
+  var q=(document.getElementById('cariSiswa').value||'').toLowerCase();
+  var fk=document.getElementById('filterKelasSiswa').value;
+  var daftar=DB.siswa.filter(function(s){
+    return (!fk || s.kelas===fk) && (!q || (s.nama+' '+s.nis+' '+s.kelas).toLowerCase().indexOf(q)>=0);
+  }).sort(function(a,b){ return (a.kelas+a.nama).localeCompare(b.kelas+b.nama); });
+  var tb=document.getElementById('tbodySiswa');
+  document.getElementById('siswaKosong').innerHTML= daftar.length? '' : '<div class="kosong"><span class="besar">🎒</span>Belum ada siswa pada filter ini.<br>Klik <b>＋ Tambah Siswa</b> untuk mulai.</div>';
+  tb.innerHTML=daftar.map(function(s){
+    var nSesi=DB.sesi.filter(function(x){ return x.siswaId===s.id; }).length;
+    var aktif=DB.sesi.some(function(x){ return x.siswaId===s.id && x.status!=='Selesai'; });
+    return '<tr><td><div class="nama-sel"><span class="avatar">'+esc(inisial(s.nama).toUpperCase())+'</span><span><span class="nm">'+esc(s.nama)+'</span><br><span class="sb">NIS '+esc(s.nis||'-')+'</span></span></div></td>'
+      +'<td>'+esc(s.kelas||'-')+'</td><td>'+(s.jk==='L'?'Laki-laki':(s.jk==='P'?'Perempuan':'-'))+'</td>'
+      +'<td><b>'+nSesi+'</b> sesi</td>'
+      +'<td>'+(aktif? '<span class="chip kuning">⏳ Didampingi</span>':'<span class="chip abu">—</span>')+'</td>'
+      +'<td class="tanpa-cetak"><div class="baris" style="flex-wrap:nowrap">'
+      +'<button class="btn kecil" onclick="lihatSiswa(\''+s.id+'\')" title="Riwayat konseling">📖</button>'
+      +'<button class="btn kecil" onclick="bukaSiswa(\''+s.id+'\')" title="Ubah">✏️</button>'
+      +'<button class="btn kecil bahaya" onclick="hapusSiswa(\''+s.id+'\')" title="Hapus">🗑️</button></div></td></tr>';
+  }).join('');
+}
+function bukaSiswa(id){
+  var s=id? siswaById(id) : {nama:'',nis:'',kelas:'',jk:'L',catatan:''};
+  if(!s) return;
+  bukaModal('<h3>'+(id?'✏️ Ubah Siswa':'🎒 Tambah Siswa Binaan')+'</h3><div class="sub">Data dasar siswa yang didampingi</div>'
+    +'<div class="form-grid">'
+    +'<div class="penuh"><label class="lbl">Nama lengkap</label><input class="inp" id="fNama" value="'+esc(s.nama)+'"></div>'
+    +'<div><label class="lbl">NIS</label><input class="inp" id="fNis" value="'+esc(s.nis)+'"></div>'
+    +'<div><label class="lbl">Kelas</label><input class="inp" id="fKelas" placeholder="mis. VIII" value="'+esc(s.kelas)+'"></div>'
+    +'<div><label class="lbl">Jenis kelamin</label><select class="inp" id="fJk"><option value="L"'+(s.jk==='L'?' selected':'')+'>Laki-laki</option><option value="P"'+(s.jk==='P'?' selected':'')+'>Perempuan</option></select></div>'
+    +'<div class="penuh"><label class="lbl">Catatan umum (latar belakang singkat)</label><textarea class="inp" id="fCatatan">'+esc(s.catatan)+'</textarea></div>'
+    +'</div>'
+    +'<div class="aksi"><button class="btn" onclick="tutupModal()">Batal</button><button class="btn utama" onclick="simpanSiswa('+(id?'\''+id+'\'':'null')+')">💾 Simpan</button></div>');
+  setTimeout(function(){ document.getElementById('fNama').focus(); },60);
+}
+function simpanSiswa(id){
+  var nama=ambil('fNama'); if(!nama){ toast('Nama siswa wajib diisi.'); return; }
+  var data={nama:nama, nis:ambil('fNis'), kelas:ambil('fKelas'), jk:ambil('fJk'), catatan:ambil('fCatatan')};
+  if(id){ var s=siswaById(id); Object.assign(s, data); toast('✔ Data siswa diperbarui.'); }
+  else{ data.id=idBaru(); DB.siswa.push(data); toast('✔ Siswa ditambahkan.'); }
+  simpan(); tutupModal(); renderSiswa(); renderDashboard();
+}
+function hapusSiswa(id){
+  var s=siswaById(id); if(!s) return;
+  if(!confirm('Hapus siswa "'+s.nama+'"?\n\nCatatan konseling milik siswa ini TIDAK ikut terhapus, tetapi namanya tampil sebagai (siswa terhapus).')) return;
+  DB.siswa=DB.siswa.filter(function(x){ return x.id!==id; });
+  simpan(); renderSiswa(); renderDashboard(); toast('🗑️ Siswa dihapus.');
+}
+function lihatSiswa(id){
+  var s=siswaById(id); if(!s) return;
+  var sesi=DB.sesi.filter(function(x){ return x.siswaId===id; }).sort(function(a,b){ return b.tanggal.localeCompare(a.tanggal); });
+  var isi='<h3>📖 Riwayat — '+esc(s.nama)+'</h3><div class="sub">Kelas '+esc(s.kelas||'-')+' • NIS '+esc(s.nis||'-')+' • '+(s.jk==='L'?'Laki-laki':'Perempuan')+'</div>'
+    +(s.catatan? '<div class="rahasia" style="margin-bottom:12px">📝 <b>Catatan umum:</b> '+esc(s.catatan)+'</div>':'')
+    +(sesi.length? sesi.map(function(x){
+        return '<div class="agenda-item"><div class="isi"><b>'+esc(x.topik||'(tanpa topik)')+'</b><div>'+tglIndo(x.tanggal)+' • '+esc(x.layanan)+'</div><div style="margin-top:4px">'+chipKategori(x.kategori)+' '+chipStatus(x.status)+'</div>'
+        +(x.catatan? '<div style="font-size:13px;margin-top:6px;color:#3f3a55;line-height:1.55">'+esc(x.catatan)+'</div>':'')
+        +(x.tindak? '<div style="font-size:12.5px;margin-top:4px;color:var(--redup)">➡️ Tindak lanjut: '+esc(x.tindak)+'</div>':'')
+        +'</div></div>';
+      }).join('') : '<div class="kosong"><span class="besar">🌱</span>Belum ada sesi konseling untuk siswa ini.</div>')
+    +'<div class="aksi"><button class="btn" onclick="tutupModal()">Tutup</button><button class="btn utama" onclick="tutupModal();bukaSesi(null,\''+id+'\')">＋ Catat Sesi</button></div>';
+  bukaModal(isi);
+}
+function eksporSiswaCSV(){
+  var baris=[['Nama','NIS','Kelas','JK','Catatan']];
+  DB.siswa.forEach(function(s){ baris.push([s.nama,s.nis,s.kelas,s.jk,s.catatan]); });
+  unduh('siswa-bkku.csv', 'text/csv', '﻿'+baris.map(function(r){ return r.map(function(c){ return '"'+String(c==null?'':c).replace(/"/g,'""')+'"'; }).join(','); }).join('\n'));
+  toast('⬇️ CSV siswa diunduh.');
+}
+function imporSiswaCSV(inp){
+  var f=inp.files[0]; if(!f) return;
+  var baca=new FileReader();
+  baca.onload=function(){
+    try{
+      var teks=String(baca.result).replace(/^﻿/,'');
+      var rows=parseCSV(teks); var tambah=0;
+      rows.forEach(function(r,i){
+        if(i===0 && /nama/i.test(r[0]||'')) return;
+        var nama=(r[0]||'').trim(); if(!nama) return;
+        DB.siswa.push({id:idBaru(), nama:nama, nis:(r[1]||'').trim(), kelas:(r[2]||'').trim(), jk:/^p/i.test((r[3]||'').trim())?'P':'L', catatan:(r[4]||'').trim()});
+        tambah++;
+      });
+      simpan(); renderSiswa(); renderDashboard(); toast('✔ '+tambah+' siswa diimpor.');
+    }catch(e){ toast('⚠️ Berkas CSV tidak dapat dibaca.'); }
+    inp.value='';
+  };
+  baca.readAsText(f);
+}
+function parseCSV(teks){
+  var rows=[], row=[], cur='', dalam=false;
+  for(var i=0;i<teks.length;i++){ var c=teks[i];
+    if(dalam){ if(c==='"'){ if(teks[i+1]==='"'){ cur+='"'; i++; } else dalam=false; } else cur+=c; }
+    else if(c==='"') dalam=true;
+    else if(c===','){ row.push(cur); cur=''; }
+    else if(c==='\n'){ row.push(cur); rows.push(row); row=[]; cur=''; }
+    else if(c!=='\r') cur+=c;
+  }
+  if(cur!=='' || row.length){ row.push(cur); rows.push(row); }
+  return rows;
+}
+
+/* ================== KONSELING ================== */
+function isiFilterKategori(){
+  var sel=document.getElementById('filterKatSesi'); var kini=sel.value;
+  sel.innerHTML='<option value="">Semua kategori</option>'+KATEGORI.map(function(k){ return '<option'+(k===kini?' selected':'')+'>'+esc(k)+'</option>'; }).join('');
+}
+function renderSesi(){
+  isiFilterKategori();
+  var q=(document.getElementById('cariSesi').value||'').toLowerCase();
+  var fk=document.getElementById('filterKatSesi').value;
+  var fs=document.getElementById('filterStatusSesi').value;
+  var fb=document.getElementById('filterBulanSesi').value;
+  var daftar=DB.sesi.filter(function(s){
+    var cocokQ=!q || (namaSiswa(s.siswaId)+' '+(s.topik||'')+' '+(s.catatan||'')).toLowerCase().indexOf(q)>=0;
+    return cocokQ && (!fk || s.kategori===fk) && (!fs || s.status===fs) && (!fb || (s.tanggal||'').slice(0,7)===fb);
+  }).sort(function(a,b){ return b.tanggal.localeCompare(a.tanggal); });
+  var el=document.getElementById('daftarSesi');
+  if(!daftar.length){ el.innerHTML='<div class="kosong"><span class="besar">🗣️</span>Belum ada sesi pada filter ini.<br>Klik <b>＋ Catat Sesi</b> untuk mencatat sesi pertama.</div>'; return; }
+  el.innerHTML=daftar.map(function(s){
+    return '<div class="agenda-item"><div class="avatar">'+esc(inisial(namaSiswa(s.siswaId)).toUpperCase())+'</div><div class="isi">'
+      +'<b>'+esc(s.topik||'(tanpa topik)')+'</b>'
+      +'<div>'+esc(namaSiswa(s.siswaId))+' • '+tglIndo(s.tanggal)+' • '+esc(s.layanan)+'</div>'
+      +'<div style="margin-top:4px">'+chipKategori(s.kategori)+' '+chipStatus(s.status)+'</div>'
+      +(s.catatan? '<div style="font-size:13.5px;margin-top:6px;line-height:1.6;color:#3f3a55">'+esc(s.catatan)+'</div>':'')
+      +(s.tindak? '<div style="font-size:12.5px;margin-top:4px;color:var(--redup)">➡️ Tindak lanjut: '+esc(s.tindak)+'</div>':'')
+      +'</div><div class="baris tanpa-cetak" style="flex-wrap:nowrap">'
+      +'<button class="btn kecil" onclick="bukaSesi(\''+s.id+'\')" title="Ubah">✏️</button>'
+      +'<button class="btn kecil bahaya" onclick="hapusSesi(\''+s.id+'\')" title="Hapus">🗑️</button></div></div>';
+  }).join('');
+}
+function bukaSesi(id, siswaTetap){
+  var s=id? DB.sesi.find(function(x){ return x.id===id; }) : {siswaId:siswaTetap||'', tanggal:hariIni(), layanan:'Konseling Individu', kategori:'Pribadi', topik:'', catatan:'', tindak:'', status:'Berlangsung'};
+  if(!s) return;
+  if(!DB.siswa.length){ toast('Tambahkan data siswa dulu di menu Data Siswa.'); keHalaman('siswa'); return; }
+  var opsiSiswa=DB.siswa.slice().sort(function(a,b){ return a.nama.localeCompare(b.nama); }).map(function(x){
+    return '<option value="'+x.id+'"'+(x.id===s.siswaId?' selected':'')+'>'+esc(x.nama)+' — '+esc(x.kelas||'')+'</option>';
+  }).join('');
+  bukaModal('<h3>'+(id?'✏️ Ubah Sesi':'🗣️ Catat Sesi Konseling')+'</h3><div class="sub">Catatan ini rahasia dan hanya tersimpan di perangkat ini</div>'
+    +'<div class="form-grid">'
+    +'<div class="penuh"><label class="lbl">Siswa</label><select class="inp" id="sSiswa">'+opsiSiswa+'</select></div>'
+    +'<div><label class="lbl">Tanggal</label><input class="inp" type="date" id="sTanggal" value="'+esc(s.tanggal)+'"></div>'
+    +'<div><label class="lbl">Status</label><select class="inp" id="sStatus"><option'+(s.status==='Berlangsung'?' selected':'')+'>Berlangsung</option><option'+(s.status==='Selesai'?' selected':'')+'>Selesai</option></select></div>'
+    +'<div><label class="lbl">Jenis layanan</label><select class="inp" id="sLayanan">'+LAYANAN.map(function(l){ return '<option'+(l===s.layanan?' selected':'')+'>'+esc(l)+'</option>'; }).join('')+'</select></div>'
+    +'<div><label class="lbl">Kategori masalah</label><select class="inp" id="sKategori">'+KATEGORI.map(function(k){ return '<option'+(k===s.kategori?' selected':'')+'>'+esc(k)+'</option>'; }).join('')+'</select></div>'
+    +'<div class="penuh"><label class="lbl">Topik / masalah yang dibahas</label><input class="inp" id="sTopik" value="'+esc(s.topik)+'" placeholder="mis. Menurunnya nilai matematika"></div>'
+    +'<div class="penuh"><label class="lbl">Isi catatan sesi (rahasia)</label><textarea class="inp" id="sCatatan" placeholder="Ceritakan jalannya sesi, perasaan siswa, dan kesepakatan yang dibuat…">'+esc(s.catatan)+'</textarea></div>'
+    +'<div class="penuh"><label class="lbl">Tindak lanjut</label><input class="inp" id="sTindak" value="'+esc(s.tindak)+'" placeholder="mis. Sesi lanjutan minggu depan; pantau kehadiran"></div>'
+    +'</div>'
+    +'<div class="aksi"><button class="btn" onclick="tutupModal()">Batal</button><button class="btn utama" onclick="simpanSesi('+(id?'\''+id+'\'':'null')+')">💾 Simpan</button></div>');
+}
+function simpanSesi(id){
+  var data={siswaId:ambil('sSiswa'), tanggal:ambil('sTanggal')||hariIni(), layanan:ambil('sLayanan'), kategori:ambil('sKategori'), topik:ambil('sTopik'), catatan:ambil('sCatatan'), tindak:ambil('sTindak'), status:ambil('sStatus')};
+  if(id){ var s=DB.sesi.find(function(x){ return x.id===id; }); Object.assign(s, data); toast('✔ Sesi diperbarui.'); }
+  else{ data.id=idBaru(); DB.sesi.push(data); toast('✔ Sesi konseling dicatat.'); }
+  simpan(); tutupModal(); renderSesi(); renderDashboard();
+}
+function hapusSesi(id){
+  if(!confirm('Hapus catatan sesi ini? Tindakan ini tidak dapat dibatalkan.')) return;
+  DB.sesi=DB.sesi.filter(function(x){ return x.id!==id; });
+  simpan(); renderSesi(); renderDashboard(); toast('🗑️ Catatan sesi dihapus.');
+}
+
+/* ================== AGENDA ================== */
+function barisAgenda(a){
+  var b=(a.tanggal||'').split('-'); var tgl=b.length===3? parseInt(b[2],10):'-'; var bln=b.length===3? BULAN_ID[parseInt(b[1],10)-1].slice(0,3):'';
+  return '<div class="agenda-item'+(a.selesai?' selesai':'')+'"><div class="tgl-kotak"><b>'+tgl+'</b><small>'+esc(bln)+'</small></div>'
+    +'<div class="isi"><b>'+esc(a.judul)+'</b><div>🕐 '+esc(a.jam||'-')+(a.tempat?' • 📍 '+esc(a.tempat):'')+' • '+tglIndo(a.tanggal)+'</div>'
+    +(a.ket? '<div>'+esc(a.ket)+'</div>':'')+'</div>'
+    +'<div class="baris tanpa-cetak" style="flex-wrap:nowrap">'
+    +'<button class="btn kecil '+(a.selesai?'':'ok')+'" onclick="toggleAgenda(\''+a.id+'\')" title="'+(a.selesai?'Batalkan selesai':'Tandai selesai')+'">'+(a.selesai?'↩️':'✔')+'</button>'
+    +'<button class="btn kecil" onclick="bukaAgenda(\''+a.id+'\')" title="Ubah">✏️</button>'
+    +'<button class="btn kecil bahaya" onclick="hapusAgenda(\''+a.id+'\')" title="Hapus">🗑️</button></div></div>';
+}
+function renderAgenda(){
+  var akan=DB.agenda.filter(function(a){ return !a.selesai && a.tanggal>=hariIni(); }).sort(function(a,b){ return (a.tanggal+a.jam).localeCompare(b.tanggal+b.jam); });
+  var semua=DB.agenda.slice().sort(function(a,b){ return b.tanggal.localeCompare(a.tanggal); });
+  document.getElementById('agendaDatang').innerHTML= akan.length? akan.map(barisAgenda).join('') : '<div class="kosong"><span class="besar">🌿</span>Tidak ada agenda mendatang.</div>';
+  document.getElementById('agendaSemua').innerHTML= semua.length? semua.map(barisAgenda).join('') : '<div class="kosong"><span class="besar">📅</span>Belum ada agenda. Klik <b>＋ Tambah Agenda</b>.</div>';
+}
+function bukaAgenda(id){
+  var a=id? DB.agenda.find(function(x){ return x.id===id; }) : {judul:'', tanggal:hariIni(), jam:'08.00', tempat:'Ruang BK', ket:''};
+  if(!a) return;
+  bukaModal('<h3>'+(id?'✏️ Ubah Agenda':'📅 Tambah Agenda')+'</h3><div class="sub">Kegiatan layanan BK yang direncanakan</div>'
+    +'<div class="form-grid">'
+    +'<div class="penuh"><label class="lbl">Judul kegiatan</label><input class="inp" id="aJudul" value="'+esc(a.judul)+'" placeholder="mis. Konseling kelompok kelas VIII"></div>'
+    +'<div><label class="lbl">Tanggal</label><input class="inp" type="date" id="aTanggal" value="'+esc(a.tanggal)+'"></div>'
+    +'<div><label class="lbl">Jam</label><input class="inp" id="aJam" value="'+esc(a.jam)+'" placeholder="08.00"></div>'
+    +'<div class="penuh"><label class="lbl">Tempat</label><input class="inp" id="aTempat" value="'+esc(a.tempat)+'"></div>'
+    +'<div class="penuh"><label class="lbl">Keterangan</label><textarea class="inp" id="aKet">'+esc(a.ket)+'</textarea></div>'
+    +'</div>'
+    +'<div class="aksi"><button class="btn" onclick="tutupModal()">Batal</button><button class="btn utama" onclick="simpanAgenda('+(id?'\''+id+'\'':'null')+')">💾 Simpan</button></div>');
+}
+function simpanAgenda(id){
+  var judul=ambil('aJudul'); if(!judul){ toast('Judul agenda wajib diisi.'); return; }
+  var data={judul:judul, tanggal:ambil('aTanggal')||hariIni(), jam:ambil('aJam'), tempat:ambil('aTempat'), ket:ambil('aKet')};
+  if(id){ var a=DB.agenda.find(function(x){ return x.id===id; }); Object.assign(a, data); toast('✔ Agenda diperbarui.'); }
+  else{ data.id=idBaru(); data.selesai=false; DB.agenda.push(data); toast('✔ Agenda ditambahkan.'); }
+  simpan(); tutupModal(); renderAgenda(); renderDashboard();
+}
+function toggleAgenda(id){ var a=DB.agenda.find(function(x){ return x.id===id; }); if(a){ a.selesai=!a.selesai; simpan(); renderAgenda(); renderDashboard(); } }
+function hapusAgenda(id){ if(!confirm('Hapus agenda ini?')) return; DB.agenda=DB.agenda.filter(function(x){ return x.id!==id; }); simpan(); renderAgenda(); renderDashboard(); toast('🗑️ Agenda dihapus.'); }
+</script>
+
+<script>
+/* ================== LAPORAN ================== */
+function renderLaporan(){
+  var inp=document.getElementById('bulanLaporan');
+  if(!inp.value) inp.value=hariIni().slice(0,7);
+  var bln=inp.value; var bb=bln.split('-');
+  var namaBulan=(BULAN_ID[parseInt(bb[1],10)-1]||'')+' '+bb[0];
+  var sesi=DB.sesi.filter(function(s){ return (s.tanggal||'').slice(0,7)===bln; }).sort(function(a,b){ return a.tanggal.localeCompare(b.tanggal); });
+  var perKat={}; KATEGORI.forEach(function(k){ perKat[k]=0; }); sesi.forEach(function(s){ perKat[s.kategori]=(perKat[s.kategori]||0)+1; });
+  var perLayanan={}; sesi.forEach(function(s){ perLayanan[s.layanan]=(perLayanan[s.layanan]||0)+1; });
+  var maks=0; KATEGORI.forEach(function(k){ maks=Math.max(maks, perKat[k]||0); });
+  var p=DB.pengaturan;
+  var html='<div style="text-align:center;border-bottom:3px double #333;padding-bottom:10px;margin-bottom:14px">'
+    +'<div style="font-size:17px;font-weight:800;letter-spacing:.4px">'+esc((p.sekolah||'').toUpperCase())+'</div>'
+    +'<div style="font-size:14px;font-weight:700;margin-top:2px">LAPORAN LAYANAN BIMBINGAN DAN KONSELING</div>'
+    +'<div style="font-size:13px">Periode: '+esc(namaBulan)+'</div></div>'
+    +'<div class="grid-stat" style="margin-bottom:6px">'
+    +'<div class="stat"><div class="angka">'+sesi.length+'</div><div class="label">Total sesi bulan ini</div></div>'
+    +'<div class="stat"><div class="angka">'+sesi.filter(function(s){return s.status!=='Selesai';}).length+'</div><div class="label">Masih berlangsung</div></div>'
+    +'<div class="stat"><div class="angka">'+new Set(sesi.map(function(s){return s.siswaId;})).size+'</div><div class="label">Siswa terlayani</div></div>'
+    +'</div>'
+    +'<h3 style="margin:14px 0 6px;font-size:15px">Rekap per Kategori Masalah</h3>'
+    +(sesi.length? KATEGORI.filter(function(k){ return perKat[k]; }).sort(function(a,b){ return perKat[b]-perKat[a]; }).map(function(k){
+        return '<div class="batang-baris"><span>'+esc(k)+'</span><div class="batang"><i style="width:'+(maks? Math.round(perKat[k]/maks*100):0)+'%"></i></div><span class="n">'+perKat[k]+'</span></div>';
+      }).join('') : '<p style="color:var(--redup);font-size:13.5px">Tidak ada sesi pada bulan ini.</p>')
+    +'<h3 style="margin:16px 0 6px;font-size:15px">Rekap per Jenis Layanan</h3>'
+    +(sesi.length? Object.keys(perLayanan).sort(function(a,b){ return perLayanan[b]-perLayanan[a]; }).map(function(l){
+        return '<div class="batang-baris"><span style="white-space:normal">'+esc(l)+'</span><div class="batang"><i style="width:'+Math.round(perLayanan[l]/sesi.length*100)+'%"></i></div><span class="n">'+perLayanan[l]+'</span></div>';
+      }).join('') : '')
+    +'<h3 style="margin:16px 0 8px;font-size:15px">Rincian Sesi</h3>'
+    +(sesi.length? '<div class="tabel-bungkus"><table><thead><tr><th>Tanggal</th><th>Siswa</th><th>Layanan</th><th>Kategori</th><th>Topik</th><th>Status</th></tr></thead><tbody>'
+      +sesi.map(function(s){ var sw=siswaById(s.siswaId); return '<tr><td style="white-space:nowrap">'+tglIndo(s.tanggal)+'</td><td><b>'+esc(namaSiswa(s.siswaId))+'</b>'+(sw?'<br><span style="color:var(--redup);font-size:12px">Kelas '+esc(sw.kelas)+'</span>':'')+'</td><td>'+esc(s.layanan)+'</td><td>'+esc(s.kategori)+'</td><td>'+esc(s.topik||'-')+'</td><td>'+(s.status==='Selesai'?'Selesai':'Berlangsung')+'</td></tr>'; }).join('')
+      +'</tbody></table></div>'
+      +'<p style="font-size:12px;color:var(--redup);margin-top:8px">Catatan: rincian isi sesi bersifat rahasia dan tidak dicantumkan dalam laporan ini.</p>'
+      : '<p style="color:var(--redup);font-size:13.5px">Belum ada sesi tercatat pada periode ini.</p>')
+    +'<div style="display:flex;justify-content:flex-end;margin-top:26px"><div style="text-align:left;min-width:230px;font-size:14px">'
+    +esc(p.kota||'')+', '+tglIndo(hariIni())+'<br>Guru Bimbingan Konseling<br><br><br><br><b><u>'+esc(p.guru||'( ______________________ )')+'</u></b>'
+    +(p.nip? '<br>NIP. '+esc(p.nip):'')+'</div></div>';
+  document.getElementById('isiLaporan').innerHTML=html;
+}
+
+/* ================== PENGATURAN ================== */
+function renderPengaturan(){
+  var p=DB.pengaturan;
+  document.getElementById('setSekolah').value=p.sekolah||'';
+  document.getElementById('setGuru').value=p.guru||'';
+  document.getElementById('setNip').value=p.nip||'';
+  document.getElementById('setKota').value=p.kota||'';
+  document.getElementById('setPin').value='';
+  document.getElementById('setPin').placeholder= p.pin? 'PIN aktif — isi PIN baru untuk mengganti, kosongkan untuk mematikan' : 'Kosong = tanpa kunci';
+}
+function simpanPengaturan(){
+  DB.pengaturan.sekolah=ambil('setSekolah');
+  DB.pengaturan.guru=ambil('setGuru');
+  DB.pengaturan.nip=ambil('setNip');
+  DB.pengaturan.kota=ambil('setKota');
+  simpan(); renderDashboard(); toast('✔ Identitas disimpan.');
+}
+function simpanPin(){
+  var v=document.getElementById('setPin').value.trim();
+  if(v && !/^\d{4,8}$/.test(v)){ toast('PIN harus 4–8 angka.'); return; }
+  DB.pengaturan.pin=v; simpan(); renderPengaturan();
+  toast(v? '🔐 PIN diaktifkan. Aplikasi akan terkunci saat dibuka kembali.' : '🔓 PIN dinonaktifkan.');
+}
+function hapusSemua(){
+  if(!confirm('HAPUS SEMUA DATA BKKu di perangkat ini?\n\nSeluruh siswa, catatan konseling, dan agenda akan hilang permanen. Pastikan sudah mengunduh cadangan JSON.')) return;
+  if(!confirm('Sekali lagi: benar-benar hapus semua data?')) return;
+  localStorage.removeItem(KUNCI); DB=contohData(); simpan();
+  renderPengaturan(); renderDashboard(); keHalaman('dashboard'); toast('🗑️ Semua data dihapus. Data contoh dimuat ulang.');
+}
+
+/* ================== CADANGAN ================== */
+function unduh(nama, tipe, isi){
+  var blob=new Blob([isi], {type:tipe}); var url=URL.createObjectURL(blob);
+  var a=document.createElement('a'); a.href=url; a.download=nama; document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); },400);
+}
+function eksporJSON(){
+  unduh('cadangan-bkku-'+hariIni()+'.json', 'application/json', JSON.stringify(DB, null, 2));
+  toast('⬇️ Cadangan JSON diunduh. Simpan di tempat aman ya.');
+}
+function imporJSONFile(inp){
+  var f=inp.files[0]; if(!f) return;
+  var baca=new FileReader();
+  baca.onload=function(){
+    try{
+      var data=JSON.parse(String(baca.result));
+      if(!data || !data.pengaturan || !Array.isArray(data.siswa) || !Array.isArray(data.sesi) || !Array.isArray(data.agenda)) throw new Error('format');
+      if(!confirm('Pulihkan data dari berkas ini? Data yang ada sekarang akan DIGANTI.')) { inp.value=''; return; }
+      DB=data; simpan(); renderDashboard(); keHalaman('dashboard'); toast('✔ Data berhasil dipulihkan.');
+    }catch(e){ toast('⚠️ Berkas bukan cadangan BKKu yang sah.'); }
+    inp.value='';
+  };
+  baca.readAsText(f);
+}
+
+/* ================== KUNCI & MULAI ================== */
+function cobaBuka(){
+  var v=document.getElementById('pinMasuk').value;
+  if(v===DB.pengaturan.pin){
+    document.getElementById('layarKunci').classList.remove('buka');
+    document.getElementById('pinSalah').textContent='';
+  } else {
+    document.getElementById('pinSalah').textContent='PIN salah, coba lagi ya.';
+    document.getElementById('pinMasuk').value='';
+  }
+}
+document.getElementById('pinMasuk').addEventListener('keydown', function(e){ if(e.key==='Enter') cobaBuka(); });
+
+muat();
+renderDashboard();
+if(DB.pengaturan.pin){
+  document.getElementById('layarKunci').classList.add('buka');
+  setTimeout(function(){ document.getElementById('pinMasuk').focus(); },80);
+}
+</script>
+</body>
+</html>
