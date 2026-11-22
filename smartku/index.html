@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d47a1">
+<title>SmartKu CBT — Asesmen Berbasis Komputer &amp; Seluler</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--brand:#0d47a1;--brand2:#1565c0;--ink:#0b2a4a;--muted:#44617f;--bg:#f3fbff;--card:#ffffff;--line:#dbe7f3;--ok:#15803d;--warn:#b45309;--bad:#b91c1c;--soft:#e8f1fc}
+html.dark{--ink:#f0f6fc;--muted:#94a3b8;--bg:#060d19;--card:#0d1b2e;--line:#1e3a5f;--soft:#12283f}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);transition:background .3s,color .3s}
+body::before{content:'';position:fixed;inset:0;z-index:-1;background:radial-gradient(600px 400px at 15% 10%,rgba(21,101,192,.25),transparent 60%),radial-gradient(700px 500px at 85% 90%,rgba(13,71,161,.22),transparent 60%),radial-gradient(400px 300px at 80% 15%,rgba(66,165,245,.18),transparent 60%)}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:14px;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--brand2);border-color:transparent}
+label{font-size:12px;font-weight:700;color:var(--muted);display:block;margin:10px 0 4px}
+.btn{background:var(--brand);color:#fff;border:none;padding:11px 18px;border-radius:11px;font-weight:800;font-size:14px}
+.btn:hover{background:var(--brand2)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-soft{background:var(--soft);color:var(--brand);border:none;padding:10px 16px;border-radius:11px;font-weight:800;font-size:13px}
+html.dark .btn-soft{color:#7db3f5}
+.btn-abu{background:#e5e7eb;color:#111827;border:none;padding:10px 16px;border-radius:11px;font-weight:700;font-size:13px}
+.btn-merah{background:#dc2626;color:#fff;border:none;padding:10px 16px;border-radius:11px;font-weight:700;font-size:13px}
+.btn-kecil{padding:6px 11px;font-size:12px;border-radius:8px}
+.kartu{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 8px 30px rgba(13,71,161,.08)}
+.bungkus{max-width:1060px;margin:0 auto;padding:18px 14px 60px}
+.sembunyi{display:none!important}
+.chip{display:inline-block;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:800;background:var(--soft);color:var(--brand)}
+html.dark .chip{color:#7db3f5}
+.chip.ok{background:#dcfce7;color:#15803d}.chip.warn{background:#fef3c7;color:#b45309}.chip.bad{background:#fee2e2;color:#b91c1c}.chip.abu{background:#e5e7eb;color:#374151}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:8px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.modal{position:fixed;inset:0;background:rgba(3,12,26,.55);display:flex;align-items:center;justify-content:center;z-index:60;padding:14px}
+.modal .kotak{background:var(--card);border-radius:18px;padding:22px;max-width:520px;width:100%;max-height:92vh;overflow-y:auto}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:22px;background:#0b2a4a;color:#fff;padding:11px 18px;border-radius:12px;font-size:13px;font-weight:700;z-index:99;box-shadow:0 10px 30px rgba(0,0,0,.3);max-width:92vw;text-align:center}
+.kelas-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-top:22px}
+.kelas-kartu{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;text-align:center;box-shadow:0 10px 34px rgba(13,71,161,.10)}
+.kelas-kartu .romawi{font-size:40px;font-weight:800;color:var(--brand)}
+.tab-login{display:flex;gap:8px;justify-content:center;margin:16px 0 4px;flex-wrap:wrap}
+.tab-login button{border:1.5px solid var(--line);background:var(--card);color:var(--muted);padding:9px 16px;border-radius:99px;font-weight:800;font-size:13px}
+.tab-login button.aktif{background:var(--brand);color:#fff;border-color:var(--brand)}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:230px;background:var(--card);border-right:1px solid var(--line);padding:16px 12px;display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+.sidebar button{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:none;padding:11px 12px;border-radius:11px;font-weight:700;font-size:14px;color:var(--muted)}
+.sidebar button.aktif{background:var(--soft);color:var(--brand)}
+html.dark .sidebar button.aktif{color:#7db3f5}
+.konten{flex:1;padding:20px;min-width:0}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.stat .angka{font-size:28px;font-weight:800;color:var(--brand)}
+.nav-bawah{display:none}
+.soal-opsi{display:block;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0;font-size:14px;font-weight:600;color:var(--ink)}
+.soal-opsi.dipilih{border-color:var(--brand);background:var(--soft)}
+.navigasi-soal{display:flex;flex-wrap:wrap;gap:6px}
+.navigasi-soal button{width:38px;height:38px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);font-weight:800;font-size:13px;color:var(--ink);position:relative}
+.navigasi-soal button.terisi{background:var(--brand);color:#fff;border-color:var(--brand)}
+.navigasi-soal button.ragu::after{content:'';position:absolute;top:3px;right:3px;width:8px;height:8px;border-radius:50%;background:#f59e0b}
+.navigasi-soal button.sedang{outline:3px solid #f59e0b}
+#pip-kamera{position:fixed;right:12px;bottom:12px;width:150px;border-radius:14px;overflow:hidden;border:3px solid #059669;z-index:50;background:#000;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+#pip-kamera video{width:100%;display:block}
+#pip-kamera .pip-label{position:absolute;top:0;left:0;right:0;background:rgba(5,80,50,.85);color:#a7f3d0;font-size:9px;font-weight:800;padding:4px 6px;letter-spacing:.05em}
+@media(max-width:760px){
+  .sidebar{display:none}
+  .konten{padding:14px 12px 86px}
+  .nav-bawah{display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);z-index:40;padding:6px 2px calc(6px + env(safe-area-inset-bottom))}
+  .nav-bawah button{flex:1;background:none;border:none;font-size:10px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0}
+  .nav-bawah button .ikon{font-size:19px}
+  .nav-bawah button.aktif{color:var(--brand)}
+}
+@media print{.sidebar,.nav-bawah,.tanpa-cetak{display:none!important}.konten{padding:0}.layout{display:block}}
+</style>
+</head>
+<body>
+
+<!-- ══════════ PORTAL PILIH KELAS ══════════ -->
+<div id="hal-portal" class="bungkus">
+  <div style="display:flex;justify-content:flex-end"><button class="btn-soft btn-kecil" onclick="toggleTema()">🌙 / ☀️ Tema</button></div>
+  <div style="text-align:center;margin-top:26px">
+    <div style="font-size:52px">🎓</div>
+    <h1 style="margin:6px 0 4px;font-size:34px">SmartKu <span style="color:var(--brand)">CBT</span></h1>
+    <p style="color:var(--muted);max-width:560px;margin:0 auto;font-size:15px">Aplikasi ujian SmartKu CBT untuk asesmen Anda. Kerjakan soal dari laptop, komputer, atau ponsel, dengan soal bergaya AKM dan pengawasan ujian yang tertib.</p>
+    <p style="font-weight:700;margin-top:20px">Pilih kelas Anda untuk masuk ke halaman login</p>
+  </div>
+  <div class="kelas-grid">
+    <div class="kelas-kartu"><div class="romawi">X</div><b>Kelas X</b><p style="color:var(--muted);font-size:13px">Masuk ke ujian Kelas X</p><button class="btn" style="width:100%" onclick="pilihKelas('10')">Masuk</button></div>
+    <div class="kelas-kartu"><div class="romawi">XI</div><b>Kelas XI</b><p style="color:var(--muted);font-size:13px">Masuk ke ujian Kelas XI</p><button class="btn" style="width:100%" onclick="pilihKelas('11')">Masuk</button></div>
+    <div class="kelas-kartu"><div class="romawi">XII</div><b>Kelas XII</b><p style="color:var(--muted);font-size:13px">Masuk ke ujian Kelas XII</p><button class="btn" style="width:100%" onclick="pilihKelas('12')">Masuk</button></div>
+  </div>
+  <p style="text-align:center;color:var(--muted);font-size:12px;margin-top:34px">© 2026 SmartKu CBT • Sistem Ujian Berbasis Komputer &amp; Seluler</p>
+</div>
+
+<!-- ══════════ LOGIN ══════════ -->
+<div id="hal-login" class="bungkus sembunyi" style="max-width:520px">
+  <button class="btn-soft btn-kecil" onclick="kembaliPortal()">‹ Kembali pilih kelas</button>
+  <div style="text-align:center;margin-top:16px">
+    <div style="font-size:42px">🎓</div>
+    <h2 id="login-judul" style="margin:4px 0">SmartKu CBT</h2>
+    <p id="login-instansi" style="color:var(--muted);margin:0;font-size:13px"></p>
+    <span class="chip" id="login-kelas-chip"></span>
+  </div>
+  <div class="tab-login">
+    <button id="tab-peserta" class="aktif" onclick="tabLogin('peserta')">👩‍🎓 Peserta</button>
+    <button id="tab-pengawas" onclick="tabLogin('pengawas')">🧑‍🏫 Pengawas</button>
+    <button id="tab-admin" onclick="tabLogin('admin')">🛠️ Admin / Proktor</button>
+  </div>
+  <div class="kartu" style="margin-top:12px">
+    <div id="form-peserta">
+      <label>Username Peserta</label><input id="lg-user" autocomplete="username" placeholder="Contoh: peserta01">
+      <label>Kata Sandi</label><input id="lg-sandi" type="password" autocomplete="current-password" placeholder="Masukkan kata sandi">
+      <button class="btn" style="width:100%;margin-top:16px" onclick="loginPeserta()">Masuk sebagai Peserta</button>
+    </div>
+    <div id="form-pengawas" class="sembunyi">
+      <label>Pilih Nama Pengawas</label><select id="lg-guru"></select>
+      <label>Kata Sandi Pengawas</label><input id="lg-guru-sandi" type="password" placeholder="Masukkan kata sandi pengawas">
+      <button class="btn" style="width:100%;margin-top:16px" onclick="loginPengawas()">Masuk sebagai Pengawas</button>
+    </div>
+    <div id="form-admin" class="sembunyi">
+      <label>PIN Admin / Proktor</label><input id="lg-pin" type="password" inputmode="numeric" placeholder="Masukkan PIN admin">
+      <button class="btn" style="width:100%;margin-top:16px" onclick="loginAdmin()">Masuk sebagai Admin</button>
+      <p style="font-size:12px;color:var(--muted)">PIN diatur di menu Pengaturan admin. Demi keamanan, PIN bawaan tidak ditampilkan di halaman ini — tanyakan kepada pengelola aplikasi.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ RUANG PESERTA ══════════ -->
+<div id="hal-peserta" class="bungkus sembunyi">
+  <div class="kartu" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+    <div style="font-size:34px">👩‍🎓</div>
+    <div style="flex:1;min-width:180px"><b id="ps-nama" style="font-size:17px"></b><div id="ps-info" style="color:var(--muted);font-size:13px"></div></div>
+    <button class="btn-abu btn-kecil" onclick="keluar()">Keluar</button>
+  </div>
+  <h3 style="margin:22px 0 10px">Ujian Tersedia</h3>
+  <div id="ps-ujian-list"></div>
+  <h3 style="margin:22px 0 10px">Hasil Saya</h3>
+  <div id="ps-hasil-list"></div>
+</div>
+
+<!-- ══════════ LAYAR UJIAN ══════════ -->
+<div id="hal-ujian" class="bungkus sembunyi" style="max-width:820px">
+  <div class="kartu" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:14px 18px">
+    <b id="uj-nama" style="flex:1;min-width:140px"></b>
+    <span class="chip warn" id="uj-poin">Poin pelanggaran: 0</span>
+    <span class="chip" id="uj-timer" style="font-size:14px">--:--</span>
+  </div>
+  <div class="kartu" style="margin-top:12px">
+    <div style="display:flex;justify-content:space-between;align-items:center"><span class="chip" id="uj-nomor"></span><label style="margin:0;display:flex;gap:6px;align-items:center;font-size:12px"><input type="checkbox" id="uj-ragu" style="width:auto" onchange="setRagu(this.checked)"> Ragu-ragu</label></div>
+    <div id="uj-soal" style="margin-top:12px;font-size:15px;line-height:1.55"></div>
+    <div id="uj-opsi" style="margin-top:8px"></div>
+    <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
+      <button class="btn-abu" onclick="navSoal(-1)">‹ Sebelumnya</button>
+      <button class="btn-soft" onclick="navSoal(1)">Berikutnya ›</button>
+      <button class="btn-merah" style="margin-left:auto" onclick="konfirmasiSelesai()">Selesai &amp; Kirim</button>
+    </div>
+  </div>
+  <div class="kartu" style="margin-top:12px"><b style="font-size:13px">Navigasi Soal</b><div class="navigasi-soal" id="uj-nav" style="margin-top:10px"></div></div>
+</div>
+<div id="pip-kamera" class="sembunyi"><div style="position:relative"><video id="pip-video" autoplay muted playsinline></video><div class="pip-label">● PENGAWASAN AKTIF — KAMERA PROKTOR</div></div></div>
+
+<!-- ══════════ LAYOUT ADMIN & PENGAWAS ══════════ -->
+<div id="hal-panel" class="sembunyi">
+  <div class="layout">
+    <aside class="sidebar">
+      <div style="padding:4px 10px 12px"><b style="font-size:17px">🎓 SmartKu CBT</b><div id="sb-peran" style="font-size:12px;color:var(--muted)"></div></div>
+      <div id="menu-panel"></div>
+      <div style="margin-top:auto"><button onclick="toggleTema()">🌙 / ☀️ Tema</button><button onclick="keluar()">🚪 Keluar</button></div>
+    </aside>
+    <main class="konten">
+      <div id="konten-panel"></div>
+    </main>
+  </div>
+  <nav class="nav-bawah" id="nav-bawah"></nav>
+</div>
+
+<div id="wadah-modal"></div>
+<div id="wadah-toast"></div>
+
+<script>
+'use strict';
+/* ═══════════ SmartKu CBT — aplikasi CBT satu berkas, data lokal per perangkat.
+   Struktur mengikuti pola umum aplikasi CBT (portal kelas → login peran → ujian →
+   panel admin/pengawas); seluruh kode, nama, dan soal ditulis ulang sendiri. ═══════════ */
+const LS_KEY='smartku_v1';
+const ROMAWI={'10':'X','11':'XI','12':'XII'};
+let kelasAktif=sessionStorage.getItem('SMARTKU_MASUK')||'';
+let user=null;         // {peran:'peserta'|'pengawas'|'admin', ...}
+let tabAktif='dashboard';
+let sesi=null;         // sesi ujian peserta yang berjalan
+let timerInt=null, streamKamera=null;
+
+function idUnik(p){return p+'_'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.getElementById('wadah-toast').appendChild(t);setTimeout(()=>t.remove(),3400)}
+function toggleTema(){document.documentElement.classList.toggle('dark');localStorage.setItem('smartku_tema',document.documentElement.classList.contains('dark')?'dark':'light')}
+if(localStorage.getItem('smartku_tema')==='dark')document.documentElement.classList.add('dark');
+
+/* ───────── Data bawaan (semua contoh fiktif) ───────── */
+function dataAwal(){
+  return {
+    settings:{namaInstansi:'SMA Contoh Nusantara',kepalaSekolah:'Drs. Contoh Kepala, M.Pd.',nipKepsek:'19xxxxxxxxxxxxxx',pinAdmin:'123456',tokenAktif:'TES2026',
+      foul:{ringan:1,sedang:2,berat:5},batasKunci:5,tampilkanNilai:true},
+    peserta:[
+      {id:'p1',username:'peserta01',sandi:'123',nama:'Andi Pratama (contoh)',kelas:'10',rombel:'X-1'},
+      {id:'p2',username:'peserta02',sandi:'123',nama:'Bunga Lestari (contoh)',kelas:'10',rombel:'X-1'},
+      {id:'p3',username:'peserta03',sandi:'123',nama:'Citra Dewi (contoh)',kelas:'11',rombel:'XI-2'}
+    ],
+    guru:[
+      {id:'g1',nama:'Pak Guru Satu (contoh)',sandi:'123',ruang:'Ruang 1',sesi:'Sesi 1'},
+      {id:'g2',nama:'Bu Guru Dua (contoh)',sandi:'123',ruang:'Ruang 2',sesi:'Sesi 1'}
+    ],
+    bankSoal:[
+      {id:'s1',mapel:'Literasi',jenis:'pg',soal:'Bacalah kalimat berikut: "Sungai Katingan mengalir melewati hutan yang lebat." Kata yang menunjukkan tempat dalam kalimat tersebut adalah …',opsi:['mengalir','Sungai Katingan','hutan lebat','melewati'],kunci:1,pembahasan:'"Sungai Katingan" adalah nama tempat (sungai) dalam kalimat itu.'},
+      {id:'s2',mapel:'Literasi',jenis:'pg',soal:'Sinonim kata "gigih" adalah …',opsi:['mudah menyerah','tekun','ragu-ragu','lemah'],kunci:1,pembahasan:'Gigih berarti tekun dan tidak mudah menyerah.'},
+      {id:'s3',mapel:'Numerasi',jenis:'pg',soal:'Sebuah toko memberi diskon 20% untuk baju seharga Rp150.000. Harga setelah diskon adalah …',opsi:['Rp110.000','Rp120.000','Rp130.000','Rp140.000'],kunci:1,pembahasan:'Diskon = 20% × 150.000 = 30.000; harga akhir = 150.000 − 30.000 = 120.000.'},
+      {id:'s4',mapel:'Numerasi',jenis:'pg',soal:'Hasil dari 3/4 + 1/2 adalah …',opsi:['4/6','5/4','1','3/8'],kunci:1,pembahasan:'3/4 + 2/4 = 5/4.'},
+      {id:'s5',mapel:'Literasi',jenis:'isian',soal:'Lawan kata (antonim) dari "rajin" adalah …',kunciTeks:['malas'],pembahasan:'Antonim rajin adalah malas.'},
+      {id:'s6',mapel:'Numerasi',jenis:'isian',soal:'Sebuah persegi memiliki sisi 9 cm. Luasnya adalah … cm².',kunciTeks:['81'],pembahasan:'Luas = 9 × 9 = 81 cm².'}
+    ],
+    ujian:[
+      {id:'u1',nama:'Latihan AKM (Contoh)',mapel:'Campuran',kelas:'10',durasi:30,tokenAktif:true,token:'TES2026',kamera:false,acak:true,soalIds:['s1','s2','s3','s4','s5','s6'],aktif:true}
+    ],
+    hasil:[],
+    statusPeserta:{}   // pid -> {ujianId, status, poin, pelanggaran:[], kunciPerangkat}
+  };
+}
+let db;
+function muat(){try{db=JSON.parse(localStorage.getItem(LS_KEY))}catch(e){db=null}if(!db||!db.settings){db=dataAwal();simpan()}}
+function simpan(){localStorage.setItem(LS_KEY,JSON.stringify(db))}
+muat();
+
+/* ───────── Portal & login ───────── */
+function tampil(id){['hal-portal','hal-login','hal-peserta','hal-ujian','hal-panel'].forEach(x=>document.getElementById(x).classList.toggle('sembunyi',x!==id))}
+function pilihKelas(k){kelasAktif=k;sessionStorage.setItem('SMARTKU_MASUK',k);bukaLogin()}
+function kembaliPortal(){kelasAktif='';sessionStorage.removeItem('SMARTKU_MASUK');tampil('hal-portal')}
+function bukaLogin(){
+  tampil('hal-login');
+  document.getElementById('login-judul').textContent='SmartKu CBT — Kelas '+ROMAWI[kelasAktif];
+  document.getElementById('login-instansi').textContent=db.settings.namaInstansi;
+  document.getElementById('login-kelas-chip').textContent='Kelas '+ROMAWI[kelasAktif];
+  const sel=document.getElementById('lg-guru');
+  sel.innerHTML=db.guru.map(g=>'<option value="'+g.id+'">'+esc(g.nama)+' — '+esc(g.ruang)+'</option>').join('')||'<option value="">(belum ada pengawas)</option>';
+}
+function tabLogin(t){['peserta','pengawas','admin'].forEach(x=>{document.getElementById('tab-'+x).classList.toggle('aktif',x===t);document.getElementById('form-'+x).classList.toggle('sembunyi',x!==t)})}
+function loginPeserta(){
+  const u=document.getElementById('lg-user').value.trim(), s=document.getElementById('lg-sandi').value;
+  const p=db.peserta.find(x=>x.username.toLowerCase()===u.toLowerCase()&&x.sandi===s);
+  if(!p)return toast('Username atau kata sandi salah.');
+  if(p.kelas!==kelasAktif)return toast('Akun ini terdaftar di Kelas '+ROMAWI[p.kelas]+', bukan Kelas '+ROMAWI[kelasAktif]+'.');
+  user={peran:'peserta',id:p.id,nama:p.nama,kelas:p.kelas,rombel:p.rombel};
+  bukaRuangPeserta();
+}
+function loginPengawas(){
+  const gid=document.getElementById('lg-guru').value, s=document.getElementById('lg-guru-sandi').value;
+  const g=db.guru.find(x=>x.id===gid&&x.sandi===s);
+  if(!g)return toast('Kata sandi pengawas salah.');
+  user={peran:'pengawas',id:g.id,nama:g.nama,ruang:g.ruang,sesi:g.sesi};
+  bukaPanel('roster');
+}
+function loginAdmin(){
+  const pin=document.getElementById('lg-pin').value;
+  if(pin!==String(db.settings.pinAdmin))return toast('PIN admin salah.');
+  user={peran:'admin',nama:'Administrator'};
+  bukaPanel('dashboard');
+}
+function keluar(){hentikanKamera();clearInterval(timerInt);sesi=null;user=null;tampil(kelasAktif?'hal-login':'hal-portal');if(kelasAktif)bukaLogin()}
+
+/* ───────── Ruang peserta ───────── */
+function bukaRuangPeserta(){
+  tampil('hal-peserta');
+  document.getElementById('ps-nama').textContent=user.nama;
+  document.getElementById('ps-info').textContent='Kelas '+ROMAWI[user.kelas]+' • '+user.rombel;
+  const list=document.getElementById('ps-ujian-list');
+  const ujs=db.ujian.filter(u=>u.kelas===user.kelas&&u.aktif);
+  list.innerHTML=ujs.length?ujs.map(u=>{
+    const sudah=db.hasil.some(h=>h.pesertaId===user.id&&h.ujianId===u.id);
+    return '<div class="kartu" style="margin-bottom:10px;display:flex;gap:12px;align-items:center;flex-wrap:wrap"><div style="flex:1;min-width:170px"><b>'+esc(u.nama)+'</b><div style="color:var(--muted);font-size:13px">'+esc(u.mapel)+' • '+u.soalIds.length+' soal • '+u.durasi+' menit'+(u.tokenAktif?' • perlu token':'')+(u.kamera?' • kamera aktif':'')+'</div></div>'+(sudah?'<span class="chip ok">Sudah dikerjakan</span>':'<button class="btn" onclick="mulaiUjian(\''+u.id+'\')">Mulai Ujian</button>')+'</div>';
+  }).join(''):'<p style="color:var(--muted)">Belum ada ujian aktif untuk kelas ini.</p>';
+  const hs=db.hasil.filter(h=>h.pesertaId===user.id);
+  document.getElementById('ps-hasil-list').innerHTML=hs.length?hs.map(h=>{const u=db.ujian.find(x=>x.id===h.ujianId);return '<div class="kartu" style="margin-bottom:8px;display:flex;gap:10px;flex-wrap:wrap;align-items:center"><b style="flex:1;min-width:150px">'+esc(u?u.nama:'(ujian dihapus)')+'</b><span class="chip">Benar '+h.benar+'/'+h.total+'</span>'+(db.settings.tampilkanNilai?'<span class="chip ok">Nilai '+h.nilai+'</span>':'')+'<span style="color:var(--muted);font-size:12px">'+new Date(h.selesaiAt).toLocaleString('id-ID')+'</span></div>'}).join(''):'<p style="color:var(--muted)">Belum ada hasil.</p>';
+}
+
+/* ───────── Mesin ujian ───────── */
+function acakArr(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function salinanPublik(soalIds,acak){
+  // Kunci & pembahasan TIDAK ikut ke salinan yang dirender untuk peserta.
+  let arr=soalIds.map(id=>db.bankSoal.find(s=>s.id===id)).filter(Boolean).map(s=>({id:s.id,mapel:s.mapel,jenis:s.jenis,soal:s.soal,opsi:s.opsi?acakArr(s.opsi):undefined}));
+  return acak?acakArr(arr):arr;
+}
+async function mulaiUjian(uid){
+  const u=db.ujian.find(x=>x.id===uid);if(!u)return;
+  if(u.tokenAktif){const t=prompt('Masukkan token ujian dari pengawas:');if(t===null)return;if(t.trim()!==String(u.token||db.settings.tokenAktif))return toast('Token salah. Minta token yang benar kepada pengawas.')}
+  sesi={ujianId:u.id,pesertaId:user.id,soal:salinanPublik(u.soalIds,u.acak),idx:0,jawaban:{},ragu:{},poin:0,pelanggaran:[],sisa:u.durasi*60,kamera:!!u.kamera,mulaiAt:Date.now()};
+  setStatus(user.id,u.id,'Mengerjakan');
+  tampil('hal-ujian');
+  document.getElementById('uj-nama').textContent=u.nama+' — '+user.nama;
+  renderSoal();renderNav();updatePoin();
+  clearInterval(timerInt);
+  timerInt=setInterval(()=>{sesi.sisa--;updateTimer();if(sesi.sisa<=0){toast('Waktu habis. Jawaban dikirim otomatis.');kirimUjian(true)}},1000);
+  updateTimer();
+  if(sesi.kamera)nyalakanKamera();
+  document.addEventListener('visibilitychange',awasTab);
+  document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen().catch(()=>{});
+  document.addEventListener('fullscreenchange',awasFullscreen);
+}
+function updateTimer(){const m=Math.floor(Math.max(0,sesi.sisa)/60),d=Math.max(0,sesi.sisa)%60;document.getElementById('uj-timer').textContent=String(m).padStart(2,'0')+':'+String(d).padStart(2,'0')}
+function updatePoin(){document.getElementById('uj-poin').textContent='Poin pelanggaran: '+sesi.poin}
+function setStatus(pid,uid,status,extra){db.statusPeserta[pid]=Object.assign({},db.statusPeserta[pid],{ujianId:uid,status:status,at:Date.now()},extra||{});simpan()}
+function catatPelanggaran(jenis,tingkat){
+  if(!sesi)return;
+  const poin=db.settings.foul[tingkat]||1;
+  sesi.poin+=poin;sesi.pelanggaran.push({jenis:jenis,tingkat:tingkat,poin:poin,at:Date.now()});
+  setStatus(user.id,sesi.ujianId,'Mengerjakan',{poin:sesi.poin});
+  updatePoin();
+  toast('Pelanggaran tercatat: '+jenis+' (+'+poin+' poin).');
+  if(sesi.poin>=db.settings.batasKunci){toast('Batas pelanggaran tercapai — ujian dikunci dan dikirim.');kirimUjian(true)}
+}
+function awasTab(){if(sesi&&document.hidden)catatPelanggaran('Pindah tab / aplikasi lain','sedang')}
+function awasFullscreen(){if(sesi&&!document.fullscreenElement)catatPelanggaran('Keluar dari layar penuh','ringan')}
+function renderSoal(){
+  const s=sesi.soal[sesi.idx];if(!s)return;
+  document.getElementById('uj-nomor').textContent='Soal '+(sesi.idx+1)+' dari '+sesi.soal.length+' • '+s.mapel;
+  document.getElementById('uj-soal').textContent=s.soal;
+  document.getElementById('uj-ragu').checked=!!sesi.ragu[s.id];
+  const wadah=document.getElementById('uj-opsi');
+  if(s.jenis==='pg'){
+    wadah.innerHTML=s.opsi.map((o,i)=>'<button class="soal-opsi'+(sesi.jawaban[s.id]===o?' dipilih':'')+'" onclick="jawabPG(\''+s.id+'\','+i+')"><b>'+'ABCD'[i]+'.</b> '+esc(o)+'</button>').join('');
+  }else{
+    wadah.innerHTML='<input id="jawab-isian" placeholder="Tulis jawaban singkat Anda" value="'+esc(sesi.jawaban[s.id]||'')+'" oninput="jawabIsian(\''+s.id+'\',this.value)">';
+  }
+  renderNav();
+}
+function jawabPG(sid,i){const s=sesi.soal.find(x=>x.id===sid);sesi.jawaban[sid]=s.opsi[i];renderSoal()}
+function jawabIsian(sid,v){sesi.jawaban[sid]=v;renderNav()}
+function setRagu(v){const s=sesi.soal[sesi.idx];sesi.ragu[s.id]=v;renderNav()}
+function navSoal(d){sesi.idx=Math.min(sesi.soal.length-1,Math.max(0,sesi.idx+d));renderSoal()}
+function lompatSoal(i){sesi.idx=i;renderSoal()}
+function renderNav(){
+  document.getElementById('uj-nav').innerHTML=sesi.soal.map((s,i)=>'<button class="'+(sesi.jawaban[s.id]?'terisi':'')+(sesi.ragu[s.id]?' ragu':'')+(i===sesi.idx?' sedang':'')+'" onclick="lompatSoal('+i+')">'+(i+1)+'</button>').join('');
+}
+function konfirmasiSelesai(){
+  const kosong=sesi.soal.filter(s=>!sesi.jawaban[s.id]).length;
+  if(!confirm('Kirim jawaban sekarang?'+(kosong?'\nMasih ada '+kosong+' soal belum dijawab.':'')))return;
+  kirimUjian(false);
+}
+function kirimUjian(otomatis){
+  if(!sesi)return;
+  clearInterval(timerInt);
+  document.removeEventListener('visibilitychange',awasTab);
+  document.removeEventListener('fullscreenchange',awasFullscreen);
+  if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});
+  hentikanKamera();
+  // Penilaian memakai bank soal asli (kunci tidak pernah ada di salinan peserta).
+  let benar=0;
+  sesi.soal.forEach(pub=>{
+    const asli=db.bankSoal.find(s=>s.id===pub.id);if(!asli)return;
+    const jwb=sesi.jawaban[pub.id];
+    if(asli.jenis==='pg'){const kunciTeks=asli.opsi[asli.kunci];if(jwb===kunciTeks)benar++}
+    else{const norm=x=>String(x||'').trim().toLowerCase();if((asli.kunciTeks||[]).some(k=>norm(k)===norm(jwb)))benar++}
+  });
+  const total=sesi.soal.length,nilai=total?Math.round(benar/total*100):0;
+  db.hasil.push({id:idUnik('h'),pesertaId:user.id,nama:user.nama,kelas:user.kelas,rombel:user.rombel,ujianId:sesi.ujianId,jawaban:Object.assign({},sesi.jawaban),benar:benar,total:total,nilai:nilai,poinPelanggaran:sesi.poin,pelanggaran:sesi.pelanggaran,otomatis:!!otomatis,selesaiAt:Date.now()});
+  setStatus(user.id,sesi.ujianId,sesi.poin>=db.settings.batasKunci?'Terkunci (batas poin)':'Selesai',{poin:sesi.poin});
+  simpan();sesi=null;
+  toast('Ujian terkirim. Nilai Anda: '+(db.settings.tampilkanNilai?nilai:'(disembunyikan pengelola)'));
+  bukaRuangPeserta();
+}
+/* ───────── Kamera pengawasan (opsional, per ujian) ───────── */
+async function nyalakanKamera(){
+  try{
+    streamKamera=await navigator.mediaDevices.getUserMedia({video:true,audio:false});
+    document.getElementById('pip-video').srcObject=streamKamera;
+    document.getElementById('pip-kamera').classList.remove('sembunyi');
+  }catch(e){catatPelanggaran('Kamera tidak dapat diakses','sedang')}
+}
+function hentikanKamera(){
+  if(streamKamera){streamKamera.getTracks().forEach(t=>t.stop());streamKamera=null}
+  const pip=document.getElementById('pip-kamera');if(pip)pip.classList.add('sembunyi');
+}
+
+/* ───────── Panel admin & pengawas ───────── */
+const MENU_ADMIN=[
+  ['dashboard','📊','Dashboard'],['peserta','👩‍🎓','Peserta'],['banksoal','📚','Bank Soal'],
+  ['ujian','📝','Ujian'],['roster','👀','Roster Pengawas'],['hasil','🏆','Hasil & Rekap'],['pengaturan','⚙️','Pengaturan']
+];
+const MENU_PENGAWAS=[['roster','👀','Roster Ruang'],['absensi','✅','Absensi Saya']];
+function bukaPanel(tab){
+  tampil('hal-panel');tabAktif=tab||tabAktif;
+  const menu=user.peran==='admin'?MENU_ADMIN:MENU_PENGAWAS;
+  document.getElementById('sb-peran').textContent=(user.peran==='admin'?'Admin / Proktor':'Pengawas — '+user.ruang+' • '+user.sesi)+' • Kelas '+ROMAWI[kelasAktif];
+  document.getElementById('menu-panel').innerHTML=menu.map(m=>'<button class="'+(tabAktif===m[0]?'aktif':'')+'" onclick="bukaPanel(\''+m[0]+'\')">'+m[1]+' '+m[2]+'</button>').join('');
+  document.getElementById('nav-bawah').innerHTML=menu.map(m=>'<button class="'+(tabAktif===m[0]?'aktif':'')+'" onclick="bukaPanel(\''+m[0]+'\')"><span class="ikon">'+m[1]+'</span>'+m[2].split(' ')[0]+'</button>').join('');
+  const k=document.getElementById('konten-panel');
+  if(tabAktif==='dashboard')k.innerHTML=viewDashboard();
+  else if(tabAktif==='peserta')k.innerHTML=viewPeserta();
+  else if(tabAktif==='banksoal')k.innerHTML=viewBankSoal();
+  else if(tabAktif==='ujian')k.innerHTML=viewUjian();
+  else if(tabAktif==='roster')k.innerHTML=viewRoster();
+  else if(tabAktif==='hasil')k.innerHTML=viewHasil();
+  else if(tabAktif==='absensi')k.innerHTML=viewAbsensi();
+  else if(tabAktif==='pengaturan')k.innerHTML=viewPengaturan();
+}
+function kartuStat(angka,label){return '<div class="stat"><div class="angka">'+angka+'</div><div style="color:var(--muted);font-size:13px;font-weight:700">'+label+'</div></div>'}
+function viewDashboard(){
+  const p=db.peserta.filter(x=>x.kelas===kelasAktif).length;
+  const sedang=Object.values(db.statusPeserta).filter(s=>s.status==='Mengerjakan').length;
+  return '<h2 style="margin-top:0">Dashboard</h2><div class="stat-grid">'+
+    kartuStat(db.peserta.length,'Total Peserta')+kartuStat(p,'Peserta Kelas '+ROMAWI[kelasAktif])+
+    kartuStat(db.bankSoal.length,'Soal di Bank')+kartuStat(db.ujian.filter(u=>u.aktif).length,'Ujian Aktif')+
+    kartuStat(sedang,'Sedang Mengerjakan')+kartuStat(db.hasil.length,'Hasil Masuk')+'</div>'+
+    '<div class="kartu" style="margin-top:14px"><b>Token ujian aktif saat ini:</b> <span class="chip">'+esc(db.settings.tokenAktif)+'</span><p style="color:var(--muted);font-size:13px">Bagikan token hanya kepada peserta di ruang ujian. Ganti token secara berkala di menu Ujian / Pengaturan. Data aplikasi ini tersimpan lokal di perangkat ini.</p></div>';
+}
+function viewPeserta(){
+  const rows=db.peserta.map(p=>'<tr><td><b>'+esc(p.nama)+'</b><br><span style="color:var(--muted)">'+esc(p.username)+'</span></td><td>'+ROMAWI[p.kelas]+'</td><td>'+esc(p.rombel)+'</td><td><button class="btn-soft btn-kecil" onclick="editPeserta(\''+p.id+'\')">Ubah</button> <button class="btn-merah btn-kecil" onclick="hapusPeserta(\''+p.id+'\')">Hapus</button></td></tr>').join('');
+  return '<h2 style="margin-top:0">Data Peserta</h2><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="btn" onclick="editPeserta(\'\')">+ Tambah Peserta</button><label class="btn-soft" style="margin:0;display:inline-flex;align-items:center;cursor:pointer">⬆ Impor CSV<input type="file" accept=".csv" class="sembunyi" onchange="imporPeserta(this)"></label><button class="btn-abu" onclick="eksporPeserta()">⬇ Unduh CSV</button></div>'+
+  '<div class="kartu" style="overflow-x:auto"><table><tr><th>Nama / Username</th><th>Kelas</th><th>Rombel</th><th>Aksi</th></tr>'+rows+'</table></div>'+
+  '<p style="color:var(--muted);font-size:12px">Format CSV impor: username,sandi,nama,kelas (10/11/12),rombel. Baris pertama boleh berupa judul kolom.</p>';
+}
+function editPeserta(id){
+  const p=db.peserta.find(x=>x.id===id)||{username:'',sandi:'123',nama:'',kelas:kelasAktif,rombel:''};
+  modal('<h3 style="margin-top:0">'+(id?'Ubah':'Tambah')+' Peserta</h3>'+
+   '<label>Nama lengkap</label><input id="ep-nama" value="'+esc(p.nama)+'">'+
+   '<label>Username</label><input id="ep-user" value="'+esc(p.username)+'">'+
+   '<label>Kata sandi</label><input id="ep-sandi" value="'+esc(p.sandi)+'">'+
+   '<label>Kelas</label><select id="ep-kelas">'+['10','11','12'].map(k=>'<option value="'+k+'"'+(p.kelas===k?' selected':'')+'>'+ROMAWI[k]+'</option>').join('')+'</select>'+
+   '<label>Rombel</label><input id="ep-rombel" value="'+esc(p.rombel)+'" placeholder="cth: X-1">'+
+   '<div style="display:flex;gap:8px;margin-top:16px"><button class="btn" style="flex:1" onclick="simpanPeserta(\''+id+'\')">Simpan</button><button class="btn-abu" onclick="tutupModal()">Batal</button></div>');
+}
+function simpanPeserta(id){
+  const v={username:document.getElementById('ep-user').value.trim(),sandi:document.getElementById('ep-sandi').value,nama:document.getElementById('ep-nama').value.trim(),kelas:document.getElementById('ep-kelas').value,rombel:document.getElementById('ep-rombel').value.trim()};
+  if(!v.username||!v.nama)return toast('Nama dan username wajib diisi.');
+  if(db.peserta.some(x=>x.username.toLowerCase()===v.username.toLowerCase()&&x.id!==id))return toast('Username sudah dipakai peserta lain.');
+  if(id)Object.assign(db.peserta.find(x=>x.id===id),v);else db.peserta.push(Object.assign({id:idUnik('p')},v));
+  simpan();tutupModal();bukaPanel('peserta');toast('Data peserta tersimpan.');
+}
+function hapusPeserta(id){if(!confirm('Hapus peserta ini?'))return;db.peserta=db.peserta.filter(x=>x.id!==id);simpan();bukaPanel('peserta')}
+function imporPeserta(inp){
+  const f=inp.files[0];if(!f)return;
+  const rd=new FileReader();
+  rd.onload=()=>{let n=0;String(rd.result).split(/\r?\n/).forEach((ln,i)=>{const c=ln.split(',').map(x=>x.trim());if(c.length<5)return;if(i===0&&/username/i.test(c[0]))return;if(db.peserta.some(x=>x.username.toLowerCase()===c[0].toLowerCase()))return;db.peserta.push({id:idUnik('p'),username:c[0],sandi:c[1]||'123',nama:c[2],kelas:['10','11','12'].includes(c[3])?c[3]:kelasAktif,rombel:c[4]});n++});simpan();bukaPanel('peserta');toast(n+' peserta terimpor.')};
+  rd.readAsText(f);
+}
+function unduh(nama,isi,tipe){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([isi],{type:tipe||'text/plain'}));a.download=nama;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
+function eksporPeserta(){unduh('peserta-smartku.csv','username,sandi,nama,kelas,rombel\n'+db.peserta.map(p=>[p.username,p.sandi,p.nama,p.kelas,p.rombel].join(',')).join('\n'),'text/csv')}
+function viewBankSoal(){
+  const rows=db.bankSoal.map(s=>'<tr><td><span class="chip">'+esc(s.mapel)+'</span></td><td>'+esc(s.soal.slice(0,110))+(s.soal.length>110?'…':'')+'</td><td>'+(s.jenis==='pg'?'Pilihan ganda':'Isian')+'</td><td><button class="btn-soft btn-kecil" onclick="editSoal(\''+s.id+'\')">Ubah</button> <button class="btn-merah btn-kecil" onclick="hapusSoal(\''+s.id+'\')">Hapus</button></td></tr>').join('');
+  return '<h2 style="margin-top:0">Bank Soal</h2><button class="btn" onclick="editSoal(\'\')">+ Tambah Soal</button><div class="kartu" style="margin-top:12px;overflow-x:auto"><table><tr><th>Mapel</th><th>Soal</th><th>Jenis</th><th>Aksi</th></tr>'+rows+'</table></div><p style="color:var(--muted);font-size:12px">Kunci jawaban hanya tampil di panel admin — saat ujian, peserta menerima salinan soal tanpa kunci dan tanpa pembahasan.</p>';
+}
+function editSoal(id){
+  const s=db.bankSoal.find(x=>x.id===id)||{mapel:'Literasi',jenis:'pg',soal:'',opsi:['','','',''],kunci:0,kunciTeks:[''],pembahasan:''};
+  modal('<h3 style="margin-top:0">'+(id?'Ubah':'Tambah')+' Soal</h3>'+
+   '<label>Mata pelajaran</label><input id="es-mapel" value="'+esc(s.mapel)+'">'+
+   '<label>Jenis</label><select id="es-jenis" onchange="toggleJenisSoal()"><option value="pg"'+(s.jenis==='pg'?' selected':'')+'>Pilihan ganda</option><option value="isian"'+(s.jenis==='isian'?' selected':'')+'>Isian singkat</option></select>'+
+   '<label>Pertanyaan</label><textarea id="es-soal" rows="3">'+esc(s.soal)+'</textarea>'+
+   '<div id="es-pg"><label>Opsi A–D (pilih radio untuk kunci)</label>'+[0,1,2,3].map(i=>'<div style="display:flex;gap:8px;align-items:center;margin:6px 0"><input type="radio" name="es-kunci" value="'+i+'" style="width:auto"'+(s.kunci===i?' checked':'')+'><input id="es-opsi-'+i+'" value="'+esc((s.opsi||[])[i]||'')+'" placeholder="Opsi '+'ABCD'[i]+'"></div>').join('')+'</div>'+
+   '<div id="es-isian"><label>Jawaban benar (pisahkan dengan koma bila ada alternatif)</label><input id="es-kunci-teks" value="'+esc((s.kunciTeks||[]).join(', '))+'"></div>'+
+   '<label>Pembahasan</label><textarea id="es-bahas" rows="2">'+esc(s.pembahasan||'')+'</textarea>'+
+   '<div style="display:flex;gap:8px;margin-top:16px"><button class="btn" style="flex:1" onclick="simpanSoal(\''+id+'\')">Simpan</button><button class="btn-abu" onclick="tutupModal()">Batal</button></div>');
+  toggleJenisSoal();
+}
+function toggleJenisSoal(){const j=document.getElementById('es-jenis').value;document.getElementById('es-pg').classList.toggle('sembunyi',j!=='pg');document.getElementById('es-isian').classList.toggle('sembunyi',j!=='isian')}
+function simpanSoal(id){
+  const jenis=document.getElementById('es-jenis').value;
+  const v={mapel:document.getElementById('es-mapel').value.trim()||'Umum',jenis:jenis,soal:document.getElementById('es-soal').value.trim(),pembahasan:document.getElementById('es-bahas').value.trim()};
+  if(!v.soal)return toast('Pertanyaan wajib diisi.');
+  if(jenis==='pg'){v.opsi=[0,1,2,3].map(i=>document.getElementById('es-opsi-'+i).value.trim());const r=document.querySelector('input[name="es-kunci"]:checked');v.kunci=r?Number(r.value):0;v.kunciTeks=undefined}
+  else{v.kunciTeks=document.getElementById('es-kunci-teks').value.split(',').map(x=>x.trim()).filter(Boolean);v.opsi=undefined;v.kunci=undefined}
+  if(id)Object.assign(db.bankSoal.find(x=>x.id===id),v);else db.bankSoal.push(Object.assign({id:idUnik('s')},v));
+  simpan();tutupModal();bukaPanel('banksoal');toast('Soal tersimpan.');
+}
+function hapusSoal(id){if(!confirm('Hapus soal ini dari bank?'))return;db.bankSoal=db.bankSoal.filter(x=>x.id!==id);simpan();bukaPanel('banksoal')}
+
+function viewUjian(){
+  const rows=db.ujian.map(u=>'<tr><td><b>'+esc(u.nama)+'</b><br><span style="color:var(--muted)">'+esc(u.mapel)+'</span></td><td>'+ROMAWI[u.kelas]+'</td><td>'+u.soalIds.length+' soal • '+u.durasi+' mnt</td><td>'+(u.tokenAktif?'<span class="chip">'+esc(u.token)+'</span>':'—')+'</td><td>'+(u.aktif?'<span class="chip ok">Aktif</span>':'<span class="chip abu">Nonaktif</span>')+'</td><td><button class="btn-soft btn-kecil" onclick="editUjian(\''+u.id+'\')">Ubah</button> <button class="btn-merah btn-kecil" onclick="hapusUjian(\''+u.id+'\')">Hapus</button></td></tr>').join('');
+  return '<h2 style="margin-top:0">Pengaturan Ujian</h2><button class="btn" onclick="editUjian(\'\')">+ Buat Ujian</button><div class="kartu" style="margin-top:12px;overflow-x:auto"><table><tr><th>Ujian</th><th>Kelas</th><th>Isi</th><th>Token</th><th>Status</th><th>Aksi</th></tr>'+rows+'</table></div>';
+}
+function editUjian(id){
+  const u=db.ujian.find(x=>x.id===id)||{nama:'',mapel:'',kelas:kelasAktif,durasi:60,tokenAktif:true,token:db.settings.tokenAktif,kamera:false,acak:true,soalIds:[],aktif:true};
+  const cek=db.bankSoal.map(s=>'<label style="display:flex;gap:8px;align-items:flex-start;font-weight:600;color:var(--ink)"><input type="checkbox" class="eu-soal" value="'+s.id+'" style="width:auto;margin-top:2px"'+(u.soalIds.includes(s.id)?' checked':'')+'><span><span class="chip">'+esc(s.mapel)+'</span> '+esc(s.soal.slice(0,90))+'</span></label>').join('');
+  modal('<h3 style="margin-top:0">'+(id?'Ubah':'Buat')+' Ujian</h3>'+
+   '<label>Nama ujian</label><input id="eu-nama" value="'+esc(u.nama)+'">'+
+   '<label>Mata pelajaran</label><input id="eu-mapel" value="'+esc(u.mapel)+'">'+
+   '<label>Kelas</label><select id="eu-kelas">'+['10','11','12'].map(k=>'<option value="'+k+'"'+(u.kelas===k?' selected':'')+'>'+ROMAWI[k]+'</option>').join('')+'</select>'+
+   '<label>Durasi (menit)</label><input id="eu-durasi" type="number" min="1" value="'+u.durasi+'">'+
+   '<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="eu-token-on" style="width:auto"'+(u.tokenAktif?' checked':'')+'> Gunakan token</label>'+
+   '<label>Token ujian</label><input id="eu-token" value="'+esc(u.token||'')+'">'+
+   '<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="eu-kamera" style="width:auto"'+(u.kamera?' checked':'')+'> Aktifkan pengawasan kamera</label>'+
+   '<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="eu-acak" style="width:auto"'+(u.acak?' checked':'')+'> Acak urutan soal &amp; opsi</label>'+
+   '<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="eu-aktif" style="width:auto"'+(u.aktif?' checked':'')+'> Ujian aktif (tampil ke peserta)</label>'+
+   '<label>Pilih soal dari bank</label><div style="max-height:180px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;padding:8px">'+cek+'</div>'+
+   '<div style="display:flex;gap:8px;margin-top:16px"><button class="btn" style="flex:1" onclick="simpanUjian(\''+id+'\')">Simpan</button><button class="btn-abu" onclick="tutupModal()">Batal</button></div>');
+}
+function simpanUjian(id){
+  const v={nama:document.getElementById('eu-nama').value.trim(),mapel:document.getElementById('eu-mapel').value.trim(),kelas:document.getElementById('eu-kelas').value,durasi:Math.max(1,Number(document.getElementById('eu-durasi').value)||60),tokenAktif:document.getElementById('eu-token-on').checked,token:document.getElementById('eu-token').value.trim(),kamera:document.getElementById('eu-kamera').checked,acak:document.getElementById('eu-acak').checked,aktif:document.getElementById('eu-aktif').checked,soalIds:[...document.querySelectorAll('.eu-soal:checked')].map(x=>x.value)};
+  if(!v.nama)return toast('Nama ujian wajib diisi.');
+  if(!v.soalIds.length)return toast('Pilih minimal satu soal.');
+  if(id)Object.assign(db.ujian.find(x=>x.id===id),v);else db.ujian.push(Object.assign({id:idUnik('u')},v));
+  simpan();tutupModal();bukaPanel('ujian');toast('Ujian tersimpan.');
+}
+function hapusUjian(id){if(!confirm('Hapus ujian ini?'))return;db.ujian=db.ujian.filter(x=>x.id!==id);simpan();bukaPanel('ujian')}
+function viewRoster(){
+  const baris=db.peserta.filter(p=>p.kelas===kelasAktif).map(p=>{
+    const st=db.statusPeserta[p.id];const h=db.hasil.find(x=>x.pesertaId===p.id);
+    let chipSt='<span class="chip abu">Belum mulai</span>';
+    if(st&&st.status==='Mengerjakan')chipSt='<span class="chip warn">Mengerjakan • poin '+(st.poin||0)+'</span>';
+    if(st&&st.status==='Selesai')chipSt='<span class="chip ok">Selesai</span>';
+    if(st&&String(st.status).startsWith('Terkunci'))chipSt='<span class="chip bad">'+esc(st.status)+'</span>';
+    return '<tr><td><b>'+esc(p.nama)+'</b><br><span style="color:var(--muted)">'+esc(p.rombel)+'</span></td><td>'+chipSt+'</td><td>'+(h?'Nilai '+h.nilai+' • benar '+h.benar+'/'+h.total:'—')+'</td><td>'+(st?'<button class="btn-soft btn-kecil" onclick="resetStatus(\''+p.id+'\')">Reset / Buka Kunci</button>':'')+'</td></tr>';
+  }).join('');
+  return '<h2 style="margin-top:0">Roster Pengawas — Kelas '+ROMAWI[kelasAktif]+'</h2>'+
+   '<div class="kartu" style="margin-bottom:12px">Token ujian aktif: <span class="chip">'+esc(db.settings.tokenAktif)+'</span> <button class="btn-soft btn-kecil tanpa-cetak" onclick="bukaPanel(\'roster\')">↻ Segarkan</button></div>'+
+   '<div class="kartu" style="overflow-x:auto"><table><tr><th>Peserta</th><th>Status</th><th>Hasil</th><th>Aksi</th></tr>'+baris+'</table></div>'+
+   '<p style="color:var(--muted);font-size:12px">Data tersimpan di perangkat ini — gunakan satu perangkat yang sama untuk peserta dan pengawas bila ingin memantau secara langsung, atau buka panel ini setelah peserta selesai di perangkat ini.</p>';
+}
+function resetStatus(pid){delete db.statusPeserta[pid];simpan();bukaPanel('roster');toast('Status peserta direset — kunci dibuka.')}
+function viewAbsensi(){
+  return '<h2 style="margin-top:0">Absensi Pengawas</h2><div class="kartu"><p><b>'+esc(user.nama)+'</b></p><p style="color:var(--muted)">'+esc(user.ruang)+' • '+esc(user.sesi)+' • Kelas '+ROMAWI[kelasAktif]+'</p><p>Kehadiran tercatat saat Anda masuk: '+new Date().toLocaleString('id-ID')+'</p><button class="btn" onclick="toast(\'Kehadiran tersimpan. Terima kasih.\')">Konfirmasi Hadir</button></div>';
+}
+function viewHasil(){
+  const rows=db.hasil.slice().sort((a,b)=>b.selesaiAt-a.selesaiAt).map(h=>{const u=db.ujian.find(x=>x.id===h.ujianId);return '<tr><td><b>'+esc(h.nama)+'</b><br><span style="color:var(--muted)">'+esc(h.rombel||'')+'</span></td><td>'+esc(u?u.nama:'-')+'</td><td>'+h.benar+'/'+h.total+'</td><td><b>'+h.nilai+'</b></td><td>'+(h.poinPelanggaran||0)+'</td><td>'+new Date(h.selesaiAt).toLocaleString('id-ID')+'</td></tr>'}).join('');
+  return '<h2 style="margin-top:0">Hasil &amp; Rekap Nilai</h2><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="btn" onclick="eksporHasil()">⬇ Unduh CSV Hasil</button><button class="btn-abu tanpa-cetak" onclick="window.print()">🖨 Cetak Daftar Hadir &amp; Nilai</button></div>'+
+  '<div class="kartu" style="overflow-x:auto"><div style="text-align:center" class="tanpa-cetak"><b>DAFTAR HADIR &amp; NILAI PESERTA</b><br>'+esc(db.settings.namaInstansi)+'<br>Kepala Sekolah: '+esc(db.settings.kepalaSekolah)+' • NIP '+esc(db.settings.nipKepsek)+'</div><table><tr><th>Peserta</th><th>Ujian</th><th>Benar</th><th>Nilai</th><th>Poin Langgar</th><th>Waktu Selesai</th></tr>'+(rows||'<tr><td colspan="6">Belum ada hasil.</td></tr>')+'</table></div>';
+}
+function eksporHasil(){unduh('hasil-smartku.csv','nama,rombel,ujian,benar,total,nilai,poin_pelanggaran,selesai\n'+db.hasil.map(h=>{const u=db.ujian.find(x=>x.id===h.ujianId);return [h.nama,h.rombel||'',u?u.nama:'',h.benar,h.total,h.nilai,h.poinPelanggaran||0,new Date(h.selesaiAt).toISOString()].join(',')}).join('\n'),'text/csv')}
+function viewPengaturan(){
+  const s=db.settings;
+  return '<h2 style="margin-top:0">Pengaturan</h2><div class="kartu">'+
+   '<label>Nama instansi / sekolah</label><input id="pg-instansi" value="'+esc(s.namaInstansi)+'">'+
+   '<label>Nama kepala sekolah</label><input id="pg-kepsek" value="'+esc(s.kepalaSekolah)+'">'+
+   '<label>NIP kepala sekolah</label><input id="pg-nip" value="'+esc(s.nipKepsek)+'">'+
+   '<label>Token ujian aktif (bawaan)</label><input id="pg-token" value="'+esc(s.tokenAktif)+'">'+
+   '<label>PIN admin baru</label><input id="pg-pin" value="'+esc(s.pinAdmin)+'">'+
+   '<label>Batas poin pelanggaran sebelum ujian dikunci</label><input id="pg-batas" type="number" min="1" value="'+s.batasKunci+'">'+
+   '<label>Poin pelanggaran — ringan / sedang / berat</label><div style="display:flex;gap:8px"><input id="pg-f1" type="number" value="'+s.foul.ringan+'"><input id="pg-f2" type="number" value="'+s.foul.sedang+'"><input id="pg-f3" type="number" value="'+s.foul.berat+'"></div>'+
+   '<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="pg-nilai" style="width:auto"'+(s.tampilkanNilai?' checked':'')+'> Tampilkan nilai kepada peserta</label>'+
+   '<button class="btn" style="margin-top:14px" onclick="simpanPengaturan()">Simpan Pengaturan</button></div>'+
+   '<div class="kartu" style="margin-top:14px"><b>Cadangan Data</b><p style="color:var(--muted);font-size:13px">Unduh cadangan sebelum mengganti perangkat atau membersihkan peramban.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn-soft" onclick="eksporJSON()">⬇ Unduh Cadangan JSON</button><label class="btn-soft" style="margin:0;display:inline-flex;align-items:center;cursor:pointer">⬆ Pulihkan JSON<input type="file" accept=".json" class="sembunyi" onchange="imporJSON(this)"></label><button class="btn-merah" onclick="resetData()">Hapus Semua Data</button></div></div>';
+}
+function simpanPengaturan(){
+  const s=db.settings;
+  s.namaInstansi=document.getElementById('pg-instansi').value.trim();s.kepalaSekolah=document.getElementById('pg-kepsek').value.trim();s.nipKepsek=document.getElementById('pg-nip').value.trim();
+  s.tokenAktif=document.getElementById('pg-token').value.trim()||s.tokenAktif;s.pinAdmin=document.getElementById('pg-pin').value.trim()||s.pinAdmin;
+  s.batasKunci=Math.max(1,Number(document.getElementById('pg-batas').value)||5);
+  s.foul={ringan:Number(document.getElementById('pg-f1').value)||1,sedang:Number(document.getElementById('pg-f2').value)||2,berat:Number(document.getElementById('pg-f3').value)||5};
+  s.tampilkanNilai=document.getElementById('pg-nilai').checked;
+  simpan();toast('Pengaturan tersimpan.');
+}
+function eksporJSON(){unduh('cadangan-smartku.json',JSON.stringify(db,null,2),'application/json')}
+function imporJSON(inp){const f=inp.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const d=JSON.parse(rd.result);if(!d.settings)throw 0;db=d;simpan();bukaPanel('pengaturan');toast('Cadangan dipulihkan.')}catch(e){toast('Berkas cadangan tidak valid.')}};rd.readAsText(f)}
+function resetData(){if(!confirm('Hapus SEMUA data dan kembali ke data contoh?'))return;localStorage.removeItem(LS_KEY);muat();bukaPanel('dashboard');toast('Data direset ke contoh awal.')}
+/* ───────── Modal ───────── */
+function modal(html){document.getElementById('wadah-modal').innerHTML='<div class="modal" onclick="if(event.target===this)tutupModal()"><div class="kotak">'+html+'</div></div>'}
+function tutupModal(){document.getElementById('wadah-modal').innerHTML=''}
+/* ───────── Boot ───────── */
+if(kelasAktif&&ROMAWI[kelasAktif])bukaLogin();else tampil('hal-portal');
+</script>
+</body>
+</html>
