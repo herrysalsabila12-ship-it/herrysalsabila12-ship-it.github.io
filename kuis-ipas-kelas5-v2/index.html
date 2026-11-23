@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuis IPAS — Kelas 5 Bab 1: Cahaya dan Bunyi (50 Soal Baru — Versi 2)</title>
+<style>
+:root{
+  --ungu:#46178f; --ungu2:#5b2ee5; --merah:#e21b3c; --biru:#1368ce; --oren:#d89e00; --hijau:#26890c;
+  --teks:#22223a; --teks2:#6f6f8a;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,Arial,sans-serif}
+body{background:linear-gradient(160deg,#2b0a5e,#46178f 55%,#6d28d9);min-height:100vh;color:var(--teks)}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select{font:inherit;color:var(--teks)}
+.bungkus{max-width:760px;margin:0 auto;padding:18px 14px 44px}
+.kartu-putih{background:#fff;border-radius:20px;box-shadow:0 14px 34px rgba(0,0,0,.3);padding:26px 24px}
+.sembunyi{display:none!important}
+/* ---------- LOGIN ---------- */
+.login{text-align:center;margin-top:5vh}
+.login .logo{font-size:56px}
+.login h1{font-size:26px;margin:8px 0 2px}
+.login .sub{color:var(--teks2);font-size:14.5px;margin-bottom:18px;line-height:1.55}
+.login label{display:block;text-align:left;font-size:12.5px;font-weight:800;color:var(--teks2);margin:13px 0 5px}
+.login input,.login select{width:100%;padding:13px 15px;border:2px solid #e3e0f5;border-radius:13px;outline:none;background:#faf9ff}
+.login input:focus,.login select:focus{border-color:var(--ungu2)}
+.btn-mulai{width:100%;background:var(--hijau);color:#fff;font-weight:900;font-size:17px;padding:15px;border-radius:13px;margin-top:20px;box-shadow:0 5px 0 #17630a}
+.btn-mulai:active{transform:translateY(3px);box-shadow:none}
+.info-kecil{font-size:12.5px;color:var(--teks2);margin-top:13px;line-height:1.6}
+/* ---------- KUIS ---------- */
+.bar-atas{display:flex;align-items:center;gap:12px;color:#fff;margin-bottom:12px}
+.bar-atas .siapa{font-weight:800;font-size:14.5px;background:rgba(255,255,255,.16);padding:8px 14px;border-radius:99px}
+.bar-atas .skor-live{margin-left:auto;font-weight:900;background:#fff;color:var(--ungu);padding:8px 15px;border-radius:99px;font-size:14.5px}
+.kemajuan{height:12px;background:rgba(255,255,255,.22);border-radius:99px;overflow:hidden;margin-bottom:8px}
+.kemajuan i{display:block;height:100%;background:#ffc61a;border-radius:99px;transition:width .4s}
+.baris-info{display:flex;color:#e9e2ff;font-size:13px;font-weight:700;margin-bottom:12px}
+.baris-info .timer{margin-left:auto}
+.timer-bar{height:7px;background:rgba(255,255,255,.18);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.timer-bar i{display:block;height:100%;background:#39d353;border-radius:99px}
+.soal-box{background:#fff;border-radius:20px;box-shadow:0 14px 34px rgba(0,0,0,.3);padding:24px 22px;margin-bottom:16px;text-align:center}
+.soal-box .topik{display:inline-block;background:#efeaff;color:var(--ungu2);font-weight:800;font-size:12px;padding:5px 13px;border-radius:99px;letter-spacing:.6px}
+.soal-box h2{font-size:20.5px;line-height:1.5;margin-top:12px}
+.opsi{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opsi button{border-radius:15px;color:#fff;font-weight:700;font-size:16px;padding:19px 15px;text-align:left;display:flex;gap:11px;align-items:center;line-height:1.4;box-shadow:0 4px 0 rgba(0,0,0,.28);transition:.15s}
+.opsi button:active{transform:translateY(3px);box-shadow:none}
+.opsi button .bentuk{font-size:19px;flex:none}
+.opsi button.w0{background:var(--merah)} .opsi button.w1{background:var(--biru)} .opsi button.w2{background:var(--oren)} .opsi button.w3{background:var(--hijau)}
+.opsi button.benar{outline:5px solid #fff;filter:brightness(1.15)}
+.opsi button.salah{opacity:.45}
+.opsi button:disabled{cursor:default}
+.umpan{margin-top:14px;text-align:center;color:#fff;font-weight:900;font-size:19px;min-height:26px;text-shadow:0 2px 6px rgba(0,0,0,.3)}
+@media(max-width:560px){ .opsi{grid-template-columns:1fr} .soal-box h2{font-size:18.5px} }
+/* ---------- HASIL ---------- */
+.hasil{text-align:center;margin-top:4vh}
+.hasil .trofi{font-size:60px}
+.hasil .nilai-besar{font-size:66px;font-weight:900;color:var(--ungu);line-height:1.05}
+.hasil .nama-hasil{font-size:19px;font-weight:800;margin-top:4px}
+.hasil .detail{display:flex;gap:11px;justify-content:center;margin:16px 0;flex-wrap:wrap}
+.hasil .detail .kotak{background:#f4f1ff;border-radius:13px;padding:11px 17px;font-size:13.5px}
+.hasil .detail .kotak b{display:block;font-size:19px}
+.btn-aksi{width:100%;padding:14px;border-radius:13px;font-weight:900;font-size:15.5px;margin-top:11px;color:#fff}
+.btn-aksi.ungu{background:var(--ungu2);box-shadow:0 4px 0 #38127a}
+.btn-aksi.abu{background:#8854c9;box-shadow:0 4px 0 #5f3794}
+.btn-aksi.putih{background:#fff;color:var(--ungu);box-shadow:0 4px 0 #cfc4ee}
+.btn-aksi:active{transform:translateY(3px);box-shadow:none}
+/* ---------- PEMBAHASAN ---------- */
+.kepala-bahas{color:#fff;margin-bottom:14px}
+.kepala-bahas h2{font-size:22px}
+.kepala-bahas p{color:#e9e2ff;font-size:13.5px;margin-top:3px}
+.filter-bahas{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.filter-bahas button{background:rgba(255,255,255,.16);color:#fff;font-weight:800;padding:9px 16px;border-radius:99px;font-size:13.5px}
+.filter-bahas button.aktif{background:#fff;color:var(--ungu)}
+.item-bahas{background:#fff;border-radius:17px;padding:19px;margin-bottom:13px;box-shadow:0 8px 20px rgba(0,0,0,.22)}
+.item-bahas .no{font-weight:900;color:var(--ungu2);font-size:13px;letter-spacing:.5px}
+.item-bahas .tanya{font-weight:700;font-size:16px;line-height:1.5;margin:5px 0 11px}
+.item-bahas .jawab-baris{font-size:14.5px;padding:8px 12px;border-radius:10px;margin-bottom:6px;background:#f7f6fc;line-height:1.45}
+.item-bahas .jawab-baris.kunci{background:#e5f6e0;font-weight:700}
+.item-bahas .jawab-baris.jawaban-salah{background:#fde4e8;font-weight:700}
+.item-bahas .bahas{background:#fff8dc;border:1.5px dashed #e3c566;border-radius:11px;padding:11px 13px;font-size:14px;line-height:1.6;margin-top:9px}
+.item-bahas .bahas b{color:#8a6d1a}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(14px);background:#22223a;color:#fff;padding:11px 19px;border-radius:11px;font-weight:600;opacity:0;pointer-events:none;transition:.25s;z-index:130;max-width:92vw;text-align:center}
+.toast.tampil{opacity:1;transform:translateX(-50%)}
+</style>
+</head>
+<body>
+<div class="bungkus">
+
+  <!-- ============ LOGIN ============ -->
+  <div class="kartu-putih login" id="layarLogin">
+    <div class="logo">🔦</div>
+    <h1>Kuis IPAS Kelas 5 — Versi 2</h1>
+    <p class="sub">Bab 1: Melihat karena Cahaya, Mendengar karena Bunyi • Paket 2: 50 soal BARU, beda dari paket pertama • Ada pembahasan lengkap di akhir!<br>Tulis namamu untuk mulai, seperti masuk ke Quizizz 👇</p>
+    <label>Nama Siswa</label>
+    <input type="text" id="inNama" placeholder="cth: Salsa Amelia">
+    <label>Kelas</label>
+    <input type="text" id="inKelas" placeholder="cth: 8A">
+    <button class="btn-mulai" id="btnMulai">▶️ Mulai Kuis</button>
+    <p class="info-kecil">Setiap soal berbatas waktu 60 detik. Jawaban langsung dicek benar/salahnya.<br>Di akhir kuis kamu dapat skor + pembahasan lengkap per nomor.</p>
+  </div>
+
+  <!-- ============ KUIS ============ -->
+  <div id="layarKuis" class="sembunyi">
+    <div class="bar-atas">
+      <span class="siapa">👤 <span id="kuisSiapa">—</span></span>
+      <span class="skor-live">⭐ Skor: <span id="kuisSkor">0</span></span>
+    </div>
+    <div class="kemajuan"><i id="barMaju" style="width:0%"></i></div>
+    <div class="baris-info"><span>Soal <span id="kuisKe">1</span> dari 100</span><span class="timer">⏱️ <span id="kuisTimer">60</span> detik</span></div>
+    <div class="timer-bar"><i id="barTimer" style="width:100%"></i></div>
+    <div class="soal-box">
+      <span class="topik" id="soalTopik">TOPIK</span>
+      <h2 id="soalTeks">—</h2>
+    </div>
+    <div class="opsi" id="wadahOpsi"></div>
+    <div class="umpan" id="umpanBalik"></div>
+  </div>
+
+  <!-- ============ HASIL ============ -->
+  <div class="kartu-putih hasil sembunyi" id="layarHasil">
+    <div class="trofi">🏆</div>
+    <div class="nilai-besar" id="hasilNilai">0</div>
+    <div class="nama-hasil" id="hasilNama">—</div>
+    <p style="color:var(--teks2);font-size:14px" id="hasilPesan">—</p>
+    <div class="detail">
+      <div class="kotak"><b id="hasilBenar" style="color:var(--hijau)">0</b>Benar</div>
+      <div class="kotak"><b id="hasilSalah" style="color:var(--merah)">0</b>Salah</div>
+      <div class="kotak"><b id="hasilWaktu">0:00</b>Waktu</div>
+    </div>
+    <button class="btn-aksi ungu" id="btnPembahasan">📖 Lihat Pembahasan Lengkap</button>
+    <button class="btn-aksi abu" id="btnUlangi">🔁 Kerjakan Lagi</button>
+    <button class="btn-aksi putih" id="btnGantiSiswa">👤 Ganti Siswa</button>
+  </div>
+
+  <!-- ============ PEMBAHASAN ============ -->
+  <div id="layarBahas" class="sembunyi">
+    <div class="kepala-bahas">
+      <h2>📖 Pembahasan Lengkap</h2>
+      <p>Jawabanmu ditandai — pelajari pembahasan tiap nomor ya!</p>
+    </div>
+    <div class="filter-bahas" id="filterBahas">
+      <button data-f="semua" class="aktif">Semua Soal</button>
+      <button data-f="salah">Yang Salah Saja</button>
+      <button data-f="benar">Yang Benar Saja</button>
+    </div>
+    <div id="daftarBahas"></div>
+    <button class="btn-aksi putih" id="btnKembaliHasil">⬅️ Kembali ke Skor</button>
+  </div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* ===== BANK SOAL: 50 soal orisinal IPAS Kelas 5 Bab 1 (cahaya & bunyi) PAKET 2 + pembahasan ===== */
+var BANK=[["Cahaya", "Periskop pada kapal selam dapat dipakai melihat keadaan di permukaan air karena periskop memanfaatkan…", ["dua cermin datar yang memantulkan cahaya", "lensa pembesar", "serat kaca berwarna", "magnet kecil"], 0, "Periskop berisi dua cermin datar yang dipasang miring berhadapan. Cahaya dari benda di atas dipantulkan cermin atas ke cermin bawah, lalu masuk ke mata pengamat."], ["Cahaya", "Kaca buram pada jendela kamar mandi hanya dapat ditembus sebagian cahaya, sehingga benda di baliknya terlihat samar. Kaca buram termasuk benda…", ["bening", "tembus cahaya sebagian (keruh)", "tidak tembus cahaya", "sumber cahaya"], 1, "Benda keruh/translusen seperti kaca buram, kertas minyak, dan plastik susu meneruskan sebagian cahaya dan menghamburkan sisanya, sehingga bayangan benda tampak samar."], ["Cahaya", "Apabila cakram warna (cakram Newton) yang berisi warna-warna pelangi diputar dengan cepat, cakram itu tampak berwarna putih. Hal ini membuktikan bahwa…", ["warna dapat hilang karena putaran", "mata tidak bisa melihat warna", "cahaya putih sebenarnya gabungan berbagai warna", "cakram menyerap semua cahaya"], 2, "Warna-warna pada cakram berpadu di mata saat berputar cepat dan tampak putih — kebalikan dari penguraian cahaya putih menjadi warna pelangi."], ["Cahaya", "Lup (kaca pembesar) dapat membuat tulisan kecil terlihat lebih besar karena lup menggunakan…", ["cermin datar", "lensa cekung", "kaca berwarna", "lensa cembung"], 3, "Lensa cembung pada lup membiaskan cahaya sehingga bayangan benda kecil tampak lebih besar dan tegak. Lup dipakai tukang jam dan peneliti serangga."], ["Cahaya", "Gerhana Matahari terjadi pada siang hari ketika cahaya Matahari menuju Bumi terhalang oleh…", ["Bulan yang berada di antara Matahari dan Bumi", "awan tebal", "gunung tinggi", "gedung bertingkat"], 0, "Saat Bulan tepat berada di antara Matahari dan Bumi, bayangan Bulan jatuh ke sebagian permukaan Bumi dan daerah itu menjadi gelap sesaat — itulah gerhana Matahari."], ["Cahaya", "Tumbuhan hijau memerlukan cahaya Matahari terutama untuk…", ["bernapas di malam hari", "membuat makanan (fotosintesis)", "mengubah warna daun", "menarik serangga"], 1, "Dengan bantuan cahaya Matahari, daun mengubah air dan udara menjadi makanan bagi tumbuhan, sambil melepaskan oksigen yang kita hirup."], ["Cahaya", "Panel surya pada atap rumah dan kalkulator memanfaatkan cahaya Matahari dengan cara mengubahnya menjadi…", ["bunyi", "energi gerak", "energi listrik", "air"], 2, "Sel surya mengubah cahaya Matahari langsung menjadi listrik. Inilah sumber energi yang bersih dan tidak akan habis selama Matahari bersinar."], ["Cahaya", "Pada malam hari Bulan tampak bercahaya terang, padahal Bulan sebenarnya…", ["membuat cahayanya sendiri", "menyimpan cahaya lampu kota", "bercahaya karena bintang", "memantulkan cahaya Matahari ke Bumi"], 3, "Bulan bukan sumber cahaya. Permukaannya memantulkan cahaya Matahari, sama seperti cermin raksasa di langit, sehingga tampak bercahaya dari Bumi."], ["Cahaya", "Tulisan AMBULANCE di bagian depan mobil ambulans sengaja ditulis terbalik supaya…", ["dapat terbaca dengan benar melalui kaca spion kendaraan di depannya", "terlihat lebih menarik", "tidak mudah luntur", "terbaca dari jarak jauh"], 0, "Bayangan pada cermin datar bersifat tertukar kiri-kanannya. Tulisan yang terbalik akan tampak normal di spion, sehingga pengemudi di depan segera memberi jalan."], ["Cahaya", "Ketika berenang, dasar kolam terlihat lebih dangkal daripada kedalaman sebenarnya. Peristiwa ini terjadi karena cahaya…", ["dipantulkan oleh ubin kolam", "dibiaskan saat keluar dari air ke udara", "diserap air seluruhnya", "berubah menjadi bunyi"], 1, "Cahaya dari dasar kolam membelok (bias) ketika berpindah dari air ke udara, sehingga mata kita memperkirakan dasar kolam lebih dekat ke permukaan."], ["Cahaya", "Daun tumbuhan tampak berwarna hijau di mata kita karena daun…", ["menghasilkan cahaya hijau", "bercampur dengan cat hijau", "memantulkan cahaya hijau dan menyerap warna lain", "terkena cahaya berwarna"], 2, "Warna benda yang kita lihat adalah warna cahaya yang dipantulkannya. Daun menyerap sebagian besar warna lain dan memantulkan warna hijau."], ["Cahaya", "Saat hujan disertai petir, kita selalu melihat kilat lebih dahulu sebelum mendengar bunyi guntur. Hal ini karena…", ["bunyi guntur sangat pelan", "kilat terjadi lebih awal", "telinga lebih lambat bekerja", "cahaya merambat jauh lebih cepat daripada bunyi"], 3, "Kilat dan guntur terjadi bersamaan, tetapi cahaya merambat sekitar 300.000 km per detik sedangkan bunyi hanya sekitar 340 meter per detik di udara."], ["Cahaya", "Kunang-kunang dapat bercahaya pada malam hari. Kunang-kunang termasuk sumber cahaya…", ["alami dari makhluk hidup", "buatan manusia", "pantulan dari Bulan", "dari listrik"], 0, "Tubuh kunang-kunang menghasilkan cahaya sendiri melalui reaksi kimia di perutnya. Cahaya ini dipakai untuk memberi tanda dan menarik pasangan."], ["Cahaya", "Mainan kaleidoskop menghasilkan gambar-gambar indah yang berubah-ubah karena di dalamnya terdapat…", ["lensa-lensa pembesar", "cermin-cermin yang saling memantulkan cahaya", "air berwarna", "magnet berputar"], 1, "Dua atau tiga cermin di dalam kaleidoskop memantulkan cahaya dan kepingan warna berkali-kali, membentuk pola simetris yang indah."], ["Cahaya", "Baju berwarna hitam yang dijemur di bawah terik Matahari terasa lebih panas daripada baju putih karena warna hitam…", ["memantulkan semua cahaya", "menghasilkan cahaya sendiri", "menyerap cahaya lebih banyak", "menolak panas"], 2, "Permukaan gelap menyerap sebagian besar cahaya dan mengubahnya menjadi panas. Sebaliknya, warna terang memantulkan lebih banyak cahaya sehingga terasa lebih sejuk."], ["Mata", "Alis dan bulu mata berguna untuk melindungi mata dari…", ["cahaya silau saja", "bunyi yang keras", "air mata", "keringat, debu, dan kotoran yang jatuh dari atas"], 3, "Alis menahan keringat dari dahi agar tidak mengalir ke mata, sedangkan bulu mata menyaring debu dan kotoran yang beterbangan."], ["Mata", "Air mata yang membasahi mata kita setiap saat berguna untuk…", ["membersihkan debu dan membunuh kuman pada permukaan mata", "memberi warna pada mata", "membuat mata berkilau saja", "mengatur pupil"], 0, "Air mata mengandung zat pembasmi kuman dan menjaga permukaan mata tetap lembap. Saat ada debu masuk, air mata keluar lebih banyak untuk membilasnya."], ["Mata", "Bagian terluar mata yang berwarna putih dan berfungsi melindungi serta memberi bentuk pada bola mata adalah…", ["iris", "sklera", "kornea", "retina"], 1, "Sklera adalah dinding kuat berwarna putih yang membungkus bola mata. Di bagian depan, sklera berubah menjadi kornea yang bening agar cahaya bisa masuk."], ["Mata", "Bagian retina tempat bayangan benda terlihat paling jelas dan tajam disebut…", ["bintik buta", "pupil", "bintik kuning", "kornea"], 2, "Bintik kuning (fovea) penuh dengan sel penerima cahaya, sehingga bayangan yang jatuh tepat di sana terlihat paling jelas. Sebaliknya, bintik buta tidak peka cahaya sama sekali."], ["Mata", "Sinyal gambar dari retina diteruskan ke otak melalui…", ["pembuluh darah", "saluran air mata", "otot mata", "saraf penglihatan (saraf optik)"], 3, "Saraf optik membawa sinyal listrik dari retina ke otak. Otak mengolah sinyal itu sehingga kita menyadari benda yang sedang dilihat."], ["Mata", "Seseorang yang sulit melihat jelas di tempat redup atau saat senja kemungkinan menderita rabun senja, yang antara lain disebabkan kekurangan…", ["vitamin A", "vitamin C", "zat besi", "kalsium"], 0, "Vitamin A dibutuhkan retina untuk membentuk zat peka cahaya redup. Kekurangannya membuat mata sulit beradaptasi dengan gelap; perbanyak wortel, bayam, dan pepaya."], ["Mata", "Penglihatan tampak kabur dan bergelombang karena permukaan kornea atau lensa tidak rata disebut mata silinder (astigmatisme), yang dibantu dengan lensa…", ["cembung biasa", "silinder", "cekung biasa", "berwarna gelap"], 1, "Pada mata silinder, cahaya tidak terfokus pada satu titik di retina sehingga benda tampak kabur atau berbayang. Lensa silinder mengoreksi arah fokus yang tidak rata itu."], ["Mata", "Penyakit mata pada orang lanjut usia di mana lensa mata menjadi keruh sehingga penglihatan berkabut disebut…", ["miopi", "hipermetropi", "katarak", "buta warna"], 2, "Katarak membuat lensa yang semula bening menjadi keruh seperti kaca berembun. Pengobatannya dengan operasi mengganti lensa yang keruh."], ["Mata", "Setelah menatap layar gawai cukup lama, cara sederhana mengistirahatkan mata adalah…", ["menatap layar lebih dekat", "menutup mata sambil bermain lagi", "mengucek mata kuat-kuat", "mengalihkan pandangan ke benda yang jauh selama sekitar 20 detik"], 3, "Ini dikenal sebagai aturan 20-20-20: setiap 20 menit menatap layar, lihat benda sejauh ±6 meter selama 20 detik agar otot mata kembali rileks."], ["Mata", "Kita berkedip secara otomatis beberapa kali setiap menit. Berkedip berguna untuk…", ["membasahi dan membersihkan permukaan mata dengan air mata", "melatih otot pipi", "mengubah ukuran pupil", "mengistirahatkan otak"], 0, "Setiap kedipan menyapu air mata ke seluruh permukaan mata, membuang debu halus, dan mencegah mata kering. Saat fokus menatap layar, kita cenderung jarang berkedip."], ["Bunyi", "Kelelawar dapat terbang dan menangkap serangga dalam gelap gulita karena kelelawar memanfaatkan…", ["cahaya matanya yang tajam", "bunyi ultrasonik dan pantulannya (ekolokasi)", "indra penciuman saja", "getaran tanah"], 1, "Kelelawar mengeluarkan bunyi sangat tinggi (ultrasonik) yang tidak terdengar manusia, lalu mendengarkan pantulannya untuk mengetahui letak dan jarak benda di depannya."], ["Bunyi", "Dokter memeriksa keadaan bayi di dalam kandungan ibu dengan alat USG yang memanfaatkan…", ["sinar lampu terang", "magnet besar", "gelombang bunyi ultrasonik dan pantulannya", "arus listrik"], 2, "USG memancarkan bunyi berfrekuensi sangat tinggi ke dalam tubuh; pantulannya dari organ dan janin diolah menjadi gambar pada layar, tanpa sinar berbahaya."], ["Bunyi", "Garpu tala yang bergetar terdengar lebih keras bunyinya apabila pangkalnya ditempelkan pada meja. Hal ini terjadi karena…", ["meja membuat garpu baru", "udara di ruangan bertambah", "garpu tala menjadi lebih panjang", "meja ikut bergetar (resonansi)"], 3, "Resonansi adalah peristiwa ikut bergetarnya suatu benda karena getaran benda lain yang frekuensinya sama. Permukaan meja yang luas menggerakkan lebih banyak udara sehingga bunyi terdengar lebih keras."], ["Bunyi", "Dinding studio rekaman dan bioskop biasanya dilapisi busa dan karpet tebal supaya bunyi…", ["diserap sehingga tidak memantul dan menimbulkan gaung", "menjadi lebih keras", "berubah menjadi cahaya", "merambat lebih cepat"], 0, "Bahan lunak dan berpori seperti busa, karpet, dan kain menyerap energi bunyi. Ruangan yang dilapisi bahan ini terdengar jernih karena pantulan bunyi berkurang."], ["Bunyi", "Dua kaleng yang dihubungkan benang panjang yang tegang dapat dipakai berbicara jarak jauh karena bunyi merambat melalui…", ["udara di sekitar benang saja", "benang sebagai zat padat", "cahaya pada benang", "kaleng yang berputar"], 1, "Suara membuat dasar kaleng bergetar; getaran itu dirambatkan benang yang tegang ke kaleng di ujung lain. Benang harus tegang dan lurus agar getaran tidak hilang."], ["Bunyi", "Botol-botol kaca berisi air dengan ketinggian berbeda akan menghasilkan nada yang berbeda saat ditiup. Botol dengan air paling banyak menghasilkan nada…", ["paling rendah", "sama saja", "paling tinggi", "tidak berbunyi"], 2, "Saat ditiup, yang bergetar adalah udara di atas permukaan air. Air yang banyak membuat ruang udara pendek, bergetar cepat, dan menghasilkan nada tinggi."], ["Bunyi", "Alat musik tradisional angklung dari Jawa Barat dimainkan dengan cara…", ["dipetik", "ditiup", "digesek", "digoyangkan hingga tabung bambunya berbenturan"], 3, "Tabung-tabung bambu angklung bergetar saat digoyangkan dan saling berbenturan, menghasilkan nada tertentu. Satu angklung menghasilkan satu nada, sehingga dimainkan bersama-sama."], ["Bunyi", "Dokter dapat mendengarkan bunyi detak jantung pasien dengan stetoskop karena stetoskop…", ["mengumpulkan dan meneruskan bunyi detak jantung ke telinga dokter", "membuat jantung berdetak lebih keras", "mengubah bunyi menjadi gambar", "menyalakan bunyi dari listrik"], 0, "Ujung stetoskop menangkap getaran bunyi dari dada, lalu meneruskannya melalui selang ke telinga dokter sehingga bunyi yang lemah pun terdengar jelas."], ["Bunyi", "Dua penyelam di dalam laut masih dapat mendengar bunyi ketukan pada tabung oksigen. Hal ini membuktikan bunyi dapat merambat melalui zat…", ["hampa", "cair (air)", "cahaya", "panas"], 1, "Bunyi memerlukan zat perantara dan dapat merambat melalui air. Lumba-lumba dan paus pun berkomunikasi dengan bunyi di dalam laut."], ["Bunyi", "Apabila kita memegang leher saat berbicara, terasa ada getaran. Getaran itu berasal dari…", ["tulang leher", "gigi yang bergesekan", "pita suara di pangkal tenggorokan", "denyut nadi"], 2, "Udara dari paru-paru menggetarkan pita suara saat melewati tenggorokan. Getaran inilah yang menjadi bunyi suara kita, lalu dibentuk oleh lidah dan bibir menjadi kata-kata."], ["Bunyi", "Bel sekolah yang berbunyi dapat didengar oleh siswa yang berada di berbagai penjuru halaman karena bunyi merambat…", ["hanya lurus ke satu arah", "hanya melalui tanah", "hanya ke arah angin", "ke segala arah melalui udara"], 3, "Getaran sumber bunyi menggetarkan udara di sekitarnya ke segala arah, seperti riak air yang menyebar. Karena itu bunyi terdengar dari berbagai arah."], ["Bunyi", "Kentongan yang dipukul dapat berbunyi nyaring dan terdengar dari jauh karena saat dipukul yang bergetar adalah…", ["badan bambu/kayu kentongan beserta udara di rongganya", "tangan pemukul", "tali gantungannya", "tanah di bawahnya"], 0, "Pukulan membuat dinding kentongan dan udara di dalam rongganya bergetar bersama. Kentongan sejak dulu dipakai sebagai alat komunikasi tanda bahaya dan ronda malam."], ["Bunyi", "Gong yang dipukul berbunyi mendengung panjang. Bunyi itu dihasilkan oleh getaran pada…", ["tali gantungan gong", "lembaran logam gong", "pemukul gong", "udara yang berhenti bergerak"], 1, "Logam gong bergetar kuat setelah dipukul pada bagian tengahnya yang menonjol (pencu). Getarannya besar dan berlangsung lama sehingga bunyinya mendengung panjang."], ["Bunyi", "Ketipung (gendang kecil) menghasilkan nada lebih tinggi daripada bedug besar karena…", ["kulit ketipung lebih tebal", "bedug dipukul lebih pelan", "kulit penutupnya kecil sehingga bergetar lebih cepat", "ketipung terbuat dari kayu"], 2, "Benda kecil dan tegang bergetar lebih cepat (frekuensi besar) sehingga nadanya tinggi. Membran bedug yang besar bergetar lebih lambat sehingga nadanya rendah dan berat."], ["Bunyi", "Terompet menghasilkan bunyi yang nyaring karena yang bergetar adalah…", ["logam terompet yang dipukul", "tombol-tombol terompet", "udara di luar terompet saja", "bibir pemain dan kolom udara di dalam terompet"], 3, "Pemain menggetarkan bibirnya pada corong terompet; getaran itu menggetarkan udara di dalam pipa dan diperkuat bentuk corongnya yang melebar."], ["Telinga", "Tiga tulang kecil di telinga tengah yang meneruskan getaran bunyi adalah…", ["martil, landasan, dan sanggurdi", "tulang pipi, rahang, dan dahi", "tulang rusuk kecil", "sanggurdi, dahi, dan pipi"], 0, "Martil, landasan, dan sanggurdi adalah tulang-tulang terkecil di tubuh manusia. Rangkaian ketiganya memperkuat getaran dari gendang telinga menuju rumah siput."], ["Telinga", "Selain untuk mendengar, telinga juga berperan penting dalam…", ["mengatur rasa lapar", "menjaga keseimbangan tubuh", "memompa darah", "mengatur suhu tubuh"], 1, "Di telinga dalam terdapat saluran setengah lingkaran berisi cairan yang peka terhadap gerakan kepala. Sinyalnya membantu otak menjaga tubuh tetap seimbang."], ["Telinga", "Kebiasaan membersihkan telinga dengan cotton bud terlalu dalam berbahaya karena dapat…", ["membuat telinga lebih bersih", "memperbesar lubang telinga", "mendorong kotoran makin masuk dan melukai gendang telinga", "menambah kotoran baru"], 2, "Liang telinga hanya aman dibersihkan bagian luarnya. Cotton bud yang masuk terlalu dalam justru memadatkan kotoran dan berisiko merobek gendang telinga."], ["Telinga", "Seseorang yang pendengarannya berkurang dapat dibantu dengan alat bantu dengar, yaitu alat yang berguna untuk…", ["menggantikan gendang telinga", "menghasilkan bunyi musik", "membersihkan kotoran telinga", "memperkuat bunyi yang masuk ke telinga"], 3, "Alat bantu dengar menangkap bunyi dengan mikrofon kecil, memperkuatnya, lalu mengantar bunyi yang lebih keras ke telinga pemakainya."], ["Telinga", "Daun telinga terasa lentur dan tidak sakit saat tertekuk karena daun telinga tersusun dari…", ["tulang rawan", "tulang keras", "otot besar", "lemak tebal"], 0, "Tulang rawan bersifat lentur dan kenyal, sehingga daun telinga dapat menekuk tanpa patah dan kembali ke bentuk semula. Ujung hidung kita juga tersusun dari tulang rawan."], ["Telinga", "Setelah ditangkap daun telinga, bunyi masuk melalui liang telinga. Liang telinga meneruskan bunyi menuju…", ["rumah siput langsung", "gendang telinga", "otak", "saluran Eustachius"], 1, "Liang (saluran) telinga adalah jalan bagi gelombang bunyi. Di ujung liang terdapat gendang telinga yang akan bergetar saat gelombang bunyi mengenainya."], ["Telinga", "Bunyi yang dapat didengar oleh telinga manusia normal disebut audiosonik, dengan frekuensi antara…", ["di bawah 20 getaran per detik", "di atas 20.000 getaran per detik", "20 sampai 20.000 getaran per detik", "hanya 100 getaran per detik"], 2, "Bunyi di bawah 20 Hz disebut infrasonik (dapat didengar gajah), sedangkan di atas 20.000 Hz disebut ultrasonik (didengar kelelawar dan lumba-lumba). Manusia berada di tengah-tengahnya."], ["Telinga", "Apabila kotoran telinga menumpuk dan menyumbat hingga pendengaran berkurang, tindakan yang benar adalah…", ["mengorek sendiri dengan benda tajam", "membiarkan saja selamanya", "meneteskan minyak goreng", "memeriksakan ke dokter agar dibersihkan dengan aman"], 3, "Dokter memiliki alat dan cairan khusus untuk melunakkan serta mengeluarkan sumbatan kotoran telinga tanpa melukai gendang telinga."], ["Telinga", "Bagian-bagian telinga yang termasuk telinga luar adalah…", ["daun telinga dan liang telinga", "gendang telinga dan tulang pendengaran", "rumah siput dan saluran setengah lingkaran", "saluran Eustachius dan koklea"], 0, "Telinga dibagi tiga bagian: telinga luar (daun dan liang telinga), telinga tengah (gendang telinga, tulang pendengaran, saluran Eustachius), dan telinga dalam (koklea dan saluran setengah lingkaran)."], ["Telinga", "Pekerja di tempat yang sangat bising, misalnya di sekitar mesin pabrik, sebaiknya memakai pelindung telinga (earmuff) supaya…", ["telinga terlihat keren", "bunyi keras yang masuk berkurang dan pendengaran terlindungi", "dapat mendengar lebih jauh", "telinga tidak berkeringat"], 1, "Paparan bunyi sangat keras setiap hari dapat merusak sel-sel pendengaran sedikit demi sedikit secara permanen. Pelindung telinga mengurangi kerasnya bunyi yang sampai ke gendang telinga."]];
+</script>
+
+<script>
+"use strict";
+/* ================= MESIN KUIS ================= */
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+var toastTimer=null;
+function toast(t){ var el=$('toast'); el.textContent=t; el.classList.add('tampil'); clearTimeout(toastTimer); toastTimer=setTimeout(function(){ el.classList.remove('tampil'); },2400); }
+function acak(arr){ var a=arr.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+
+var SESI=null;
+var BATAS_DETIK=60;
+function mulaiKuis(){
+  var nama=$('inNama').value.trim();
+  if(!nama){ toast('Tulis nama siswa dulu ya 😊'); $('inNama').focus(); return; }
+  var kelas=$('inKelas').value.trim()||'—';
+  // susun soal: acak urutan soal + acak urutan pilihan, kunci disesuaikan
+  var soal=acak(BANK.map(function(q, idx){
+    var urutan=acak([0,1,2,3]);
+    return { topik:q[0], teks:q[1], opsi:urutan.map(function(i){ return q[2][i]; }), kunci:urutan.indexOf(q[3]), bahas:q[4], nomorAsli:idx+1 };
+  }));
+  SESI={ nama:nama, kelas:kelas, soal:soal, ke:0, benar:0, jawab:[], tMulai:Date.now(), sisa:BATAS_DETIK, timer:null, kunciLayar:false };
+  $('layarLogin').classList.add('sembunyi');
+  $('layarHasil').classList.add('sembunyi');
+  $('layarBahas').classList.add('sembunyi');
+  $('layarKuis').classList.remove('sembunyi');
+  $('kuisSiapa').textContent=nama+' • '+kelas;
+  tampilSoal();
+  window.scrollTo({top:0});
+}
+$('btnMulai').addEventListener('click', mulaiKuis);
+$('inNama').addEventListener('keydown', function(e){ if(e.key==='Enter') mulaiKuis(); });
+
+var BENTUK=['▲','◆','●','■'];
+function tampilSoal(){
+  var s=SESI.soal[SESI.ke];
+  $('kuisKe').textContent=SESI.ke+1;
+  $('kuisSkor').textContent=SESI.benar;
+  $('barMaju').style.width=(SESI.ke/SESI.soal.length*100)+'%';
+  $('soalTopik').textContent=s.topik.toUpperCase();
+  $('soalTeks').textContent=s.teks;
+  $('umpanBalik').textContent='';
+  var w=$('wadahOpsi'); w.innerHTML='';
+  s.opsi.forEach(function(o, i){
+    var b=document.createElement('button');
+    b.className='w'+i;
+    b.innerHTML='<span class="bentuk">'+BENTUK[i]+'</span><span>'+esc(o)+'</span>';
+    b.addEventListener('click', function(){ jawab(i); });
+    w.appendChild(b);
+  });
+  SESI.kunciLayar=false;
+  mulaiTimerSoal();
+}
+function mulaiTimerSoal(){
+  clearInterval(SESI.timer);
+  SESI.sisa=BATAS_DETIK;
+  $('kuisTimer').textContent=SESI.sisa;
+  $('barTimer').style.width='100%';
+  $('barTimer').style.background='#39d353';
+  SESI.timer=setInterval(function(){
+    SESI.sisa--;
+    $('kuisTimer').textContent=Math.max(0, SESI.sisa);
+    $('barTimer').style.width=Math.max(0, SESI.sisa/BATAS_DETIK*100)+'%';
+    if(SESI.sisa<=15) $('barTimer').style.background='#e21b3c';
+    if(SESI.sisa<=0){ clearInterval(SESI.timer); jawab(-1); }
+  }, 1000);
+}
+function jawab(pilihan){
+  if(SESI.kunciLayar) return;
+  SESI.kunciLayar=true;
+  clearInterval(SESI.timer);
+  var s=SESI.soal[SESI.ke];
+  var tepat = pilihan===s.kunci;
+  SESI.jawab[SESI.ke]=pilihan;
+  if(tepat) SESI.benar++;
+  $('kuisSkor').textContent=SESI.benar;
+  var tombol=$('wadahOpsi').querySelectorAll('button');
+  tombol.forEach(function(b, i){
+    b.disabled=true;
+    if(i===s.kunci) b.classList.add('benar');
+    else if(i===pilihan) b.classList.add('salah');
+    else b.classList.add('salah');
+  });
+  $('umpanBalik').textContent = pilihan===-1 ? '⏰ Waktu habis! Jawaban benar ditandai putih.' : (tepat ? '🎉 Betul! Kerja bagus!' : '💪 Belum tepat — yang benar ditandai putih ya.');
+  setTimeout(function(){
+    SESI.ke++;
+    if(SESI.ke>=SESI.soal.length) tampilHasil();
+    else tampilSoal();
+  }, 1500);
+}
+function tampilHasil(){
+  clearInterval(SESI.timer);
+  $('barMaju').style.width='100%';
+  var total=SESI.soal.length;
+  var nilai=Math.round(SESI.benar/total*100);
+  var detik=Math.round((Date.now()-SESI.tMulai)/1000);
+  var waktu=Math.floor(detik/60)+':'+('0'+(detik%60)).slice(-2);
+  $('layarKuis').classList.add('sembunyi');
+  $('layarHasil').classList.remove('sembunyi');
+  $('hasilNilai').textContent=nilai;
+  $('hasilNama').textContent=SESI.nama+' • Kelas '+SESI.kelas;
+  $('hasilPesan').textContent = nilai>=85 ? 'Luar biasa! Kamu menguasai Bab 1 dengan sangat baik 🌟' : (nilai>=70 ? 'Bagus! Sedikit lagi menuju sempurna 👍' : (nilai>=55 ? 'Cukup baik — pelajari pembahasannya dan coba lagi ya 💪' : 'Jangan menyerah! Baca pembahasan lengkapnya, pasti bisa lebih baik 🌱'));
+  $('hasilBenar').textContent=SESI.benar;
+  $('hasilSalah').textContent=total-SESI.benar;
+  $('hasilWaktu').textContent=waktu;
+  window.scrollTo({top:0});
+}
+$('btnUlangi').addEventListener('click', function(){ mulaiKuisDariHasil(); });
+function mulaiKuisDariHasil(){
+  var nama=SESI.nama, kelas=SESI.kelas;
+  $('inNama').value=nama; $('inKelas').value=kelas==='—'?'':kelas;
+  mulaiKuis();
+}
+$('btnGantiSiswa').addEventListener('click', function(){
+  $('layarHasil').classList.add('sembunyi');
+  $('layarBahas').classList.add('sembunyi');
+  $('layarLogin').classList.remove('sembunyi');
+  window.scrollTo({top:0});
+});
+/* ================= PEMBAHASAN ================= */
+var filterBahas='semua';
+$('btnPembahasan').addEventListener('click', function(){
+  $('layarHasil').classList.add('sembunyi');
+  $('layarBahas').classList.remove('sembunyi');
+  renderBahas();
+  window.scrollTo({top:0});
+});
+$('btnKembaliHasil').addEventListener('click', function(){
+  $('layarBahas').classList.add('sembunyi');
+  $('layarHasil').classList.remove('sembunyi');
+  window.scrollTo({top:0});
+});
+document.querySelectorAll('#filterBahas button').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('#filterBahas button').forEach(function(x){ x.classList.remove('aktif'); });
+    b.classList.add('aktif'); filterBahas=b.getAttribute('data-f'); renderBahas();
+  });
+});
+function renderBahas(){
+  var d=$('daftarBahas'); d.innerHTML='';
+  var tampil=0;
+  SESI.soal.forEach(function(s, i){
+    var jawabanSiswa=SESI.jawab[i];
+    var betul=jawabanSiswa===s.kunci;
+    if(filterBahas==='salah' && betul) return;
+    if(filterBahas==='benar' && !betul) return;
+    tampil++;
+    var div=document.createElement('div'); div.className='item-bahas';
+    var html='<div class="no">SOAL '+(i+1)+' • '+esc(s.topik).toUpperCase()+' • '+(betul?'✅ BENAR':'❌ SALAH')+'</div><div class="tanya">'+esc(s.teks)+'</div>';
+    s.opsi.forEach(function(o, oi){
+      var kelasBaris='jawab-baris';
+      if(oi===s.kunci) kelasBaris+=' kunci';
+      else if(oi===jawabanSiswa) kelasBaris+=' jawaban-salah';
+      var tanda = oi===s.kunci ? ' ✅ Kunci' : (oi===jawabanSiswa ? ' ← Jawabanmu' : '');
+      html+='<div class="'+kelasBaris+'"><b>'+'ABCD'[oi]+'.</b> '+esc(o)+tanda+'</div>';
+    });
+    if(jawabanSiswa===-1 || jawabanSiswa===undefined) html+='<div class="jawab-baris jawaban-salah">⏰ Kamu tidak sempat menjawab soal ini.</div>';
+    html+='<div class="bahas"><b>📖 Pembahasan:</b> '+esc(s.bahas)+'</div>';
+    div.innerHTML=html;
+    d.appendChild(div);
+  });
+  if(!tampil) d.innerHTML='<div style="color:#fff;text-align:center;padding:20px">Tidak ada soal pada filter ini. 🎉</div>';
+}
+</script>
+</body>
+</html>
