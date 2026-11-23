@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#7f1d1d">
+<title>Kamus Bahasa Katingan — Kamus Dasar Dayak Ngaju (Dialek Katingan)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Fraunces:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{--merah:#7f1d1d;--merah2:#991b1b;--emas:#d4a017;--krem:#fdf8ec;--ink:#221709;--muted:#7a6a52;--line:#e7dcc3;--card:#fffdf6}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--krem);color:var(--ink)}
+.ornamen{height:14px;background:repeating-linear-gradient(45deg,var(--merah) 0 14px,var(--emas) 14px 20px,#1c0a0a 20px 34px,var(--emas) 34px 40px)}
+.sampul{background:linear-gradient(160deg,#450a0a,#7f1d1d 55%,#991b1b);color:#fdf8ec;text-align:center;padding:52px 18px 44px}
+.sampul .kecil{letter-spacing:.28em;font-size:11px;font-weight:800;color:var(--emas);text-transform:uppercase}
+.sampul h1{font-family:'Fraunces',serif;font-size:clamp(34px,7vw,58px);margin:10px 0 6px;line-height:1.05}
+.sampul p{max-width:620px;margin:8px auto;color:#f3e2c7;font-size:15px}
+.lencana{display:inline-block;border:1.5px solid var(--emas);color:#ffe9a8;border-radius:99px;padding:5px 14px;font-size:12px;font-weight:800;margin-top:10px}
+.bungkus{max-width:880px;margin:0 auto;padding:20px 14px 70px}
+.kartu{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin:14px 0;box-shadow:0 4px 18px rgba(69,10,10,.06)}
+h2{font-family:'Fraunces',serif;color:var(--merah);margin:4px 0 10px;font-size:24px}
+h3{color:var(--merah);margin:0 0 8px;font-size:17px}
+p,li{font-size:14.5px;line-height:1.65}
+.cari{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.cari input{flex:1;min-width:200px;padding:13px 15px;border:1.5px solid var(--line);border-radius:12px;font-size:15px;font-family:inherit;background:#fff}
+.btn{background:var(--merah);color:#fff;border:none;padding:12px 18px;border-radius:12px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit}
+.btn:hover{background:var(--merah2)}
+.btn-emas{background:var(--emas);color:#2a1a00}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 4px}
+.chips button{border:1.5px solid var(--line);background:#fff;padding:8px 13px;border-radius:99px;font-weight:700;font-size:12.5px;cursor:pointer;font-family:inherit;color:var(--muted)}
+.chips button.aktif{background:var(--merah);color:#fff;border-color:var(--merah)}
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;font-size:14.5px;vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+td.kata{font-weight:800;color:var(--merah);white-space:nowrap}
+td.contoh{color:var(--muted);font-style:italic;font-size:13.5px}
+.jumlah{color:var(--muted);font-size:13px;font-weight:700}
+.kaki{text-align:center;color:var(--muted);font-size:12.5px;margin-top:26px;line-height:1.7}
+@media print{
+  .sampul{padding:26px 10px}.tanpa-cetak{display:none!important}
+  body{background:#fff}.kartu{box-shadow:none;border:none;padding:6px 0}
+  .halaman-kat{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="ornamen"></div>
+<header class="sampul">
+  <div class="kecil">Ebook Kamus Dasar</div>
+  <h1>Kamus Bahasa Katingan</h1>
+  <p>Bahasa Dayak Ngaju — Dialek Katingan ⇄ Bahasa Indonesia</p>
+  <p style="font-size:13.5px">Kosakata sehari-hari masyarakat di sepanjang Sungai Katingan, Kalimantan Tengah: sapaan, bilangan, keluarga, alam dan sungai, sampai frasa percakapan.</p>
+  <span class="lencana">±200 kata &amp; frasa • bisa dicari • siap cetak</span>
+</header>
+
+<div class="bungkus">
+  <div class="kartu">
+    <h2>Tentang Bahasa Ini</h2>
+    <p>Bahasa yang dituturkan sehari-hari oleh masyarakat Dayak di Kabupaten Katingan adalah <b>bahasa Dayak Ngaju</b> — bahasa besar Kalimantan Tengah yang juga dipakai di daerah aliran Sungai Kapuas, Kahayan, Mentaya, dan Barito. Suku Katingan sendiri termasuk salah satu anak suku Dayak Ngaju. Karena itulah bahasa ibu di Kasongan, Tasik Payawan, sampai Katingan Hulu pada dasarnya adalah Ngaju dengan <b>dialek Katingan</b>.</p>
+    <p>Ciri dialek yang paling mudah dikenali adalah bunyi <b>“o”</b> di beberapa kata yang dalam Ngaju baku berbunyi “u” — misalnya <i>mihop</i> (minum) dan <i>tiroh</i> (tidur). Kamus dasar ini menuliskan bentuk yang umum dipakai, dan bentuk pasangannya dicantumkan bila ada.</p>
+    <p><b>Cara memakai:</b> ketik kata pada kotak pencarian (boleh kata Katingan atau artinya dalam bahasa Indonesia), atau saring menurut kelompok kata. Tombol <b>Cetak / Simpan PDF</b> mencetak seluruh isi kamus menjadi lembaran A4 — cocok untuk bahan ajar muatan lokal di kelas.</p>
+    <p style="color:var(--muted);font-size:13px">Catatan: ini kamus <i>dasar</i> untuk pembelajaran awal. Ejaan mengikuti tulisan Ngaju yang umum; variasi ucap antar-desa itu wajar dalam bahasa lisan. Koreksi dan tambahan kata dari penutur asli sangat diterima agar kamus ini makin tepat.</p>
+    <div class="cari tanpa-cetak">
+      <input id="kotak-cari" type="search" placeholder="🔎 Cari kata… misalnya: danum, air, makan, sungai" oninput="render()">
+      <button class="btn btn-emas" onclick="window.print()">🖨 Cetak / Simpan PDF</button>
+    </div>
+    <div class="chips tanpa-cetak" id="chips"></div>
+    <p class="jumlah" id="jumlah"></p>
+  </div>
+
+  <div id="isi"></div>
+
+  <div class="kartu">
+    <h2>Frasa Sehari-hari</h2>
+    <p>Contoh kalimat utuh untuk latihan bercakap. Kata-kata di dalamnya dapat ditemukan pada bagian kamus di atas.</p>
+    <table id="tabel-frasa"><tr><th>Bahasa Katingan</th><th>Artinya</th></tr></table>
+  </div>
+
+  <p class="kaki">Kamus Bahasa Katingan — kamus dasar Dayak Ngaju (dialek Katingan) ⇄ Indonesia.<br>
+  Disusun sebagai bahan belajar dan pelestarian bahasa daerah Kabupaten Katingan, Kalimantan Tengah.<br>
+  Ela sampai bahasa itah nihau — jangan sampai bahasa kita hilang. 🛶</p>
+</div>
+<div class="ornamen"></div>
+
+<script>
+"use strict";
+/* Kosakata dasar Dayak Ngaju (dialek Katingan). Ejaan mengikuti tulisan Ngaju umum;
+   bentuk dialek berpasangan ditulis dengan tanda "/". */
+const KATEGORI=[
+ ["bilangan","🔢 Bilangan"],["ganti","🙋 Kata Ganti & Sapaan"],["keluarga","👨‍👩‍👧 Keluarga & Orang"],
+ ["tanya","❓ Kata Tanya & Tunjuk"],["waktu","🕐 Waktu & Hari"],["alam","🌊 Alam & Sungai"],
+ ["tubuh","🧍 Tubuh"],["rumah","🏠 Rumah & Benda"],["hewan","🐃 Hewan & Tumbuhan"],
+ ["kerja","🛠️ Kata Kerja Sehari-hari"],["sifat","🎨 Kata Sifat & Warna"]
+];
+const KATA=[
+["ije","satu","bilangan"],["due","dua","bilangan"],["telu","tiga","bilangan"],["epat","empat","bilangan"],
+["lime","lima","bilangan"],["jahawen","enam","bilangan"],["uju","tujuh","bilangan"],["hanya","delapan","bilangan"],
+["jalatien","sembilan","bilangan"],["sapulu","sepuluh","bilangan"],["ije belas","sebelas","bilangan"],
+["due belas","dua belas","bilangan"],["due pulu","dua puluh","bilangan"],["telu pulu","tiga puluh","bilangan"],
+["ije ratus","seratus","bilangan"],["ije kuyan","seribu","bilangan"],
+["aku","saya / aku","ganti"],["ikau / ikaw","kamu / engkau","ganti"],["ie / iye","dia","ganti"],
+["itah","kita","ganti"],["ikei","kami","ganti"],["ketun / keton","kalian","ganti"],["ewen","mereka","ganti"],
+["aran","nama","ganti"],["ayungku","kepunyaanku / milikku","ganti"],["arep","diri sendiri","ganti"],
+["indu / indang","ibu","keluarga"],["apang / bapa","ayah / bapak","keluarga"],["tambi","nenek","keluarga"],
+["bue","kakek","keluarga"],["kaka","kakak / abang","keluarga"],["andi","adik","keluarga"],
+["aken","keponakan","keluarga"],["anak","anak","keluarga"],["tambakas","anak sulung","keluarga"],
+["busu / tambusu","anak bungsu","keluarga"],["sawa","istri","keluarga"],["bana","suami","keluarga"],
+["mina","bibi / tante","keluarga"],["mama","paman / om","keluarga"],["hatue","laki-laki","keluarga"],
+["bawi","perempuan","keluarga"],["uluh","orang","keluarga"],["pahari","saudara / kerabat","keluarga"],
+["haruei","saudara / famili","keluarga"],["belian","dukun / tabib adat","keluarga"],["liau","almarhum","keluarga"],
+["narai","apa","tanya"],["eweh","siapa","tanya"],["kuweh / kueh","mana","tanya"],
+["hang kuweh","di mana","tanya"],["pea / hamparea","kapan","tanya"],["pire","berapa","tanya"],
+["kilen / kilenampih","bagaimana","tanya"],["jetuh / jituh","ini","tanya"],["jite / jete","itu","tanya"],
+["hetuh","sini","tanya"],["hete","situ","tanya"],["hekaw","sana","tanya"],["akan","untuk / kepada","tanya"],
+["bara","dari","tanya"],["awi / haranan","karena / sebab","tanya"],["huang","dalam / di dalam","tanya"],
+["hunjun","di atas","tanya"],["penda","di bawah","tanya"],["kilau","seperti","tanya"],
+["andau","hari / siang","waktu"],["hanjewu","pagi","waktu"],["halemei","sore","waktu"],
+["hamalem","malam","waktu"],["wayah tuh","sekarang","waktu"],["jewu","besok","waktu"],
+["nyelu","tahun","waktu"],["bulan","bulan","waktu"],
+["danum","air","alam"],["batang danum","sungai (besar)","alam"],["danau","danau","alam"],
+["petak","tanah","alam"],["kayu","kayu / pohon","alam"],["dawen","daun","alam"],
+["riwut","angin","alam"],["langit","langit","alam"],["matanandau","matahari","alam"],
+["metu","bintang","alam"],["apui","api","alam"],["asep","asap","alam"],["kilat","kilat / petir","alam"],
+["guntur","guntur","alam"],["laut","laut","alam"],["pasir","pasir","alam"],["batu","batu","alam"],
+["lewu","kampung / desa","alam"],["hasep","kabut","alam"],["kawu","abu / debu","alam"],
+["balau","rambut","tubuh"],["mata","mata","tubuh"],["pinding","telinga","tubuh"],
+["kasinga","gigi","tubuh"],["jela","lidah","tubuh"],["lenge","tangan","tubuh"],["pai","kaki","tubuh"],
+["kanai","perut","tubuh"],["atei","hati","tubuh"],["daha","darah","tubuh"],["isi","daging","tubuh"],
+["gantau","kanan","tubuh"],["likut","belakang","tubuh"],["ikuh","ekor","tubuh"],
+["huma","rumah","rumah"],["batunggang","pintu","rumah"],["basenguk","jendela","rumah"],
+["hatap / sapau","atap","rumah"],["dukuh","pondok / rumah di ladang","rumah"],
+["asu","anjing","hewan"],["bawui","babi","hewan"],["bakei","kera / monyet","hewan"],
+["balawau","tikus","hewan"],["handipe","ular","hewan"],["hadangan","kerbau","hewan"],
+["burung","burung","hewan"],["lauk","ikan","hewan"],["nyamuk","nyamuk","hewan"],
+["guti","kutu","hewan"],["handalai","cacing","hewan"],["sabangkang","laba-laba","hewan"],
+["bua","buah","hewan"],["kambang","bunga","hewan"],
+["kuman","makan","kerja"],["mihop / mihup","minum","kerja"],["tiroh / tiruh","tidur","kerja"],
+["mananjung","berjalan","kerja"],["hadari","berlari","kerja"],["munduk","duduk","kerja"],
+["mendeng","berdiri","kerja"],["menter","berbaring","kerja"],["bagawi","bekerja","kerja"],
+["membasa","membaca","kerja"],["nampa","membuat / membikin","kerja"],["mamili","membeli","kerja"],
+["mampakasak","memasak","kerja"],["manangis","menangis","kerja"],["mahaseng","bernapas","kerja"],
+["hanangui","berenang","kerja"],["mandup","berburu","kerja"],["mimbul","menanam","kerja"],
+["mangali","menggali","kerja"],["manetek","memotong","kerja"],["mamukul","memukul","kerja"],
+["dumah","datang","kerja"],["belum","hidup","kerja"],["matei","mati / meninggal","kerja"],
+["mikeh","takut","kerja"],["mahamen","malu","kerja"],["umba","ikut","kerja"],
+["ulih","bisa / dapat","kerja"],["hakun","mau / bersedia","kerja"],["tehau","panggil","kerja"],
+["hamaoh","berbicara / bercakap","kerja"],["manampayah","melihat","kerja"],["mahining","mendengar","kerja"],
+["mandai","memanjat","kerja"],["manupi","bermimpi","kerja"],["mangirut","menggigit","kerja"],
+["manakau","mencuri","kerja"],["mimbing","memegang","kerja"],["mintih","memilih","kerja"],
+["hai","besar","sifat"],["kurik","kecil","sifat"],["panjang","panjang","sifat"],["pandak","pendek","sifat"],
+["lumbah","lebar","sifat"],["babehat","berat","sifat"],["batajim","tajam","sifat"],["batumpul","tumpul","sifat"],
+["bakapal","tebal","sifat"],["banipis","tipis","sifat"],["bahalap","baik / bagus","sifat"],
+["papa","buruk / jelek / kotor","sifat"],["balasut","panas","sifat"],["keang","kering","sifat"],
+["bisa","basah","sifat"],["haru","baru","sifat"],["bakas","tua","sifat"],["bahanyi","berani","sifat"],
+["belau","lapar","sifat"],["besuh","kenyang","sifat"],["pehe","sakit","sifat"],["barigas","sehat","sifat"],
+["bahandang","merah","sifat"],["bahenda","kuning","sifat"],["babilem","hitam","sifat"],
+["baputi","putih","sifat"],["bahijau","hijau","sifat"],["kejau","jauh","sifat"],["handalem","dalam","sifat"],
+["dia","tidak","sifat"],["jaton","tidak ada","sifat"],["beken","bukan","sifat"],["ela","jangan","sifat"],
+["amun","jika / bila","sifat"],["atun","ada","sifat"]
+];
+const FRASA=[
+["Tabe!","Salam hormat (sapaan pembuka yang sopan)"],
+["Salamat hanjewu!","Selamat pagi!"],
+["Salamat dumah!","Selamat datang!"],
+["Narai aranmu?","Siapa namamu?"],
+["Arangku …","Nama saya …"],
+["Ikau bara kuweh?","Kamu dari mana?"],
+["Aku bara Kasongan.","Saya dari Kasongan."],
+["Kueh humam?","Di mana rumahmu?"],
+["Aku handak kuman.","Saya mau makan."],
+["Ikei mananjung akan lewu.","Kami berjalan ke kampung."],
+["Aku kanahuang dengam.","Aku mencintaimu."],
+["Tarima kasih!","Terima kasih! (kata serapan yang umum dipakai)"],
+["Ela tiruh hindai!","Jangan tidur dulu!"]
+];
+let saringKat="semua";
+function buatChips(){
+  const c=document.getElementById("chips");
+  c.innerHTML="<button data-k=\"semua\" class=\"aktif\" onclick=\"pilihKat('semua')\">Semua</button>"+
+    KATEGORI.map(k=>"<button data-k=\""+k[0]+"\" onclick=\"pilihKat('"+k[0]+"')\">"+k[1]+"</button>").join("");
+}
+function pilihKat(k){saringKat=k;document.querySelectorAll("#chips button").forEach(b=>b.classList.toggle("aktif",b.dataset.k===k));render()}
+function cocok(kata,arti,q){return (kata+" "+arti).toLowerCase().includes(q)}
+function render(){
+  const q=document.getElementById("kotak-cari").value.trim().toLowerCase();
+  const isi=document.getElementById("isi");let total=0,html="";
+  KATEGORI.forEach(([kode,label])=>{
+    if(saringKat!=="semua"&&saringKat!==kode)return;
+    const rows=KATA.filter(e=>e[2]===kode&&(!q||cocok(e[0],e[1],q)));
+    if(!rows.length)return;total+=rows.length;
+    html+="<div class=\"kartu halaman-kat\"><h3>"+label+"</h3><table><tr><th style=\"width:34%\">Bahasa Katingan</th><th>Bahasa Indonesia</th></tr>"+
+      rows.map(e=>"<tr><td class=\"kata\">"+e[0]+"</td><td>"+e[1]+"</td></tr>").join("")+"</table></div>";
+  });
+  isi.innerHTML=html||"<div class=\"kartu\"><p>Tidak ada kata yang cocok. Coba kata kunci lain.</p></div>";
+  document.getElementById("jumlah").textContent="Menampilkan "+total+" dari "+KATA.length+" kata.";
+}
+function renderFrasa(){
+  document.getElementById("tabel-frasa").innerHTML="<tr><th style=\"width:44%\">Bahasa Katingan</th><th>Artinya</th></tr>"+
+    FRASA.map(f=>"<tr><td class=\"kata\">"+f[0]+"</td><td class=\"contoh\" style=\"font-style:normal;color:inherit\">"+f[1]+"</td></tr>").join("");
+}
+buatChips();render();renderFrasa();
+</script>
+</body>
+</html>
