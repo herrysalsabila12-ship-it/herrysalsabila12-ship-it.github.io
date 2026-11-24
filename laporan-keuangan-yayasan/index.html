@@ -108,7 +108,7 @@ tr:hover td{background:#fdf9ec}
 var KUNCI='keuyayasan_v1';
 var MENU=[
  ['beranda','🏠','Beranda'],['catat','➕','Catat'],['transaksi','☰','Transaksi'],
- ['spp','💳','SPP'],['santri','🎓','Data Santri'],['donatur','❤️','Donatur'],
+ ['spp','💳','SPP'],['santri','🎓','Data Santri'],['ujian','📝','Ujian CBT'],['donatur','❤️','Donatur'],
  ['qurban','🐄','Qurban'],['kegiatan','📋','Kegiatan'],['pengaturan','⚙️','Pengaturan']
 ];
 var KATEGORI=['SPP Santri','Donasi','Qurban','Kegiatan','Operasional','Gaji & Honor','Pembangunan','Sosial','Lainnya'];
@@ -134,12 +134,23 @@ function bawaan(){
   kegiatan:[
    {id:1,nama:'Peringatan Maulid Nabi (contoh)',tgl:ymd(new Date()),anggaran:1500000,realisasi:1350000,ket:'Sudah terlaksana'}
   ],
-  seq:{santri:4,trx:3,donatur:2,qurban:2,kegiatan:2}
+  soal:[
+   {id:1,tanya:'Rukun Islam yang pertama adalah …',opsi:['Shalat','Syahadat','Puasa','Zakat'],kunci:1,kategori:'Pengajian'},
+   {id:2,tanya:'Jumlah rukun Islam ada …',opsi:['4','5','6','7'],kunci:1,kategori:'Pengajian'},
+   {id:3,tanya:'Sebelum makan, kita membaca …',opsi:['Alhamdulillah','Bismillah','Subhanallah','Astaghfirullah'],kunci:1,kategori:'Doa Sehari-hari'},
+   {id:4,tanya:'Sebelum shalat, kita wajib berwudu dengan …',opsi:['Air yang suci','Pasir kering','Minyak wangi','Susu'],kunci:0,kategori:'Pengajian'},
+   {id:5,tanya:'Surat pertama di dalam Al-Qur\u2019an adalah …',opsi:['Al-Baqarah','Al-Fatihah','Al-Ikhlas','An-Nas'],kunci:1,kategori:"Al-Qur'an"}
+  ],
+  paket:[
+   {id:1,nama:'Latihan Pengajian (Contoh)',token:'UJIAN1',durasi:15,soalIds:[1,2,3,4,5],aktif:true}
+  ],
+  hasil:[],
+  seq:{santri:4,trx:3,donatur:2,qurban:2,kegiatan:2,soal:6,paket:2,hasil:1}
  };
 }
 var DB=mauat();
 function mauat(){
- try{var d=JSON.parse(localStorage.getItem(KUNCI));if(d&&d.set)return d;}catch(e){}
+ try{var d=JSON.parse(localStorage.getItem(KUNCI));if(d&&d.set){var b=bawaan();['soal','paket','hasil'].forEach(function(k){if(!d[k])d[k]=b[k];if(d.seq&&d.seq[k]==null)d.seq[k]=b.seq[k];});return d;}}catch(e){}
  var b=bawaan();localStorage.setItem(KUNCI,JSON.stringify(b));return b;
 }
 function simpan(){localStorage.setItem(KUNCI,JSON.stringify(DB));}
@@ -174,12 +185,12 @@ function bangunMenu(){
 function render(){
  bangunMenu();
  $('#h-nama-yayasan').textContent=DB.set.yayasan;
- var fn={beranda:pgBeranda,catat:pgCatat,transaksi:pgTransaksi,spp:pgSPP,santri:pgSantri,donatur:pgDonatur,qurban:pgQurban,kegiatan:pgKegiatan,pengaturan:pgPengaturan}[halaman];
+ var fn={beranda:pgBeranda,catat:pgCatat,transaksi:pgTransaksi,spp:pgSPP,santri:pgSantri,ujian:pgUjian,donatur:pgDonatur,qurban:pgQurban,kegiatan:pgKegiatan,pengaturan:pgPengaturan}[halaman];
  $('#konten').innerHTML=fn();
  pasang();
  window.scrollTo(0,0);
 }
-function pasang(){var fn={beranda:psBeranda,catat:psCatat,transaksi:psTransaksi,spp:psSPP,santri:psSantri,donatur:psDonatur,qurban:psQurban,kegiatan:psKegiatan,pengaturan:psPengaturan}[halaman];if(fn)fn();}
+function pasang(){var fn={beranda:psBeranda,catat:psCatat,transaksi:psTransaksi,spp:psSPP,santri:psSantri,ujian:psUjian,donatur:psDonatur,qurban:psQurban,kegiatan:psKegiatan,pengaturan:psPengaturan}[halaman];if(fn)fn();}
 function kepala(judul,sub){return '<h1>'+judul+'</h1><p class="sub">'+sub+'</p>';}
 /* jam + hijriah */
 function jamJalan(){
@@ -585,6 +596,171 @@ function psPengaturan(){
    localStorage.removeItem(KUNCI);DB=mauat();halaman='beranda';render();toast('Semua data dihapus');
   }
  });
+}
+/* ===== Ujian CBT ===== */
+var ujianSesi=null;var ujianTimer=null;
+function soalById(id){return DB.soal.filter(function(s){return s.id===id;})[0];}
+function pgUjian(){
+ if(ujianSesi)return pgKerja();
+ var paketAktif=DB.paket.filter(function(p){return p.aktif;});
+ var opsiPaket=paketAktif.map(function(p){return '<option value="'+p.id+'">'+esc(p.nama)+' ('+p.soalIds.length+' soal · '+p.durasi+' menit)</option>';}).join('');
+ var opsiSantri=DB.santri.filter(function(s){return s.aktif;}).map(function(s){return '<option value="'+s.id+'">'+esc(s.nama)+' — NIS '+esc(s.nis)+'</option>';}).join('');
+ var barisSoal=DB.soal.map(function(s,i){
+  return '<tr><td>'+(i+1)+'</td><td>'+esc(s.tanya)+'</td><td>'+esc(s.kategori||'—')+'</td><td>'+'ABCD'[s.kunci]+'</td>'
+  +'<td><button class="btn kecil" data-soaledit="'+s.id+'">Ubah</button> <button class="btn kecil bahaya" data-soalhapus="'+s.id+'">Hapus</button></td></tr>';
+ }).join('')||'<tr><td colspan="5" class="kosong">Bank soal masih kosong.</td></tr>';
+ var barisPaket=DB.paket.map(function(p){
+  return '<tr><td><b>'+esc(p.nama)+'</b></td><td><b>'+esc(p.token)+'</b></td><td>'+p.durasi+' menit</td><td>'+p.soalIds.length+' soal</td><td>'+(p.aktif?'<span class="pill lunas">Aktif</span>':'<span class="pill nonaktif">Nonaktif</span>')+'</td>'
+  +'<td><button class="btn kecil" data-paketedit="'+p.id+'">Ubah</button> <button class="btn kecil bahaya" data-pakethapus="'+p.id+'">Hapus</button></td></tr>';
+ }).join('')||'<tr><td colspan="6" class="kosong">Belum ada paket ujian.</td></tr>';
+ var barisHasil=DB.hasil.slice().sort(function(a,b){return b.id-a.id;}).map(function(h,i){
+  return '<tr><td>'+(i+1)+'</td><td><b>'+esc(h.nama)+'</b></td><td>'+esc(h.paketNama)+'</td><td>'+h.benar+' / '+h.total+'</td><td><b>'+h.nilai+'</b></td><td>'+esc(h.waktu)+'</td><td><button class="btn kecil bahaya" data-hasilhapus="'+h.id+'">Hapus</button></td></tr>';
+ }).join('')||'<tr><td colspan="7" class="kosong">Belum ada nilai masuk.</td></tr>';
+ return kepala('Ujian CBT Santri','Santri mengerjakan soal di aplikasi ini, nilainya langsung masuk dan tersimpan di menu Hasil Ujian.')
+ +'<div class="kartu" style="margin-bottom:16px"><b style="color:var(--hijau)">▶️ Mode Santri — Mulai Ujian</b>'
+ +'<div class="formgrid" style="margin-top:12px"><div><label>Pilih nama santri</label><select id="uj-santri">'+opsiSantri+'</select></div>'
+ +'<div><label>Paket ujian</label><select id="uj-paket">'+opsiPaket+'</select></div>'
+ +'<div><label>Token ujian (dari guru)</label><input id="uj-token" placeholder="Mis. UJIAN1" style="text-transform:uppercase"></div>'
+ +'<div style="display:flex;align-items:end"><button class="btn utama" id="uj-mulai" style="width:100%">Mulai mengerjakan</button></div></div>'
+ +'<p class="sub" style="margin-top:10px">Saat mengerjakan, santri cukup memilih jawaban — tidak ada tanda silang atau tanda salah yang tampil. Nilai muncul setelah jawaban dikumpulkan.</p></div>'
+ +'<div class="kartu" style="margin-bottom:16px"><div class="bar-aksi" style="margin-bottom:10px"><b style="color:var(--hijau)">📚 Bank Soal</b><span style="flex:1"></span><button class="btn utama" id="uj-tambahsoal">➕ Tambah soal</button></div>'
+ +'<div class="tabelbungkus" style="border:none"><table><thead><tr><th>NO</th><th>PERTANYAAN</th><th>KATEGORI</th><th>KUNCI</th><th></th></tr></thead><tbody>'+barisSoal+'</tbody></table></div></div>'
+ +'<div class="kartu" style="margin-bottom:16px"><div class="bar-aksi" style="margin-bottom:10px"><b style="color:var(--hijau)">📦 Paket Ujian</b><span style="flex:1"></span><button class="btn utama" id="uj-tambahpaket">➕ Tambah paket</button></div>'
+ +'<div class="tabelbungkus" style="border:none"><table><thead><tr><th>NAMA PAKET</th><th>TOKEN</th><th>DURASI</th><th>SOAL</th><th>STATUS</th><th></th></tr></thead><tbody>'+barisPaket+'</tbody></table></div></div>'
+ +'<div class="kartu"><div class="bar-aksi" style="margin-bottom:10px"><b style="color:var(--hijau)">🏆 Hasil Ujian — Nilai Masuk</b><span style="flex:1"></span><button class="btn" id="uj-hasilexcel">⬇️ Excel (CSV)</button></div>'
+ +'<div class="tabelbungkus" style="border:none"><table><thead><tr><th>NO</th><th>NAMA SANTRI</th><th>PAKET</th><th>BENAR</th><th>NILAI</th><th>WAKTU</th><th></th></tr></thead><tbody>'+barisHasil+'</tbody></table></div></div>';
+}
+function formSoal(s){
+ s=s||{tanya:'',opsi:['','','',''],kunci:0,kategori:'Pengajian'};
+ var opsiHtml=s.opsi.map(function(o,i){
+  return '<div><label>Pilihan '+'ABCD'[i]+(i===0?'':'')+'</label><input id="fo-opsi'+i+'" value="'+esc(o)+'"></div>';
+ }).join('');
+ bukaModal('<h3>'+(s.id?'Ubah':'Tambah')+' Soal</h3><div class="formgrid">'
+ +'<div class="penuh"><label>Pertanyaan *</label><textarea id="fo-tanya" rows="2">'+esc(s.tanya)+'</textarea></div>'
+ +opsiHtml
+ +'<div><label>Jawaban benar</label><select id="fo-kunci">'+[0,1,2,3].map(function(i){return '<option value="'+i+'"'+(s.kunci===i?' selected':'')+'>Pilihan '+'ABCD'[i]+'</option>';}).join('')+'</select></div>'
+ +'<div><label>Kategori</label><input id="fo-kategori" value="'+esc(s.kategori||'')+'" placeholder="Pengajian / Doa / Tahfidz"></div></div>'
+ +'<div class="aksi"><button class="btn" onclick="tutupModal()">Batal</button><button class="btn utama" id="fo-simpan">Simpan soal</button></div>');
+ $('#fo-simpan').addEventListener('click',function(){
+  var t=$('#fo-tanya').value.trim();if(!t){toast('Pertanyaannya wajib diisi');return;}
+  var opsi=[0,1,2,3].map(function(i){return $('#fo-opsi'+i).value.trim();});
+  if(opsi.some(function(o){return !o;})){toast('Keempat pilihan harus diisi');return;}
+  var data={tanya:t,opsi:opsi,kunci:Number($('#fo-kunci').value),kategori:$('#fo-kategori').value.trim()};
+  if(s.id){var lama=soalById(s.id);Object.keys(data).forEach(function(k){lama[k]=data[k];});}
+  else{data.id=DB.seq.soal++;DB.soal.push(data);}
+  simpan();tutupModal();render();toast('Soal tersimpan ✅');
+ });
+}
+function formPaket(p){
+ p=p||{nama:'',token:'',durasi:30,soalIds:[],aktif:true};
+ var cek=DB.soal.map(function(s){
+  return '<label style="display:block;font-weight:400;margin:4px 0"><input type="checkbox" class="fp-soal" value="'+s.id+'" '+(p.soalIds.indexOf(s.id)>=0?'checked':'')+' style="width:auto"> '+esc(s.tanya)+'</label>';
+ }).join('')||'<span class="sub">Bank soal masih kosong — tambah soal dulu.</span>';
+ bukaModal('<h3>'+(p.id?'Ubah':'Tambah')+' Paket Ujian</h3><div class="formgrid">'
+ +'<div class="penuh"><label>Nama paket *</label><input id="fp-nama" value="'+esc(p.nama)+'" placeholder="Mis. Ujian Tahfidz Juz 30"></div>'
+ +'<div><label>Token ujian *</label><input id="fp-token" value="'+esc(p.token)+'" placeholder="Mis. TAHFIDZ1" style="text-transform:uppercase"></div>'
+ +'<div><label>Durasi (menit)</label><input type="number" id="fp-durasi" value="'+p.durasi+'" min="1"></div>'
+ +'<div><label>Status</label><select id="fp-aktif"><option value="1"'+(p.aktif?' selected':'')+'>Aktif</option><option value="0"'+(p.aktif?'':' selected')+'>Nonaktif</option></select></div>'
+ +'<div class="penuh"><label>Soal dalam paket ini</label><div style="max-height:180px;overflow-y:auto;border:1px solid var(--garis);border-radius:9px;padding:8px 12px">'+cek+'</div></div></div>'
+ +'<div class="aksi"><button class="btn" onclick="tutupModal()">Batal</button><button class="btn utama" id="fp-simpan">Simpan paket</button></div>');
+ $('#fp-simpan').addEventListener('click',function(){
+  var n=$('#fp-nama').value.trim(),tk=$('#fp-token').value.trim().toUpperCase();
+  if(!n||!tk){toast('Nama paket dan token wajib diisi');return;}
+  var ids=Array.prototype.map.call(document.querySelectorAll('.fp-soal:checked'),function(c){return Number(c.value);});
+  if(!ids.length){toast('Pilih minimal satu soal');return;}
+  var data={nama:n,token:tk,durasi:Number($('#fp-durasi').value)||30,soalIds:ids,aktif:$('#fp-aktif').value==='1'};
+  if(p.id){var lama=DB.paket.filter(function(x){return x.id===p.id;})[0];Object.keys(data).forEach(function(k){lama[k]=data[k];});}
+  else{data.id=DB.seq.paket++;DB.paket.push(data);}
+  simpan();tutupModal();render();toast('Paket ujian tersimpan ✅');
+ });
+}
+function psUjian(){
+ if(ujianSesi){psKerja();return;}
+ var tm=$('#uj-tambahsoal');if(tm)tm.addEventListener('click',function(){formSoal(null);});
+ var tp=$('#uj-tambahpaket');if(tp)tp.addEventListener('click',function(){formPaket(null);});
+ Array.prototype.forEach.call(document.querySelectorAll('[data-soaledit]'),function(b){
+  b.addEventListener('click',function(){formSoal(soalById(Number(b.getAttribute('data-soaledit'))));});
+ });
+ Array.prototype.forEach.call(document.querySelectorAll('[data-soalhapus]'),function(b){
+  b.addEventListener('click',function(){var id=Number(b.getAttribute('data-soalhapus'));DB.soal=DB.soal.filter(function(s){return s.id!==id;});DB.paket.forEach(function(p){p.soalIds=p.soalIds.filter(function(x){return x!==id;});});simpan();render();toast('Soal dihapus');});
+ });
+ Array.prototype.forEach.call(document.querySelectorAll('[data-paketedit]'),function(b){
+  b.addEventListener('click',function(){formPaket(DB.paket.filter(function(x){return x.id===Number(b.getAttribute('data-paketedit'));})[0]);});
+ });
+ Array.prototype.forEach.call(document.querySelectorAll('[data-pakethapus]'),function(b){
+  b.addEventListener('click',function(){DB.paket=DB.paket.filter(function(x){return x.id!==Number(b.getAttribute('data-pakethapus'));});simpan();render();toast('Paket dihapus');});
+ });
+ Array.prototype.forEach.call(document.querySelectorAll('[data-hasilhapus]'),function(b){
+  b.addEventListener('click',function(){DB.hasil=DB.hasil.filter(function(x){return x.id!==Number(b.getAttribute('data-hasilhapus'));});simpan();render();toast('Nilai dihapus');});
+ });
+ var he=$('#uj-hasilexcel');if(he)he.addEventListener('click',function(){
+  var rows=[['Nama Santri','NIS','Paket','Benar','Total Soal','Nilai','Waktu']];
+  DB.hasil.forEach(function(h){rows.push([h.nama,h.nis||'',h.paketNama,h.benar,h.total,h.nilai,h.waktu]);});
+  unduhCSV('hasil-ujian-santri.csv',rows);toast('File hasil ujian diunduh');
+ });
+ var m=$('#uj-mulai');if(m)m.addEventListener('click',function(){
+  var p=DB.paket.filter(function(x){return x.id===Number($('#uj-paket').value);})[0];
+  var s=DB.santri.filter(function(x){return x.id===Number($('#uj-santri').value);})[0];
+  if(!p){toast('Belum ada paket ujian aktif');return;}
+  if(!s){toast('Belum ada santri aktif');return;}
+  if($('#uj-token').value.trim().toUpperCase()!==p.token){toast('Token salah — tanya token ke guru');return;}
+  if(!p.soalIds.length){toast('Paket ini belum berisi soal');return;}
+  ujianSesi={paketId:p.id,paketNama:p.nama,santriId:s.id,nama:s.nama,nis:s.nis,soalIds:p.soalIds.slice(),jawab:{},selesai:Date.now()+p.durasi*60000};
+  render();
+ });
+}
+/* ===== Mode santri: mengerjakan ===== */
+function pgKerja(){
+ var s=ujianSesi;
+ var soalHtml=s.soalIds.map(function(id,i){
+  var q=soalById(id);if(!q)return'';
+  var opsi=q.opsi.map(function(o,j){
+   var pilih=s.jawab[id]===j;
+   return '<button class="btn" data-jawab="'+id+':'+j+'" style="display:block;width:100%;text-align:left;margin:5px 0;'+(pilih?'background:var(--hijau);color:#fff;border-color:var(--hijau);font-weight:700':'')+'">'+'ABCD'[j]+'. '+esc(o)+'</button>';
+  }).join('');
+  return '<div class="kartu" style="margin-bottom:12px"><b>'+(i+1)+'. '+esc(q.tanya)+'</b><div style="margin-top:8px">'+opsi+'</div></div>';
+ }).join('');
+ var terjawab=Object.keys(s.jawab).length;
+ return '<h1>📝 '+esc(s.paketNama)+'</h1><p class="sub">Nama: <b>'+esc(s.nama)+'</b> · Terjawab '+terjawab+' dari '+s.soalIds.length+' soal · Sisa waktu: <b id="uj-sisa">—</b></p>'
+ +soalHtml
+ +'<button class="btn utama" id="uj-kumpul" style="width:100%;padding:14px;font-size:16px">📩 Kumpulkan jawaban</button>'
+ +'<p class="sub" style="text-align:center;margin-top:8px">Periksa lagi jawabanmu sebelum dikumpulkan. Waktu habis = jawaban terkumpul otomatis.</p>';
+}
+function psKerja(){
+ Array.prototype.forEach.call(document.querySelectorAll('[data-jawab]'),function(b){
+  b.addEventListener('click',function(){
+   var p=b.getAttribute('data-jawab').split(':');
+   ujianSesi.jawab[p[0]]=Number(p[1]);render();
+  });
+ });
+ $('#uj-kumpul').addEventListener('click',function(){kumpulkan(false);});
+ clearInterval(ujianTimer);
+ function tik(){
+  if(!ujianSesi){clearInterval(ujianTimer);return;}
+  var sisa=ujianSesi.selesai-Date.now();
+  var el=$('#uj-sisa');
+  if(el){var dtk=Math.max(0,Math.round(sisa/1000));el.textContent=Math.floor(dtk/60)+':'+('0'+(dtk%60)).slice(-2);}
+  if(sisa<=0){clearInterval(ujianTimer);kumpulkan(true);}
+ }
+ ujianTimer=setInterval(tik,500);tik();
+}
+function kumpulkan(otomatis){
+ var s=ujianSesi;if(!s)return;
+ clearInterval(ujianTimer);
+ var benar=0;
+ s.soalIds.forEach(function(id){var q=soalById(id);if(q&&s.jawab[id]===q.kunci)benar++;});
+ var total=s.soalIds.length;
+ var nilai=total?Math.round(benar/total*100):0;
+ var waktu=new Date();
+ DB.hasil.push({id:DB.seq.hasil++,santriId:s.santriId,nama:s.nama,nis:s.nis,paketId:s.paketId,paketNama:s.paketNama,benar:benar,total:total,nilai:nilai,waktu:tglIndo(ymd(waktu))+' '+('0'+waktu.getHours()).slice(-2)+':'+('0'+waktu.getMinutes()).slice(-2)});
+ simpan();
+ ujianSesi=null;
+ bukaModal('<h3 style="text-align:center">🎉 Jawaban terkumpul'+(otomatis?' (waktu habis)':'')+'</h3>'
+ +'<p style="text-align:center;font-size:15px">'+esc(s.nama)+'<br>Paket: '+esc(s.paketNama)+'</p>'
+ +'<div style="text-align:center;margin:16px 0"><div class="sub" style="margin:0">Nilaimu</div><div style="font-size:52px;font-weight:800;color:var(--hijau)">'+nilai+'</div><div class="sub">Jawaban benar '+benar+' dari '+total+' soal</div></div>'
+ +'<p class="sub" style="text-align:center">Nilai ini sudah masuk ke menu Hasil Ujian di aplikasi guru. Terima kasih sudah mengerjakan dengan jujur 🙏</p>'
+ +'<div class="aksi" style="justify-content:center"><button class="btn utama" onclick="tutupModal()">Selesai</button></div>');
+ render();toast('Nilai tersimpan ke Hasil Ujian ✅');
 }
 /* mulai */
 render();jamJalan();
