@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FormCBT — CBT Berbasis Google Form</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--biru:#1d4ed8;--biru2:#2563eb;--gelap:#0f2a5c;--latar:#eef3fb;--teks:#1c2733;--redup:#64748b;--garis:#d7e0ee;--hijau:#1e7d32;--merah:#b3402e}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--latar);color:var(--teks);min-height:100vh}
+header{background:linear-gradient(120deg,var(--gelap),var(--biru));color:#fff;padding:14px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:40;box-shadow:0 2px 10px rgba(10,30,80,.3)}
+header .logo{font-size:28px}
+header b{font-size:20px;letter-spacing:.4px}
+header small{display:block;color:#bcd2ff;font-size:12px}
+header .kanan{margin-left:auto;display:flex;gap:8px}
+main{max-width:1020px;margin:0 auto;padding:20px 16px 70px}
+h1{font-size:23px;color:var(--gelap);margin-bottom:4px}
+.sub{color:var(--redup);font-size:13.5px;margin-bottom:16px}
+.kartu{background:#fff;border:1px solid var(--garis);border-radius:14px;padding:18px;box-shadow:0 1px 4px rgba(20,40,90,.06);margin-bottom:16px}
+.btn{border:1px solid var(--garis);background:#fff;border-radius:9px;padding:9px 16px;font-size:13.5px;cursor:pointer;font-family:inherit;color:var(--teks)}
+.btn:hover{border-color:var(--biru2)}
+.btn.utama{background:var(--biru);color:#fff;border-color:var(--biru);font-weight:700}
+.btn.utama:hover{background:var(--biru2)}
+.btn.kecil{padding:5px 10px;font-size:12px;border-radius:7px}
+.btn.bahaya{color:var(--merah);border-color:#ecc9c2}
+.btn.putih{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.4)}
+input,select,textarea{border:1px solid #c6d2e4;border-radius:9px;padding:9px 12px;font-size:13.5px;font-family:inherit;background:#fff;width:100%}
+input:focus,select:focus{outline:2px solid #b9cdf5;border-color:var(--biru2)}
+label{font-size:12.5px;font-weight:600;color:#3c4c63;display:block;margin-bottom:5px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.formgrid .penuh{grid-column:1/-1}
+.grid-ujian{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.kartu-ujian{background:#fff;border:1px solid var(--garis);border-radius:14px;padding:18px;box-shadow:0 1px 4px rgba(20,40,90,.06)}
+.kartu-ujian h3{color:var(--gelap);font-size:16.5px;margin-bottom:4px}
+.kartu-ujian .meta{color:var(--redup);font-size:12.5px;margin-bottom:12px;line-height:1.5}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:11.5px;font-weight:700}
+.pill.aktif{background:#e2f2df;color:#256b1e}.pill.nonaktif{background:#eee;color:#777}.pill.selesai{background:#dbeafe;color:#1d4ed8}
+.tabelbungkus{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:600px}
+th{background:#eef3fb;text-align:left;padding:10px 12px;font-size:11.5px;letter-spacing:.5px;color:#43536b;border-bottom:1px solid var(--garis);white-space:nowrap}
+td{padding:9px 12px;border-bottom:1px solid #edf1f8;vertical-align:top}
+.kosong{text-align:center;color:var(--redup);padding:30px 10px}
+.modal{position:fixed;inset:0;background:rgba(10,20,40,.55);display:none;align-items:flex-start;justify-content:center;z-index:99;overflow-y:auto;padding:22px 12px}
+.modal.buka{display:flex}
+.modal .kotak{background:#fff;border-radius:16px;max-width:560px;width:100%;padding:22px}
+.modal h3{color:var(--gelap);margin-bottom:14px}
+.modal .aksi{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--gelap);color:#fff;padding:11px 22px;border-radius:999px;font-size:14px;z-index:200;transition:.3s}
+.toast.tampil{transform:translateX(-50%) translateY(0)}
+.bingkai{width:100%;height:calc(100vh - 190px);min-height:480px;border:1px solid var(--garis);border-radius:12px;background:#fff}
+.bar-ujian{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:#fff;border:1px solid var(--garis);border-radius:12px;padding:10px 14px;margin-bottom:12px}
+.bar-ujian .timer{font-size:19px;font-weight:800;color:var(--biru);font-variant-numeric:tabular-nums}
+.langkah{background:#f4f8ff;border:1px dashed #b9cdf5;border-radius:12px;padding:14px 16px;font-size:13.5px;line-height:1.65}
+@media(max-width:640px){.formgrid{grid-template-columns:1fr}header b{font-size:17px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">📝</div>
+  <div><b>FormCBT</b><small id="h-instansi">CBT Berbasis Google Form</small></div>
+  <div class="kanan"><button class="btn putih kecil" id="btn-guru">🔑 Ruang Guru</button></div>
+</header>
+<main id="konten"></main>
+<div class="modal" id="modal"><div class="kotak" id="modal-isi"></div></div>
+<div class="toast" id="toast"></div>
+<script>
+'use strict';
+var KUNCI='formcbt_v1';
+function bawaan(){
+ return {
+  set:{instansi:'SMP Tarung Riwut',pin:'123456'},
+  ujian:[
+   {id:1,judul:'Pancasila Kelas 5 (Contoh)',mapel:'Pendidikan Pancasila',kelas:'Kelas 5',link:'https://docs.google.com/forms/d/1RqwLttOJV5-q5ARmLKDxsxdBLnESISV0YQXQY1ljc50/viewform',token:'',durasi:60,aktif:true}
+  ],
+  sesi:[],
+  seq:{ujian:2,sesi:1}
+ };
+}
+var DB=mauat();
+function mauat(){
+ try{var d=JSON.parse(localStorage.getItem(KUNCI));if(d&&d.set)return d;}catch(e){}
+ var b=bawaan();localStorage.setItem(KUNCI,JSON.stringify(b));return b;
+}
+function simpan(){localStorage.setItem(KUNCI,JSON.stringify(DB));}
+function $(s){return document.querySelector(s);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function ymd(d){var m=('0'+(d.getMonth()+1)).slice(-2),t=('0'+d.getDate()).slice(-2);return d.getFullYear()+'-'+m+'-'+t;}
+function jam(d){return('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);}
+function tglIndo(s){var b=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];var p=s.split('-');return Number(p[2])+' '+b[Number(p[1])-1]+' '+p[0];}
+function toast(msg){var t=$('#toast');t.textContent=msg;t.classList.add('tampil');setTimeout(function(){t.classList.remove('tampil');},2300);}
+function embedForm(url){
+ if(!url)return'';
+ if(url.indexOf('embedded=true')>=0)return url;
+ return url+(url.indexOf('?')>=0?'&':'?')+'embedded=true';
+}
+function bukaModal(html){$('#modal-isi').innerHTML=html;$('#modal').classList.add('buka');}
+function tutupModal(){$('#modal').classList.remove('buka');}
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)tutupModal();});
+function unduhCSV(nama,rows){
+ var isi=rows.map(function(r){return r.map(function(c){c=String(c==null?'':c);return /[";\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c;}).join(';');}).join('\r\n');
+ var a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+isi],{type:'text/csv'}));a.download=nama;a.click();setTimeout(function(){URL.revokeObjectURL(a.href);},500);
+}
+/* ===== Alur tampilan ===== */
+var tampil='siswa'; // siswa | ruang | guru
+var guruMasuk=false;
+var sesiAktif=null;var timerUjian=null;
+function render(){
+ $('#h-instansi').textContent=DB.set.instansi+' · CBT Berbasis Google Form';
+ $('#btn-guru').textContent=guruMasuk?'🏠 Ke Halaman Siswa':'🔑 Ruang Guru';
+ if(tampil==='ruang'){$('#konten').innerHTML=pgRuang();psRuang();}
+ else if(tampil==='guru'&&guruMasuk){$('#konten').innerHTML=pgGuru();psGuru();}
+ else{$('#konten').innerHTML=pgSiswa();psSiswa();}
+ window.scrollTo(0,0);
+}
+document.getElementById('btn-guru').addEventListener('click',function(){
+ if(guruMasuk){tampil='siswa';render();return;}
+ bukaModal('<h3>🔑 Masuk Ruang Guru</h3><div><label>PIN guru</label><input type="password" id="pin-guru" inputmode="numeric" placeholder="Masukkan PIN"></div><div class="aksi"><button class="btn" onclick="tutupModal()">Batal</button><button class="btn utama" id="pin-ok">Masuk</button></div>');
+ $('#pin-ok').addEventListener('click',function(){
+  if($('#pin-guru').value===DB.set.pin){guruMasuk=true;tampil='guru';tutupModal();render();toast('Selamat datang di Ruang Guru ✅');}
+  else toast('PIN salah');
+ });
+});
+/* ===== Halaman siswa ===== */
+function pgSiswa(){
+ var aktif=DB.ujian.filter(function(u){return u.aktif;});
+ var kartu=aktif.map(function(u){
+  return '<div class="kartu-ujian"><h3>'+esc(u.judul)+'</h3><div class="meta">'+esc(u.mapel)+' · '+esc(u.kelas)+'<br>⏱️ Durasi '+u.durasi+' menit'+(u.token?' · 🔑 Pakai token':'')+'</div><button class="btn utama" data-mulai="'+u.id+'" style="width:100%">Mulai ujian</button></div>';
+ }).join('')||'<div class="kartu kosong">Belum ada ujian yang aktif. Tunggu guru mengaktifkan ujian ya.</div>';
+ return '<h1>Pilih Ujian</h1><p class="sub">Soal ujian ini memakai Google Form yang disiapkan guru. Isi namamu, kerjakan dengan jujur, lalu tekan tombol selesai di dalam formulir dan tombol "Selesai Ujian" di aplikasi.</p><div class="grid-ujian">'+kartu+'</div>';
+}
+function psSiswa(){
+ Array.prototype.forEach.call(document.querySelectorAll('[data-mulai]'),function(b){
+  b.addEventListener('click',function(){
+   var u=DB.ujian.filter(function(x){return x.id===Number(b.getAttribute('data-mulai'));})[0];
+   bukaModal('<h3>'+esc(u.judul)+'</h3><div class="formgrid">'
+   +'<div class="penuh"><label>Nama lengkap *</label><input id="mu-nama" placeholder="Nama siswa"></div>'
+   +'<div><label>Kelas *</label><input id="mu-kelas" value="'+esc(u.kelas)+'"></div>'
+   +(u.token?'<div><label>Token ujian *</label><input id="mu-token" style="text-transform:uppercase" placeholder="Token dari guru"></div>':'<div></div>')
+   +'</div><div class="aksi"><button class="btn" onclick="tutupModal()">Batal</button><button class="btn utama" id="mu-ok">Mulai mengerjakan</button></div>');
+   $('#mu-ok').addEventListener('click',function(){
+    var nama=$('#mu-nama').value.trim(),kelas=$('#mu-kelas').value.trim();
+    if(!nama||!kelas){toast('Nama dan kelas wajib diisi');return;}
+    if(u.token&&$('#mu-token').value.trim().toUpperCase()!==u.token.toUpperCase()){toast('Token salah — minta token ke guru');return;}
+    sesiAktif={ujianId:u.id,judul:u.judul,nama:nama,kelas:kelas,mulai:new Date(),selesai:Date.now()+u.durasi*60000};
+    tutupModal();tampil='ruang';render();toast('Selamat mengerjakan 🙏');
+   });
+  });
+ });
+}
+/* ===== Ruang ujian ===== */
+function pgRuang(){
+ var u=DB.ujian.filter(function(x){return x.id===sesiAktif.ujianId;})[0];
+ if(!u){tampil='siswa';return pgSiswa();}
+ return '<div class="bar-ujian"><div>📝 <b>'+esc(u.judul)+'</b><br><small>'+esc(sesiAktif.nama)+' · '+esc(sesiAktif.kelas)+'</small></div>'
+ +'<div style="flex:1"></div><div class="timer" id="sisa-waktu">—</div>'
+ +'<button class="btn utama" id="btn-selesai">✅ Selesai ujian</button></div>'
+ +'<iframe class="bingkai" src="'+esc(embedForm(u.link))+'" title="Soal ujian Google Form"></iframe>'
+ +'<p class="sub" style="margin-top:10px">Penting: setelah menjawab semua soal, tekan tombol <b>Kirim / Submit</b> di dalam formulir sampai muncul tanda terkirim, lalu tekan <b>Selesai ujian</b> di atas.</p>';
+}
+function psRuang(){
+ var btnS=$('#btn-selesai');if(!btnS||!sesiAktif)return;
+ btnS.addEventListener('click',function(){selesaikan(false);});
+ clearInterval(timerUjian);
+ function tik(){
+  if(!sesiAktif){clearInterval(timerUjian);return;}
+  var sisa=sesiAktif.selesai-Date.now();var el=$('#sisa-waktu');
+  if(el){var d=Math.max(0,Math.round(sisa/1000));el.textContent=Math.floor(d/60)+':'+('0'+(d%60)).slice(-2);if(sisa<60000)el.style.color='var(--merah)';}
+  if(sisa<=0){clearInterval(timerUjian);selesaikan(true);}
+ }
+ timerUjian=setInterval(tik,500);tik();
+}
+function selesaikan(otomatis){
+ if(!sesiAktif)return;
+ clearInterval(timerUjian);
+ var s=sesiAktif;sesiAktif=null;
+ DB.sesi.push({id:DB.seq.sesi++,ujianId:s.ujianId,judul:s.judul,nama:s.nama,kelas:s.kelas,tanggal:ymd(new Date()),mulai:jam(s.mulai),selesai:jam(new Date()),otomatis:!!otomatis});
+ simpan();
+ bukaModal('<h3 style="text-align:center">🎉 Ujian selesai'+(otomatis?' (waktu habis)':'')+'</h3><p style="text-align:center;line-height:1.7">Terima kasih, <b>'+esc(s.nama)+'</b>.<br>Kehadiran ujianmu sudah tercatat di aplikasi guru.<br>Jawabanmu tersimpan di Google Form guru — nilai akan diumumkan guru dari hasil formulir tersebut.</p><div class="aksi" style="justify-content:center"><button class="btn utama" onclick="tutupModal()">Tutup</button></div>');
+ tampil='siswa';render();
+}
+</script>
+<script>
+/* ===== Ruang guru ===== */
+function pgGuru(){
+ var barisUjian=DB.ujian.map(function(u){
+  return '<tr><td><b>'+esc(u.judul)+'</b><br><small style="color:var(--redup)">'+esc(u.link)+'</small></td><td>'+esc(u.mapel)+'</td><td>'+esc(u.kelas)+'</td><td>'+(u.token?esc(u.token):'—')+'</td><td>'+u.durasi+' mnt</td><td>'+(u.aktif?'<span class="pill aktif">Aktif</span>':'<span class="pill nonaktif">Nonaktif</span>')+'</td>'
+  +'<td style="white-space:nowrap"><button class="btn kecil" data-ujianedit="'+u.id+'">Ubah</button> <button class="btn kecil bahaya" data-ujianhapus="'+u.id+'">Hapus</button></td></tr>';
+ }).join('')||'<tr><td colspan="7" class="kosong">Belum ada ujian. Klik "Tambah ujian" lalu tempel tautan Google Form.</td></tr>';
+ var sesiUrut=DB.sesi.slice().sort(function(a,b){return b.id-a.id;});
+ var barisSesi=sesiUrut.map(function(s,i){
+  return '<tr><td>'+(i+1)+'</td><td><b>'+esc(s.nama)+'</b></td><td>'+esc(s.kelas)+'</td><td>'+esc(s.judul)+'</td><td>'+tglIndo(s.tanggal)+'</td><td>'+esc(s.mulai)+' – '+esc(s.selesai)+'</td><td>'+(s.otomatis?'Waktu habis':'Selesai')+'</td><td><button class="btn kecil bahaya" data-sesihapus="'+s.id+'">Hapus</button></td></tr>';
+ }).join('')||'<tr><td colspan="8" class="kosong">Belum ada siswa yang menyelesaikan ujian.</td></tr>';
+ return '<h1>🔑 Ruang Guru</h1><p class="sub">Kelola ujian berbasis Google Form, lihat catatan kehadiran ujian, dan unduh rekapnya.</p>'
+ +'<div class="kartu"><div style="display:flex;align-items:center;margin-bottom:10px"><b style="color:var(--gelap)">📋 Daftar Ujian</b><span style="flex:1"></span><button class="btn utama" id="g-tambah">➕ Tambah ujian</button></div>'
+ +'<div class="tabelbungkus"><table><thead><tr><th>UJIAN & TAUTAN FORM</th><th>MAPEL</th><th>KELAS</th><th>TOKEN</th><th>DURASI</th><th>STATUS</th><th></th></tr></thead><tbody>'+barisUjian+'</tbody></table></div></div>'
+ +'<div class="kartu"><div style="display:flex;align-items:center;margin-bottom:10px"><b style="color:var(--gelap)">🧾 Catatan Kehadiran Ujian ('+DB.sesi.length+')</b><span style="flex:1"></span><button class="btn" id="g-sesiexcel">⬇️ Excel (CSV)</button></div>'
+ +'<div class="tabelbungkus"><table><thead><tr><th>NO</th><th>NAMA</th><th>KELAS</th><th>UJIAN</th><th>TANGGAL</th><th>JAM</th><th>KETERANGAN</th><th></th></tr></thead><tbody>'+barisSesi+'</tbody></table></div>'
+ +'<p class="sub" style="margin:10px 0 0">Nilai siswa ada di Google Form masing-masing ujian (menu Respons di formulir, atau Spreadsheet responsnya) — catatan di sini adalah bukti kehadiran/waktu mengerjakan.</p></div>'
+ +'<div class="kartu"><b style="color:var(--gelap)">📖 Cara menautkan soal Google Form</b><div class="langkah" style="margin-top:10px">'
+ +'1. Buat soal di <b>Google Form</b> dan aktifkan mode kuis: Setelan → "Jadikan ini kuis" → isi kunci jawaban & poin.<br>'
+ +'2. Klik <b>Kirim</b> → ikon tautan 🔗 → centang "Persingkat URL" bila mau → <b>Salin</b>.<br>'
+ +'3. Di aplikasi ini klik <b>Tambah ujian</b>, tempel tautannya, beri judul, token (boleh kosong), dan durasi, lalu simpan.<br>'
+ +'4. Siswa membuka aplikasi → pilih ujian → isi nama → kerjakan formulir di dalam aplikasi → tekan Kirim di formulir, lalu "Selesai ujian".<br>'
+ +'5. Pastikan setelan formulir: "Kumpulkan alamat email" tidak wajib, dan formulir bisa dibuka siapa saja yang punya tautan.</div></div>'
+ +'<div class="kartu"><b style="color:var(--gelap)">⚙️ Pengaturan</b><div class="formgrid" style="margin-top:12px">'
+ +'<div><label>Nama sekolah / instansi</label><input id="g-instansi" value="'+esc(DB.set.instansi)+'"></div>'
+ +'<div><label>PIN ruang guru</label><input id="g-pin" value="'+esc(DB.set.pin)+'"></div></div>'
+ +'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px"><button class="btn utama" id="g-simpan">Simpan pengaturan</button><button class="btn" id="g-backup">💾 Unduh cadangan (JSON)</button><label class="btn" style="margin:0">📥 Pulihkan cadangan<input type="file" id="g-restore" accept=".json" style="display:none"></label></div></div>';
+}
+function formUjian(u){
+ u=u||{judul:'',mapel:'',kelas:'',link:'',token:'',durasi:60,aktif:true};
+ bukaModal('<h3>'+(u.id?'Ubah':'Tambah')+' Ujian</h3><div class="formgrid">'
+ +'<div class="penuh"><label>Judul ujian *</label><input id="fu-judul" value="'+esc(u.judul)+'" placeholder="Mis. Ulangan Matematika Bab 1"></div>'
+ +'<div><label>Mata pelajaran</label><input id="fu-mapel" value="'+esc(u.mapel)+'"></div>'
+ +'<div><label>Kelas</label><input id="fu-kelas" value="'+esc(u.kelas)+'" placeholder="Mis. Kelas 5"></div>'
+ +'<div class="penuh"><label>Tautan Google Form *</label><input id="fu-link" value="'+esc(u.link)+'" placeholder="https://docs.google.com/forms/d/…/viewform atau https://forms.gle/…"></div>'
+ +'<div><label>Token (boleh kosong)</label><input id="fu-token" value="'+esc(u.token)+'" style="text-transform:uppercase" placeholder="Mis. UTS1"></div>'
+ +'<div><label>Durasi (menit)</label><input type="number" id="fu-durasi" value="'+u.durasi+'" min="1"></div>'
+ +'<div><label>Status</label><select id="fu-aktif"><option value="1"'+(u.aktif?' selected':'')+'>Aktif</option><option value="0"'+(u.aktif?'':' selected')+'>Nonaktif</option></select></div></div>'
+ +'<div class="aksi"><button class="btn" onclick="tutupModal()">Batal</button><button class="btn utama" id="fu-simpan">Simpan ujian</button></div>');
+ $('#fu-simpan').addEventListener('click',function(){
+  var j=$('#fu-judul').value.trim(),l=$('#fu-link').value.trim();
+  if(!j||!l){toast('Judul dan tautan form wajib diisi');return;}
+  if(l.indexOf('google.com/forms')<0&&l.indexOf('forms.gle')<0){toast('Tautan itu sepertinya bukan Google Form');return;}
+  var data={judul:j,mapel:$('#fu-mapel').value.trim(),kelas:$('#fu-kelas').value.trim(),link:l,token:$('#fu-token').value.trim().toUpperCase(),durasi:Number($('#fu-durasi').value)||60,aktif:$('#fu-aktif').value==='1'};
+  if(u.id){var lama=DB.ujian.filter(function(x){return x.id===u.id;})[0];Object.keys(data).forEach(function(k){lama[k]=data[k];});}
+  else{data.id=DB.seq.ujian++;DB.ujian.push(data);}
+  simpan();tutupModal();render();toast('Ujian tersimpan ✅');
+ });
+}
+function psGuru(){
+ $('#g-tambah').addEventListener('click',function(){formUjian(null);});
+ Array.prototype.forEach.call(document.querySelectorAll('[data-ujianedit]'),function(b){
+  b.addEventListener('click',function(){formUjian(DB.ujian.filter(function(x){return x.id===Number(b.getAttribute('data-ujianedit'));})[0]);});
+ });
+ Array.prototype.forEach.call(document.querySelectorAll('[data-ujianhapus]'),function(b){
+  b.addEventListener('click',function(){DB.ujian=DB.ujian.filter(function(x){return x.id!==Number(b.getAttribute('data-ujianhapus'));});simpan();render();toast('Ujian dihapus');});
+ });
+ Array.prototype.forEach.call(document.querySelectorAll('[data-sesihapus]'),function(b){
+  b.addEventListener('click',function(){DB.sesi=DB.sesi.filter(function(x){return x.id!==Number(b.getAttribute('data-sesihapus'));});simpan();render();toast('Catatan dihapus');});
+ });
+ $('#g-sesiexcel').addEventListener('click',function(){
+  var rows=[['Nama','Kelas','Ujian','Tanggal','Mulai','Selesai','Keterangan']];
+  DB.sesi.forEach(function(s){rows.push([s.nama,s.kelas,s.judul,tglIndo(s.tanggal),s.mulai,s.selesai,s.otomatis?'Waktu habis':'Selesai']);});
+  unduhCSV('kehadiran-ujian.csv',rows);toast('File kehadiran diunduh');
+ });
+ $('#g-simpan').addEventListener('click',function(){
+  DB.set.instansi=$('#g-instansi').value.trim()||DB.set.instansi;
+  var p=$('#g-pin').value.trim();if(p)DB.set.pin=p;
+  simpan();render();toast('Pengaturan tersimpan ✅');
+ });
+ $('#g-backup').addEventListener('click',function(){
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(DB)],{type:'application/json'}));a.download='cadangan-formcbt.json';a.click();setTimeout(function(){URL.revokeObjectURL(a.href);},500);
+ });
+ $('#g-restore').addEventListener('change',function(){
+  var f=this.files[0];if(!f)return;
+  var r=new FileReader();r.onload=function(){try{var d=JSON.parse(r.result);if(!d.set)throw 0;DB=d;simpan();render();toast('Cadangan dipulihkan ✅');}catch(e){toast('File cadangan tidak cocok');}};
+  r.readAsText(f);
+ });
+}
+/* mulai */
+render();
+</script>
+</body>
+</html>
