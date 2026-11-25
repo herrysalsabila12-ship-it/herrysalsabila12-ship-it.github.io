@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuis IPS Kelas 9 — Database Apps Script</title>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--ungu:#6d28d9;--ungu2:#7c3aed;--gelap:#2e1065;--latar:#f3f0fb;--teks:#221c33;--redup:#6f6890;--garis:#ddd3f5;--hijau:#1e7d32;--merah:#b3402e}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--latar);color:var(--teks);min-height:100vh}
+header{background:linear-gradient(120deg,var(--gelap),var(--ungu));color:#fff;padding:14px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:40;box-shadow:0 2px 10px rgba(46,16,101,.35)}
+header .logo{font-size:28px}header b{font-size:19px}header small{display:block;color:#d6c9ff;font-size:12px}
+main{max-width:860px;margin:0 auto;padding:20px 16px 70px}
+h1{font-size:22px;color:var(--gelap);margin-bottom:4px}
+.sub{color:var(--redup);font-size:13.5px;margin-bottom:16px;line-height:1.55}
+.kartu{background:#fff;border:1px solid var(--garis);border-radius:14px;padding:20px;box-shadow:0 1px 4px rgba(46,16,101,.07);margin-bottom:16px}
+.btn{border:1px solid var(--garis);background:#fff;border-radius:9px;padding:9px 16px;font-size:13.5px;cursor:pointer;font-family:inherit;color:var(--teks)}
+.btn:hover{border-color:var(--ungu2)}
+.btn.utama{background:var(--ungu);color:#fff;border-color:var(--ungu);font-weight:700}
+.btn.utama:hover{background:var(--ungu2)}
+.btn.kecil{padding:5px 10px;font-size:12px;border-radius:7px}
+.btn.bahaya{color:var(--merah);border-color:#ecc9c2}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+input,select{border:1px solid #c9bdf0;border-radius:9px;padding:10px 12px;font-size:14px;font-family:inherit;background:#fff;width:100%}
+input:focus{outline:2px solid #cdbcf7;border-color:var(--ungu2)}
+label{font-size:12.5px;font-weight:600;color:#4a3f73;display:block;margin-bottom:5px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.formgrid .penuh{grid-column:1/-1}
+.bar-ujian{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:#fff;border:1px solid var(--garis);border-radius:12px;padding:10px 14px;margin-bottom:12px}
+.timer{font-size:19px;font-weight:800;color:var(--ungu);font-variant-numeric:tabular-nums}
+.prog{height:8px;background:#ece5fb;border-radius:99px;overflow:hidden;margin-bottom:14px}
+.prog i{display:block;height:100%;background:var(--ungu2);transition:.3s}
+.soal-tanya{font-size:16.5px;font-weight:600;line-height:1.55;margin-bottom:14px}
+.opsi{display:block;width:100%;text-align:left;border:1px solid var(--garis);background:#fff;border-radius:11px;padding:12px 14px;margin:7px 0;font-size:14.5px;cursor:pointer;font-family:inherit;line-height:1.5}
+.opsi:hover{border-color:var(--ungu2)}
+.opsi.pilih{background:#ede9fe;border-color:var(--ungu);font-weight:700;color:var(--gelap)}
+.opsi.benar{background:#e2f2df;border-color:var(--hijau);font-weight:700}
+.gridnomor{display:flex;flex-wrap:wrap;gap:6px}
+.gridnomor button{width:38px;height:38px;border-radius:9px;border:1px solid var(--garis);background:#fff;cursor:pointer;font-size:13px;font-family:inherit}
+.gridnomor button.isi{background:#ede9fe;border-color:var(--ungu);font-weight:700}
+.gridnomor button.aktif{outline:2px solid var(--ungu);font-weight:800}
+.tabelbungkus{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:560px}
+th{background:#f1ebfd;text-align:left;padding:10px 12px;font-size:11.5px;letter-spacing:.5px;color:#4a3f73;border-bottom:1px solid var(--garis);white-space:nowrap}
+td{padding:9px 12px;border-bottom:1px solid #f0ebfa}
+.kosong{text-align:center;color:var(--redup);padding:26px 10px}
+.modal{position:fixed;inset:0;background:rgba(20,8,50,.55);display:none;align-items:flex-start;justify-content:center;z-index:99;overflow-y:auto;padding:22px 12px}
+.modal.buka{display:flex}
+.modal .kotak{background:#fff;border-radius:16px;max-width:520px;width:100%;padding:22px}
+.modal h3{color:var(--gelap);margin-bottom:14px}
+.modal .aksi{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--gelap);color:#fff;padding:11px 22px;border-radius:999px;font-size:14px;z-index:200;transition:.3s;text-align:center;max-width:92vw}
+.toast.tampil{transform:translateX(-50%) translateY(0)}
+.skor-besar{font-size:56px;font-weight:800;color:var(--ungu);text-align:center;line-height:1.1}
+.bahas{background:#f6f2ff;border:1px dashed #c9bdf0;border-radius:10px;padding:10px 13px;font-size:13.5px;line-height:1.6;margin-top:8px}
+.langkah{background:#f6f2ff;border:1px dashed #c9bdf0;border-radius:12px;padding:14px 16px;font-size:13.5px;line-height:1.7}
+@media(max-width:640px){.formgrid{grid-template-columns:1fr}header b{font-size:16px}}
+</style>
+</head>
+<body>
+<header><div class="logo">🌏</div><div><b>Kuis IPS Kelas 9</b><small>Semester 1 · 50 Soal PG · Database Apps Script</small></div></header>
+<main id="konten"></main>
+<div class="modal" id="modal"><div class="kotak" id="modal-isi"></div></div>
+<div class="toast" id="toast"></div>
+<script>
+'use strict';
+var BANK=[{"topik": "Perubahan Sosial", "tanya": "Perubahan sosial adalah …", "opsi": ["berubahnya lembaga, nilai, sikap, dan pola perilaku masyarakat dari waktu ke waktu", "berpindahnya penduduk dari desa ke kota", "bertambahnya jumlah penduduk suatu daerah", "berubahnya musim dan cuaca di suatu wilayah"], "kunci": 0, "bahas": "Perubahan sosial adalah berubahnya lembaga, nilai, sikap, dan pola perilaku masyarakat dari waktu ke waktu — masyarakat selalu bergerak, cepat atau lambat."}, {"topik": "Perubahan Sosial", "tanya": "Perubahan dari surat, lalu telepon, kemudian ponsel pintar adalah contoh perubahan sosial berbentuk …", "opsi": ["revolusi", "evolusi", "regress", "besar"], "kunci": 1, "bahas": "Evolusi adalah perubahan yang berlangsung lambat dan bertahap, seperti perkembangan alat komunikasi dari surat sampai ponsel."}, {"topik": "Perubahan Sosial", "tanya": "Tren potongan rambut yang berganti-ganti termasuk perubahan sosial berdasarkan cakupan …", "opsi": ["besar", "revolusi", "kecil", "direncanakan"], "kunci": 2, "bahas": "Perubahan kecil hanya menyentuh sebagian kecil kehidupan masyarakat, misalnya tren potongan rambut atau mode pakaian."}, {"topik": "Perubahan Sosial", "tanya": "Program KB dan pembangunan sekolah di berbagai daerah merupakan contoh perubahan sosial yang …", "opsi": ["tidak direncanakan", "terjadi karena bencana", "bersifat regress", "direncanakan"], "kunci": 3, "bahas": "Perubahan yang direncanakan memang sengaja dibuat oleh pemerintah/masyarakat, contohnya program KB dan pembangunan sekolah."}, {"topik": "Perubahan Sosial", "tanya": "Masuknya listrik ke sebuah desa sehingga warga bisa belajar dan berusaha di malam hari adalah perubahan yang bersifat …", "opsi": ["regress", "progress", "revolusi", "kecil"], "kunci": 1, "bahas": "Progress adalah perubahan ke arah kemajuan; listrik masuk desa membawa banyak kemudahan bagi warga."}, {"topik": "Perubahan Sosial", "tanya": "Contoh perubahan sosial yang dialami masyarakat Katingan menurut materi adalah …", "opsi": ["semua warga pindah ke kota", "pasar tradisional ditutup permanen", "orang menyeberang sungai kini memakai jembatan dan feri", "sungai dikeringkan untuk jalan raya"], "kunci": 2, "bahas": "Dulu menyeberang sungai memakai perahu kecil; sekarang ada jembatan dan feri — itulah perubahan sosial di sekitar kita."}, {"topik": "Penyebab & Dampak", "tanya": "Berikut ini yang termasuk penyebab internal perubahan sosial adalah …", "opsi": ["bencana alam", "peperangan dengan negara lain", "pengaruh budaya masyarakat lain", "penemuan baru (inovasi)"], "kunci": 3, "bahas": "Penyebab internal berasal dari dalam masyarakat: perubahan jumlah penduduk, penemuan baru, konflik, dan pemberontakan."}, {"topik": "Penyebab & Dampak", "tanya": "Penyebab eksternal perubahan sosial adalah …", "opsi": ["bencana alam dan perubahan lingkungan", "bertambahnya penduduk", "konflik dalam masyarakat", "pemberontakan"], "kunci": 0, "bahas": "Penyebab eksternal datang dari luar masyarakat, misalnya bencana alam, peperangan, dan pengaruh budaya masyarakat lain."}, {"topik": "Penyebab & Dampak", "tanya": "Penemuan baru dapat menyebar melalui tiga jalan. Berikut ini yang BUKAN jalannya adalah …", "opsi": ["inovasi, yaitu penemuan yang benar-benar baru", "unsur lama yang diberi fungsi baru", "larangan pemerintah terhadap penemuan", "penyempurnaan penemuan yang sudah ada"], "kunci": 2, "bahas": "Tiga jalan penyebaran penemuan baru: inovasi, unsur lama diberi fungsi baru, dan penyempurnaan penemuan yang sudah ada."}, {"topik": "Penyebab & Dampak", "tanya": "Dampak positif perubahan sosial adalah …", "opsi": ["gaya hidup konsumtif", "lunturnya nilai gotong royong", "meningkatnya kriminalitas", "mobilitas sosial terbuka, siapa pun bisa naik kelas lewat pendidikan"], "kunci": 3, "bahas": "Dampak positif perubahan sosial antara lain pola pikir makin maju, teknologi memudahkan hidup, mobilitas sosial terbuka, dan pengakuan HAM."}, {"topik": "Penyebab & Dampak", "tanya": "Dampak negatif perubahan sosial adalah …", "opsi": ["kesenjangan sosial antara yang kaya dan yang miskin", "pola pikir masyarakat makin rasional", "pengakuan kesetaraan gender makin kuat", "teknologi membuka lapangan kerja baru"], "kunci": 0, "bahas": "Dampak negatifnya: kesenjangan sosial, gaya hidup konsumtif dan individualis, lunturnya gotong royong, serta kriminalitas bila perubahan tak terkendali."}, {"topik": "Penyebab & Dampak", "tanya": "Bertambah atau berkurangnya jumlah penduduk termasuk penyebab perubahan sosial dari …", "opsi": ["luar masyarakat", "dalam masyarakat", "alam", "negara lain"], "kunci": 1, "bahas": "Perubahan jumlah penduduk berasal dari dalam masyarakat sendiri, jadi termasuk penyebab internal."}, {"topik": "Modernisasi", "tanya": "Modernisasi adalah …", "opsi": ["meniru budaya Barat secara berlebihan", "kewajiban memakai barang-barang impor", "meninggalkan semua tradisi dan budaya bangsa", "proses berubahnya sikap dan mentalitas masyarakat agar sesuai tuntutan zaman dengan berpikir rasional dan memanfaatkan iptek"], "kunci": 3, "bahas": "Modernisasi adalah proses perubahan sikap dan mentalitas agar sesuai tuntutan zaman — rasional, terbuka, dan memanfaatkan ilmu pengetahuan dan teknologi."}, {"topik": "Modernisasi", "tanya": "Salah satu ciri masyarakat modern adalah …", "opsi": ["berpikir logis dan ilmiah", "menolak semua perubahan", "tidak menghargai waktu", "berorientasi pada masa lalu"], "kunci": 0, "bahas": "Ciri masyarakat modern: berpikir logis dan ilmiah, terbuka pada perubahan, menghargai waktu, berorientasi ke masa depan, dan percaya diri."}, {"topik": "Modernisasi", "tanya": "Westernisasi adalah …", "opsi": ["memakai teknologi untuk belajar", "meniru budaya Barat secara berlebihan sampai kehilangan jati diri", "menjual produk lokal ke luar negeri", "belajar bahasa Inggris untuk bekerja"], "kunci": 1, "bahas": "Westernisasi berbeda dari modernisasi: westernisasi meniru budaya Barat secara berlebihan hingga kehilangan jati diri bangsa."}, {"topik": "Modernisasi", "tanya": "Contoh sikap modern menurut materi adalah petani yang …", "opsi": ["meninggalkan pekerjaan bertani", "menolak semua teknologi baru", "memakai aplikasi cuaca dan menjual hasil kebunnya lewat toko daring", "meniru seluruh gaya hidup orang kota"], "kunci": 2, "bahas": "Petani modern memanfaatkan teknologi (aplikasi cuaca, toko daring) tetapi tetap memegang nilai bangsa seperti gotong royong."}, {"topik": "Modernisasi", "tanya": "Berikut ini yang BUKAN syarat agar modernisasi berjalan sehat adalah …", "opsi": ["menutup diri dari ilmu pengetahuan", "cara berpikir ilmiah", "sistem administrasi yang baik", "masyarakat yang mau berubah"], "kunci": 0, "bahas": "Syarat modernisasi sehat: cara berpikir ilmiah, administrasi yang baik, iklim yang mendukung karya, dan masyarakat yang mau berubah."}, {"topik": "Modernisasi", "tanya": "Pernyataan yang benar tentang modernisasi adalah …", "opsi": ["modernisasi sama dengan westernisasi", "modernisasi memakai kemajuan zaman tanpa melepas nilai dan budaya bangsa", "orang modern harus meninggalkan gotong royong", "modernisasi hanya soal pakaian dan gaya hidup"], "kunci": 1, "bahas": "Modernisasi justru memanfaatkan kemajuan zaman sambil tetap memegang nilai dan budaya bangsa."}, {"topik": "Globalisasi", "tanya": "Globalisasi adalah …", "opsi": ["perdagangan yang hanya terjadi di dalam negeri", "kewajiban memakai produk dalam negeri", "proses mendunia sehingga batas antarnegara terasa hilang karena perdagangan, teknologi, dan budaya mengalir bebas", "berpindahnya ibu kota negara"], "kunci": 2, "bahas": "Globalisasi adalah proses mendunia: batas antarnegara terasa hilang karena perdagangan, teknologi, dan budaya mengalir bebas ke seluruh dunia."}, {"topik": "Globalisasi", "tanya": "Berikut ini yang merupakan pendorong globalisasi adalah …", "opsi": ["larangan perdagangan antarnegara", "penutupan pelabuhan dan bandara", "pelarangan internet", "perusahaan multinasional dan kemajuan teknologi komunikasi"], "kunci": 3, "bahas": "Globalisasi didorong perusahaan multinasional, kemajuan teknologi komunikasi dan transportasi, serta perdagangan bebas antarnegara."}, {"topik": "Globalisasi", "tanya": "Contoh globalisasi dalam kehidupan sehari-hari adalah …", "opsi": ["gotong royong membersihkan kampung", "sistem subak di Bali", "musik K-pop dan film Hollywood dinikmati masyarakat Indonesia", "berladang huma di Kalimantan"], "kunci": 2, "bahas": "Musik K-pop, film Hollywood, makanan cepat saji, dan belanja impor lewat e-commerce adalah contoh globalisasi di sekitar kita."}, {"topik": "Globalisasi", "tanya": "Dampak positif globalisasi adalah …", "opsi": ["produk lokal kalah bersaing", "budaya lokal tergerus budaya asing", "gaya hidup makin konsumtif", "barang lebih beragam dan mudah didapat"], "kunci": 3, "bahas": "Dampak positif globalisasi: barang beragam dan mudah didapat, ilmu dan teknologi berkembang, komunikasi murah, serta peluang ekspor dan lapangan kerja."}, {"topik": "Globalisasi", "tanya": "Dampak negatif globalisasi adalah …", "opsi": ["produk lokal kalah bersaing dan bisa gulung tikar", "peluang ekspor makin besar", "komunikasi makin murah", "wawasan masyarakat makin luas"], "kunci": 0, "bahas": "Dampak negatif globalisasi: produk lokal kalah bersaing, budaya lokal tergerus, gaya hidup konsumtif, dan ketergantungan pada produk luar."}, {"topik": "Globalisasi", "tanya": "Sikap bijak menghadapi globalisasi adalah …", "opsi": ["menolak semua budaya asing", "menyaring budaya asing dengan Pancasila dan agama serta mencintai produk dalam negeri", "menerima semua budaya asing tanpa saringan", "hanya memakai produk impor"], "kunci": 1, "bahas": "Sikap bijak: ambil yang baik, saring yang buruk — saring budaya asing dengan Pancasila dan agama, cintai produk dalam negeri, dan pakai teknologi untuk belajar dan berusaha."}, {"topik": "Kearifan Lokal", "tanya": "Kearifan lokal adalah …", "opsi": ["budaya populer dari luar negeri", "aturan yang dibuat pemerintah pusat", "teknologi baru untuk menjaga lingkungan", "nilai dan kebiasaan baik warisan leluhur suatu daerah yang menjaga keharmonisan hidup dengan alam dan sesama"], "kunci": 3, "bahas": "Kearifan lokal adalah nilai dan kebiasaan baik warisan leluhur yang terbukti menjaga keharmonisan hidup — dengan alam maupun sesama."}, {"topik": "Kearifan Lokal", "tanya": "Subak di Bali adalah kearifan lokal berupa …", "opsi": ["sistem pengaturan air sawah bersama yang adil dan lestari", "aturan adat tertulis", "larangan mengambil hasil alam pada masa tertentu", "upacara syukuran panen"], "kunci": 0, "bahas": "Subak adalah sistem pengaturan air sawah bersama di Bali — adil, lestari, dan penuh musyawarah; bahkan diakui UNESCO sebagai warisan dunia."}, {"topik": "Kearifan Lokal", "tanya": "Sasi di Maluku dan Papua adalah …", "opsi": ["kerja bersama membangun rumah", "larangan mengambil hasil alam pada masa tertentu agar alam pulih kembali", "aturan adat tertulis tentang ketertiban desa", "cara berladang berpindah"], "kunci": 1, "bahas": "Sasi adalah larangan mengambil hasil alam pada masa tertentu supaya alam punya waktu pulih kembali."}, {"topik": "Kearifan Lokal", "tanya": "Awig-awig di Bali dan Lombok adalah …", "opsi": ["sistem pengairan sawah", "larangan menebang hutan selamanya", "aturan adat tertulis untuk menjaga lingkungan dan ketertiban desa", "nama tarian tradisional"], "kunci": 2, "bahas": "Awig-awig adalah aturan adat tertulis yang menjaga lingkungan dan ketertiban desa di Bali dan Lombok."}, {"topik": "Kearifan Lokal", "tanya": "Huma dalam budaya Dayak di Kalimantan adalah …", "opsi": ["membuka hutan dengan membakar besar-besaran", "berladang dengan memperhatikan musim dan kesuburan tanah", "menanam padi di sawah irigasi", "berkebun sayur di pekarangan"], "kunci": 1, "bahas": "Huma adalah cara berladang bijak warisan leluhur Dayak: memperhatikan musim dan kesuburan tanah."}, {"topik": "Kearifan Lokal", "tanya": "Berikut ini yang BUKAN cara melestarikan kearifan lokal adalah …", "opsi": ["mempelajarinya di sekolah dan keluarga", "mendokumentasikannya lewat media digital", "menganggapnya kuno lalu meninggalkannya", "menjadikannya daya tarik wisata budaya"], "kunci": 2, "bahas": "Kearifan lokal terancam justru karena dianggap kuno dan ditinggalkan; cara melestarikannya: dipelajari, dipakai sehari-hari, didokumentasikan, dan dijadikan wisata budaya."}, {"topik": "Uang & Lembaga Keuangan", "tanya": "Sebelum ada uang, orang bertukar barang secara langsung. Cara itu disebut …", "opsi": ["kredit", "gadai", "investasi", "barter"], "kunci": 3, "bahas": "Barter adalah tukar-menukar barang secara langsung; cara ini repot karena kedua pihak harus sama-sama membutuhkan barang yang ditukar."}, {"topik": "Uang & Lembaga Keuangan", "tanya": "Fungsi uang sebagai satuan hitung artinya uang digunakan untuk …", "opsi": ["mengukur nilai suatu barang (harga)", "menyimpan kekayaan", "membayar utang", "alat tukar barang"], "kunci": 0, "bahas": "Sebagai satuan hitung, uang dipakai mengukur nilai barang — itulah yang kita sebut harga."}, {"topik": "Uang & Lembaga Keuangan", "tanya": "Fungsi uang sebagai penyimpan nilai artinya …", "opsi": ["kekayaan dapat disimpan untuk digunakan pada masa depan", "uang hanya berlaku hari ini", "harga barang selalu tetap", "uang tidak boleh ditabung"], "kunci": 0, "bahas": "Dengan uang, kekayaan bisa disimpan (ditabung) dan dipakai lagi pada masa depan — itulah fungsi penyimpan nilai."}, {"topik": "Uang & Lembaga Keuangan", "tanya": "Bank sentral Indonesia yang bertugas menjaga kestabilan nilai rupiah dan sistem pembayaran (termasuk QRIS) adalah …", "opsi": ["Otoritas Jasa Keuangan", "Bank Indonesia", "Kementerian Keuangan", "Lembaga Penjamin Simpanan"], "kunci": 1, "bahas": "Bank Indonesia (BI) adalah bank sentral: mengatur dan menjaga kestabilan nilai rupiah serta sistem pembayaran, termasuk QRIS."}, {"topik": "Uang & Lembaga Keuangan", "tanya": "Berikut ini yang termasuk lembaga keuangan non-bank adalah …", "opsi": ["Bank BRI", "Bank BCA", "pegadaian dan perusahaan asuransi", "Bank Indonesia"], "kunci": 2, "bahas": "Lembaga keuangan non-bank misalnya koperasi simpan pinjam, asuransi, pegadaian, dana pensiun, dan perusahaan pembiayaan (leasing)."}, {"topik": "Uang & Lembaga Keuangan", "tanya": "Otoritas Jasa Keuangan (OJK) bertugas …", "opsi": ["mencetak uang rupiah", "menjamin simpanan nasabah bank", "menyalurkan kredit ke masyarakat", "mengawasi bank dan lembaga keuangan agar aman"], "kunci": 3, "bahas": "OJK mengawasi bank dan lembaga keuangan agar aman; yang menjamin simpanan adalah LPS, dan yang mengatur rupiah adalah Bank Indonesia."}, {"topik": "Interaksi Abad ke-21", "tanya": "Kelebihan interaksi digital dibandingkan interaksi nyata adalah …", "opsi": ["lebih hangat dan jelas maksudnya", "tidak memakai alat apa pun", "cepat, murah, praktis, dan jangkauannya seluruh dunia", "hanya bisa dilakukan di sekolah"], "kunci": 2, "bahas": "Interaksi digital lewat gawai dan internet cepat, murah, praktis, dan menjangkau seluruh dunia kapan saja."}, {"topik": "Interaksi Abad ke-21", "tanya": "Risiko interaksi digital yang harus diwaspadai adalah …", "opsi": ["salah paham kecil", "harus bertemu langsung", "biaya transportasi mahal", "hoaks, penipuan, perundungan siber, dan jejak digital yang abadi"], "kunci": 3, "bahas": "Risiko dunia digital: hoaks, penipuan, perundungan siber (cyberbullying), dan jejak digital yang sulit hilang."}, {"topik": "Interaksi Abad ke-21", "tanya": "Dalam etika digital, PROTECT berarti …", "opsi": ["melindungi data pribadi dan keamanan akun, misalnya tidak membagikan kode OTP", "menghormati orang lain di dunia maya", "mengajari orang lain memakai internet", "melaporkan semua akun yang tidak dikenal"], "kunci": 0, "bahas": "Etika digital disingkat RESPECT, EDUCATE, PROTECT — Protect: lindungi data pribadi dan keamanan akunmu; jangan pernah bagikan kode OTP."}, {"topik": "Interaksi Abad ke-21", "tanya": "Dalam etika digital, RESPECT berarti …", "opsi": ["memakai kata sandi yang kuat", "menghormati orang lain di dunia maya seperti di dunia nyata", "terus belajar memakai internet", "melindungi data pribadi"], "kunci": 1, "bahas": "Respect artinya menghormati orang lain di dunia maya sama seperti di dunia nyata."}, {"topik": "Transaksi Digital", "tanya": "QRIS adalah …", "opsi": ["nama sebuah bank digital", "satu kode QR yang bisa dipakai semua aplikasi pembayaran", "aplikasi ojek daring", "kartu kredit untuk pelajar"], "kunci": 1, "bahas": "QRIS adalah satu kode QR untuk semua aplikasi pembayaran — dari mal sampai warung kopi cukup satu kode."}, {"topik": "Transaksi Digital", "tanya": "E-commerce adalah …", "opsi": ["pasar tradisional yang buka malam hari", "jasa pengiriman barang", "toko daring tempat penjual dan pembeli dari berbagai kota bertemu", "mesin kasir di supermarket"], "kunci": 2, "bahas": "E-commerce adalah toko daring: penjual dan pembeli dari berbagai kota, bahkan negara, bertemu tanpa harus tatap muka."}, {"topik": "Transaksi Digital", "tanya": "Keuntungan transaksi ekonomi digital bagi pelaku usaha kecil adalah …", "opsi": ["usaha hanya bisa dijalankan dari toko besar", "tidak perlu melayani pembeli", "barang pasti laku tanpa promosi", "membuka peluang usaha dari rumah (UMKM go digital)"], "kunci": 3, "bahas": "Transaksi digital cepat dan praktis, banyak pilihan dan promo, serta membuka peluang usaha dari rumah — UMKM bisa go digital."}, {"topik": "Transaksi Digital", "tanya": "Risiko berbelanja daring yang harus diwaspadai adalah …", "opsi": ["penipuan toko fiktif dan barang yang datang tidak sesuai pesanan", "banyak pilihan barang", "pembayaran terlalu cepat", "kurir mengantar sampai rumah"], "kunci": 0, "bahas": "Risiko transaksi digital: penipuan toko fiktif, barang tidak sesuai, kebocoran data, dan pinjol ilegal — selalu waspada."}, {"topik": "Transaksi Digital", "tanya": "Pinjaman online (pinjol) ilegal berbahaya karena …", "opsi": ["prosesnya terlalu cepat", "hanya bisa dipakai orang dewasa", "wajib memakai QRIS", "bunganya mencekik dan tidak berizin OJK"], "kunci": 3, "bahas": "Pinjol ilegal berbunga mencekik dan tidak berizin — sebelum memakai layanan keuangan, selalu cek izinnya di OJK."}, {"topik": "Literasi Finansial", "tanya": "Literasi finansial adalah …", "opsi": ["kemampuan memahami dan mengelola uang dengan bijak", "kemampuan membaca laporan bank", "kebiasaan berbelanja secara daring", "keahlian membuat uang palsu terlihat asli"], "kunci": 0, "bahas": "Literasi finansial adalah kemampuan memahami dan mengelola uang dengan bijak: membedakan kebutuhan dan keinginan, berani menabung, dan tidak mudah tertipu."}, {"topik": "Literasi Finansial", "tanya": "Cara menabung yang benar menurut materi adalah …", "opsi": ["menabung dari sisa uang jajan bila ada", "menyisihkan tabungan di awal, bukan menunggu sisa", "menabung hanya saat ada uang besar", "meminjam uang untuk ditabung"], "kunci": 1, "bahas": "Langkah mengelola uang: catat pemasukan dan pengeluaran, dahulukan kebutuhan, dan sisihkan tabungan di awal — bukan dari sisa."}, {"topik": "Literasi Finansial", "tanya": "Contoh anggaran sederhana untuk pelajar menurut materi adalah …", "opsi": ["100% untuk jajan dan hiburan", "50% tabungan, 50% jajan", "50% kebutuhan, 30% tabungan dan belajar, 20% jajan atau hiburan", "tidak perlu membuat anggaran"], "kunci": 2, "bahas": "Anggaran sederhana pelajar: 50% kebutuhan, 30% tabungan dan belajar, 20% jajan/hiburan."}, {"topik": "Literasi Finansial", "tanya": "Ciri-ciri investasi bodong adalah …", "opsi": ["janji untung besar dalam waktu singkat tanpa risiko", "untung wajar dan berizin OJK", "wajib menyetor laporan keuangan", "hanya ditawarkan di bank"], "kunci": 0, "bahas": "Waspada investasi bodong: janji untung besar, waktu singkat, tanpa risiko — juga tawaran cepat kaya tanpa kerja dan arisan daring yang tidak jelas."}, {"topik": "Literasi Finansial", "tanya": "Menyisihkan Rp2.000 dari uang saku setiap hari ke celengan selama satu bulan (30 hari) akan terkumpul …", "opsi": ["Rp20.000", "Rp60.000", "Rp30.000", "Rp200.000"], "kunci": 1, "bahas": "Rp2.000 × 30 hari = Rp60.000. Kecil-kecil lama-lama menjadi bukit — itulah literasi finansial dalam tindakan nyata."}];
+var KUNCI='kuisips9_v1';
+var DB=mauat();
+function bawaan(){return{gas:'https://script.google.com/macros/s/AKfycbwwt2KnTrf16a2oMqSCW_jXFqJgAaUb9xTIISJjCnJcpzhx71k8VDiZRb4L32CV_JD0/exec',token:'IPS9DB',pin:'123456',lokal:[]};}
+function mauat(){try{var d=JSON.parse(localStorage.getItem(KUNCI));if(d&&typeof d.pin==='string')return d;}catch(e){}var b=bawaan();localStorage.setItem(KUNCI,JSON.stringify(b));return b;}
+function simpan(){localStorage.setItem(KUNCI,JSON.stringify(DB));}
+function $(s){return document.querySelector(s);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('tampil');setTimeout(function(){t.classList.remove('tampil');},2600);}
+function bukaModal(h){$('#modal-isi').innerHTML=h;$('#modal').classList.add('buka');}
+function tutupModal(){$('#modal').classList.remove('buka');}
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)tutupModal();});
+function ymd(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+function jam(d){return('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);}
+var halaman='login',sesi=null,timerInt=null,guruMasuk=false,nilaiJarakJauh=null;
+function render(){
+ if(halaman==='login'){$('#konten').innerHTML=pgLogin();psLogin();}
+ else if(halaman==='ujian'){$('#konten').innerHTML=pgUjian();psUjian();}
+ else if(halaman==='hasil'){$('#konten').innerHTML=pgHasil();psHasil();}
+ else if(halaman==='bahas'){$('#konten').innerHTML=pgBahas();psBahas();}
+ else if(halaman==='guru'){$('#konten').innerHTML=pgGuru();psGuru();}
+ window.scrollTo(0,0);
+}
+/* ===== Halaman depan: login nama & kelas ===== */
+function pgLogin(){
+ return '<h1>🌏 Kuis IPS Kelas 9 — Semester 1</h1><p class="sub">Materi: Manusia dan Perubahan (perubahan sosial, modernisasi, globalisasi, kearifan lokal) dan Perkembangan Ekonomi Digital (uang & lembaga keuangan, transaksi digital, literasi finansial).<br>Jumlah soal: <b>50 pilihan ganda</b> · Waktu: <b>60 menit</b> · Nilai langsung terkirim ke database guru.</p>'
+ +'<div class="kartu"><b style="color:var(--gelap)">🔑 Login Siswa</b><div class="formgrid" style="margin-top:14px">'
+ +'<div><label>Nama lengkap *</label><input id="lg-nama" placeholder="Tulis namamu"></div>'
+ +'<div><label>Kelas *</label><input id="lg-kelas" placeholder="Mis. IX A / 9A"></div></div>'
+ +'<button class="btn utama" id="lg-mulai" style="width:100%;margin-top:16px;padding:13px;font-size:15px">Mulai mengerjakan →</button>'
+ +'<p class="sub" style="margin:12px 0 0">Kerjakan dengan jujur ya. Setelah selesai, nilaimu otomatis masuk ke database guru (Google Sheets lewat Apps Script).</p></div>'
+ +'<div style="text-align:center"><button class="btn" id="lg-guru">🔑 Mode Guru</button></div>';
+}
+function psLogin(){
+ $('#lg-mulai').addEventListener('click',function(){
+  var nama=$('#lg-nama').value.trim(),kelas=$('#lg-kelas').value.trim();
+  if(!nama||!kelas){toast('Nama dan kelas wajib diisi dulu ya');return;}
+  sesi={nama:nama,kelas:kelas,jawab:{},idx:0,selesai:Date.now()+60*60000,terkirim:null};
+  halaman='ujian';render();toast('Selamat mengerjakan, '+nama+' 🙏');
+ });
+ $('#lg-guru').addEventListener('click',function(){
+  bukaModal('<h3>🔑 Mode Guru</h3><div><label>PIN guru</label><input type="password" id="pin-guru" inputmode="numeric" placeholder="Masukkan PIN"></div><div class="aksi"><button class="btn" onclick="tutupModal()">Batal</button><button class="btn utama" id="pin-ok">Masuk</button></div>');
+  $('#pin-ok').addEventListener('click',function(){
+   if($('#pin-guru').value===DB.pin){guruMasuk=true;halaman='guru';tutupModal();render();}
+   else toast('PIN salah');
+  });
+ });
+}
+</script>
+<script>
+/* ===== Halaman ujian ===== */
+function pgUjian(){
+ var s=sesi,q=BANK[s.idx];
+ var terjawab=Object.keys(s.jawab).length;
+ var opsi=q.opsi.map(function(o,j){
+  return '<button class="opsi'+(s.jawab[s.idx]===j?' pilih':'')+'" data-opsi="'+j+'"><b>'+'ABCD'[j]+'.</b> '+esc(o)+'</button>';
+ }).join('');
+ var grid=BANK.map(function(_,i){
+  return '<button data-lompat="'+i+'" class="'+(s.jawab[i]!=null?'isi':'')+(i===s.idx?' aktif':'')+'">'+(i+1)+'</button>';
+ }).join('');
+ return '<div class="bar-ujian"><div>👤 <b>'+esc(s.nama)+'</b> · '+esc(s.kelas)+'</div><div style="flex:1"></div><div class="timer" id="sisa-waktu">—</div></div>'
+ +'<div class="prog"><i style="width:'+Math.round(terjawab/BANK.length*100)+'%"></i></div>'
+ +'<div class="kartu"><div class="sub" style="margin-bottom:8px">Soal '+(s.idx+1)+' dari '+BANK.length+' · Topik: '+esc(q.topik)+' · Terjawab '+terjawab+'</div>'
+ +'<div class="soal-tanya">'+esc(q.tanya)+'</div>'+opsi
+ +'<div style="display:flex;gap:10px;margin-top:16px"><button class="btn" id="uj-sebelum" '+(s.idx===0?'disabled':'')+'>← Sebelumnya</button><div style="flex:1"></div>'
+ +(s.idx<BANK.length-1?'<button class="btn utama" id="uj-berikut">Berikutnya →</button>':'<button class="btn utama" id="uj-kumpul">📩 Kumpulkan jawaban</button>')
+ +'</div></div>'
+ +'<div class="kartu"><b style="color:var(--gelap)">Nomor soal</b><div class="gridnomor" style="margin-top:10px">'+grid+'</div>'
+ +(terjawab===BANK.length&&s.idx<BANK.length-1?'<button class="btn utama" id="uj-kumpul2" style="width:100%;margin-top:14px">📩 Semua terjawab — Kumpulkan jawaban</button>':'')
+ +'</div>';
+}
+function psUjian(){
+ Array.prototype.forEach.call(document.querySelectorAll('[data-opsi]'),function(b){
+  b.addEventListener('click',function(){sesi.jawab[sesi.idx]=Number(b.getAttribute('data-opsi'));render();});
+ });
+ Array.prototype.forEach.call(document.querySelectorAll('[data-lompat]'),function(b){
+  b.addEventListener('click',function(){sesi.idx=Number(b.getAttribute('data-lompat'));render();});
+ });
+ var sb=$('#uj-sebelum');if(sb)sb.addEventListener('click',function(){sesi.idx--;render();});
+ var br=$('#uj-berikut');if(br)br.addEventListener('click',function(){sesi.idx++;render();});
+ var kp=$('#uj-kumpul');if(kp)kp.addEventListener('click',function(){kumpulkan(false);});
+ var kp2=$('#uj-kumpul2');if(kp2)kp2.addEventListener('click',function(){kumpulkan(false);});
+ clearInterval(timerInt);
+ function tik(){
+  if(!sesi){clearInterval(timerInt);return;}
+  var sisa=sesi.selesai-Date.now();var el=$('#sisa-waktu');
+  if(el){var d=Math.max(0,Math.round(sisa/1000));el.textContent=Math.floor(d/60)+':'+('0'+(d%60)).slice(-2);}
+  if(sisa<=0){clearInterval(timerInt);kumpulkan(true);}
+ }
+ timerInt=setInterval(tik,500);tik();
+}
+function kumpulkan(otomatis){
+ if(!sesi)return;
+ clearInterval(timerInt);
+ var benar=0;
+ BANK.forEach(function(q,i){if(sesi.jawab[i]===q.kunci)benar++;});
+ var nilai=Math.round(benar/BANK.length*100);
+ var rec={nama:sesi.nama,kelas:sesi.kelas,benar:benar,total:BANK.length,nilai:nilai,tanggal:ymd(new Date()),waktu:jam(new Date()),otomatis:!!otomatis};
+ sesi.hasil=rec;
+ DB.lokal.push(rec);simpan();
+ halaman='hasil';render();
+ kirimNilai(rec);
+}
+function kirimNilai(rec){
+ if(!DB.gas){if(sesi)sesi.terkirim=false;var e=$('#status-kirim');if(e)e.innerHTML='📴 Database belum terhubung — nilai tersimpan di perangkat ini. Guru: hubungkan alamat Apps Script di Mode Guru → Pengaturan.';return;}
+ fetch(DB.gas,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({token:DB.token,nama:rec.nama,kelas:rec.kelas,benar:rec.benar,total:rec.total,nilai:rec.nilai,tanggal:rec.tanggal,waktu:rec.waktu})})
+ .then(function(r){return r.json();})
+ .then(function(j){
+   if(sesi)sesi.terkirim=!!(j&&j.ok);
+   var e=$('#status-kirim');
+   if(e)e.innerHTML=(j&&j.ok)?'✅ Nilai terkirim ke database guru (Google Sheets).':'⚠️ Pengiriman ke database gagal — nilai tersimpan di perangkat ini.';
+ })
+ .catch(function(){
+   if(sesi)sesi.terkirim=false;
+   var e=$('#status-kirim');if(e)e.innerHTML='⚠️ Pengiriman ke database gagal (jaringan) — nilai tersimpan di perangkat ini.';
+ });
+}
+/* ===== Halaman hasil & pembahasan ===== */
+function pgHasil(){
+ var h=sesi.hasil;
+ return '<h1>🎉 Selesai'+(h.otomatis?' (waktu habis)':'')+'</h1><p class="sub">'+esc(sesi.nama)+' · '+esc(sesi.kelas)+'</p>'
+ +'<div class="kartu"><div class="sub" style="text-align:center;margin:0">Nilaimu</div><div class="skor-besar">'+h.nilai+'</div>'
+ +'<p style="text-align:center">Jawaban benar <b>'+h.benar+'</b> dari '+h.total+' soal</p>'
+ +'<p id="status-kirim" style="text-align:center;margin-top:10px">⏳ Mengirim nilai ke database guru…</p>'
+ +'<div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button class="btn utama" id="hs-bahas">📖 Lihat pembahasan</button><button class="btn" id="hs-awal">🏠 Kembali ke awal</button></div></div>';
+}
+function psHasil(){
+ $('#hs-bahas').addEventListener('click',function(){halaman='bahas';render();});
+ $('#hs-awal').addEventListener('click',function(){sesi=null;halaman='login';render();});
+ var e=$('#status-kirim');
+ if(e&&sesi.terkirim===true)e.innerHTML='✅ Nilai terkirim ke database guru (Google Sheets).';
+ if(e&&sesi.terkirim===false)e.innerHTML='⚠️ Nilai tersimpan di perangkat ini (database belum terhubung / gagal kirim).';
+}
+function pgBahas(){
+ var html='<h1>📖 Pembahasan</h1><p class="sub">Jawabanmu yang benar berwarna hijau. Pelajari pembahasannya ya.</p>';
+ BANK.forEach(function(q,i){
+  var jw=sesi.jawab[i];
+  html+='<div class="kartu"><div class="sub" style="margin-bottom:6px">Soal '+(i+1)+' · '+esc(q.topik)+(jw===q.kunci?' · Benar':(jw==null?' · Tidak dijawab':' · Belum tepat'))+'</div><div class="soal-tanya" style="font-size:15.5px">'+esc(q.tanya)+'</div>';
+  q.opsi.forEach(function(o,j){
+   var cls=j===q.kunci?'opsi benar':'opsi';
+   html+='<div class="'+cls+'" style="cursor:default"><b>'+'ABCD'[j]+'.</b> '+esc(o)+(j===q.kunci?' ✓':'')+(j===jw&&jw!==q.kunci?' <span style="color:var(--redup);font-size:12px">(jawabanmu)</span>':'')+'</div>';
+  });
+  html+='<div class="bahas">💡 '+esc(q.bahas)+'</div></div>';
+ });
+ return html+'<div style="text-align:center"><button class="btn utama" id="bh-awal">🏠 Kembali ke awal</button></div>';
+}
+function psBahas(){$('#bh-awal').addEventListener('click',function(){sesi=null;halaman='login';render();});}
+/* ===== Mode guru ===== */
+function pgGuru(){
+ var rows=(nilaiJarakJauh||DB.lokal).slice().reverse();
+ var sumber=nilaiJarakJauh?'database Apps Script (Google Sheets)':'perangkat ini (database belum dimuat)';
+ var baris=rows.map(function(r,i){
+  return '<tr><td>'+(i+1)+'</td><td><b>'+esc(r.nama)+'</b></td><td>'+esc(r.kelas)+'</td><td>'+r.benar+' / '+r.total+'</td><td><b>'+r.nilai+'</b></td><td>'+esc(r.tanggal||'')+' '+esc(r.waktu||'')+'</td></tr>';
+ }).join('')||'<tr><td colspan="6" class="kosong">Belum ada nilai masuk.</td></tr>';
+ return '<h1>🔑 Mode Guru — Rekap Nilai</h1><p class="sub">Sumber data: '+sumber+'. Tombol "Muat dari database" mengambil semua nilai dari Google Sheets; "Unduh Excel" menyimpan rekap sebagai berkas .xlsx.</p>'
+ +'<div class="kartu"><div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px"><button class="btn utama" id="gr-muat">🔄 Muat dari database</button><button class="btn" id="gr-excel">⬇️ Unduh Excel (.xlsx)</button><button class="btn" id="gr-keluar">🏠 Halaman siswa</button></div>'
+ +'<div class="tabelbungkus"><table><thead><tr><th>NO</th><th>NAMA</th><th>KELAS</th><th>BENAR</th><th>NILAI</th><th>WAKTU</th></tr></thead><tbody>'+baris+'</tbody></table></div></div>'
+ +'<div class="kartu"><b style="color:var(--gelap)">⚙️ Pengaturan Database Apps Script</b><div class="formgrid" style="margin-top:12px">'
+ +'<div class="penuh"><label>Alamat Web App Apps Script (URL /exec)</label><input id="gr-gas" value="'+esc(DB.gas)+'" placeholder="https://script.google.com/macros/s/…/exec"></div>'
+ +'<div><label>Token database</label><input id="gr-token" value="'+esc(DB.token)+'"></div>'
+ +'<div><label>PIN guru</label><input id="gr-pin" value="'+esc(DB.pin)+'"></div></div>'
+ +'<button class="btn utama" id="gr-simpan" style="margin-top:14px">Simpan pengaturan</button>'
+ +'<div class="langkah" style="margin-top:14px">Cara menghubungkan database: buka Google Apps Script (script.google.com) dengan akun Google guru → proyek baru → tempel isi berkas <b>Code.gs</b> dari paket "Kuis IPS Kelas 9 — Database" → jalankan fungsi <b>siapkan</b> sekali (membuat Google Sheets "DB Kuis IPS Kelas 9") → Deploy → Web app → akses "Anyone" → salin URL-nya ke kolom di atas. Token di aplikasi harus sama dengan token di Code.gs.</div></div>';
+}
+function psGuru(){
+ $('#gr-keluar').addEventListener('click',function(){guruMasuk=false;nilaiJarakJauh=null;halaman='login';render();});
+ $('#gr-simpan').addEventListener('click',function(){
+  DB.gas=$('#gr-gas').value.trim();DB.token=$('#gr-token').value.trim()||DB.token;
+  var p=$('#gr-pin').value.trim();if(p)DB.pin=p;
+  simpan();toast('Pengaturan tersimpan ✅');render();
+ });
+ $('#gr-muat').addEventListener('click',function(){
+  if(!DB.gas){toast('Alamat Apps Script belum diisi (lihat Pengaturan)');return;}
+  toast('Mengambil nilai dari database…');
+  fetch(DB.gas+'?aksi=nilai&token='+encodeURIComponent(DB.token))
+  .then(function(r){return r.json();})
+  .then(function(j){
+   if(j&&j.ok){nilaiJarakJauh=j.data||[];render();toast('Nilai dari database dimuat ✅');}
+   else toast('Gagal memuat: token salah atau database belum siap');
+  })
+  .catch(function(){toast('Gagal terhubung ke database (jaringan)');});
+ });
+ $('#gr-excel').addEventListener('click',function(){
+  var rows=(nilaiJarakJauh||DB.lokal);
+  if(!rows.length){toast('Belum ada nilai untuk diunduh');return;}
+  var data=[['Nama','Kelas','Benar','Total Soal','Nilai','Tanggal','Waktu']];
+  rows.forEach(function(r){data.push([r.nama,r.kelas,r.benar,r.total,r.nilai,r.tanggal||'',r.waktu||'']);});
+  if(window.XLSX){
+   var ws=XLSX.utils.aoa_to_sheet(data);var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Nilai IPS Kelas 9');
+   XLSX.writeFile(wb,'nilai-kuis-ips-kelas9.xlsx');toast('Berkas Excel diunduh ✅');
+  }else{
+   var isi=data.map(function(r){return r.map(function(c){c=String(c==null?'':c);return /[";\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c;}).join(';');}).join('\r\n');
+   var a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+isi],{type:'text/csv'}));a.download='nilai-kuis-ips-kelas9.csv';a.click();setTimeout(function(){URL.revokeObjectURL(a.href);},500);
+   toast('SheetJS tidak termuat — diunduh sebagai CSV (bisa dibuka di Excel)');
+  }
+ });
+}
+/* mulai */
+render();
+</script>
+</body>
+</html>
