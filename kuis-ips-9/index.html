@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kuis IPS Kelas 9 — Database Apps Script</title>
+<title>Ulangan Semester 1 — IPS Kelas 9</title>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -59,7 +59,7 @@ td{padding:9px 12px;border-bottom:1px solid #f0ebfa}
 </style>
 </head>
 <body>
-<header><div class="logo">🌏</div><div><b>Kuis IPS Kelas 9</b><small>Semester 1 · 50 Soal PG · Database Apps Script</small></div></header>
+<header><div class="logo">🌏</div><div><b>Ulangan Semester 1</b><small>IPS Kelas 9 · 50 Soal Pilihan Ganda</small></div></header>
 <main id="konten"></main>
 <div class="modal" id="modal"><div class="kotak" id="modal-isi"></div></div>
 <div class="toast" id="toast"></div>
@@ -84,25 +84,26 @@ function render(){
  if(halaman==='login'){$('#konten').innerHTML=pgLogin();psLogin();}
  else if(halaman==='ujian'){$('#konten').innerHTML=pgUjian();psUjian();}
  else if(halaman==='hasil'){$('#konten').innerHTML=pgHasil();psHasil();}
- else if(halaman==='bahas'){$('#konten').innerHTML=pgBahas();psBahas();}
  else if(halaman==='guru'){$('#konten').innerHTML=pgGuru();psGuru();}
  window.scrollTo(0,0);
 }
 /* ===== Halaman depan: login nama & kelas ===== */
 function pgLogin(){
- return '<h1>🌏 Kuis IPS Kelas 9 — Semester 1</h1><p class="sub">Materi: Manusia dan Perubahan (perubahan sosial, modernisasi, globalisasi, kearifan lokal) dan Perkembangan Ekonomi Digital (uang & lembaga keuangan, transaksi digital, literasi finansial).<br>Jumlah soal: <b>50 pilihan ganda</b> · Waktu: <b>60 menit</b> · Nilai langsung terkirim ke database guru.</p>'
+ return '<h1>📝 Ulangan Semester 1 — IPS Kelas 9</h1><p class="sub">Materi: Manusia dan Perubahan (perubahan sosial, modernisasi, globalisasi, kearifan lokal) dan Perkembangan Ekonomi Digital (uang & lembaga keuangan, transaksi digital, literasi finansial).<br>Jumlah soal: <b>50 pilihan ganda</b> · Waktu: <b>120 menit (2 jam)</b> · Nilai langsung terkirim ke database guru.</p>'
  +'<div class="kartu"><b style="color:var(--gelap)">🔑 Login Siswa</b><div class="formgrid" style="margin-top:14px">'
  +'<div><label>Nama lengkap *</label><input id="lg-nama" placeholder="Tulis namamu"></div>'
  +'<div><label>Kelas *</label><input id="lg-kelas" placeholder="Mis. IX A / 9A"></div></div>'
  +'<button class="btn utama" id="lg-mulai" style="width:100%;margin-top:16px;padding:13px;font-size:15px">Mulai mengerjakan →</button>'
- +'<p class="sub" style="margin:12px 0 0">Kerjakan dengan jujur ya. Setelah selesai, nilaimu otomatis masuk ke database guru (Google Sheets lewat Apps Script).</p></div>'
+ +'<p class="sub" style="margin:12px 0 0">Kerjakan dengan jujur ya. Setelah selesai, nilaimu otomatis masuk ke database guru (Google Sheets lewat Apps Script).</p><p class="sub" style="margin:8px 0 0">⚠️ <b>Peraturan ulangan:</b> dilarang keluar dari halaman ini (pindah tab atau aplikasi) selama ulangan. Setiap kali keluar tercatat sebagai peringatan — sesudah <b>4 kali peringatan</b>, ulangan langsung <b>terkunci</b> dan nilai dihitung dari jawaban yang sudah ada. Sesudah selesai <b>tidak ada pembahasan</b>.</p></div>'
  +'<div style="text-align:center"><button class="btn" id="lg-guru">🔑 Mode Guru</button></div>';
 }
 function psLogin(){
  $('#lg-mulai').addEventListener('click',function(){
   var nama=$('#lg-nama').value.trim(),kelas=$('#lg-kelas').value.trim();
   if(!nama||!kelas){toast('Nama dan kelas wajib diisi dulu ya');return;}
-  sesi={nama:nama,kelas:kelas,jawab:{},idx:0,selesai:Date.now()+60*60000,terkirim:null};
+  var sudahTerkunci=DB.lokal.some(function(r){return r.terkunci&&r.nama.toLowerCase()===nama.toLowerCase()&&r.kelas.toLowerCase()===kelas.toLowerCase();});
+  if(sudahTerkunci){toast('Nilai untuk nama & kelas ini sudah terkunci di perangkat ini');return;}
+  sesi={nama:nama,kelas:kelas,jawab:{},idx:0,selesai:Date.now()+120*60000,terkirim:null,keluar:0,terkunci:false};
   halaman='ujian';render();toast('Selamat mengerjakan, '+nama+' 🙏');
  });
  $('#lg-guru').addEventListener('click',function(){
@@ -145,6 +146,7 @@ function psUjian(){
  });
  var sb=$('#uj-sebelum');if(sb)sb.addEventListener('click',function(){sesi.idx--;render();});
  var br=$('#uj-berikut');if(br)br.addEventListener('click',function(){sesi.idx++;render();});
+ pasangJaga();
  var kp=$('#uj-kumpul');if(kp)kp.addEventListener('click',function(){kumpulkan(false);});
  var kp2=$('#uj-kumpul2');if(kp2)kp2.addEventListener('click',function(){kumpulkan(false);});
  clearInterval(timerInt);
@@ -156,13 +158,35 @@ function psUjian(){
  }
  timerInt=setInterval(tik,500);tik();
 }
-function kumpulkan(otomatis){
+var jagaAktif=false;
+function pasangJaga(){
+ if(jagaAktif)return;jagaAktif=true;
+ document.addEventListener('visibilitychange',jagaKeluar);
+}
+function lepasJaga(){
+ jagaAktif=false;
+ document.removeEventListener('visibilitychange',jagaKeluar);
+}
+function jagaKeluar(){
+ if(!sesi||halaman!=='ujian'||sesi.terkunci)return;
+ if(document.hidden){
+  sesi.keluar=(sesi.keluar||0)+1;
+  if(sesi.keluar>4){
+   sesi.terkunci=true;
+   kumpulkan(false,true);
+  }
+ }else if(sesi.keluar>0&&sesi.keluar<=4){
+  bukaModal('<h3>⚠️ Peringatan '+sesi.keluar+' dari 4</h3><p>Kamu keluar dari halaman ulangan. Jangan pindah tab atau aplikasi selama ulangan berlangsung.</p><p>Bila keluar lagi sesudah 4 kali peringatan, ulangan langsung <b>terkunci</b> dan nilaimu dihitung dari jawaban yang sudah ada.</p><div class="aksi"><button class="btn utama" onclick="tutupModal()">Saya mengerti</button></div>');
+ }
+}
+function kumpulkan(otomatis,terkunci){
  if(!sesi)return;
  clearInterval(timerInt);
+ lepasJaga();
  var benar=0;
  BANK.forEach(function(q,i){if(sesi.jawab[i]===q.kunci)benar++;});
  var nilai=Math.round(benar/BANK.length*100);
- var rec={nama:sesi.nama,kelas:sesi.kelas,benar:benar,total:BANK.length,nilai:nilai,tanggal:ymd(new Date()),waktu:jam(new Date()),otomatis:!!otomatis};
+ var rec={nama:sesi.nama,kelas:sesi.kelas,benar:benar,total:BANK.length,nilai:nilai,tanggal:ymd(new Date()),waktu:jam(new Date()),otomatis:!!otomatis,terkunci:!!terkunci};
  sesi.hasil=rec;
  DB.lokal.push(rec);simpan();
  halaman='hasil';render();
@@ -170,7 +194,7 @@ function kumpulkan(otomatis){
 }
 function kirimNilai(rec){
  if(!DB.gas){if(sesi)sesi.terkirim=false;var e=$('#status-kirim');if(e)e.innerHTML='📴 Database belum terhubung — nilai tersimpan di perangkat ini. Guru: hubungkan alamat Apps Script di Mode Guru → Pengaturan.';return;}
- fetch(DB.gas,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({token:DB.token,nama:rec.nama,kelas:rec.kelas,benar:rec.benar,total:rec.total,nilai:rec.nilai,tanggal:rec.tanggal,waktu:rec.waktu})})
+ fetch(DB.gas,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({token:DB.token,nama:rec.nama,kelas:rec.kelas,benar:rec.benar,total:rec.total,nilai:rec.nilai,tanggal:rec.tanggal,waktu:rec.waktu,terkunci:rec.terkunci?'ya':''})})
  .then(function(r){return r.json();})
  .then(function(j){
    if(sesi)sesi.terkirim=!!(j&&j.ok);
@@ -185,39 +209,25 @@ function kirimNilai(rec){
 /* ===== Halaman hasil & pembahasan ===== */
 function pgHasil(){
  var h=sesi.hasil;
- return '<h1>🎉 Selesai'+(h.otomatis?' (waktu habis)':'')+'</h1><p class="sub">'+esc(sesi.nama)+' · '+esc(sesi.kelas)+'</p>'
+ return '<h1>'+(h.terkunci?'🔒 Selesai — ulangan terkunci':'🎉 Selesai'+(h.otomatis?' (waktu habis)':''))+'</h1><p class="sub">'+esc(sesi.nama)+' · '+esc(sesi.kelas)+'</p>'
+ +(h.terkunci?'<p class="sub">Ulangan ini terkunci karena kamu keluar dari halaman sesudah 4 kali peringatan. Nilai di bawah ini dihitung dari jawaban yang sempat kamu isi.</p>':'')
  +'<div class="kartu"><div class="sub" style="text-align:center;margin:0">Nilaimu</div><div class="skor-besar">'+h.nilai+'</div>'
  +'<p style="text-align:center">Jawaban benar <b>'+h.benar+'</b> dari '+h.total+' soal</p>'
  +'<p id="status-kirim" style="text-align:center;margin-top:10px">⏳ Mengirim nilai ke database guru…</p>'
- +'<div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button class="btn utama" id="hs-bahas">📖 Lihat pembahasan</button><button class="btn" id="hs-awal">🏠 Kembali ke awal</button></div></div>';
+ +'<div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap"><button class="btn utama" id="hs-awal">🏠 Kembali ke awal</button></div></div>';
 }
 function psHasil(){
- $('#hs-bahas').addEventListener('click',function(){halaman='bahas';render();});
  $('#hs-awal').addEventListener('click',function(){sesi=null;halaman='login';render();});
  var e=$('#status-kirim');
  if(e&&sesi.terkirim===true)e.innerHTML='✅ Nilai terkirim ke database guru (Google Sheets).';
  if(e&&sesi.terkirim===false)e.innerHTML='⚠️ Nilai tersimpan di perangkat ini (database belum terhubung / gagal kirim).';
 }
-function pgBahas(){
- var html='<h1>📖 Pembahasan</h1><p class="sub">Jawabanmu yang benar berwarna hijau. Pelajari pembahasannya ya.</p>';
- BANK.forEach(function(q,i){
-  var jw=sesi.jawab[i];
-  html+='<div class="kartu"><div class="sub" style="margin-bottom:6px">Soal '+(i+1)+' · '+esc(q.topik)+(jw===q.kunci?' · Benar':(jw==null?' · Tidak dijawab':' · Belum tepat'))+'</div><div class="soal-tanya" style="font-size:15.5px">'+esc(q.tanya)+'</div>';
-  q.opsi.forEach(function(o,j){
-   var cls=j===q.kunci?'opsi benar':'opsi';
-   html+='<div class="'+cls+'" style="cursor:default"><b>'+'ABCD'[j]+'.</b> '+esc(o)+(j===q.kunci?' ✓':'')+(j===jw&&jw!==q.kunci?' <span style="color:var(--redup);font-size:12px">(jawabanmu)</span>':'')+'</div>';
-  });
-  html+='<div class="bahas">💡 '+esc(q.bahas)+'</div></div>';
- });
- return html+'<div style="text-align:center"><button class="btn utama" id="bh-awal">🏠 Kembali ke awal</button></div>';
-}
-function psBahas(){$('#bh-awal').addEventListener('click',function(){sesi=null;halaman='login';render();});}
 /* ===== Mode guru ===== */
 function pgGuru(){
  var rows=(nilaiJarakJauh||DB.lokal).slice().reverse();
  var sumber=nilaiJarakJauh?'database Apps Script (Google Sheets)':'perangkat ini (database belum dimuat)';
  var baris=rows.map(function(r,i){
-  return '<tr><td>'+(i+1)+'</td><td><b>'+esc(r.nama)+'</b></td><td>'+esc(r.kelas)+'</td><td>'+r.benar+' / '+r.total+'</td><td><b>'+r.nilai+'</b></td><td>'+esc(r.tanggal||'')+' '+esc(r.waktu||'')+'</td></tr>';
+  return '<tr><td>'+(i+1)+'</td><td><b>'+esc(r.nama)+'</b></td><td>'+esc(r.kelas)+'</td><td>'+r.benar+' / '+r.total+'</td><td><b>'+r.nilai+'</b>'+(r.terkunci?' 🔒':'')+'</td><td>'+esc(r.tanggal||'')+' '+esc(r.waktu||'')+'</td></tr>';
  }).join('')||'<tr><td colspan="6" class="kosong">Belum ada nilai masuk.</td></tr>';
  return '<h1>🔑 Mode Guru — Rekap Nilai</h1><p class="sub">Sumber data: '+sumber+'. Tombol "Muat dari database" mengambil semua nilai dari Google Sheets; "Unduh Excel" menyimpan rekap sebagai berkas .xlsx.</p>'
  +'<div class="kartu"><div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px"><button class="btn utama" id="gr-muat">🔄 Muat dari database</button><button class="btn" id="gr-excel">⬇️ Unduh Excel (.xlsx)</button><button class="btn" id="gr-keluar">🏠 Halaman siswa</button></div>'
