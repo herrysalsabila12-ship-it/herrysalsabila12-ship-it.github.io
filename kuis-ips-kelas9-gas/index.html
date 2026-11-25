@@ -36,7 +36,6 @@ label{font-size:12.5px;font-weight:600;color:#4a3f73;display:block;margin-bottom
 .opsi:hover{border-color:var(--ungu2)}
 .opsi.pilih{background:#ede9fe;border-color:var(--ungu);font-weight:700;color:var(--gelap)}
 .opsi.benar{background:#e2f2df;border-color:var(--hijau);font-weight:700}
-.opsi.salah{background:#fde8e4;border-color:var(--merah)}
 .gridnomor{display:flex;flex-wrap:wrap;gap:6px}
 .gridnomor button{width:38px;height:38px;border-radius:9px;border:1px solid var(--garis);background:#fff;cursor:pointer;font-size:13px;font-family:inherit}
 .gridnomor button.isi{background:#ede9fe;border-color:var(--ungu);font-weight:700}
@@ -152,7 +151,7 @@ function psUjian(){
  function tik(){
   if(!sesi){clearInterval(timerInt);return;}
   var sisa=sesi.selesai-Date.now();var el=$('#sisa-waktu');
-  if(el){var d=Math.max(0,Math.round(sisa/1000));el.textContent=Math.floor(d/60)+':'+('0'+(d%60)).slice(-2);if(sisa<60000)el.style.color='var(--merah)';}
+  if(el){var d=Math.max(0,Math.round(sisa/1000));el.textContent=Math.floor(d/60)+':'+('0'+(d%60)).slice(-2);}
   if(sisa<=0){clearInterval(timerInt);kumpulkan(true);}
  }
  timerInt=setInterval(tik,500);tik();
@@ -203,10 +202,10 @@ function pgBahas(){
  var html='<h1>📖 Pembahasan</h1><p class="sub">Jawabanmu yang benar berwarna hijau. Pelajari pembahasannya ya.</p>';
  BANK.forEach(function(q,i){
   var jw=sesi.jawab[i];
-  html+='<div class="kartu"><div class="sub" style="margin-bottom:6px">Soal '+(i+1)+' · '+esc(q.topik)+(jw===q.kunci?' · ✅ Benar':' · ❌ '+(jw==null?'Tidak dijawab':'Salah'))+'</div><div class="soal-tanya" style="font-size:15.5px">'+esc(q.tanya)+'</div>';
+  html+='<div class="kartu"><div class="sub" style="margin-bottom:6px">Soal '+(i+1)+' · '+esc(q.topik)+(jw===q.kunci?' · Benar':(jw==null?' · Tidak dijawab':' · Belum tepat'))+'</div><div class="soal-tanya" style="font-size:15.5px">'+esc(q.tanya)+'</div>';
   q.opsi.forEach(function(o,j){
-   var cls=j===q.kunci?'opsi benar':(j===jw?'opsi salah':'opsi');
-   html+='<div class="'+cls+'" style="cursor:default"><b>'+'ABCD'[j]+'.</b> '+esc(o)+(j===q.kunci?' ✓':'')+'</div>';
+   var cls=j===q.kunci?'opsi benar':'opsi';
+   html+='<div class="'+cls+'" style="cursor:default"><b>'+'ABCD'[j]+'.</b> '+esc(o)+(j===q.kunci?' ✓':'')+(j===jw&&jw!==q.kunci?' <span style="color:var(--redup);font-size:12px">(jawabanmu)</span>':'')+'</div>';
   });
   html+='<div class="bahas">💡 '+esc(q.bahas)+'</div></div>';
  });
