@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ArtKu Studio — Pembuat Gambar AI</title>
+<meta name="description" content="ArtKu Studio: buat gambar dari teks dengan AI, gratis, bisa diinstal di HP.">
+<meta name="theme-color" content="#6d28d9">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<style>
+:root{--bg:#0f0a1f;--card:#1c1433;--card2:#251b45;--line:#372a5e;--txt:#f3efff;--mut:#b7aede;--acc:#8b5cf6;--acc2:#f59e0b;--ok:#34d399}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;min-height:100vh;padding-bottom:34px}
+header{position:sticky;top:0;z-index:5;background:linear-gradient(135deg,#6d28d9,#9333ea 55%,#f59e0b 130%);padding:14px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 18px rgba(0,0,0,.35)}
+header .logo{font-size:26px}
+header h1{font-size:19px;line-height:1.15}
+header p{font-size:12px;opacity:.92}
+header .sp{flex:1}
+#btnInstall{display:none;background:#fff;color:#6d28d9;border:0;font-weight:800;border-radius:999px;padding:8px 14px;font-size:13px;cursor:pointer}
+main{max-width:760px;margin:0 auto;padding:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:14px}
+label.judul{display:block;font-weight:700;font-size:14px;margin-bottom:8px}
+textarea{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:12px;color:var(--txt);padding:12px;font-size:15px;min-height:92px;resize:vertical;font-family:inherit}
+textarea:focus{outline:2px solid var(--acc)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chip{background:var(--card2);border:1px solid var(--line);color:var(--mut);border-radius:999px;padding:7px 12px;font-size:12.5px;cursor:pointer}
+.chip:active{transform:scale(.97)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.grid2{grid-template-columns:1fr}}
+select{width:100%;background:var(--card2);border:1px solid var(--line);border-radius:12px;color:var(--txt);padding:11px;font-size:14.5px}
+.gaya{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.gaya button{background:var(--card2);border:1.5px solid var(--line);color:var(--txt);border-radius:12px;padding:10px 4px;font-size:13px;cursor:pointer}
+.gaya button.aktif{border-color:var(--acc2);background:#3a2a10;color:#ffd88a;font-weight:700}
+#btnBuat{width:100%;background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;border:0;border-radius:14px;padding:15px;font-size:16.5px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(139,92,246,.4)}
+#btnBuat:disabled{opacity:.55}
+#status{font-size:13px;color:var(--mut);margin-top:10px;min-height:18px;text-align:center}
+#hasilWrap{display:none}
+#hasil{width:100%;border-radius:14px;display:block;background:#000}
+.aksi{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.aksi button{flex:1;min-width:100px;border-radius:11px;padding:11px 6px;font-size:13.5px;font-weight:700;cursor:pointer;border:1px solid var(--line);background:var(--card2);color:var(--txt)}
+.aksi button.utama{background:var(--acc);border-color:var(--acc);color:#fff}
+#metaHasil{font-size:12px;color:var(--mut);margin-top:10px;word-break:break-word}
+.galeri{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.galeri figure{position:relative;border-radius:10px;overflow:hidden;background:#000;aspect-ratio:1}
+.galeri img{width:100%;height:100%;object-fit:cover;display:block;cursor:pointer}
+.galeri figcaption{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.85));font-size:10.5px;padding:14px 6px 5px;color:#eee;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kosong{color:var(--mut);font-size:13.5px;text-align:center;padding:14px 4px}
+footer{text-align:center;color:var(--mut);font-size:12px;padding:6px 16px}
+.sembunyi{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">🎨</div>
+  <div><h1>ArtKu Studio</h1><p>Pembuat Gambar AI — ketik, jadi gambar</p></div>
+  <div class="sp"></div>
+  <button id="btnInstall">⬇ Instal</button>
+</header>
+<main>
+  <section class="card">
+    <label class="judul" for="prompt">✍️ Jelaskan gambar yang diinginkan</label>
+    <textarea id="prompt" placeholder="Contoh: seekor burung enggang terbang di atas Sungai Katingan saat matahari terbit, hutan hijau di bawahnya…"></textarea>
+    <div class="chips" id="contoh"></div>
+  </section>
+
+  <section class="card">
+    <label class="judul">🖌️ Gaya gambar</label>
+    <div class="gaya" id="gaya">
+      <button data-gaya="" class="aktif">Bebas</button>
+      <button data-gaya=", realistic photograph, ultra detailed, natural lighting">📷 Foto Nyata</button>
+      <button data-gaya=", anime style, vibrant, studio ghibli inspired">🌸 Anime</button>
+      <button data-gaya=", digital painting, detailed illustration, artstation quality">🖼️ Lukisan Digital</button>
+      <button data-gaya=", 3d render, pixar style, octane render, cute">🧊 3D Render</button>
+      <button data-gaya=", fantasy art, magical, glowing, epic composition">🐉 Fantasi</button>
+      <button data-gaya=", watercolor painting, soft colors, paper texture">💧 Cat Air</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="grid2">
+      <div>
+        <label class="judul" for="rasio">📐 Bentuk gambar</label>
+        <select id="rasio">
+          <option value="1024x1024">Persegi (1:1)</option>
+          <option value="960x1280">Potret (3:4)</option>
+          <option value="1280x960">Lanskap (4:3)</option>
+          <option value="900x1600">Cerita/WA (9:16)</option>
+          <option value="1600x900">Lebar (16:9)</option>
+        </select>
+      </div>
+      <div>
+        <label class="judul" for="model">🤖 Mesin gambar</label>
+        <select id="model">
+          <option value="flux">Flux — kualitas terbaik</option>
+          <option value="turbo">Turbo — lebih cepat</option>
+        </select>
+      </div>
+    </div>
+    <div style="height:12px"></div>
+    <button id="btnBuat">✨ Buat Gambar</button>
+    <div id="status"></div>
+  </section>
+
+  <section class="card" id="hasilWrap">
+    <label class="judul">🖼️ Hasil</label>
+    <img id="hasil" alt="Gambar hasil buatan AI">
+    <div class="aksi">
+      <button class="utama" id="btnUnduh">⬇ Unduh</button>
+      <button id="btnVariasi">🎲 Variasi Baru</button>
+      <button id="btnSalin">📋 Salin Prompt</button>
+    </div>
+    <div id="metaHasil"></div>
+  </section>
+
+  <section class="card">
+    <label class="judul">🗂️ Galeri Saya <span style="color:var(--mut);font-weight:400">(tersimpan di HP ini)</span></label>
+    <div class="galeri" id="galeri"></div>
+    <div class="kosong" id="galeriKosong">Belum ada gambar. Buat gambar pertama di atas 👆</div>
+  </section>
+</main>
+<footer>ArtKu Studio • Gambar dibuat AI lewat layanan Pollinations (perlu internet) • Galeri tersimpan lokal di perangkat ini</footer>
+
+<script>
+'use strict';
+var $ = function(id){ return document.getElementById(id); };
+var KUNCI = 'artku_galeri_v1';
+var gayaPilih = '';
+var hasilKini = null; // {prompt, url, seed, w, h, model}
+
+var CONTOH = [
+  'Burung enggang terbang di atas Sungai Katingan saat matahari terbit',
+  'Rumah betang Dayak di tepi sungai, sore hari, kabut tipis',
+  'Anak-anak bermain perahu di sungai, kampung Kalimantan',
+  'Kucing oren memakai kopiah duduk di teras rumah kayu',
+  'Pemandangan hutan tropis dengan air terjun jernih',
+  'Robot kecil ramah membantu guru di kelas sekolah dasar'
+];
+CONTOH.forEach(function(c){
+  var b = document.createElement('button');
+  b.className = 'chip'; b.textContent = c.length > 42 ? c.slice(0,42) + '…' : c;
+  b.title = c;
+  b.onclick = function(){ $('prompt').value = c; $('prompt').focus(); };
+  $('contoh').appendChild(b);
+});
+
+$('gaya').addEventListener('click', function(e){
+  var btn = e.target.closest('button'); if(!btn) return;
+  document.querySelectorAll('#gaya button').forEach(function(x){ x.classList.remove('aktif'); });
+  btn.classList.add('aktif');
+  gayaPilih = btn.getAttribute('data-gaya') || '';
+});
+
+function bacaGaleri(){
+  try { return JSON.parse(localStorage.getItem(KUNCI) || '[]'); } catch(e){ return []; }
+}
+function simpanGaleri(g){
+  try { localStorage.setItem(KUNCI, JSON.stringify(g.slice(0, 60))); } catch(e){}
+}
+function tampilGaleri(){
+  var g = bacaGaleri();
+  var box = $('galeri'); box.innerHTML = '';
+  $('galeriKosong').style.display = g.length ? 'none' : 'block';
+  g.forEach(function(it, i){
+    var f = document.createElement('figure');
+    var im = document.createElement('img');
+    im.src = it.url; im.alt = it.prompt; im.loading = 'lazy';
+    im.onclick = function(){ tampilHasil(it); window.scrollTo({top:0, behavior:'smooth'}); };
+    var cap = document.createElement('figcaption'); cap.textContent = it.prompt;
+    f.appendChild(im); f.appendChild(cap); box.appendChild(f);
+  });
+}
+function tampilHasil(it){
+  hasilKini = it;
+  $('hasilWrap').style.display = 'block';
+  $('hasil').src = it.url;
+  $('metaHasil').textContent = 'Prompt: ' + it.prompt + ' • Ukuran ' + it.w + '×' + it.h + ' • Mesin ' + it.model + ' • Benih ' + it.seed;
+}
+function buatGambar(seedBaru){
+  var teks = $('prompt').value.trim();
+  if(!teks){ $('status').textContent = 'Tulis dulu gambar apa yang diinginkan 🙂'; $('prompt').focus(); return; }
+  var bagian = $('rasio').value.split('x');
+  var w = +bagian[0], h = +bagian[1];
+  var model = $('model').value;
+  var seed = (typeof seedBaru === 'number') ? seedBaru : Math.floor(Math.random() * 999999);
+  var promptPenuh = teks + gayaPilih;
+  var url = 'https://image.pollinations.ai/prompt/' + encodeURIComponent(promptPenuh) +
+            '?width=' + w + '&height=' + h + '&seed=' + seed + '&model=' + model + '&nologo=true';
+  var it = { prompt: teks, url: url, seed: seed, w: w, h: h, model: model };
+  $('btnBuat').disabled = true;
+  $('status').textContent = '⏳ Sedang menggambar… biasanya 10–40 detik, mohon tunggu.';
+  $('hasilWrap').style.display = 'block';
+  var img = $('hasil');
+  img.removeAttribute('src');
+  var selesai = false;
+  img.onload = function(){
+    if(selesai) return; selesai = true;
+    $('btnBuat').disabled = false;
+    $('status').textContent = '✅ Selesai! Ketuk Unduh untuk menyimpan, atau Variasi Baru untuk versi lain.';
+    tampilHasil(it);
+    var g = bacaGaleri(); g.unshift(it); simpanGaleri(g); tampilGaleri();
+  };
+  img.onerror = function(){
+    if(selesai) return; selesai = true;
+    $('btnBuat').disabled = false;
+    $('status').textContent = '⚠️ Mesin gambar sedang sibuk. Coba lagi sebentar, atau ganti mesin ke Turbo.';
+  };
+  img.src = url;
+}
+$('btnBuat').onclick = function(){ buatGambar(); };
+$('btnVariasi').onclick = function(){ if(hasilKini){ $('prompt').value = hasilKini.prompt; buatGambar(Math.floor(Math.random()*999999)); } };
+$('btnSalin').onclick = function(){
+  if(!hasilKini) return;
+  if(navigator.clipboard) navigator.clipboard.writeText(hasilKini.prompt);
+  $('status').textContent = '📋 Prompt disalin.';
+};
+$('btnUnduh').onclick = function(){
+  if(!hasilKini) return;
+  $('status').textContent = '⏳ Mengunduh gambar…';
+  fetch(hasilKini.url).then(function(r){ return r.blob(); }).then(function(b){
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(b);
+    a.download = 'artku-' + hasilKini.seed + '.jpg';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+    $('status').textContent = '✅ Gambar terunduh.';
+  }).catch(function(){
+    window.open(hasilKini.url, '_blank');
+    $('status').textContent = 'Gambar dibuka di tab baru — tekan lama lalu simpan.';
+  });
+};
+
+// PWA: service worker + tombol instal
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
+}
+var acaraInstal = null;
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault(); acaraInstal = e; $('btnInstall').style.display = 'block';
+});
+$('btnInstall').onclick = function(){
+  if(!acaraInstal) return;
+  acaraInstal.prompt();
+  acaraInstal.userChoice.then(function(){ acaraInstal = null; $('btnInstall').style.display = 'none'; });
+};
+tampilGaleri();
+</script>
+</body>
+</html>
