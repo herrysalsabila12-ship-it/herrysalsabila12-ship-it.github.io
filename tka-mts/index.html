@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulasi TKA MTs — Tes Kemampuan Akademik</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--biru:#0b5394;--biru2:#083d6e;--bg:#e9edf1;--teks:#1f2937;--redup:#6b7280;--garis:#d1d5db;--kuning:#f7b500;--hijau:#1e7d32}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--bg);color:var(--teks);font-size:15px}
+button{font-family:inherit;cursor:pointer}
+input{font-family:inherit;font-size:15px;padding:10px 12px;border:1px solid var(--garis);border-radius:6px;width:100%}
+/* KEPALA ala TKA */
+.kepala{background:var(--biru);color:#fff;padding:0 18px;display:flex;align-items:center;gap:14px;min-height:58px;flex-wrap:wrap}
+.kepala .logo{font-weight:800;font-size:18px;letter-spacing:.02em}
+.kepala .logo small{display:block;font-weight:500;font-size:11px;opacity:.85}
+.kepala .kanan{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.kotak-waktu{background:#fff;color:var(--biru2);border-radius:6px;padding:6px 14px;text-align:center}
+.kotak-waktu small{display:block;font-size:10px;font-weight:700;color:var(--redup)}
+.kotak-waktu b{font-size:17px}
+.ukuran-font{display:flex;gap:4px}
+.ukuran-font button{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:5px;padding:4px 9px;font-weight:700}
+/* AWAL */
+.bungkus{max-width:1020px;margin:22px auto;padding:0 14px}
+.kartu{background:#fff;border:1px solid var(--garis);border-radius:10px;padding:20px;margin-bottom:16px}
+.grid-mapel{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.mapel{border:1.5px solid var(--garis);border-radius:10px;padding:16px 12px;text-align:center;background:#fff;width:100%}
+.mapel:hover{border-color:var(--biru)}
+.mapel.pilih{border-color:var(--biru);background:#eaf2fb;box-shadow:0 0 0 2px var(--biru) inset}
+.mapel .ik{font-size:30px}.mapel b{display:block;margin-top:6px;font-size:15px}
+.mapel span{font-size:12px;color:var(--redup)}
+.btn{background:var(--biru);color:#fff;border:none;padding:11px 22px;border-radius:7px;font-weight:700;font-size:14px;letter-spacing:.02em}
+.btn:hover{background:var(--biru2)}
+.btn.abu{background:#6b7280}.btn.kuning{background:var(--kuning);color:#3a2c00}
+.btn.besar{font-size:16px;padding:13px 30px}
+/* UJIAN */
+.tata{display:flex;gap:16px;max-width:1180px;margin:16px auto;padding:0 14px;align-items:flex-start}
+.area-soal{flex:1;background:#fff;border:1px solid var(--garis);border-radius:10px;padding:22px;min-width:0}
+.no-soal{display:inline-block;background:var(--biru);color:#fff;font-weight:700;font-size:12.5px;padding:4px 12px;border-radius:5px;letter-spacing:.05em}
+.teks-soal{margin:14px 0 6px;line-height:1.65;white-space:pre-line}
+.opsi{display:flex;gap:11px;align-items:flex-start;width:100%;text-align:left;padding:11px 13px;border:1.5px solid var(--garis);border-radius:8px;background:#fff;margin-top:9px;line-height:1.5}
+.opsi .huruf{flex:none;width:27px;height:27px;border-radius:50%;border:2px solid #9ca3af;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#4b5563}
+.opsi:hover{border-color:#7db3e8}
+.opsi.dipilih{border-color:var(--biru);background:#eaf2fb}
+.opsi.dipilih .huruf{background:var(--biru);border-color:var(--biru);color:#fff}
+.nav-bawah{display:flex;gap:9px;margin-top:20px;flex-wrap:wrap}
+.panel{background:#fff;border:1px solid var(--garis);border-radius:10px;padding:14px;width:252px;flex:none}
+.panel h4{font-size:13px;letter-spacing:.04em;margin-bottom:10px}
+.grid-nomor{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.grid-nomor button{height:36px;border-radius:6px;border:1.5px solid var(--garis);background:#fff;font-weight:700;font-size:13px;position:relative}
+.grid-nomor button.terisi{background:var(--biru);border-color:var(--biru);color:#fff}
+.grid-nomor button.ragu{background:var(--kuning);border-color:var(--kuning);color:#3a2c00}
+.grid-nomor button.terisi.ragu{background:linear-gradient(135deg,var(--biru) 55%,var(--kuning) 55%);color:#fff}
+.grid-nomor button.kini{outline:2.5px solid #111827;outline-offset:1px}
+.legenda{font-size:11.5px;color:var(--redup);margin-top:11px;line-height:1.9}
+.legenda i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid var(--garis)}
+.modal{position:fixed;inset:0;background:rgba(17,24,39,.55);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal.buka{display:flex}
+.modal .kotak{background:#fff;border-radius:12px;padding:24px;width:100%;max-width:430px}
+.baris-btn{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+td,th{padding:7px 6px;border-bottom:1px solid #eef1f4;text-align:left}
+.pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11.5px;font-weight:700;background:#eaf2fb;color:var(--biru2)}
+@media(max-width:820px){.tata{flex-direction:column}.panel{width:100%;order:-1}.grid-nomor{grid-template-columns:repeat(10,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- ======== LAYAR AWAL ======== -->
+<div id="layarAwal">
+  <div class="kepala"><div class="logo">SIMULASI TKA<small>Tes Kemampuan Akademik • Jenjang MTs</small></div></div>
+  <div class="bungkus">
+    <div class="kartu">
+      <h2 style="font-size:19px">Selamat Datang, Calon Siswa MTs 👋</h2>
+      <p style="color:var(--redup);margin-top:6px;line-height:1.6">Latihan Tes Kemampuan Akademik dengan tampilan &amp; cara kerja seperti ujian aslinya. Pilih mata pelajaran, kerjakan <b>50 soal</b> dalam <b>60 menit</b>, gunakan tombol <b>Ragu-Ragu</b> untuk menandai soal, dan pantau sisa soal lewat Daftar Soal di samping.</p>
+      <label style="font-size:12.5px;font-weight:700;color:var(--redup);display:block;margin:16px 0 5px">NAMA PESERTA</label>
+      <input id="inNama" placeholder="Tulis namamu, cth: Salsa Putri">
+      <label style="font-size:12.5px;font-weight:700;color:var(--redup);display:block;margin:16px 0 5px">PILIH MATA PELAJARAN</label>
+      <div class="grid-mapel" id="gridMapel"></div>
+      <p id="errAwal" style="color:#b91c1c;font-size:13px;margin-top:12px;min-height:16px"></p>
+      <button class="btn besar" style="margin-top:6px" onclick="kePetunjuk()">MULAI TES →</button>
+    </div>
+    <div class="kartu" id="kartuRiwayat" style="display:none">
+      <h3 style="font-size:15px;margin-bottom:8px">📈 Nilai Latihan Terakhirmu</h3>
+      <table id="tabelRiwayat"></table>
+    </div>
+    <p style="text-align:center;color:var(--redup);font-size:12px">Soal latihan asli untuk persiapan masuk MTs • Nilai tersimpan di perangkat ini</p>
+  </div>
+</div>
+
+<!-- ======== PETUNJUK ======== -->
+<div id="layarPetunjuk" style="display:none">
+  <div class="kepala"><div class="logo">SIMULASI TKA<small>Petunjuk Pengerjaan</small></div></div>
+  <div class="bungkus" style="max-width:760px">
+    <div class="kartu">
+      <h2 style="font-size:18px">Petunjuk Pengerjaan Tes</h2>
+      <table style="margin-top:10px">
+        <tr><td style="width:150px;color:var(--redup)">Nama Peserta</td><td><b id="konfNama">—</b></td></tr>
+        <tr><td style="color:var(--redup)">Mata Pelajaran</td><td><b id="konfMapel">—</b></td></tr>
+        <tr><td style="color:var(--redup)">Jumlah Soal</td><td><b>50 soal pilihan ganda</b></td></tr>
+        <tr><td style="color:var(--redup)">Waktu</td><td><b>60 menit</b> — hitung mundur berjalan otomatis, jawaban terkumpul sendiri saat waktu habis</td></tr>
+      </table>
+      <ol style="margin:14px 0 0 18px;line-height:1.85">
+        <li>Klik huruf jawaban untuk menjawab. Jawaban bisa diubah kapan pun sebelum waktu habis.</li>
+        <li>Tombol <b>RAGU-RAGU</b> menandai soal dengan warna kuning di Daftar Soal, untuk ditinjau lagi nanti.</li>
+        <li>Nomor soal yang sudah dijawab berubah biru di panel <b>Daftar Soal</b> — klik nomornya untuk loncat ke soal itu.</li>
+        <li>Kerjakan dengan jujur tanpa membuka tab/aplikasi lain. Selamat mengerjakan!</li>
+      </ol>
+      <div class="baris-btn" style="justify-content:space-between">
+        <button class="btn abu" onclick="kembaliAwal()">← Kembali</button>
+        <button class="btn besar" onclick="mulaiTes()">SAYA SIAP, MULAI ▶</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== UJIAN ======== -->
+<div id="layarUjian" style="display:none">
+  <div class="kepala">
+    <div class="logo">SIMULASI TKA<small id="kepalaMapel">—</small></div>
+    <div class="kanan">
+      <div class="ukuran-font"><button onclick="aturFont(-1)">A−</button><button onclick="aturFont(0)">A</button><button onclick="aturFont(1)">A+</button></div>
+      <div class="kotak-waktu"><small>SISA WAKTU</small><b id="sisaWaktu">60:00</b></div>
+    </div>
+  </div>
+  <div class="tata">
+    <div class="area-soal" id="areaSoal">
+      <span class="no-soal" id="noSoal">SOAL NO. 1</span>
+      <span class="pill" id="pillRagu" style="display:none;background:#fef3c7;color:#92400e">DITANDAI RAGU-RAGU</span>
+      <div class="teks-soal" id="teksSoal"></div>
+      <div id="daftarOpsi"></div>
+      <div class="nav-bawah">
+        <button class="btn abu" onclick="geser(-1)">◀ SOAL SEBELUMNYA</button>
+        <button class="btn kuning" onclick="toggleRagu()">⚑ RAGU-RAGU</button>
+        <button class="btn" id="btnLanjut" onclick="geser(1)">SOAL BERIKUTNYA ▶</button>
+        <button class="btn" id="btnSelesai" style="display:none;background:var(--hijau)" onclick="mintaSelesai()">✔ SELESAI TES</button>
+      </div>
+    </div>
+    <aside class="panel">
+      <h4>DAFTAR SOAL</h4>
+      <div style="font-size:12.5px;color:var(--redup);margin-bottom:9px">Peserta: <b id="panelNama" style="color:var(--teks)">—</b><br>Terjawab: <b id="panelTerjawab" style="color:var(--teks)">0</b> / 50</div>
+      <div class="grid-nomor" id="gridNomor"></div>
+      <div class="legenda">
+        <i style="background:var(--biru)"></i>Sudah dijawab<br>
+        <i style="background:var(--kuning)"></i>Ragu-ragu<br>
+        <i style="background:#fff"></i>Belum dijawab
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- ======== HASIL ======== -->
+<div id="layarHasil" style="display:none">
+  <div class="kepala"><div class="logo">SIMULASI TKA<small>Hasil Tes</small></div></div>
+  <div class="bungkus" style="max-width:820px">
+    <div class="kartu" style="text-align:center">
+      <p style="color:var(--redup)" id="hasilInfo">—</p>
+      <div style="font-size:56px;font-weight:800;color:var(--biru)" id="hasilNilai">0</div>
+      <p id="hasilDetail" style="color:var(--redup)"></p>
+      <div class="baris-btn" style="justify-content:center">
+        <button class="btn abu" onclick="kembaliAwal()">🏠 Ke Beranda</button>
+        <button class="btn" onclick="toggleReview()">📖 Lihat Pembahasan</button>
+      </div>
+    </div>
+    <div class="kartu" id="kartuReview" style="display:none"><h3 style="margin-bottom:10px">Pembahasan</h3><div id="isiReview"></div></div>
+  </div>
+</div>
+
+<div class="modal" id="modal"><div class="kotak" id="isiModal"></div></div>
+
+<script>
+"use strict";
+var BANK={};
+var MAPEL=[['mtk','Matematika','🔢'],['bindo','Bahasa Indonesia','📖'],['bing','Bahasa Inggris','🔤'],['ipa','IPA','🔬'],['ips','IPS','🌏'],['pai','Pend. Agama Islam','🕌']];
+var tes=null,timerInt=null,skalaFont=0;
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function bukaModal(h){document.getElementById('isiModal').innerHTML=h;document.getElementById('modal').classList.add('buka');}
+function tutupModal(){document.getElementById('modal').classList.remove('buka');}
+/* --- layar awal --- */
+var mapelPilih=null;
+function gambarPilihMapel(){
+  document.getElementById('gridMapel').innerHTML=MAPEL.map(function(m){
+    var ada=BANK[m[0]]&&BANK[m[0]].length===50;
+    return '<button class="mapel'+(mapelPilih===m[0]?' pilih':'')+'" onclick="mapelPilih=\''+m[0]+'\';gambarPilihMapel()"><div class="ik">'+m[2]+'</div><b>'+m[1]+'</b><span>'+(ada?'50 soal • 60 menit':'belum tersedia')+'</span></button>';}).join('');
+  gambarRiwayat();
+}
+function gambarRiwayat(){
+  var r={};try{r=JSON.parse(localStorage.getItem('tka_mts_v1')||'{}');}catch(e){}
+  var baris=MAPEL.filter(function(m){return r[m[0]];}).map(function(m){return '<tr><td>'+m[2]+' '+m[1]+'</td><td><b>'+r[m[0]].nilai+'</b></td><td style="color:var(--redup)">'+r[m[0]].kapan+'</td></tr>';}).join('');
+  document.getElementById('kartuRiwayat').style.display=baris?'block':'none';
+  document.getElementById('tabelRiwayat').innerHTML=baris;
+}
+function kePetunjuk(){
+  var nama=document.getElementById('inNama').value.trim();
+  var err=document.getElementById('errAwal');
+  if(!nama){err.textContent='Isi nama peserta dulu ya.';return;}
+  if(!mapelPilih){err.textContent='Pilih mata pelajaran dulu ya.';return;}
+  err.textContent='';
+  tes={nama:nama,mapel:mapelPilih,jawaban:{},ragu:{},idx:0,mulai:0};
+  document.getElementById('konfNama').textContent=nama;
+  document.getElementById('konfMapel').textContent=MAPEL.filter(function(m){return m[0]===mapelPilih;})[0][1];
+  document.getElementById('layarAwal').style.display='none';
+  document.getElementById('layarPetunjuk').style.display='block';
+}
+function kembaliAwal(){stopTimer();tes=null;document.getElementById('layarPetunjuk').style.display='none';document.getElementById('layarUjian').style.display='none';document.getElementById('layarHasil').style.display='none';document.getElementById('layarAwal').style.display='block';gambarPilihMapel();}
+/* --- ujian --- */
+function soalKini(){return BANK[tes.mapel][tes.idx];}
+function mulaiTes(){
+  tes.mulai=Date.now();
+  document.getElementById('layarPetunjuk').style.display='none';
+  document.getElementById('layarUjian').style.display='block';
+  document.getElementById('kepalaMapel').textContent=MAPEL.filter(function(m){return m[0]===tes.mapel;})[0][1]+' • 50 Soal';
+  document.getElementById('panelNama').textContent=tes.nama;
+  gambarSoal();mulaiTimer();
+}
+function gambarSoal(){
+  var q=soalKini();
+  document.getElementById('noSoal').textContent='SOAL NO. '+(tes.idx+1);
+  document.getElementById('pillRagu').style.display=tes.ragu[tes.idx]?'inline-block':'none';
+  document.getElementById('teksSoal').textContent=q[0];
+  document.getElementById('teksSoal').style.fontSize=(16+skalaFont*1.5)+'px';
+  document.getElementById('daftarOpsi').innerHTML=[1,2,3,4].map(function(i){
+    return '<button class="opsi'+(tes.jawaban[tes.idx]===i-1?' dipilih':'')+'" onclick="jawab('+(i-1)+')"><span class="huruf">'+'ABCD'[i-1]+'</span><span>'+esc(q[i])+'</span></button>';}).join('');
+  document.getElementById('btnLanjut').style.display=tes.idx>=49?'none':'inline-block';
+  document.getElementById('btnSelesai').style.display=tes.idx>=49?'inline-block':'none';
+  var terjawab=Object.keys(tes.jawaban).length;
+  document.getElementById('panelTerjawab').textContent=terjawab;
+  document.getElementById('gridNomor').innerHTML=BANK[tes.mapel].map(function(_,i){
+    var kls=(tes.jawaban[i]!=null?'terisi':'')+(tes.ragu[i]?' ragu':'')+(i===tes.idx?' kini':'');
+    return '<button class="'+kls+'" onclick="tes.idx='+i+';gambarSoal()">'+(i+1)+'</button>';}).join('');
+}
+function jawab(i){tes.jawaban[tes.idx]=i;gambarSoal();}
+function toggleRagu(){tes.ragu[tes.idx]=!tes.ragu[tes.idx];gambarSoal();}
+function geser(d){var n=tes.idx+d;if(n<0||n>49)return;tes.idx=n;gambarSoal();}
+function aturFont(d){skalaFont=d===0?0:Math.max(-1,Math.min(2,skalaFont+d));if(tes)gambarSoal();}
+function mulaiTimer(){
+  stopTimer();
+  timerInt=setInterval(function(){
+    if(!tes)return;
+    var sisa=60*60000-(Date.now()-tes.mulai);
+    if(sisa<=0){selesaiTes(true);return;}
+    var m=Math.floor(sisa/60000),s=Math.floor(sisa%60000/1000);
+    document.getElementById('sisaWaktu').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  },500);
+}
+function stopTimer(){if(timerInt){clearInterval(timerInt);timerInt=null;}}
+function mintaSelesai(){
+  var isi=Object.keys(tes.jawaban).length;
+  bukaModal('<h3>Selesaikan Tes?</h3><p style="line-height:1.6;margin-top:6px">Terjawab <b>'+isi+' dari 50 soal</b>.'+(isi<50?' Masih ada '+(50-isi)+' soal belum dijawab — soal kosong dihitung tidak benar.':'')+'</p><div class="baris-btn"><button class="btn abu" onclick="tutupModal()">Belum</button><button class="btn" onclick="tutupModal();selesaiTes(false)">Ya, Selesai</button></div>');
+}
+function hitungNilai(){
+  var b=0;BANK[tes.mapel].forEach(function(q,i){if(tes.jawaban[i]===q[5])b++;});
+  return {benar:b,nilai:Math.round(b/50*100)};
+}
+function selesaiTes(otomatis){
+  stopTimer();
+  var h=hitungNilai();
+  var r={};try{r=JSON.parse(localStorage.getItem('tka_mts_v1')||'{}');}catch(e){}
+  r[tes.mapel]={nilai:h.nilai,kapan:new Date().toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})};
+  try{localStorage.setItem('tka_mts_v1',JSON.stringify(r));}catch(e){}
+  document.getElementById('layarUjian').style.display='none';
+  document.getElementById('layarHasil').style.display='block';
+  document.getElementById('hasilInfo').textContent=(otomatis?'⏰ Waktu habis — tes terkumpul otomatis. ':'')+tes.nama+' • '+MAPEL.filter(function(m){return m[0]===tes.mapel;})[0][1];
+  document.getElementById('hasilNilai').textContent=h.nilai;
+  document.getElementById('hasilDetail').textContent='Jawaban benar '+h.benar+' dari 50 soal • Ragu-ragu '+Object.keys(tes.ragu).filter(function(k){return tes.ragu[k];}).length+' soal';
+  document.getElementById('kartuReview').style.display='none';
+}
+function toggleReview(){
+  var k=document.getElementById('kartuReview');
+  if(k.style.display==='block'){k.style.display='none';return;}
+  k.style.display='block';
+  document.getElementById('isiReview').innerHTML=BANK[tes.mapel].map(function(q,i){
+    var j=tes.jawaban[i];var benar=j===q[5];
+    var status=benar?'<span class="pill" style="background:#dcfce7;color:#166534">✔ Benar</span>':'<span class="pill" style="background:#f3f4f6;color:#4b5563">Belum tepat</span>';
+    var infoJawab=j==null?'<span style="color:var(--redup)">Tidak dijawab</span>':'Jawabanmu: <b>'+'ABCD'[j]+'. '+esc(q[j+1])+'</b>';
+    return '<div style="border-bottom:1px solid #eef1f4;padding:11px 0"><b>'+(i+1)+'.</b> '+esc(q[0])+'<br>'+status+' '+infoJawab+'<br><span style="color:var(--redup)">Kunci: <b>'+'ABCD'[q[5]]+'. '+esc(q[q[5]+1])+'</b></span></div>';
+  }).join('');
+}
+gambarPilihMapel();
+window.TKA={get BANK(){return BANK;},get tes(){return tes;},set tes(v){tes=v;},jawab:jawab,toggleRagu:toggleRagu,geser:geser,hitungNilai:hitungNilai,mulaiTes:mulaiTes,kePetunjuk:kePetunjuk,selesaiTes:selesaiTes};
+
+BANK.mtk=[
+["Hasil dari 25 × 4 + 30 adalah …","120","130","140","110",1],
+["FPB dari 24 dan 36 adalah …","6","12","18","24",1],
+["KPK dari 5 dan 7 adalah …","12","25","35","70",2],
+["Hasil dari 3/5 + 1/5 adalah …","2/5","3/5","4/5","1",2],
+["Bentuk pecahan biasa dari 0,75 adalah …","1/4","2/4","3/4","4/5",2],
+["Pecahan paling kecil di antara 1/2, 1/3, 1/4, dan 1/5 adalah …","1/2","1/3","1/4","1/5",3],
+["Keliling persegi dengan sisi 9 cm adalah … cm","18","36","81","40",1],
+["Luas segitiga dengan alas 10 cm dan tinggi 6 cm adalah … cm²","60","30","16","26",1],
+["Volume kubus dengan rusuk 5 cm adalah … cm³","25","75","125","150",2],
+["Hasil dari 15% × 200 adalah …","15","20","30","45",2],
+["Besar sudut lurus adalah … derajat","90","180","270","360",1],
+["Bilangan prima terbesar antara 10 dan 20 adalah …","13","15","17","19",3],
+["Hasil dari −8 + 15 adalah …","−7","7","−23","23",1],
+["Hasil dari 6² + 4² adalah …","20","52","100","40",1],
+["Rata-rata dari 4, 6, 8, dan 10 adalah …","6","7","8","9",1],
+["2 jam 30 menit sama dengan … menit","120","130","150","230",2],
+["3 km sama dengan … m","300","3.000","30.000","30",1],
+["Luas trapesium dengan sisi sejajar 8 cm dan 12 cm serta tinggi 5 cm adalah … cm²","40","50","60","100",1],
+["Sebuah lingkaran berdiameter 14 cm. Jari-jarinya adalah … cm","28","14","7","21",2],
+["5 lusin sama dengan … buah","50","60","12","100",1],
+["Bentuk desimal dari 7/10 adalah …","0,07","0,7","7,0","0,007",1],
+["Hasil dari 480 ÷ 8 adalah …","50","60","70","80",1],
+["Bilangan ganjil di antara berikut adalah …","24","30","27","42",2],
+["Skala peta 1 : 100. Jarak pada peta 5 cm, jarak sebenarnya adalah …","50 m","5 m","500 m","0,5 m",1],
+["Suhu ruangan −3°C lalu naik 7°C. Suhu sekarang adalah … °C","−10","4","10","−4",1],
+["Hasil dari 1/2 + 1/4 adalah …","2/6","3/4","1/6","2/4",1],
+["Luas lingkaran dengan jari-jari 7 cm (π = 22/7) adalah … cm²","44","154","308","616",1],
+["Keliling lingkaran berdiameter 20 cm (π = 3,14) adalah … cm","31,4","62,8","314","628",1],
+["Banyak rusuk pada kubus adalah …","6","8","12","16",2],
+["Modus dari data 5, 6, 6, 7, 6, 8 adalah …","5","6","7","8",1],
+["Hasil dari 3/4 × 100 adalah …","25","50","75","80",2],
+["Bilangan desimal terbesar adalah …","0,75","0,9","0,5","0,09",1],
+["Harga baju Rp80.000,00 dengan diskon 25%. Uang yang dibayar adalah …","Rp20.000,00","Rp40.000,00","Rp60.000,00","Rp75.000,00",2],
+["Jarak 120 km ditempuh dengan kecepatan 60 km/jam. Waktu yang dibutuhkan adalah … jam","1","2","3","4",1],
+["7,5 kg sama dengan … gram","75","750","7.500","75.000",2],
+["Banyak simetri lipat pada persegi adalah …","1","2","4","8",2],
+["Sudut terkecil yang dibentuk jarum jam pada pukul 03.00 adalah … derajat","30","60","90","180",2],
+["Hasil dari 144 ÷ 12 × 3 adalah …","4","36","48","432",1],
+["Pecahan campuran dari 9/4 adalah …","1 1/4","2 1/4","2 1/2","3 1/4",1],
+["Median dari data 3, 5, 7, 9, 11 adalah …","3","5","7","9",2],
+["Volume balok dengan panjang 6 cm, lebar 4 cm, dan tinggi 3 cm adalah … cm³","13","24","72","108",2],
+["Hasil dari 20% + 0,35 adalah …","0,45","0,55","0,65","2,35",1],
+["Keliling persegi panjang dengan panjang 10 cm dan lebar 6 cm adalah … cm","16","32","60","120",1],
+["Hasil dari 1.000 − 456 adalah …","454","544","554","654",1],
+["Bilangan yang habis dibagi 3 adalah …","124","126","128","130",1],
+["Hasil dari 2/3 × 9 adalah …","3","6","12","18",1],
+["Sumbu mendatar pada bidang koordinat kartesius disebut sumbu …","X","Y","Z","W",0],
+["5 windu sama dengan … tahun","5","8","40","50",2],
+["Sebuah keran mengalirkan 600 liter air dalam 10 menit. Debitnya adalah … liter/menit","6","60","600","6.000",1],
+["Sebuah dadu dilempar satu kali. Peluang muncul mata dadu 6 adalah …","1/2","1/3","1/6","6/6",2]
+];
+
+BANK.bindo=[
+["Sinonim kata 'gembira' adalah …","sedih","senang","marah","takut",1],
+["Antonim kata 'rajin' adalah …","giat","tekun","malas","pandai",2],
+["Kata baku dari 'apotik' adalah …","apotik","apotek","apotick","apothek",1],
+["Kalimat yang menggunakan huruf kapital dengan benar adalah …","ibu pergi ke jakarta.","Ibu pergi ke Jakarta.","Ibu Pergi Ke Jakarta.","ibu Pergi ke jakarta.",1],
+["Imbuhan pada kata 'berlari' adalah …","ber-","-lari","lar-","be-",0],
+["'Adik sedang membaca buku di kamar.' Kata kerja pada kalimat tersebut adalah …","adik","sedang","membaca","buku",2],
+["Tanda baca yang dipakai untuk mengakhiri kalimat berita adalah …","tanda tanya (?)","tanda seru (!)","tanda titik (.)","tanda koma (,)",2],
+["Kalimat tanya yang tepat untuk menanyakan tempat adalah …","Siapa namamu?","Di mana rumahmu?","Kapan kamu berangkat?","Mengapa kamu menangis?",1],
+["Bagian pantun yang berisi maksud utama disebut …","sampiran","isi","sajak","bait",1],
+["Pantun bersajak …","a-a-a-a","a-b-a-b","a-b-b-a","bebas",1],
+["Majas yang membandingkan dua hal dengan kata 'seperti' atau 'bagai' disebut …","metafora","hiperbola","simile","personifikasi",2],
+["'Wajahnya bersinar seperti bulan purnama.' Kalimat tersebut mengandung majas …","personifikasi","simile","hiperbola","ironi",1],
+["'Angin berbisik di telingaku.' Kalimat tersebut mengandung majas …","personifikasi","metafora","simile","litotes",0],
+["Kata ganti orang pertama tunggal adalah …","kamu","dia","saya","mereka",2],
+["Penulisan gabungan kata yang benar adalah …","di mana","dimana","di-mana","di mana-mana",0],
+["'Rumah itu dijual kemarin.' Kata 'dijual' menggunakan imbuhan …","me-","di-","ber-","ter-",1],
+["Kalimat langsung yang benar penulisannya adalah …","Ibu berkata, 'Ayo makan!'","Ibu berkata, Ayo makan!","Ibu berkata 'ayo makan'","Ibu berkata: ayo makan",0],
+["Ide pokok paragraf biasanya terdapat pada …","kalimat penjelas","kalimat utama","akhir kata","judul saja",1],
+["Teks yang berisi langkah-langkah membuat atau melakukan sesuatu disebut teks …","narasi","prosedur","deskripsi","eksposisi",1],
+["Cerita yang tokohnya binatang dan mengandung pesan moral disebut …","legenda","mitos","fabel","sage",2],
+["Cerita rakyat 'Malin Kundang' berasal dari daerah …","Jawa Barat","Sumatera Barat","Kalimantan","Sulawesi",1],
+["Amanat dalam sebuah cerita adalah …","nama pengarang","pesan moral yang disampaikan","tempat kejadian","jumlah tokoh",1],
+["Latar dalam cerita menunjukkan …","waktu dan tempat kejadian","nama tokoh utama","amanat cerita","judul cerita",0],
+["'Sebaiknya kamu belajar lebih giat.' Kata 'sebaiknya' menunjukkan kalimat …","perintah","saran","larangan","berita",1],
+["Kalimat larangan yang tepat adalah …","Silakan masuk!","Jangan membuang sampah sembarangan!","Ayo kita bermain!","Tolong ambilkan buku itu!",1],
+["Kata 'memperhatikan' terbentuk dari imbuhan …","me- -kan","memper- -kan","per- -kan","mem- -kan",1],
+["Antonim kata 'tinggi' adalah …","besar","rendah","lebar","panjang",1],
+["Sinonim kata 'pandai' adalah …","bodoh","cerdas","malas","lambat",1],
+["Huruf kapital digunakan pada …","setiap awal kata","awal kalimat dan nama diri","kata kerja saja","akhir kalimat",1],
+["Penulisan nama hari yang benar adalah …","hari senin","hari Senin","Hari senin","HARI SENIN",1],
+["'Paman membawa oleh-oleh dari Surabaya.' Kata 'oleh-oleh' termasuk kata …","kata kerja","kata ulang","kata ganti","kata sifat",1],
+["Slogan yang baik bersifat …","panjang dan bertele-tele","singkat, menarik, dan mudah diingat","sulit dipahami","tanpa makna",1],
+["Teks laporan hasil observasi bersifat …","khayalan","fakta","dongeng","pendapat pribadi",1],
+["Satu bait dalam puisi umumnya terdiri atas … baris","satu","empat","sepuluh","bebas selalu",1],
+["Persamaan bunyi di akhir baris puisi disebut …","tema","rima","amanat","majas",1],
+["Kata 'ke pasar' — kata 'ke' berfungsi sebagai …","imbuhan","kata depan (preposisi)","kata ganti","kata kerja",1],
+["Kalimat efektif adalah kalimat yang …","panjang sekali","hemat kata dan mudah dipahami","banyak kata mubazir","tidak punya subjek",1],
+["'Karena hujan deras, pertandingan ditunda.' Konjungsi pada kalimat itu menunjukkan hubungan …","waktu","sebab-akibat","pilihan","pertentangan",1],
+["Penulisan alamat surat yang benar menggunakan huruf kapital pada …","semua kata","nama jalan dan kota","kata 'jalan' saja","tidak ada",1],
+["Kata sifat di antara berikut adalah …","berlari","meja","cantik","membaca",2],
+["'Buku itu milik saya.' Kata 'saya' adalah kata ganti orang …","pertama","kedua","ketiga","jamak",0],
+["Dongeng 'Timun Mas' berasal dari daerah …","Jawa Tengah","Bali","Papua","Aceh",0],
+["Makna kata 'tangan kanan' dalam kalimat 'Pak Budi adalah tangan kanan kepala sekolah' adalah …","anggota tubuh","orang kepercayaan","tangan sebelah kanan","sarung tangan",1],
+["Kata berimbuhan 'ter-' yang bermakna tidak sengaja terdapat pada kata …","terbang","terjatuh","terkenal","teratur",1],
+["Judul karangan ditulis dengan huruf kapital pada …","setiap kata tanpa kecuali","huruf pertama setiap kata kecuali kata tugas di tengah","huruf terakhir kata","tidak perlu kapital",1],
+["'Adik menangis karena terjatuh.' Kata tanya yang tepat untuk menanyakan sebab adalah …","siapa","di mana","mengapa","kapan",2],
+["Paragraf yang kalimat utamanya di awal disebut paragraf …","induktif","deduktif","campuran","deskriptif",1],
+["Kata baku dari 'ijin' adalah …","ijin","izin","ijien","izinlah",1],
+["Dalam wawancara, orang yang ditanya disebut …","pewawancara","narasumber","penulis","pembaca",1],
+["'Ayah membaca koran di teras.' Objek kalimat tersebut adalah …","ayah","membaca","koran","di teras",2]
+];
+
+BANK.bing=[
+["'Good morning' means …","selamat malam","selamat pagi","selamat siang","selamat tinggal",1],
+["Rina: 'How are you?' — Salsa: '…'","I am fine, thank you","Goodbye","See you later","You are welcome",0],
+["The English word for 'buku' is …","pen","book","table","chair",1],
+["I … a student.","is","are","am","be",2],
+["She … my sister.","am","are","is","be",2],
+["They … playing football now.","is","am","are","be",2],
+["The plural of 'child' is …","childs","childes","children","childrens",2],
+["The opposite of 'big' is …","large","small","tall","long",1],
+["Today is Monday. Yesterday was …","Tuesday","Sunday","Wednesday","Friday",1],
+["The month after June is …","May","August","July","April",2],
+["'Twelve' is the number …","10","11","12","20",2],
+["A cat has … legs.","two","three","four","six",2],
+["The color of the sky on a sunny day is …","green","blue","red","black",1],
+["We write with a …","spoon","pen","plate","shoe",1],
+["My mother's brother is my …","father","uncle","cousin","nephew",1],
+["'… is your name?' — 'My name is Budi.'","Who","Where","What","When",2],
+["'… do you live?' — 'In Kasongan.'","What","Where","Who","Why",1],
+["The students … in the classroom every morning.","studies","study","studying","studied",1],
+["He … to school by bike every day.","go","goes","going","gone",1],
+["There … a book on the table.","are","is","am","be",1],
+["There … many students in the hall.","is","am","are","be",2],
+["The cat is … the table. (di bawah)","on","under","in","between",1],
+["I have breakfast in the …","night","evening","morning","midnight",2],
+["'Thank you very much' — '…'","I am sorry","You are welcome","Good night","See you",1],
+["The English word for 'makan' is …","drink","sleep","eat","read",2],
+["A doctor works in a …","school","hospital","market","farm",1],
+["The day before Friday is …","Thursday","Saturday","Monday","Sunday",0],
+["'… old are you?' — 'I am twelve.'","What","Who","How","Where",2],
+["She has … umbrella.","a","an","the","some",1],
+["This is … apple.","a","an","two","many",1],
+["Birds can …","swim","fly","run fast","climb trees",1],
+["We wear … on our feet.","hats","shoes","gloves","shirts",1],
+["The sun rises in the …","west","north","east","south",2],
+["'Library' is a place to …","cook","borrow books","play football","sleep",1],
+["My father … a teacher.","am","are","is","be",2],
+["Choose the correct sentence:","She don't like rice.","She doesn't like rice.","She not like rice.","She doesn't likes rice.",1],
+["The past tense of 'go' is …","goed","gone to","went","going",2],
+["'… is she?' — 'She is my teacher.'","What","Where","Who","When",2],
+["It is seven o'clock. In English: 'It is …'","seven clock","seven o'clock","o'clock seven","seven hours",1],
+["A week has … days.","five","six","seven","eight",2],
+["The English word for 'air' (minum) is …","fire","water","earth","wind",1],
+["Elephants are … animals.","small","tiny","big","short",2],
+["'… pencils do you have?' — 'Three.'","How much","How many","How old","How long",1],
+["We must … our hands before eating.","wash","washes","washing","washed",0],
+["The capital city of Indonesia is …","Bandung","Surabaya","Jakarta","Medan",2],
+["'Goodbye' in Indonesian is …","halo","terima kasih","selamat tinggal","maaf",2],
+["A fish lives in …","a tree","water","a nest","a hole",1],
+["January is the … month of the year.","second","first","third","last",1],
+["The students are in the … (ruang kelas)","kitchen","bedroom","classroom","bathroom",2],
+["'Excuse me' is used to say …","thank you","goodbye","sorry / permisi","hello",2]
+];
+
+BANK.ipa=[
+["Proses tumbuhan membuat makanan sendiri disebut …","respirasi","fotosintesis","fermentasi","evaporasi",1],
+["Gas yang dibutuhkan tumbuhan untuk fotosintesis adalah …","oksigen","karbon dioksida","nitrogen","hidrogen",1],
+["Hasil fotosintesis yang dilepas ke udara adalah …","karbon dioksida","uap air","oksigen","asap",2],
+["Dalam rantai makanan, tumbuhan berperan sebagai …","konsumen","produsen","pengurai","predator",1],
+["Hewan pemakan tumbuhan disebut …","karnivora","omnivora","herbivora","insektivora",2],
+["Hubungan antara lebah dan bunga adalah simbiosis …","parasitisme","komensalisme","mutualisme","kompetisi",2],
+["Benalu yang menempel pada pohon mangga merugikan inangnya. Hubungan ini disebut simbiosis …","mutualisme","parasitisme","komensalisme","netralisme",1],
+["Organ tubuh manusia yang memompa darah adalah …","paru-paru","hati","jantung","ginjal",2],
+["Tempat pertukaran oksigen dan karbon dioksida dalam tubuh adalah …","jantung","paru-paru","usus","lambung",1],
+["Rangka manusia berfungsi untuk …","mengalirkan darah","menegakkan tubuh dan melindungi organ","mencerna makanan","menghasilkan energi",1],
+["Sendi engsel terdapat pada …","bahu","siku dan lutut","leher","pergelangan tangan",1],
+["Makanan dicerna secara kimiawi pertama kali di …","mulut","kerongkongan","usus besar","anus",0],
+["Gaya yang menyebabkan buah jatuh dari pohon adalah gaya …","otot","magnet","gravitasi","gesek",2],
+["Gaya gesek dapat diperkecil dengan cara …","memberi oli/pelumas","membuat permukaan kasar","menambah beban","memperbesar benda",0],
+["Magnet dapat menarik benda yang terbuat dari …","kayu","plastik","besi","karet",2],
+["Kutub magnet yang sama bila didekatkan akan …","tarik-menarik","tolak-menolak","melekat","meledak",1],
+["Sumber energi terbesar bagi bumi adalah …","bulan","matahari","api","listrik",1],
+["Perubahan energi pada kipas angin adalah …","listrik menjadi panas","listrik menjadi gerak","gerak menjadi bunyi","kimia menjadi listrik",1],
+["Baterai menyimpan energi …","gerak","panas","kimia","bunyi",2],
+["Benda yang dapat menghantarkan listrik dengan baik disebut …","isolator","konduktor","resistor","generator",1],
+["Contoh isolator listrik adalah …","besi","tembaga","karet","aluminium",2],
+["Rangkaian listrik yang bercabang disebut rangkaian …","seri","paralel","tunggal","tertutup",1],
+["Planet yang paling dekat dengan matahari adalah …","Venus","Bumi","Merkurius","Mars",2],
+["Planet tempat manusia tinggal adalah …","Mars","Bumi","Jupiter","Saturnus",1],
+["Planet yang memiliki cincin paling jelas adalah …","Jupiter","Mars","Saturnus","Uranus",2],
+["Gerakan bumi mengelilingi matahari disebut …","rotasi","revolusi","orbit","gravitasi",1],
+["Rotasi bumi menyebabkan terjadinya …","musim","siang dan malam","gerhana","pasang surut",1],
+["Bulan mengelilingi bumi dalam waktu sekitar …","7 hari","15 hari","29,5 hari","365 hari",2],
+["Perubahan wujud dari cair menjadi gas disebut …","membeku","mencair","menguap","mengembun",2],
+["Perubahan wujud dari gas menjadi cair disebut …","menguap","mengembun","menyublim","membeku",1],
+["Kapur barus yang lama-lama habis di lemari mengalami perubahan wujud …","mencair","membeku","menyublim","mengembun",2],
+["Penguapan air laut oleh panas matahari dalam daur air disebut …","kondensasi","evaporasi","presipitasi","infiltrasi",1],
+["Hewan yang berkembang biak dengan bertelur disebut …","vivipar","ovipar","ovovivipar","membelah diri",1],
+["Kucing berkembang biak dengan cara …","bertelur","beranak (vivipar)","bertelur dan beranak","membelah diri",1],
+["Tumbuhan yang berkembang biak dengan tunas adalah …","mangga","pisang","jambu","rambutan",1],
+["Penyerbukan pada tumbuhan dibantu oleh …","akar","serangga dan angin","batang","daun saja",1],
+["Kaktus beradaptasi di daerah kering dengan cara …","daun lebar","batang tebal menyimpan air dan daun berduri","akar pendek","bunga besar",1],
+["Bebek dapat berenang dengan baik karena memiliki …","paruh panjang","kaki berselaput","sayap besar","leher panjang",1],
+["Unta menyimpan cadangan makanan berupa lemak di …","perut","punuk","kaki","leher",1],
+["Bagian tumbuhan yang berfungsi menyerap air dari tanah adalah …","daun","batang","akar","bunga",2],
+["Fungsi daun bagi tumbuhan adalah …","menyerap air","tempat fotosintesis","menopang bunga","menyimpan biji",1],
+["Sumber daya alam yang dapat diperbarui adalah …","minyak bumi","batu bara","air dan tumbuhan","emas",2],
+["Kegiatan menebang hutan secara liar dapat menyebabkan …","udara bersih","banjir dan tanah longsor","tanah subur","hujan teratur",1],
+["Vitamin yang banyak terdapat pada buah jeruk adalah vitamin …","A","B","C","D",2],
+["Penyakit yang disebabkan kekurangan vitamin C adalah …","rabun senja","sariawan dan gusi berdarah (skorbut)","beri-beri","rakitis",1],
+["Zat makanan yang berfungsi sebagai sumber energi utama adalah …","protein","lemak","karbohidrat","vitamin",2],
+["Gigi yang berfungsi untuk mengoyak makanan adalah gigi …","seri","taring","geraham","susu",1],
+["Alat untuk mengukur suhu adalah …","barometer","termometer","neraca","stopwatch",1],
+["Satuan gaya dalam SI adalah …","joule","watt","newton","meter",2],
+["Bunyi dihasilkan oleh benda yang …","bergetar","bercahaya","bergerak lurus","berwarna",0]
+];
+
+BANK.ips=[
+["Ibu kota Provinsi Kalimantan Tengah adalah …","Banjarmasin","Palangka Raya","Pontianak","Samarinda",1],
+["Sungai terpanjang di Indonesia yang ada di Kalimantan adalah Sungai …","Mahakam","Kapuas","Barito","Musi",1],
+["Negara-negara ASEAN beranggotakan … negara","8","9","10","11",3],
+["Sekretariat ASEAN berkedudukan di …","Bangkok","Kuala Lumpur","Jakarta","Singapura",2],
+["Proklamasi Kemerdekaan Indonesia dibacakan pada tanggal …","17 Agustus 1945","20 Mei 1908","28 Oktober 1928","1 Juni 1945",0],
+["Teks Proklamasi dibacakan oleh …","Mohammad Hatta","Ir. Soekarno","Sutan Sjahrir","Jenderal Sudirman",1],
+["Peristiwa Sumpah Pemuda terjadi pada tanggal …","17 Agustus 1945","28 Oktober 1928","10 November 1945","22 Juni 1945",1],
+["Hari Kebangkitan Nasional diperingati setiap tanggal …","20 Mei","1 Juni","17 Agustus","10 November",0],
+["Pahlawan dari Surabaya yang terkenal dengan pertempuran 10 November adalah …","Diponegoro","Bung Tomo","Pattimura","Tuanku Imam Bonjol",1],
+["Kerajaan Hindu tertua di Indonesia adalah Kerajaan …","Majapahit","Sriwijaya","Kutai","Tarumanegara",2],
+["Kerajaan Sriwijaya berpusat di daerah …","Jawa Timur","Sumatera (Palembang)","Kalimantan Timur","Bali",1],
+["Candi Borobudur dibangun pada masa Kerajaan …","Majapahit","Mataram Kuno","Kutai","Singasari",1],
+["Bangsa Eropa yang pertama kali datang ke Indonesia adalah …","Belanda","Inggris","Portugis","Spanyol",2],
+["VOC adalah kongsi dagang milik bangsa …","Portugis","Inggris","Belanda","Jepang",2],
+["Jepang menjajah Indonesia selama kurang lebih …","350 tahun","35 tahun","3,5 tahun","10 tahun",2],
+["Benua terbesar di dunia adalah …","Afrika","Amerika","Asia","Eropa",2],
+["Samudra terluas di dunia adalah Samudra …","Hindia","Atlantik","Pasifik","Arktik",2],
+["Indonesia terletak di antara dua benua, yaitu …","Asia dan Afrika","Asia dan Australia","Eropa dan Asia","Amerika dan Asia",1],
+["Garis khayal yang membagi bumi menjadi belahan utara dan selatan adalah …","garis bujur","garis khatulistiwa","garis lintang","garis meridian",1],
+["Peta yang menggambarkan keadaan permukaan bumi disebut peta …","politik","topografi","iklim","penduduk",1],
+["Kegiatan menghasilkan barang atau jasa disebut kegiatan …","konsumsi","distribusi","produksi","transportasi",2],
+["Orang yang memakai/menggunakan barang dan jasa disebut …","produsen","distributor","konsumen","agen",2],
+["Badan usaha yang berdasarkan asas kekeluargaan adalah …","PT","CV","koperasi","firma",2],
+["Bapak Koperasi Indonesia adalah …","Ir. Soekarno","Mohammad Hatta","Ki Hajar Dewantara","R.A. Kartini",1],
+["Mata uang negara Malaysia adalah …","baht","ringgit","peso","dolar",1],
+["Mata uang negara Thailand adalah …","ringgit","baht","dong","kyat",1],
+["Hasil pertanian utama Indonesia antara lain …","gandum","padi dan jagung","anggur","zaitun",1],
+["Nelayan adalah pekerjaan yang banyak ditemukan di daerah …","pegunungan","pantai/pesisir","hutan","kota besar",1],
+["Perkebunan kelapa sawit banyak terdapat di pulau …","Jawa dan Bali","Sumatera dan Kalimantan","Sulawesi dan Papua","Nusa Tenggara",1],
+["Alat transportasi tradisional yang ditarik kuda adalah …","becak","delman/andong","bemo","perahu",1],
+["Kenampakan alam berupa daratan yang menjorok ke laut disebut …","teluk","tanjung","selat","delta",1],
+["Perairan sempit yang memisahkan dua pulau disebut …","tanjung","teluk","selat","samudra",2],
+["Gunung tertinggi di Indonesia adalah …","Gunung Semeru","Gunung Kerinci","Puncak Jaya","Gunung Rinjani",2],
+["Rumah adat Tongkonan berasal dari daerah …","Sumatera Barat","Toraja, Sulawesi Selatan","Kalimantan","Papua",1],
+["Tari Saman berasal dari daerah …","Aceh","Bali","Jawa Barat","Papua",0],
+["Alat musik angklung berasal dari daerah …","Jawa Timur","Jawa Barat","Bali","Sumatera Utara",1],
+["Globalisasi membuat kita dapat …","hidup tanpa teknologi","berkomunikasi dengan orang di negara lain dengan cepat","menutup diri dari dunia","kembali ke zaman dulu",1],
+["Sikap yang baik terhadap produk dalam negeri adalah …","meremehkannya","mencintai dan menggunakannya","tidak mau memakai","membuangnya",1],
+["Kegiatan menjual barang ke luar negeri disebut …","impor","ekspor","distribusi","konsumsi",1],
+["Kegiatan membeli barang dari luar negeri disebut …","ekspor","impor","produksi","barter",1],
+["Sebelum ada uang, manusia melakukan tukar-menukar barang yang disebut …","kredit","barter","tabungan","investasi",1],
+["Bank sentral Indonesia adalah …","Bank BRI","Bank Indonesia","Bank Mandiri","Bank BCA",1],
+["Pajak yang dibayar masyarakat digunakan negara untuk …","kepentingan pribadi pejabat","pembangunan negara","dibagikan ke luar negeri","disimpan saja",1],
+["Kerja sama negara-negara di kawasan Asia Tenggara diwadahi oleh …","PBB","ASEAN","WHO","UNICEF",1],
+["Kantor pusat PBB berada di kota …","London","Paris","New York","Jenewa",2],
+["Presiden pertama Republik Indonesia adalah …","Soeharto","Ir. Soekarno","B.J. Habibie","Mohammad Hatta",1],
+["Lagu kebangsaan Indonesia adalah …","Garuda Pancasila","Indonesia Raya","Maju Tak Gentar","Halo-Halo Bandung",1],
+["Lambang negara Indonesia adalah …","Garuda Pancasila","Bhinneka Tunggal Ika","Merah Putih","Pancasila",0],
+["Sila pertama Pancasila berbunyi …","Kemanusiaan yang adil dan beradab","Ketuhanan Yang Maha Esa","Persatuan Indonesia","Keadilan sosial bagi seluruh rakyat Indonesia",1],
+["Hari Pahlawan diperingati setiap tanggal …","10 November","17 Agustus","2 Mei","1 Oktober",0]
+];
+
+BANK.pai=[
+["Jumlah rukun Islam adalah …","4","5","6","7",1],
+["Rukun Islam yang pertama adalah …","salat","syahadat","puasa","zakat",1],
+["Jumlah rukun iman adalah …","4","5","6","7",2],
+["Iman kepada malaikat adalah rukun iman yang ke-…","satu","dua","tiga","empat",1],
+["Malaikat yang bertugas menyampaikan wahyu adalah …","Mikail","Israfil","Jibril","Izrail",2],
+["Malaikat yang bertugas membagikan rezeki adalah …","Jibril","Mikail","Raqib","Malik",1],
+["Malaikat yang bertugas meniup sangkakala adalah …","Israfil","Izrail","Ridwan","Atid",0],
+["Malaikat yang mencatat amal baik manusia adalah …","Atid","Munkar","Raqib","Nakir",2],
+["Malaikat penjaga pintu surga adalah …","Malik","Ridwan","Israfil","Mikail",1],
+["Kitab suci yang diturunkan kepada Nabi Musa a.s. adalah …","Zabur","Injil","Taurat","Al-Qur'an",2],
+["Kitab Zabur diturunkan kepada Nabi …","Isa a.s.","Daud a.s.","Ibrahim a.s.","Musa a.s.",1],
+["Kitab suci terakhir yang diturunkan Allah Swt. adalah …","Injil","Taurat","Al-Qur'an","Zabur",2],
+["Nabi pertama yang diutus Allah adalah Nabi …","Nuh a.s.","Ibrahim a.s.","Adam a.s.","Muhammad saw.",2],
+["Nabi terakhir (penutup para nabi) adalah Nabi …","Isa a.s.","Muhammad saw.","Musa a.s.","Yusuf a.s.",1],
+["Jumlah surat dalam Al-Qur'an adalah …","99","100","114","120",2],
+["Al-Qur'an terdiri atas … juz","10","20","30","40",2],
+["Surat pertama dalam Al-Qur'an adalah …","Al-Baqarah","Al-Fatihah","Al-Ikhlas","An-Nas",1],
+["Surat Al-Fatihah terdiri atas … ayat","5","6","7","8",2],
+["Wahyu pertama diturunkan kepada Nabi Muhammad saw. di …","Gua Tsur","Gua Hira","Makkah","Madinah",1],
+["Surat yang pertama kali diturunkan adalah …","Al-Fatihah","Al-'Alaq","Al-Muddatstsir","Al-Qalam",1],
+["Nabi Muhammad saw. lahir di kota …","Madinah","Thaif","Makkah","Yaman",2],
+["Ayah Nabi Muhammad saw. bernama …","Abu Thalib","Abdul Muthalib","Abdullah","Hamzah",2],
+["Ibu Nabi Muhammad saw. bernama …","Khadijah","Aminah","Halimah","Fatimah",1],
+["Peristiwa perjalanan Nabi Muhammad saw. menerima perintah salat disebut …","Hijrah","Isra Miraj","Fathu Makkah","Badar",1],
+["Dalam peristiwa Isra Miraj, Nabi Muhammad saw. menerima perintah …","puasa","zakat","salat lima waktu","haji",2],
+["Jumlah rakaat salat Subuh adalah …","2","3","4","5",0],
+["Salat yang jumlah rakaatnya 3 adalah salat …","Zuhur","Asar","Magrib","Isya",2],
+["Salat Zuhur dikerjakan sebanyak … rakaat","2","3","4","5",2],
+["Berwudu dilakukan sebelum …","makan","salat","tidur","bermain",1],
+["Apabila tidak ada air, berwudu dapat diganti dengan …","mandi","tayamum","cuci tangan","istirahat",1],
+["Tayamum menggunakan …","air","pasir/debu yang suci","minyak","daun",1],
+["Puasa Ramadan adalah rukun Islam yang ke-…","dua","tiga","empat","lima",2],
+["Hari raya umat Islam setelah Ramadan adalah …","Idul Adha","Idul Fitri","Maulid","Isra Miraj",1],
+["Idul Fitri dirayakan pada tanggal …","1 Ramadan","1 Syawal","10 Zulhijah","1 Muharam",1],
+["Zakat fitrah dibayarkan pada bulan …","Ramadan (sebelum Idul Fitri)","Syawal","Zulhijah","Muharam",0],
+["Ibadah haji dilaksanakan di kota …","Madinah","Makkah","Palestina","Mesir",1],
+["Wukuf saat ibadah haji dilaksanakan di …","Mina","Arafah","Muzdalifah","Jabal Rahmah",1],
+["Ka'bah adalah kiblat umat Islam yang berada di …","Madinah","Makkah","Yerusalem","Baghdad",1],
+["Sifat wajib bagi rasul yang berarti jujur adalah …","amanah","tabligh","siddiq","fathanah",2],
+["Sifat wajib bagi rasul yang berarti cerdas adalah …","siddiq","amanah","tabligh","fathanah",3],
+["Sifat wajib bagi rasul yang berarti menyampaikan wahyu adalah …","tabligh","siddiq","fathanah","amanah",0],
+["Asmaul Husna berjumlah …","33","40","99","100",2],
+["Ar-Rahman artinya Allah Maha …","Raja","Pencipta","Pengasih","Mengetahui",2],
+["Al-Khaliq artinya Allah Maha …","Pengasih","Pencipta","Penyayang","Bijaksana",1],
+["Rasul Ulul Azmi berjumlah … nabi","3","4","5","6",2],
+["Salah satu rasul Ulul Azmi adalah …","Yusuf a.s.","Nuh a.s.","Yunus a.s.","Harun a.s.",1],
+["Orang yang mengumandangkan azan disebut …","imam","muazin","khatib","makmum",1],
+["Salat Jumat wajib dikerjakan oleh …","perempuan","laki-laki muslim","anak kecil","semua orang",1],
+["Sebelum makan, seorang muslim dianjurkan membaca …","Alhamdulillah","Bismillah","Astagfirullah","Subhanallah",1],
+["Ucapan yang dibaca setelah selesai makan adalah …","Bismillah","Masya Allah","Alhamdulillah","Allahu Akbar",2]
+];
+</script>
+</body>
+</html>
