@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AgenKu — Asisten Suara Pribadi</title>
-<meta name="description" content="AgenKu: asisten suara pribadi ala Jarvis. Panggil pakai suara, menjawab pakai suara. Otaknya Gemini dengan kunci milik sendiri.">
+<meta name="description" content="AgenKu: asisten suara pribadi ala Jarvis. Panggil pakai suara, menjawab pakai suara. Otaknya Gemini atau StepFun, dengan kunci milik sendiri.">
 <style>
 :root{
  --bg:#02060f; --panel:#071426; --panel2:#0a1c33; --garis:#12365e;
@@ -115,14 +115,36 @@ footer{padding:0 16px 14px;text-align:center;font-size:11px;color:#5b84a8;max-wi
   <div id="isiTranskrip"><div class="kosong">Belum ada percakapan. Aktifkan AgenKu lalu sapa "Hai Agen".</div></div>
  </div>
 </main>
-<footer>AgenKu berjalan 100% di browser ini. Suara diproses layanan pengenal suara Chrome; jawaban dibuat Gemini memakai kunci API milik sendiri yang tersimpan hanya di perangkat ini. Butuh Chrome/Edge dan internet.</footer>
+<footer>AgenKu berjalan 100% di browser ini. Suara diproses layanan pengenal suara Chrome; jawaban dibuat Gemini atau StepFun memakai kunci API milik sendiri yang tersimpan hanya di perangkat ini. Butuh Chrome/Edge dan internet.</footer>
 
 <div class="latar" id="latarAtur">
  <div class="modal">
   <h2>⚙️ Pengaturan AgenKu</h2>
-  <p>Masukkan kunci API Gemini milik sendiri (dari Google AI Studio). Kunci hanya disimpan di browser perangkat ini — tidak dikirim ke mana pun selain Google saat menjawab.</p>
+  <p>Pilih otak AgenKu: Gemini (Google AI Studio) atau StepFun (gateway berbayar yang sudah Bapak beli). Kunci hanya disimpan di browser perangkat ini — tidak dikirim ke mana pun selain penyedia yang dipilih saat menjawab. Jangan pernah kirim kunci lewat chat.</p>
+  <label>OTAK (PENYEDIA AI)</label>
+  <select id="inOtak">
+   <option value="gemini">Gemini — Google AI Studio (gratis)</option>
+   <option value="stepfun">StepFun — gateway claudepeak (berbayar, kuota penjual)</option>
+  </select>
+  <div id="bagGemini">
   <label>KUNCI API GEMINI</label>
   <input type="password" id="inKunci" placeholder="Tempel kunci API di sini (AIza… atau AQ.…)">
+  </div>
+  <div id="bagStepfun" style="display:none">
+  <label>KUNCI API STEPFUN (GATEWAY)</label>
+  <input type="password" id="inKunciStep" placeholder="Tempel kunci gateway StepFun di sini">
+  <label>MODEL STEPFUN</label>
+  <select id="inModelStep">
+   <option value="step-5">step-5</option>
+   <option value="step-5-hore">step-5-hore</option>
+   <option value="stepfun/step-5-preview">stepfun/step-5-preview</option>
+   <option value="stepfun/step-3.7-flash">stepfun/step-3.7-flash</option>
+   <option value="stepfun/step-3.5-flash-2603">stepfun/step-3.5-flash-2603</option>
+  </select>
+  <label>BASE URL GATEWAY</label>
+  <input type="text" id="inBaseStep" placeholder="https://api.claudepeak.com/v1">
+  <p style="margin-top:8px">Kalau kunci gateway yang ditempel di chat dulu, anggap sudah bocor — pakai kunci baru dari penjual bila ada.</p>
+  </div>
   <label>KATA SAPA (WAKE WORD)</label>
   <input type="text" id="inSapa" placeholder="hai agen">
   <label>KECEPATAN SUARA JAWABAN: <span id="lblCepat">1.0×</span></label>
@@ -142,7 +164,7 @@ footer{padding:0 16px 14px;text-align:center;font-size:11px;color:#5b84a8;max-wi
 'use strict';
 /* ================= AgenKu — asisten suara pribadi ================= */
 var LS='agenku_v1';
-var setelan={kunci:'',sapa:'hai agen',cepat:1,selalu:true};
+var setelan={kunci:'',otak:'gemini',kunciStep:'',modelStep:'step-5',baseStep:'https://api.claudepeak.com/v1',sapa:'hai agen',cepat:1,selalu:true};
 try{var s0=JSON.parse(localStorage.getItem(LS)||'null');if(s0&&typeof s0==='object'){for(var k in setelan){if(s0[k]!==undefined)setelan[k]=s0[k];}}}catch(e){}
 function simpanSetelan(){try{localStorage.setItem(LS,JSON.stringify(setelan));}catch(e){}}
 function $(id){return document.getElementById(id);}
@@ -278,7 +300,46 @@ function perintahLokal(n){
 function prosesPerintah(n){
  var lokal=perintahLokal(n);
  if(lokal!==null){tambahBaris('AgenKu',lokal);bicara(lokal);return;}
- tanyaGemini(n);
+ tanyaOtak(n);
+}
+function tanyaOtak(teks){
+ if(setelan.otak==='stepfun')tanyaStepFun(teks);
+ else tanyaGemini(teks);
+}
+
+/* ---------- otak: StepFun (gateway OpenAI-compatible) ---------- */
+function tanyaStepFun(teks){
+ if(!setelan.kunciStep){
+  var pesan='Kunci API StepFun belum diisi. Silakan buka tombol Atur di kanan atas, pilih otak StepFun, lalu tempel kunci gateway Bapak di sana (di dalam aplikasi ini, bukan lewat chat).';
+  tambahBaris('sistem',pesan);bicara('Kunci API StepFun belum diisi. Silakan isi dulu di menu Atur.');toast('Isi kunci StepFun di menu ⚙️ Atur');return;
+ }
+ setState('pikir');
+ var msgs=[{role:'system',content:SISTEM}];
+ var awal=Math.max(0,riwayat.length-10);
+ for(var i=awal;i<riwayat.length;i++){msgs.push({role:riwayat[i].role==='model'?'assistant':'user',content:riwayat[i].text});}
+ msgs.push({role:'user',content:teks});
+ var base=(setelan.baseStep||'https://api.claudepeak.com/v1').replace(/\/+$/,'');
+ var daftar=[setelan.modelStep||'step-5'];
+ if(daftar[0]!=='step-5')daftar.push('step-5');
+ function coba(idx){
+  if(idx>=daftar.length){
+   setState(aktif?'dengar':'mati');
+   var g='Maaf Pak, StepFun gagal dihubungi. Periksa kunci gateway, nama model, dan koneksi internet, lalu coba lagi.';
+   tambahBaris('sistem',g);bicara('Maaf Pak, saya gagal menghubungi StepFun. Periksa kunci gateway dan internet Bapak.');return;
+  }
+  fetch(base+'/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+setelan.kunciStep},body:JSON.stringify({model:daftar[idx],messages:msgs,temperature:0.7,max_tokens:500})}).then(function(r){
+   return r.json().then(function(j){return{ok:r.ok,status:r.status,json:j};});
+  }).then(function(res){
+   if(!res.ok)throw new Error('http '+res.status);
+   var jawab=((res.json.choices&&res.json.choices[0]&&res.json.choices[0].message&&res.json.choices[0].message.content)||'').trim();
+   if(!jawab)throw new Error('kosong');
+   riwayat.push({role:'user',text:teks});riwayat.push({role:'model',text:jawab});
+   if(riwayat.length>20)riwayat=riwayat.slice(-20);
+   tambahBaris('AgenKu',jawab);
+   bicara(jawab);
+  }).catch(function(){coba(idx+1);});
+ }
+ coba(0);
 }
 
 /* ---------- otak: Gemini ---------- */
@@ -334,25 +395,42 @@ function tanyaGemini(teks){
 <script>
 'use strict';
 /* ---------- pengendali antarmuka ---------- */
+function aturBagOtak(){
+ var step=$('inOtak').value==='stepfun';
+ $('bagGemini').style.display=step?'none':'';
+ $('bagStepfun').style.display=step?'':'none';
+}
 function segarDariSetelan(){
  $('inKunci').value=setelan.kunci||'';
+ $('inOtak').value=setelan.otak||'gemini';
+ $('inKunciStep').value=setelan.kunciStep||'';
+ $('inModelStep').value=setelan.modelStep||'step-5';
+ $('inBaseStep').value=setelan.baseStep||'https://api.claudepeak.com/v1';
+ aturBagOtak();
  $('inSapa').value=setelan.sapa||'hai agen';
  $('inCepat').value=setelan.cepat||1;
  $('lblCepat').textContent=Number(setelan.cepat||1).toFixed(2).replace(/0$/,'')+'×';
  $('inSelalu').checked=!!setelan.selalu;
 }
 $('inCepat').addEventListener('input',function(){$('lblCepat').textContent=Number(this.value).toFixed(2).replace(/0$/,'')+'×';});
+$('inOtak').addEventListener('change',aturBagOtak);
 $('btnAtur').addEventListener('click',function(){segarDariSetelan();$('latarAtur').classList.add('buka');});
 $('btnTutupAtur').addEventListener('click',function(){$('latarAtur').classList.remove('buka');});
 $('latarAtur').addEventListener('click',function(e){if(e.target===this)this.classList.remove('buka');});
 $('btnSimpanAtur').addEventListener('click',function(){
  setelan.kunci=$('inKunci').value.trim();
+ setelan.otak=$('inOtak').value==='stepfun'?'stepfun':'gemini';
+ setelan.kunciStep=$('inKunciStep').value.trim();
+ setelan.modelStep=$('inModelStep').value||'step-5';
+ setelan.baseStep=$('inBaseStep').value.trim()||'https://api.claudepeak.com/v1';
  setelan.sapa=$('inSapa').value.trim().toLowerCase()||'hai agen';
  setelan.cepat=parseFloat($('inCepat').value)||1;
  setelan.selalu=$('inSelalu').checked;
  simpanSetelan();
  $('latarAtur').classList.remove('buka');
- toast(setelan.kunci?'Pengaturan disimpan. AgenKu siap dipakai.':'Pengaturan disimpan — kunci API masih kosong.');
+ toast(setelan.otak==='stepfun'
+  ?(setelan.kunciStep?'Pengaturan disimpan. Otak StepFun siap dipakai.':'Pengaturan disimpan — kunci StepFun masih kosong.')
+  :(setelan.kunci?'Pengaturan disimpan. AgenKu siap dipakai.':'Pengaturan disimpan — kunci API masih kosong.'));
 });
 $('btnTesSuara').addEventListener('click',function(){
  bicara('Halo Pak, ini tes suara AgenKu. Suara saya terdengar jelas dan siap membantu.');
